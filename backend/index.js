@@ -33,11 +33,17 @@ const allowedOrigins = [
   'http://localhost:3001',
   'http://localhost:3002',
   'http://localhost:3003',
-  'http://localhost:3004'
-];
+  'http://localhost:3004',
+  process.env.FRONTEND_URL,
+  process.env.ADMIN_URL,
+  process.env.COMPANY_URL
+].filter(Boolean);
 
-// Initialize socket.io
-const socketInit = require('./socket').init(server);
+// Initialize socket.io only in non-serverless environment
+let socketInit;
+if (process.env.VERCEL !== '1') {
+  socketInit = require('./socket').init(server);
+}
 
 // Updated CORS configuration
 app.use(cors({
@@ -188,15 +194,23 @@ app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
 
+// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://kaoser614:0096892156428@cluster0.2awol.mongodb.net/")
   .then(result => {
-    server.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      console.log('Socket.IO server initialized');
-    });
+    console.log('Database connected successfully');
+    // Only start server if not in Vercel serverless environment
+    if (process.env.VERCEL !== '1') {
+      server.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+        console.log('Socket.IO server initialized');
+      });
+    }
   })
   .catch(err => {
     console.error('Database connection failed:', err);
   });
+
+// Export the Express app for Vercel
+module.exports = app;
 
 
