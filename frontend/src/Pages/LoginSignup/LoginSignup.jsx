@@ -24,7 +24,7 @@ const LoginSignup = () => {
     
     try {
       const endpoint = isLogin ? '/user/auth/login' : '/user/auth/register';
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

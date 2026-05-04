@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
 
     try {
-      const response = await axios.get('http://localhost:4000/user/auth/me', {
+      const response = await axios.get('https://backend-eight-tan-16.vercel.app/user/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       
       // Make API call to update user data
-      const response = await fetch('http://localhost:4000/user/auth/update', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/user/auth/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

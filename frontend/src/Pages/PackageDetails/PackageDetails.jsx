@@ -54,7 +54,7 @@ const fetchChats = async () => {
       throw new Error('No token found');
     }
     
-    const response = await fetch(`http://localhost:4000/api/chat/get-user-chat/${userId}?query=${chatType}`, {
+    const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-user-chat/${userId}?query=${chatType}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ useEffect(() => {
   const fetchReviews = async (tourId) => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get(`http://localhost:4000/reviews/tour/${tourId}`);
+      const response = await axios.get(`https://backend-eight-tan-16.vercel.app/reviews/tour/${tourId}`);
       setReviews(response.data);
       setErrorReviews(null);
     } catch (error) {

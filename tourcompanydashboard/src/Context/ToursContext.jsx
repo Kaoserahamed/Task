@@ -25,7 +25,7 @@ export const ToursProvider = ({ children }) => {
       }
       const companyId = company.company._id;
       console.log("Fetching tours for company ID:", companyId);
-      const response = await fetch(`http://localhost:4000/api/companytours/${companyId}`);
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/companytours/${companyId}`);
       const data = await response.json();
       console.log(response);
       if (data.success) {
@@ -44,7 +44,7 @@ export const ToursProvider = ({ children }) => {
   const fetchTours = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/tours');
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/tours');
       const data = await response.json();
       
       if (data.success) {
@@ -65,7 +65,7 @@ export const ToursProvider = ({ children }) => {
       setLoading(true);
       if (!company) throw new Error('No company logged in');
       const companyId = company.company._id;
-      const response = await fetch(`http://localhost:4000/api/companytours/${companyId}`);
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/companytours/${companyId}`);
       const data = await response.json();
       if (!data.success) throw new Error(data.error);
 
@@ -73,7 +73,7 @@ export const ToursProvider = ({ children }) => {
       const toursWithBookings = await Promise.all(
         data.tours.map(async (tour) => {
           const res = await fetch(
-            `http://localhost:4000/api/bookings/tour/${tour._id}`,
+            `https://backend-eight-tan-16.vercel.app/api/bookings/tour/${tour._id}`,
             { headers: { 'Authorization': `Bearer ${token}` } }
           );
           const bookingsData = await res.json();
@@ -92,7 +92,7 @@ export const ToursProvider = ({ children }) => {
 
   const deleteTour = async (tourId) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/tours/${tourId}`, {
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}`, {
         method: 'DELETE',
       });
       const data = await response.json();
@@ -111,7 +111,7 @@ export const ToursProvider = ({ children }) => {
 
   const updateTourStatus = async (tourId, status) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/tours/${tourId}/status`, {
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

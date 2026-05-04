@@ -35,7 +35,7 @@ const ChatPage = () => {
           throw new Error('No token found');
         }
         console.log(authtoken)
-         response=await fetch(`http://localhost:4000/api/chat/get-chat/${companyId}?query=${'adcom'}`
+         response=await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-chat/${companyId}?query=${'adcom'}`
 , {
           method: 'GET',
           headers: {

@@ -15,7 +15,7 @@ const ExploreByCategory = () => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const res = await fetch('http://localhost:4000/reviews');
+        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
         const reviews = await res.json();
 
         const ratingMap = {};
@@ -48,7 +48,7 @@ const ExploreByCategory = () => {
   }, [tours]);
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`http://localhost:4000/api/tours/${tourId}/increment-view`, {
+      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -175,7 +175,7 @@ const ExploreTourCard = ({ tour, onExplore, averageRating }) => {
     <div className="explore-tour-card">
       <div className="explore-tour-image">
         <img
-          src={tour.images && tour.images.length > 0 ? `http://localhost:4000/${tour.images[0]}` : 'https://picsum.photos/300/200'}
+          src={tour.images && tour.images.length > 0 ? `https://backend-eight-tan-16.vercel.app/${tour.images[0]}` : 'https://picsum.photos/300/200'}
           alt={tour.name}
           onError={(e) => { e.target.src = 'https://picsum.photos/300/200'; }}
         />

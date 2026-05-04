@@ -17,7 +17,7 @@ const Signup = () => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:4000/api/admin/signup', {
+            const response = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

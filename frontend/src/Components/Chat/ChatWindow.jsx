@@ -82,7 +82,7 @@ console.log(selectedChat);
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch('http://localhost:4000/api/chat/send-message', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/chat/send-message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

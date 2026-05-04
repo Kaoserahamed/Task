@@ -50,7 +50,7 @@ const ReviewPage = () => {
   const fetchAllReviews = async () => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get('http://localhost:4000/reviews');
+      const response = await axios.get('https://backend-eight-tan-16.vercel.app/reviews');
       setReviews(response.data);
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -64,7 +64,7 @@ const ReviewPage = () => {
   const fetchReviewsForTour = async (tourId) => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get(`http://localhost:4000/reviews/tour/${tourId}`);
+      const response = await axios.get(`https://backend-eight-tan-16.vercel.app/reviews/tour/${tourId}`);
       setReviews(response.data);
     } catch (error) {
       console.error(`Error fetching reviews for tour ${tourId}:`, error);
@@ -188,7 +188,7 @@ const ReviewPage = () => {
       });
 
       // Submit review to API - use the correct path
-      const response = await axios.post('http://localhost:4000/reviews', formData, {
+      const response = await axios.post('https://backend-eight-tan-16.vercel.app/reviews', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -461,7 +461,7 @@ const ReviewPage = () => {
                       {review.photos.map((photo, index) => (
                         <img
                           key={index}
-                          src={photo.startsWith('http') ? photo : `http://localhost:4000${photo}`}
+                          src={photo.startsWith('http') ? photo : `https://backend-eight-tan-16.vercel.app${photo}`}
                           alt="Review"
                         />
                       ))}

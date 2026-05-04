@@ -26,7 +26,7 @@ const BookingList = () => {
   const fetchTourInfo = async () => {
     try {
       const token = localStorage.getItem('company-token');
-      const response = await fetch(`http://localhost:4000/api/tours/${tourId}`, {
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -48,7 +48,7 @@ const BookingList = () => {
       
       const token = localStorage.getItem('company-token');
       const response = await fetch(
-        `http://localhost:4000/api/bookings/tour/${tourId}?page=${currentPage}&limit=10`,
+        `https://backend-eight-tan-16.vercel.app/api/bookings/tour/${tourId}?page=${currentPage}&limit=10`,
         {
           headers: {
             'Authorization': `Bearer ${token}`

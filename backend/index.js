@@ -8,6 +8,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
+const config = require('./config/env');
 const chatRoutes = require('./routes/chatRoutes');
 const authRoutes = require('./routes/authRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
@@ -25,30 +26,18 @@ const adminAuthRoutes = require('./routes/adminauth');
 
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 4000;
-
-// Define allowed origins
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'http://localhost:3003',
-  'http://localhost:3004',
-  process.env.FRONTEND_URL,
-  process.env.ADMIN_URL,
-  process.env.COMPANY_URL
-].filter(Boolean);
+const PORT = config.port;
 
 // Initialize socket.io only in non-serverless environment
 let socketInit;
-if (process.env.VERCEL !== '1') {
+if (!config.isVercel) {
   socketInit = require('./socket').init(server);
 }
 
 // Updated CORS configuration
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || config.cors.origins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -195,19 +184,21 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://kaoser614:0096892156428@cluster0.2awol.mongodb.net/?appName=Cluster0")
+mongoose.connect(config.mongodb.uri)
   .then(result => {
     console.log('Database connected successfully');
     // Only start server if not in Vercel serverless environment
-    if (process.env.VERCEL !== '1') {
+    if (!config.isVercel) {
       server.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
+        console.log(`Environment: ${config.nodeEnv}`);
         console.log('Socket.IO server initialized');
       });
     }
   })
   .catch(err => {
     console.error('Database connection failed:', err);
+    process.exit(1);
   });
 
 // Export the Express app for Vercel

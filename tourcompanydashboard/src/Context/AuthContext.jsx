@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('company-token');
       
       // Make API call to update user data
-      const response = await fetch('http://localhost:4000/company/auth/update-info', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/update-info', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

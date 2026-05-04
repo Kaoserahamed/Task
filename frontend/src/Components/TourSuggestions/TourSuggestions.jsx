@@ -21,7 +21,7 @@ const TourSuggestions = ({ weatherCity }) => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const res = await fetch('http://localhost:4000/reviews');
+        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
         const reviews = await res.json();
 
         const ratingMap = {};
@@ -80,7 +80,7 @@ const TourSuggestions = ({ weatherCity }) => {
       setError(null);
 
       try {
-        const response = await fetch(`http://localhost:4000/Suggestion/${encodeURIComponent(weatherCity)}`);
+        const response = await fetch(`https://backend-eight-tan-16.vercel.app/Suggestion/${encodeURIComponent(weatherCity)}`);
         if (response.ok) {
           const suggestedData = await response.json();
           console.log('Suggested data:', suggestedData);
@@ -131,7 +131,7 @@ const TourSuggestions = ({ weatherCity }) => {
   const handleExploreNow = async (tourId, tourName) => {
     try {
       // Increment view count
-      await fetch(`http://localhost:4000/api/tours/${tourId}/increment-view`, {
+      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
 
@@ -194,7 +194,7 @@ const TourSuggestions = ({ weatherCity }) => {
             const tourPrice = tour.price || 'N/A';
             const tourCategory = tour.packageCategories?.join(', ') || 'General';
             const tourImage = tour.images && tour.images.length > 0
-              ? `http://localhost:4000/${tour.images[0]}`
+              ? `https://backend-eight-tan-16.vercel.app/${tour.images[0]}`
               : 'https://picsum.photos/300/200';
             const duration = tour.duration ? `${tour.duration.days} days / ${tour.duration.nights} nights` : 'Duration not specified';
             const daysUntilStart = getDaysUntilStart(tour.startDate);

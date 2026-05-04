@@ -305,7 +305,7 @@ const ManageTours = () => {
                 <div className="tour-image">
                   {tour.images && tour.images[0] ? (
                     <img
-                      src={`http://localhost:4000/${tour.images[0]}`}
+                      src={`https://backend-eight-tan-16.vercel.app/${tour.images[0]}`}
                       alt={tour.name}
                       onError={(e) => {
                         e.target.src = fallbackImageUrl;
@@ -418,3 +418,4 @@ const ManageTours = () => {
 };
 
 export default ManageTours;
+

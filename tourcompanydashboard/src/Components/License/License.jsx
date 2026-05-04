@@ -57,7 +57,7 @@ const License = () => {
     const fetchCompany = async () => {
       try {
         const token = localStorage.getItem('company-token');
-        const res = await fetch('http://localhost:4000/company/auth/companies');
+        const res = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/companies');
         const data = await res.json();
         // Find this company by id
         const myCompany = (data.companies || []).find(c => c._id === company?.company?._id);
@@ -80,7 +80,7 @@ const License = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch('http://localhost:4000/company/auth/companies');
+        const res = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/companies');
         const data = await res.json();
         const myCompany = (data.companies || []).find(c => c._id === company?.company?._id);
         if (myCompany) {
@@ -164,7 +164,7 @@ const License = () => {
     try {
       // Verify password before saving
       const token = localStorage.getItem('company-token');
-      const res = await fetch('http://localhost:4000/company/auth/verify-password', {
+      const res = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/verify-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -477,3 +477,4 @@ const License = () => {
 };
 
 export default License;
+

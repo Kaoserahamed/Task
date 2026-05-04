@@ -32,7 +32,7 @@ const Settings = () => {
     async function fetchProfile() {
       setProfileLoading(true);
       try {
-        const res = await fetch('http://localhost:4000/api/admin/profile', {
+        const res = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/profile', {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('admin-token')}` }
         });
         const data = await res.json();
@@ -78,7 +78,7 @@ const Settings = () => {
       return;
     }
     try {
-      const res = await fetch('http://localhost:4000/api/admin/profile', {
+      const res = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ const Settings = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/admin/change-password', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ const Settings = () => {
   const handleNotificationSettings = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:4000/api/admin/update-notifications', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/update-notifications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -420,3 +420,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

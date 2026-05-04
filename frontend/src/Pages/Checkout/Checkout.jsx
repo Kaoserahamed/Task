@@ -77,7 +77,7 @@ const Checkout = () => {
       // Calculate total amount
       const totalAmount = selectedTour.price * requestedTravelers;
 
-      const bookingResponse = await fetch('http://localhost:4000/api/bookings/add', {
+      const bookingResponse = await fetch('https://backend-eight-tan-16.vercel.app/api/bookings/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ const Checkout = () => {
       }
 
       // Update tour seats
-      const updateResponse = await fetch(`http://localhost:4000/api/tours/${tourId}/book-seats`, {
+      const updateResponse = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/book-seats`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

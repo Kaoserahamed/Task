@@ -24,7 +24,7 @@ const fetchChats=async()=>{
       throw new Error('No token found');
     }
     console.log(token)
-     response=await fetch(`http://localhost:4000/api/chat/get-chat/${companyId}?query=${'comuse'}`
+     response=await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-chat/${companyId}?query=${'comuse'}`
 , {
       method: 'GET',
   
@@ -85,7 +85,7 @@ const fetchChats=async()=>{
     setIsSearching(true);
     try {
       const authtoken = localStorage.getItem('company-token');
-      const response = await fetch(`http://localhost:4000/user/auth/search?query=${encodeURIComponent(query)}`, {
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/user/auth/search?query=${encodeURIComponent(query)}`, {
         headers: {
           'Authorization': `Bearer ${authtoken}`
         }

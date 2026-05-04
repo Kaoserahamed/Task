@@ -22,7 +22,7 @@ const ResetPassword = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:4000/user/auth/reset', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/user/auth/reset', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

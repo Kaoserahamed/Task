@@ -16,7 +16,7 @@ const ProfileInfo = () => {
   // Memoize the avatar URL to prevent unnecessary re-renders
   const getAvatarUrl = useCallback(() => {
     if (userData?.avatar && userData.avatar !== 'default-avatar.png') {
-      return `http://localhost:4000/${userData.avatar}`;
+      return `https://backend-eight-tan-16.vercel.app/${userData.avatar}`;
     }
     return '/default-avatar.png';
   }, [userData?.avatar]);
@@ -39,14 +39,14 @@ const ProfileInfo = () => {
 
       try {
         // Fetch Wishlist Count
-        const wishlistRes = await axios.get('http://localhost:4000/api/wishlist', {
+        const wishlistRes = await axios.get('https://backend-eight-tan-16.vercel.app/api/wishlist', {
           headers: { Authorization: `Bearer ${token}` },
           params: { email: userData.email }
         });
         setWishlistCount(wishlistRes.data.wishlist?.length || 0);
 
         // Fetch Bookings (trips)
-        const bookingRes = await axios.get('http://localhost:4000/api/bookings', {
+        const bookingRes = await axios.get('https://backend-eight-tan-16.vercel.app/api/bookings', {
           headers: { Authorization: `Bearer ${token}` },
           params: { email: userData.email }
         });
@@ -112,7 +112,7 @@ const ProfileInfo = () => {
     try {
       console.log('Uploading avatar for:', userData.email);
       
-      const response = await axios.post('http://localhost:4000/user/auth/avatar', formData, {
+      const response = await axios.post('https://backend-eight-tan-16.vercel.app/user/auth/avatar', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
         },
@@ -122,7 +122,7 @@ const ProfileInfo = () => {
 
       if (response.data.success) {
         // Update the avatar URL with cache busting
-        const newAvatarUrl = `http://localhost:4000/${response.data.user.avatar}?t=${Date.now()}`;
+        const newAvatarUrl = `https://backend-eight-tan-16.vercel.app/${response.data.user.avatar}?t=${Date.now()}`;
         setAvatarPreview(newAvatarUrl);
         setImageError(false);
         setError('');

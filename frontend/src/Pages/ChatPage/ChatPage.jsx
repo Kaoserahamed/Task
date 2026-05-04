@@ -35,7 +35,7 @@ const ChatPage = () => {
           throw new Error('No token found');
         }
         
-        const response = await fetch(`http://localhost:4000/api/chat/get-user-chat/${userId}?query=${chatType}`, {
+        const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-user-chat/${userId}?query=${chatType}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -26,7 +26,7 @@ const RegistrationRequest = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch(`http://localhost:4000/company/auth/companies`);
+        const res = await fetch(`https://backend-eight-tan-16.vercel.app/company/auth/companies`);
         const data = await res.json();
         const found = (data.companies || []).find(c => c._id === id);
         setCompany(found || null);
@@ -45,7 +45,7 @@ const RegistrationRequest = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`http://localhost:4000/company/auth/update-status`, {
+      const res = await fetch(`https://backend-eight-tan-16.vercel.app/company/auth/update-status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -122,3 +122,4 @@ const RegistrationRequest = () => {
 };
 
 export default RegistrationRequest;
+

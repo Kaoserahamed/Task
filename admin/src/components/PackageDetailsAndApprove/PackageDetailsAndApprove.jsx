@@ -11,7 +11,7 @@ const PackageDetailsAndApprove = () => {
 
   useEffect(() => {
     async function fetchTour() {
-      const res = await fetch(`http://localhost:4000/api/tours/${id}`);
+      const res = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}`);
       const data = await res.json();
       if (data.success) setTour(data.tour);
       setLoading(false);
@@ -20,7 +20,7 @@ const PackageDetailsAndApprove = () => {
   }, [id]);
 
   const handleApprove = async () => {
-    await fetch(`http://localhost:4000/api/tours/${id}/status`, {
+    await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}/status`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'approved' })
@@ -39,7 +39,7 @@ const PackageDetailsAndApprove = () => {
 
   const handleReject = async () => {
     const review = window.prompt('Enter a reason for rejection (optional):', '');
-    await fetch(`http://localhost:4000/api/tours/${id}/status`, {
+    await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}/status`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'rejected', review })
@@ -161,7 +161,7 @@ const PackageDetailsAndApprove = () => {
             tour.images.map((img, idx) => (
               <div key={idx} className="existing-image-item">
                 <img
-                  src={`http://localhost:4000/${img}`}
+                  src={`https://backend-eight-tan-16.vercel.app/${img}`}
                   alt={`tour-img-${idx}`}
                 />
               </div>

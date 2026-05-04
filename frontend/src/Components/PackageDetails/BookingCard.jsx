@@ -56,7 +56,7 @@ const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, 
 
     try {
       const response = await axios.post(
-        'http://localhost:4000/api/wishlist/add',
+        'https://backend-eight-tan-16.vercel.app/api/wishlist/add',
         { tourId, email: user?.user?.email }, 
         {
           headers: {
@@ -107,3 +107,4 @@ const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, 
 };
 
 export default BookingCard;
+

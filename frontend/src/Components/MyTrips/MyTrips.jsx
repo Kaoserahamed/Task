@@ -11,7 +11,7 @@ const MyTrips = () => {
   const navigate = useNavigate();
   const handleViewDetails = async (tourId) => {
     try {
-      await axios.patch(`http://localhost:4000/api/tours/${tourId}/increment-view`);
+      await axios.patch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -34,7 +34,7 @@ const MyTrips = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:4000/api/bookings', {
+        const response = await axios.get('https://backend-eight-tan-16.vercel.app/api/bookings', {
           headers: { 'Authorization': `Bearer ${token}` },
           params: { email: user.user.email }
         });
@@ -126,7 +126,7 @@ const MyTrips = () => {
             <div key={trip._id || index} className="trip-card">
               <div className="trip-image">
                 <img
-                  src={`http://localhost:4000/${trip.images?.[0]}`}
+                  src={`https://backend-eight-tan-16.vercel.app/${trip.images?.[0]}`}
                   alt={trip.name || 'Trip'}
                 />
                 <span className={`status ${trip.status?.toLowerCase() || 'pending'}`}>

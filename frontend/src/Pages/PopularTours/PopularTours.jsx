@@ -12,7 +12,7 @@ const PopularTours = () => {
   useEffect(() => {
     const fetchAverageRatings = async () => {
       try {
-        const res = await fetch('http://localhost:4000/reviews');
+        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
         const reviews = await res.json();
 
         const ratingMap = {};

@@ -23,7 +23,7 @@ const AllBookingsList = () => {
         tours.map(async (tour) => {
           // Fetch bookings for this tour
           const res = await fetch(
-            `http://localhost:4000/api/bookings/tour/${tour._id}`,
+            `https://backend-eight-tan-16.vercel.app/api/bookings/tour/${tour._id}`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -88,7 +88,7 @@ const AllBookingsList = () => {
   const fetchAllBookings = async () => {
     try {
       const token = localStorage.getItem('company-token');
-      const response = await fetch('http://localhost:4000/api/bookings/admin/all', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/bookings/admin/all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -178,7 +178,7 @@ const AllBookingsList = () => {
                 <div className="tour-image">
                   {tour.images && tour.images.length > 0 ? (
                     <img
-                      src={`http://localhost:4000/${tour.images[0]}`}
+                      src={`https://backend-eight-tan-16.vercel.app/${tour.images[0]}`}
                       alt={tour.title || tour.name}
                     />
                   ) : (

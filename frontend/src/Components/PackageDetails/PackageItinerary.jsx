@@ -26,3 +26,4 @@ const PackageItinerary = ({ destinations }) => {
 };
 
 export default PackageItinerary;
+

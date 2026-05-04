@@ -29,7 +29,7 @@ const Companies = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('admin-token');
-      const response = await fetch('http://localhost:4000/api/companies', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/companies', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

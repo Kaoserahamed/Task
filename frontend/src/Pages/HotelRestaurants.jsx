@@ -14,8 +14,8 @@ const HotelRestaurants = () => {
       try {
         setLoading(true);
         const [hotelRes, restaurantRes] = await Promise.all([
-          axios.get('http://localhost:4000/api/hotels'),
-          axios.get('http://localhost:4000/api/restaurants'),
+          axios.get('https://backend-eight-tan-16.vercel.app/api/hotels'),
+          axios.get('https://backend-eight-tan-16.vercel.app/api/restaurants'),
         ]);
         setHotels(hotelRes.data || []);
         setRestaurants(restaurantRes.data || []);
@@ -100,3 +100,4 @@ const HotelRestaurants = () => {
 };
 
 export default HotelRestaurants;
+

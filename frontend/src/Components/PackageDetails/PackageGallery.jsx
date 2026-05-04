@@ -25,7 +25,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
     <div className="image-gallery">
       <div className="main-image-container">
         <img
-          src={`http://localhost:4000/${images[activeImage]}`}
+          src={`https://backend-eight-tan-16.vercel.app/${images[activeImage]}`}
           alt="Tour"
           className="main-image"
           onError={handleImageError}
@@ -54,7 +54,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
           {images.map((img, index) => (
             <img
               key={index}
-              src={`http://localhost:4000/${img}`}
+              src={`https://backend-eight-tan-16.vercel.app/${img}`}
               alt={`Tour ${index + 1}`}
               className={`thumbnail ${activeImage === index ? 'active' : ''}`}
               onClick={() => setActiveImage(index)}

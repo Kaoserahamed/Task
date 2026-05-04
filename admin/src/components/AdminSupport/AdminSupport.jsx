@@ -22,7 +22,7 @@ const AdminSupport = () => {
 
   const fetchUserChats = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/chat/get-all-admin-chats?query=aduse`);
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-all-admin-chats?query=aduse`);
       const data = await response.json();
       if (!response.ok) {
         throw new Error('Failed to fetch user chats');
@@ -37,7 +37,7 @@ const AdminSupport = () => {
 
   const fetchCompanyChats = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/chat/get-all-admin-chats?query=adcom`);
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-all-admin-chats?query=adcom`);
       const data = await response.json();
       if (!response.ok) {
         throw new Error('Failed to fetch company chats');
@@ -138,7 +138,7 @@ const AdminSupport = () => {
 
     try {
       const authtoken = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/api/chat/send-message', {
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/chat/send-message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

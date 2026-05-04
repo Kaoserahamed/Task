@@ -26,7 +26,7 @@ const UpcomingTours = () => {
   // Handle explore now with view increment
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`http://localhost:4000/api/tours/${tourId}/increment-view`, {
+      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -100,7 +100,7 @@ const UpcomingTours = () => {
               const tourPrice = tour.price || 'N/A';
               const tourLocation = tour.weather || 'Location TBD';
               const tourImage = tour.images && tour.images.length > 0
-                ? `http://localhost:4000/${tour.images[0]}`
+                ? `https://backend-eight-tan-16.vercel.app/${tour.images[0]}`
                 : 'https://picsum.photos/300/200';
               const daysUntilStart = getDaysUntilStart(tour.startDate);
               const startDate = formatDate(tour.startDate);

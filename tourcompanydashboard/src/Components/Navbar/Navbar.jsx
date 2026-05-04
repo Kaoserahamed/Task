@@ -32,7 +32,7 @@ const Navbar = () => {
   const fetchCompanyDetails = useCallback(async (id) => {
     if (!id) return;
     try {
-      const response = await fetch(`http://localhost:4000/api/company/${id}`, {
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/company/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -183,3 +183,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

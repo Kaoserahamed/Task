@@ -10,7 +10,7 @@ export const ToursProvider = ({ children }) => {
   const fetchTours = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/tours/approved');
+      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/tours/approved');
       if (!response.ok) {
         throw new Error('Failed to fetch tours');
       }
@@ -31,7 +31,7 @@ export const ToursProvider = ({ children }) => {
 
   const fetchTourById = useCallback(async (id) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/tours/${id}`);
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch tour');
       }

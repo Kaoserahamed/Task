@@ -89,7 +89,7 @@ const EditTour = () => {
 
   const fetchTourDetails = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/tours/${tourId}`);
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}`);
       const data = await response.json();
 
       if (data.success) {
@@ -150,7 +150,7 @@ const EditTour = () => {
     });
 
     try {
-      const response = await fetch(`http://localhost:4000/api/tours/${tourId}`, {
+      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}`, {
         method: 'PUT',
         body: formData,
       });
@@ -601,7 +601,7 @@ const EditTour = () => {
               {tourDetails.images.map((image, index) => (
                 <div key={index} className="image-preview-item">
                   <img
-                    src={image instanceof File ? URL.createObjectURL(image) : `http://localhost:4000/${image}`}
+                    src={image instanceof File ? URL.createObjectURL(image) : `https://backend-eight-tan-16.vercel.app/${image}`}
                     alt={`preview-${index}`}
                     className="image-thumbnail"
                   />

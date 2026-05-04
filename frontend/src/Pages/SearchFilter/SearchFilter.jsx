@@ -61,7 +61,7 @@ const SearchFilter = () => {
   useEffect(() => {
     const fetchRatingsFromReviews = async () => {
       try {
-        const response = await fetch('http://localhost:4000/reviews');
+        const response = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
         const reviews = await response.json();
 
         const ratingMap = {};
@@ -95,7 +95,7 @@ const SearchFilter = () => {
   }, []);
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`http://localhost:4000/api/tours/${tourId}/increment-view`, {
+      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -409,7 +409,7 @@ const SearchFilter = () => {
 
     // Add forward slash if imagePath doesn't start with one
     const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-    return `http://localhost:4000${path}`;
+    return `https://backend-eight-tan-16.vercel.app${path}`;
   };
 
   // Get status badge color and text

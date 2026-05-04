@@ -39,12 +39,12 @@ const Dashboard = () => {
   useEffect(() => {
     async function fetchDashboardData() {
       // Fetch all tours
-      const toursRes = await fetch('http://localhost:4000/api/tours');
+      const toursRes = await fetch('https://backend-eight-tan-16.vercel.app/api/tours');
       const toursData = await toursRes.json();
       const tours = toursData.tours || [];
       setTours(tours);
       // Fetch all bookings
-      const bookingsRes = await fetch('http://localhost:4000/api/bookings/all');
+      const bookingsRes = await fetch('https://backend-eight-tan-16.vercel.app/api/bookings/all');
       const bookingsData = await bookingsRes.json();
       const allBookings = bookingsData.bookings || [];
       // Calculate total revenue
@@ -71,7 +71,7 @@ const Dashboard = () => {
     async function fetchChartData() {
       setLoadingCharts(true);
       // Fetch all bookings
-      const bookingsRes = await fetch('http://localhost:4000/api/bookings/all');
+      const bookingsRes = await fetch('https://backend-eight-tan-16.vercel.app/api/bookings/all');
       const bookingsData = await bookingsRes.json();
       const allBookings = bookingsData.bookings || [];
       // Bar chart: revenue by month (Jan-Dec)
@@ -88,11 +88,11 @@ const Dashboard = () => {
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
       ]);
       // Fetch all tours
-      const toursRes = await fetch('http://localhost:4000/api/tours');
+      const toursRes = await fetch('https://backend-eight-tan-16.vercel.app/api/tours');
       const toursData = await toursRes.json();
       const tours = toursData.tours || [];
       // Fetch all companies
-      const companiesRes = await fetch('http://localhost:4000/company/auth/companies');
+      const companiesRes = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/companies');
       const companiesData = await companiesRes.json();
       const companies = companiesData.companies || [];
       // Build maps for fast lookup
@@ -124,7 +124,7 @@ const Dashboard = () => {
     fetchChartData();
   }, []);
   async function fetchPendingCompanies() {
-    const res = await fetch('http://localhost:4000/company/auth/companies');
+    const res = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/companies');
     const data = await res.json();
     // Only companies with verificationStatus 'pending'
     setPendingCompanies((data.companies || []).filter(c => c.verificationStatus === 'pending'));
@@ -147,7 +147,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     async function fetchApprovedCompanies() {
-      const res = await fetch('http://localhost:4000/company/auth/companies');
+      const res = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/companies');
       const data = await res.json();
       // Only companies with verificationStatus 'approved'
       setApprovedCompanies((data.companies || []).filter(c => c.verificationStatus === 'approved'));
@@ -157,7 +157,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     async function fetchPendingPackages() {
-      const toursRes = await fetch('http://localhost:4000/api/tours');
+      const toursRes = await fetch('https://backend-eight-tan-16.vercel.app/api/tours');
       const toursData = await toursRes.json();
       setPendingPackages((toursData.tours || []).filter(t => t.status === 'pending'));
     }
@@ -371,3 +371,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

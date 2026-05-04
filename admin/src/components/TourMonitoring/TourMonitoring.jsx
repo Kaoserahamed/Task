@@ -21,7 +21,7 @@ const TourMonitoring = () => {
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/tours');
+        const res = await axios.get('https://backend-eight-tan-16.vercel.app/api/tours');
         const fetchedTours = Array.isArray(res.data) ? res.data : res.data.tours;
         setTours(fetchedTours || []);
       } catch (err) {
@@ -44,7 +44,7 @@ const TourMonitoring = () => {
       } else {
         // Fetch from API if not found
         setModalLoading(true);
-        axios.get(`http://localhost:4000/api/tours/${selectedTourId}`)
+        axios.get(`https://backend-eight-tan-16.vercel.app/api/tours/${selectedTourId}`)
           .then(res => {
             setSelectedTour(res.data.tour || res.data);
             setGalleryActiveImage(0);
@@ -65,7 +65,7 @@ const TourMonitoring = () => {
       const revenues = {};
       for (const tour of tours) {
         try {
-          const res = await axios.get(`http://localhost:4000/api/bookings/tour/${tour._id}`);
+          const res = await axios.get(`https://backend-eight-tan-16.vercel.app/api/bookings/tour/${tour._id}`);
           const bookings = res.data.bookings || [];
           revenues[tour._id] = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0) * 0.1;
         } catch (e) {
@@ -79,7 +79,7 @@ const TourMonitoring = () => {
 
   const handleStatusChange = async (id, newStatus, review) => {
     try {
-      await axios.patch(`http://localhost:4000/api/tours/${id}/status`, { status: newStatus, review: review });
+      await axios.patch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}/status`, { status: newStatus, review: review });
       console.log(review);
       setTours(tours.map((tour) =>
         tour._id === id ? { ...tour, status: newStatus, review: review } : tour
@@ -374,3 +374,4 @@ const TourMonitoring = () => {
 };
 
 export default TourMonitoring;
+

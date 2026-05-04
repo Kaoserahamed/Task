@@ -12,7 +12,7 @@ const Wishlist = () => {
 
   const handleViewDetails = async (tourId) => {
     try {
-      await axios.patch(`http://localhost:4000/api/tours/${tourId}/increment-view`);
+      await axios.patch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -35,7 +35,7 @@ const Wishlist = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:4000/api/wishlist', {
+        const response = await axios.get('https://backend-eight-tan-16.vercel.app/api/wishlist', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -70,7 +70,7 @@ const Wishlist = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:4000/api/wishlist/remove/${tourId}`, {
+      await axios.delete(`https://backend-eight-tan-16.vercel.app/api/wishlist/remove/${tourId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -96,7 +96,7 @@ const Wishlist = () => {
           <div className="wishlist-image">
             <p>{item.tourId?.name}</p>
             <img
-              src={`http://localhost:4000/${item.tourId?.images[0]}`} // Assuming the first image is representative
+              src={`https://backend-eight-tan-16.vercel.app/${item.tourId?.images[0]}`} // Assuming the first image is representative
               alt={item.tourId?.name}
             />
             {item.tourId && (

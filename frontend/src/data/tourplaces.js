@@ -10,3 +10,4 @@ const tourPlaces = [
 ];
 
 export default tourPlaces;
+

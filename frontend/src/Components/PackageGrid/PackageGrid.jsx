@@ -16,7 +16,7 @@ const PackageGrid = ({ packages }) => {
 
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`http://localhost:4000/api/tours/${tourId}/increment-view`, {
+      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -29,7 +29,7 @@ const PackageGrid = ({ packages }) => {
   useEffect(() => {
     const fetchAverageRatings = async () => {
       try {
-        const res = await fetch('http://localhost:4000/reviews');
+        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
         const reviews = await res.json();
 
         const ratingMap = {};
@@ -82,7 +82,7 @@ const PackageGrid = ({ packages }) => {
           <div key={tour._id} className="package-card">
             <div className="package-image">
               <img
-                src={`http://localhost:4000/${tour.images[0]}`}
+                src={`https://backend-eight-tan-16.vercel.app/${tour.images[0]}`}
                 alt={tour.name}
                 onError={(e) => {
                   e.target.src = 'https://picsum.photos/300/200';

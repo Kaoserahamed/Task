@@ -10,7 +10,7 @@ const PendingTours = ({ id, name, applicant, date, status, price }) => {
     try {
       setIsLoading(true);
       console.log('key',id);
-      const response = await axios.patch(`http://localhost:4000/api/tours/${id}/status`,{
+      const response = await axios.patch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}/status`,{
         status:newStatus
       });
 
