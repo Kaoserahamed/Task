@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const Company = require('../models/Company');
+const Company = require('../models/company');
 const User = require('../models/User');
 
 // Demo account credentials
