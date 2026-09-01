@@ -17,6 +17,7 @@ import socket from '../../socket'
 import { useAuth } from '../../Context/AuthContext';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const Navbar = () => {
   const location = useLocation();
@@ -32,7 +33,7 @@ const Navbar = () => {
   const fetchCompanyDetails = useCallback(async (id) => {
     if (!id) return;
     try {
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/company/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/company/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

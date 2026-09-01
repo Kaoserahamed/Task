@@ -4,6 +4,7 @@ import ChatWindow from './Chat/ChatWindow';
 import {useAuth} from  '../../Context/AuthContext'
 import socket from '../../socket';
 import './ChatPage.css';
+import API_BASE_URL from '../../config/api';
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; 
 const ChatPage = () => {
   const [chatType, setChatType] = useState('comuse'); // 'companies' or 'admin'
@@ -35,7 +36,7 @@ const ChatPage = () => {
           throw new Error('No token found');
         }
         console.log(authtoken)
-         response=await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-chat/${companyId}?query=${'adcom'}`
+         response=await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'adcom'}`
 , {
           method: 'GET',
           headers: {

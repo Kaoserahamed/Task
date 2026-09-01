@@ -2,6 +2,7 @@ import React, { useState ,useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UploadTour.css';  // Import the CSS file for styling
 import { useAuth } from '../../Context/AuthContext';
+import API_BASE_URL from '../../config/api';
 
 const UploadTour = () => {
   const {company}=useAuth();
@@ -247,7 +248,7 @@ console.log(companyName);
     });
   
     try {
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/tours', {
+      const response = await fetch(`${API_BASE_URL}/api/tours`, {
         method: 'POST',
         body: formData,
       });

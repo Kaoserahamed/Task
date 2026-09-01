@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EditTour.css';
+import API_BASE_URL from '../../config/api';
 
 const EditTour = () => {
   const { tourId } = useParams();
@@ -89,7 +90,7 @@ const EditTour = () => {
 
   const fetchTourDetails = async () => {
     try {
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}`);
+      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`);
       const data = await response.json();
 
       if (data.success) {
@@ -150,7 +151,7 @@ const EditTour = () => {
     });
 
     try {
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`, {
         method: 'PUT',
         body: formData,
       });
@@ -601,7 +602,7 @@ const EditTour = () => {
               {tourDetails.images.map((image, index) => (
                 <div key={index} className="image-preview-item">
                   <img
-                    src={image instanceof File ? URL.createObjectURL(image) : `https://backend-eight-tan-16.vercel.app/${image}`}
+                    src={image instanceof File ? URL.createObjectURL(image) : `${API_BASE_URL}/${image}`}
                     alt={`preview-${index}`}
                     className="image-thumbnail"
                   />

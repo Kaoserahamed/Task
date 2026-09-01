@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './BookingList.css';
 import socket from '../../socket';
+import API_BASE_URL from '../../config/api';
 const BookingList = () => {
   const { tourId } = useParams(); // Get tourId from URL parameters
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const BookingList = () => {
   const fetchTourInfo = async () => {
     try {
       const token = localStorage.getItem('company-token');
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -48,7 +49,7 @@ const BookingList = () => {
       
       const token = localStorage.getItem('company-token');
       const response = await fetch(
-        `https://backend-eight-tan-16.vercel.app/api/bookings/tour/${tourId}?page=${currentPage}&limit=10`,
+        `${API_BASE_URL}/api/bookings/tour/${tourId}?page=${currentPage}&limit=10`,
         {
           headers: {
             'Authorization': `Bearer ${token}`

@@ -2,6 +2,7 @@ import React from 'react';
 import './ChatList.css';
 import avatar from '../../Assets/chat_avatar.png';
 import {useState,useEffect} from 'react';
+import API_BASE_URL from '../../../config/api';
 
 const ChatList = ({ chatType, selectedChat, setSelectedChat,companyId,companyname,username,token ,socket}) => {
   
@@ -24,7 +25,7 @@ const fetchChats=async()=>{
       throw new Error('No token found');
     }
     console.log(token)
-     response=await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-chat/${companyId}?query=${'comuse'}`
+     response=await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'comuse'}`
 , {
       method: 'GET',
   
@@ -85,7 +86,7 @@ const fetchChats=async()=>{
     setIsSearching(true);
     try {
       const authtoken = localStorage.getItem('company-token');
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/user/auth/search?query=${encodeURIComponent(query)}`, {
+      const response = await fetch(`${API_BASE_URL}/user/auth/search?query=${encodeURIComponent(query)}`, {
         headers: {
           'Authorization': `Bearer ${authtoken}`
         }

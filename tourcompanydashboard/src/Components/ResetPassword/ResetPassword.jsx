@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResetPasswordForm from './ResetPasswordForm/ResetPasswordForm';
 import './ResetPassword.css';
+import API_BASE_URL from '../../config/api';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({ email: '' });
@@ -22,7 +23,7 @@ const ResetPassword = () => {
     setMessage('');
 
     try {
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/company/auth/reset', {
+      const response = await fetch(`${API_BASE_URL}/company/auth/reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

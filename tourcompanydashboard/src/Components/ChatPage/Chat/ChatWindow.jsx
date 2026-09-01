@@ -2,6 +2,7 @@ import React, { useState, useEffect ,useRef} from 'react';
 import './ChatWindow.css';
 import avatar from '../../Assets/chat_avatar.png';
 import { useAuth } from '../../../Context/AuthContext';
+import API_BASE_URL from '../../../config/api';
 
 const ChatWindow = ({ selectedChat, companyId,chatType,username ,socket}) => {
   const [newMessage, setNewMessage] = useState('');
@@ -79,7 +80,7 @@ useEffect(() => {
 
     try {
       const authtoken = localStorage.getItem('company-token');
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/chat/send-message', {
+      const response = await fetch(`${API_BASE_URL}/api/chat/send-message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import { useTours } from '../../Context/ToursContext';
 import socket from '../../socket';
 import { useAuth } from '../../Context/AuthContext';
 import './ManageTours.css';
+import API_BASE_URL from '../../config/api';
 
 const ManageTours = () => {
   const { company } = useAuth();
@@ -305,7 +306,7 @@ const ManageTours = () => {
                 <div className="tour-image">
                   {tour.images && tour.images[0] ? (
                     <img
-                      src={`https://backend-eight-tan-16.vercel.app/${tour.images[0]}`}
+                      src={`${API_BASE_URL}/${tour.images[0]}`}
                       alt={tour.name}
                       onError={(e) => {
                         e.target.src = fallbackImageUrl;

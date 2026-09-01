@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './AllBookingsList.css';
 import socket from '../../socket';
 import { useTours } from '../../Context/ToursContext';
+import API_BASE_URL from '../../config/api';
 
 const AllBookingsList = () => {
   const { tours, loading, error, fetchToursWithBookings } = useTours();
@@ -23,7 +24,7 @@ const AllBookingsList = () => {
         tours.map(async (tour) => {
           // Fetch bookings for this tour
           const res = await fetch(
-            `https://backend-eight-tan-16.vercel.app/api/bookings/tour/${tour._id}`,
+            `${API_BASE_URL}/api/bookings/tour/${tour._id}`,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -88,7 +89,7 @@ const AllBookingsList = () => {
   const fetchAllBookings = async () => {
     try {
       const token = localStorage.getItem('company-token');
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/bookings/admin/all', {
+      const response = await fetch(`${API_BASE_URL}/api/bookings/admin/all`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -178,7 +179,7 @@ const AllBookingsList = () => {
                 <div className="tour-image">
                   {tour.images && tour.images.length > 0 ? (
                     <img
-                      src={`https://backend-eight-tan-16.vercel.app/${tour.images[0]}`}
+                      src={`${API_BASE_URL}/${tour.images[0]}`}
                       alt={tour.title || tour.name}
                     />
                   ) : (
