@@ -40,9 +40,12 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps, Postman, or curl)
     if (!origin) return callback(null, true);
     
-    // Allow all origins in production on Vercel (can be restricted later)
-    if (config.isVercel) {
-      return callback(null, true);
+    // Allow all .vercel.app domains in production
+    if (config.isVercel || config.nodeEnv === 'production') {
+      // Allow all Vercel domains
+      if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
+        return callback(null, true);
+      }
     }
     
     // Check against whitelist for non-Vercel environments

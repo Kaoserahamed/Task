@@ -4,13 +4,30 @@ let io;
 
 module.exports = {
     init: httpServer => {
-        io = require('socket.io')(httpServer, {
-            cors: {
+        // Configure CORS for Socket.io
+        const socketCorsConfig = config.isVercel || config.nodeEnv === 'production'
+            ? {
+                origin: (origin, callback) => {
+                    // Allow all Vercel domains and localhost
+                    if (!origin || origin.includes('.vercel.app') || origin.includes('localhost')) {
+                        callback(null, true);
+                    } else {
+                        callback(null, false);
+                    }
+                },
+                methods: ["GET", "POST"],
+                credentials: true,
+                allowedHeaders: ["Content-Type", "Authorization"]
+            }
+            : {
                 origin: config.cors.origins,
                 methods: ["GET", "POST"],
                 credentials: true,
                 allowedHeaders: ["Content-Type", "Authorization"]
-            },
+            };
+
+        io = require('socket.io')(httpServer, {
+            cors: socketCorsConfig,
             transports: ['websocket', 'polling'],
             allowEIO3: true
         });
