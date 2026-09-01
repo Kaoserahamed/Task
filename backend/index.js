@@ -103,8 +103,8 @@ app.use('/api', require('./routes/weatherRoutes'));
 app.use('/api/admin', adminAuthRoutes);
 app.use('/api/admin', adminAuth, adminAuthRoutes);
 
-// Demo Accounts Route
-app.use('/api/demo', require('./routes/demoAccounts'));
+// Demo Accounts Route - Removed to fix deployment issue
+// app.use('/api/demo', require('./routes/demoAccounts'));
 
 // Get all tours
 
