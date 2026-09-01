@@ -22,6 +22,15 @@ const LoginSignup = () => {
     confirmPassword: ''
   });
 
+  // Function to fill demo credentials
+  const fillDemoCredentials = () => {
+    setFormData({
+      ...formData,
+      email: 'demo@adventuretours.com',
+      password: 'demo123'
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -94,6 +103,22 @@ const LoginSignup = () => {
         )}
 
         <AuthTabs isLogin={isLogin} setIsLogin={setIsLogin} />
+        
+        {isLogin && (
+          <div className="demo-credentials">
+            <p className="demo-label">🎯 Try Demo Company Account:</p>
+            <button 
+              type="button" 
+              className="demo-btn"
+              onClick={fillDemoCredentials}
+            >
+              Fill Demo Credentials
+            </button>
+            <p className="demo-info">
+              Email: <strong>demo@adventuretours.com</strong> | Password: <strong>demo123</strong>
+            </p>
+          </div>
+        )}
         
         <AuthForm 
           isLogin={isLogin}

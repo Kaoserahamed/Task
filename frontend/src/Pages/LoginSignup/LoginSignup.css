@@ -285,3 +285,83 @@
     transform: none;
   }
 }
+
+/* Demo Credentials Section */
+.demo-credentials {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 2px dashed #f59e0b;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px 0;
+  text-align: center;
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+.demo-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 10px;
+}
+
+.demo-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
+}
+
+.demo-btn:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.4);
+}
+
+.demo-btn:active {
+  transform: translateY(0);
+}
+
+.demo-info {
+  font-size: 0.85rem;
+  color: #78350f;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.demo-info strong {
+  color: #92400e;
+  font-weight: 700;
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: #f59e0b;
+  }
+  50% {
+    border-color: #fbbf24;
+  }
+}
+
+/* Dark mode support for demo credentials */
+[data-theme="dark"] .demo-credentials {
+  background: linear-gradient(135deg, #78350f, #92400e);
+  border-color: #f59e0b;
+}
+
+[data-theme="dark"] .demo-label {
+  color: #fcd34d;
+}
+
+[data-theme="dark"] .demo-info {
+  color: #fde68a;
+}
+
+[data-theme="dark"] .demo-info strong {
+  color: #fcd34d;
+}
