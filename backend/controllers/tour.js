@@ -38,9 +38,12 @@ exports.createTour = async (req, res) => {
       }
     }
 
-    // Add image paths to the tour data
+    // Add image paths/URLs to the tour data
     if (req.files) {
-      tourData.images = req.files.map(file => file.path);
+      tourData.images = req.files.map(file => {
+        // Cloudinary returns 'path' as URL, local storage uses 'path' as file path
+        return file.path || file.url;
+      });
     }
 
     // Parse duration values properly
