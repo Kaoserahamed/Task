@@ -5,6 +5,7 @@ import { ToursContext } from '../../Context/ToursContext'; // Import ToursContex
 import { Star, X, Upload, Check, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import './ReviewPage.css';
+import API_BASE_URL from '../../config/api';
 
 const ReviewPage = () => {
   const { tours, loading } = useContext(ToursContext); // Get tours from context
@@ -50,7 +51,7 @@ const ReviewPage = () => {
   const fetchAllReviews = async () => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get('https://backend-eight-tan-16.vercel.app/reviews');
+      const response = await axios.get(`${API_BASE_URL}/reviews`);
       setReviews(response.data);
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -64,7 +65,7 @@ const ReviewPage = () => {
   const fetchReviewsForTour = async (tourId) => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get(`https://backend-eight-tan-16.vercel.app/reviews/tour/${tourId}`);
+      const response = await axios.get(`${API_BASE_URL}/reviews/tour/${tourId}`);
       setReviews(response.data);
     } catch (error) {
       console.error(`Error fetching reviews for tour ${tourId}:`, error);
@@ -188,7 +189,7 @@ const ReviewPage = () => {
       });
 
       // Submit review to API - use the correct path
-      const response = await axios.post('https://backend-eight-tan-16.vercel.app/reviews', formData, {
+      const response = await axios.post(`${API_BASE_URL}/reviews`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -461,7 +462,7 @@ const ReviewPage = () => {
                       {review.photos.map((photo, index) => (
                         <img
                           key={index}
-                          src={photo.startsWith('http') ? photo : `https://backend-eight-tan-16.vercel.app${photo}`}
+                          src={photo.startsWith('http') ? photo : `${API_BASE_URL}${photo}`}
                           alt="Review"
                         />
                       ))}

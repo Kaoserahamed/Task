@@ -3,6 +3,7 @@ import axios from 'axios';
 import './MyTrips.css';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 const MyTrips = () => {
   const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -11,7 +12,7 @@ const MyTrips = () => {
   const navigate = useNavigate();
   const handleViewDetails = async (tourId) => {
     try {
-      await axios.patch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`);
+      await axios.patch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -34,7 +35,7 @@ const MyTrips = () => {
       }
 
       try {
-        const response = await axios.get('https://backend-eight-tan-16.vercel.app/api/bookings', {
+        const response = await axios.get(`${API_BASE_URL}/api/bookings`, {
           headers: { 'Authorization': `Bearer ${token}` },
           params: { email: user.user.email }
         });
@@ -126,7 +127,7 @@ const MyTrips = () => {
             <div key={trip._id || index} className="trip-card">
               <div className="trip-image">
                 <img
-                  src={`https://backend-eight-tan-16.vercel.app/${trip.images?.[0]}`}
+                  src={`${API_BASE_URL}/${trip.images?.[0]}`}
                   alt={trip.name || 'Trip'}
                 />
                 <span className={`status ${trip.status?.toLowerCase() || 'pending'}`}>

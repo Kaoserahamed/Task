@@ -1,7 +1,6 @@
-/**
-import API_BASE_URL from '../config/api';
+﻿/**
  * API Configuration
- * Centralized API URL configuration for the Frontend
+ * Centralized API URL configuration for the Admin Dashboard
  */
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';

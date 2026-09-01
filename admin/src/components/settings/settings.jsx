@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './settings.css';
+import API_BASE_URL from '../../config/api';
 
 const Settings = () => {
   const { user, login } = useAuth();
@@ -32,7 +33,7 @@ const Settings = () => {
     async function fetchProfile() {
       setProfileLoading(true);
       try {
-        const res = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/profile', {
+        const res = await fetch(`${API_BASE_URL}/api/admin/profile`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('admin-token')}` }
         });
         const data = await res.json();
@@ -78,7 +79,7 @@ const Settings = () => {
       return;
     }
     try {
-      const res = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/profile', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +138,7 @@ const Settings = () => {
     }
 
     try {
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/change-password', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +170,7 @@ const Settings = () => {
   const handleNotificationSettings = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/update-notifications', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/update-notifications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

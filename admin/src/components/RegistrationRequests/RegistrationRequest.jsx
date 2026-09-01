@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './RegistrationRequest.css';
 import socket from '../../socket';
+import API_BASE_URL from '../../config/api';
 
 const emptySocialLinks = {
   facebook: '',
@@ -26,7 +27,7 @@ const RegistrationRequest = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch(`https://backend-eight-tan-16.vercel.app/company/auth/companies`);
+        const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
         const data = await res.json();
         const found = (data.companies || []).find(c => c._id === id);
         setCompany(found || null);
@@ -45,7 +46,7 @@ const RegistrationRequest = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`https://backend-eight-tan-16.vercel.app/company/auth/update-status`, {
+      const res = await fetch(`${API_BASE_URL}/company/auth/update-status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

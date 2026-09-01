@@ -5,6 +5,7 @@ import { useAuth } from '../../Context/AuthContext';
 import socket from '../../socket';
 import { useLocation } from 'react-router-dom';
 import './ChatPage.css';
+import API_BASE_URL from '../../config/api';
 
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; 
 
@@ -35,7 +36,7 @@ const ChatPage = () => {
           throw new Error('No token found');
         }
         
-        const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-user-chat/${userId}?query=${chatType}`, {
+        const response = await fetch(`${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

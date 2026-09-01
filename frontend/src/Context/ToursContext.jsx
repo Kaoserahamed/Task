@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
+import API_BASE_URL from '../config/api';
 
 export const ToursContext = createContext();
 
@@ -10,7 +11,7 @@ export const ToursProvider = ({ children }) => {
   const fetchTours = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/tours/approved');
+      const response = await fetch(`${API_BASE_URL}/api/tours/approved`);
       if (!response.ok) {
         throw new Error('Failed to fetch tours');
       }
@@ -31,7 +32,7 @@ export const ToursProvider = ({ children }) => {
 
   const fetchTourById = useCallback(async (id) => {
     try {
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}`);
+      const response = await fetch(`${API_BASE_URL}/api/tours/${id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch tour');
       }

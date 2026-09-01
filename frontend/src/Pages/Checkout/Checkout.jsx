@@ -8,6 +8,7 @@ import PaymentInfoForm from './PaymentInfoForm';
 import OrderSummary from './OrderSummary';
 import './Checkout.css';
 import socket from '../../socket';
+import API_BASE_URL from '../../config/api';
 
 const Checkout = () => {
   const [step, setStep] = useState(1);
@@ -77,7 +78,7 @@ const Checkout = () => {
       // Calculate total amount
       const totalAmount = selectedTour.price * requestedTravelers;
 
-      const bookingResponse = await fetch('https://backend-eight-tan-16.vercel.app/api/bookings/add', {
+      const bookingResponse = await fetch(`${API_BASE_URL}/api/bookings/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ const Checkout = () => {
       }
 
       // Update tour seats
-      const updateResponse = await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/book-seats`, {
+      const updateResponse = await fetch(`${API_BASE_URL}/api/tours/${tourId}/book-seats`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

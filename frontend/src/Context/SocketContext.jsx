@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { useAuth } from './AuthContext';
+import API_BASE_URL from '../config/api';
 
 const SocketContext = createContext();
 
@@ -14,7 +15,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      const newSocket = io('https://backend-eight-tan-16.vercel.app', {
+      const newSocket = io(`${API_BASE_URL}`, {
         query: { userId: user._id }
       });
 

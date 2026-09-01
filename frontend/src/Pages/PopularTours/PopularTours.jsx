@@ -2,6 +2,7 @@ import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { ToursContext } from '../../Context/ToursContext';
 import PackageGrid from '../../Components/PackageGrid/PackageGrid';
 import './PopularTours.css';
+import API_BASE_URL from '../../config/api';
 
 const PopularTours = () => {
   const { tours = [], loading } = useContext(ToursContext);
@@ -12,7 +13,7 @@ const PopularTours = () => {
   useEffect(() => {
     const fetchAverageRatings = async () => {
       try {
-        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
+        const res = await fetch(`${API_BASE_URL}/reviews`);
         const reviews = await res.json();
 
         const ratingMap = {};

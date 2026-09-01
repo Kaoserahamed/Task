@@ -9,6 +9,7 @@ import './PackageDetails.css';
 import socket from '../../socket'
 import TourSuggestions from '../../Components/TourSuggestions/TourSuggestions';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
 
 
 const PackageDetails = () => {
@@ -54,7 +55,7 @@ const fetchChats = async () => {
       throw new Error('No token found');
     }
     
-    const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-user-chat/${userId}?query=${chatType}`, {
+    const response = await fetch(`${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ useEffect(() => {
   const fetchReviews = async (tourId) => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get(`https://backend-eight-tan-16.vercel.app/reviews/tour/${tourId}`);
+      const response = await axios.get(`${API_BASE_URL}/reviews/tour/${tourId}`);
       setReviews(response.data);
       setErrorReviews(null);
     } catch (error) {

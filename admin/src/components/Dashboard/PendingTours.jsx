@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
 
 const PendingTours = ({ id, name, applicant, date, status, price }) => {
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -10,7 +11,7 @@ const PendingTours = ({ id, name, applicant, date, status, price }) => {
     try {
       setIsLoading(true);
       console.log('key',id);
-      const response = await axios.patch(`https://backend-eight-tan-16.vercel.app/api/tours/${id}/status`,{
+      const response = await axios.patch(`${API_BASE_URL}/api/tours/${id}/status`,{
         status:newStatus
       });
 

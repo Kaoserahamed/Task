@@ -5,6 +5,7 @@ import { ToursContext } from '../../Context/ToursContext';
 import './SearchFilter.css';
 import SearchBox from '../../Components/SearchBox/SearchBox';
 import { Star, Calendar, Clock, MapPin } from 'lucide-react';
+import API_BASE_URL from '../../config/api';
 
 const SearchFilter = () => {
   const { tours, loading, error } = useContext(ToursContext);
@@ -61,7 +62,7 @@ const SearchFilter = () => {
   useEffect(() => {
     const fetchRatingsFromReviews = async () => {
       try {
-        const response = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
+        const response = await fetch(`${API_BASE_URL}/reviews`);
         const reviews = await response.json();
 
         const ratingMap = {};
@@ -95,7 +96,7 @@ const SearchFilter = () => {
   }, []);
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
+      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -409,7 +410,7 @@ const SearchFilter = () => {
 
     // Add forward slash if imagePath doesn't start with one
     const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-    return `https://backend-eight-tan-16.vercel.app${path}`;
+    return `${API_BASE_URL}${path}`;
   };
 
   // Get status badge color and text

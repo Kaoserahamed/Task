@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToursContext } from '../../Context/ToursContext';
 import { useAuth } from '../../Context/AuthContext';
 import './TourSuggestions.css';
+import API_BASE_URL from '../../config/api';
 
 const TourSuggestions = ({ weatherCity }) => {
   const [suggestions, setSuggestions] = useState([]);
@@ -21,7 +22,7 @@ const TourSuggestions = ({ weatherCity }) => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
+        const res = await fetch(`${API_BASE_URL}/reviews`);
         const reviews = await res.json();
 
         const ratingMap = {};
@@ -80,7 +81,7 @@ const TourSuggestions = ({ weatherCity }) => {
       setError(null);
 
       try {
-        const response = await fetch(`https://backend-eight-tan-16.vercel.app/Suggestion/${encodeURIComponent(weatherCity)}`);
+        const response = await fetch(`${API_BASE_URL}/Suggestion/${encodeURIComponent(weatherCity)}`);
         if (response.ok) {
           const suggestedData = await response.json();
           console.log('Suggested data:', suggestedData);
@@ -131,7 +132,7 @@ const TourSuggestions = ({ weatherCity }) => {
   const handleExploreNow = async (tourId, tourName) => {
     try {
       // Increment view count
-      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
+      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
 
@@ -194,7 +195,7 @@ const TourSuggestions = ({ weatherCity }) => {
             const tourPrice = tour.price || 'N/A';
             const tourCategory = tour.packageCategories?.join(', ') || 'General';
             const tourImage = tour.images && tour.images.length > 0
-              ? `https://backend-eight-tan-16.vercel.app/${tour.images[0]}`
+              ? `${API_BASE_URL}/${tour.images[0]}`
               : 'https://picsum.photos/300/200';
             const duration = tour.duration ? `${tour.duration.days} days / ${tour.duration.nights} nights` : 'Duration not specified';
             const daysUntilStart = getDaysUntilStart(tour.startDate);

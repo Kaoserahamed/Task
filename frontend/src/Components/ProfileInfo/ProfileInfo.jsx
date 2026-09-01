@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import './ProfileInfo.css';
 import { useAuth } from '../../Context/AuthContext';
+import API_BASE_URL from '../../config/api';
 
 const ProfileInfo = () => {
   const { user, updateUserLocal, refreshUserData } = useAuth();
@@ -16,7 +17,7 @@ const ProfileInfo = () => {
   // Memoize the avatar URL to prevent unnecessary re-renders
   const getAvatarUrl = useCallback(() => {
     if (userData?.avatar && userData.avatar !== 'default-avatar.png') {
-      return `https://backend-eight-tan-16.vercel.app/${userData.avatar}`;
+      return `${API_BASE_URL}/${userData.avatar}`;
     }
     return '/default-avatar.png';
   }, [userData?.avatar]);
@@ -39,14 +40,14 @@ const ProfileInfo = () => {
 
       try {
         // Fetch Wishlist Count
-        const wishlistRes = await axios.get('https://backend-eight-tan-16.vercel.app/api/wishlist', {
+        const wishlistRes = await axios.get(`${API_BASE_URL}/api/wishlist`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { email: userData.email }
         });
         setWishlistCount(wishlistRes.data.wishlist?.length || 0);
 
         // Fetch Bookings (trips)
-        const bookingRes = await axios.get('https://backend-eight-tan-16.vercel.app/api/bookings', {
+        const bookingRes = await axios.get(`${API_BASE_URL}/api/bookings`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { email: userData.email }
         });
@@ -112,7 +113,7 @@ const ProfileInfo = () => {
     try {
       console.log('Uploading avatar for:', userData.email);
       
-      const response = await axios.post('https://backend-eight-tan-16.vercel.app/user/auth/avatar', formData, {
+      const response = await axios.post(`${API_BASE_URL}/user/auth/avatar`, formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
         },
@@ -122,7 +123,7 @@ const ProfileInfo = () => {
 
       if (response.data.success) {
         // Update the avatar URL with cache busting
-        const newAvatarUrl = `https://backend-eight-tan-16.vercel.app/${response.data.user.avatar}?t=${Date.now()}`;
+        const newAvatarUrl = `${API_BASE_URL}/${response.data.user.avatar}?t=${Date.now()}`;
         setAvatarPreview(newAvatarUrl);
         setImageError(false);
         setError('');

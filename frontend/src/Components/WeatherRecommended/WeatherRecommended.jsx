@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ToursContext } from '../../Context/ToursContext';
 import './WeatherRecommended.css';
+import API_BASE_URL from '../../config/api';
 
 const WeatherRecommended = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const WeatherRecommended = () => {
   };
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
+      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -26,7 +27,7 @@ const WeatherRecommended = () => {
     // Fetch all reviews and compute average ratings
     const fetchReviews = async () => {
       try {
-        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
+        const res = await fetch(`${API_BASE_URL}/reviews`);
         const reviews = await res.json();
 
         const ratingMap = {};
@@ -86,7 +87,7 @@ const WeatherRecommended = () => {
               <div key={tour._id} className="tour-card">
                 <div className="tour-image">
                   <img
-                    src={`https://backend-eight-tan-16.vercel.app/${tour.images[0]}`}
+                    src={`${API_BASE_URL}/${tour.images[0]}`}
                     alt={tour.name}
                     onError={(e) => {
                       e.target.src = 'https://picsum.photos/300/200';

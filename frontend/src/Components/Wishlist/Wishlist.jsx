@@ -3,6 +3,7 @@ import axios from 'axios';
 import './Wishlist.css';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../../config/api';
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -12,7 +13,7 @@ const Wishlist = () => {
 
   const handleViewDetails = async (tourId) => {
     try {
-      await axios.patch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`);
+      await axios.patch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -35,7 +36,7 @@ const Wishlist = () => {
       }
 
       try {
-        const response = await axios.get('https://backend-eight-tan-16.vercel.app/api/wishlist', {
+        const response = await axios.get(`${API_BASE_URL}/api/wishlist`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -70,7 +71,7 @@ const Wishlist = () => {
     }
 
     try {
-      await axios.delete(`https://backend-eight-tan-16.vercel.app/api/wishlist/remove/${tourId}`, {
+      await axios.delete(`${API_BASE_URL}/api/wishlist/remove/${tourId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -96,7 +97,7 @@ const Wishlist = () => {
           <div className="wishlist-image">
             <p>{item.tourId?.name}</p>
             <img
-              src={`https://backend-eight-tan-16.vercel.app/${item.tourId?.images[0]}`} // Assuming the first image is representative
+              src={`${API_BASE_URL}/${item.tourId?.images[0]}`} // Assuming the first image is representative
               alt={item.tourId?.name}
             />
             {item.tourId && (

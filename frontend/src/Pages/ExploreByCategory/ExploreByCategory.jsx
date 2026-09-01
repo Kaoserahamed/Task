@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ToursContext } from '../../Context/ToursContext';
 import CategoryTabs from '../../Components/CategoryTabs/CategoryTabs';
 import './ExploreByCategory.css';
+import API_BASE_URL from '../../config/api';
 
 const ExploreByCategory = () => {
   const { category } = useParams();
@@ -15,7 +16,7 @@ const ExploreByCategory = () => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const res = await fetch('https://backend-eight-tan-16.vercel.app/reviews');
+        const res = await fetch(`${API_BASE_URL}/reviews`);
         const reviews = await res.json();
 
         const ratingMap = {};
@@ -48,7 +49,7 @@ const ExploreByCategory = () => {
   }, [tours]);
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
+      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -175,7 +176,7 @@ const ExploreTourCard = ({ tour, onExplore, averageRating }) => {
     <div className="explore-tour-card">
       <div className="explore-tour-image">
         <img
-          src={tour.images && tour.images.length > 0 ? `https://backend-eight-tan-16.vercel.app/${tour.images[0]}` : 'https://picsum.photos/300/200'}
+          src={tour.images && tour.images.length > 0 ? `${API_BASE_URL}/${tour.images[0]}` : 'https://picsum.photos/300/200'}
           alt={tour.name}
           onError={(e) => { e.target.src = 'https://picsum.photos/300/200'; }}
         />

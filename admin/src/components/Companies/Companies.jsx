@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './Companies.css';
+import API_BASE_URL from '../../config/api';
 
 const Companies = () => {
   const [companies, setCompanies] = useState([]);
@@ -29,7 +30,7 @@ const Companies = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('admin-token');
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/companies', {
+      const response = await fetch(`${API_BASE_URL}/api/companies`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -3,6 +3,7 @@ import './ChatList.css';
 import avatar from '../Assets/chat_avatar.png';
 import {useAuth} from '../../Context/AuthContext';
 import {useState, useEffect} from 'react';
+import API_BASE_URL from '../../config/api';
 
 const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, socket }) => {
   const {user} = useAuth();
@@ -22,7 +23,7 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
         throw new Error('No token found');
       }
       
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-user-chat/${userId}?query=${chatType}`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +86,7 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
     setIsSearching(true);
     try {
       const authtoken = localStorage.getItem('token');
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/company/auth/search?query=${encodeURIComponent(query)}`, {
+      const response = await fetch(`${API_BASE_URL}/company/auth/search?query=${encodeURIComponent(query)}`, {
         headers: {
           'Authorization': `Bearer ${authtoken}`
         }

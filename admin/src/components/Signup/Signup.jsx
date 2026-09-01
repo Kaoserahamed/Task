@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Signup.css';
+import API_BASE_URL from '../../config/api';
 
 const Signup = () => {
     const { login } = useAuth();
@@ -17,7 +18,7 @@ const Signup = () => {
             return;
         }
         try {
-            const response = await fetch('https://backend-eight-tan-16.vercel.app/api/admin/signup', {
+            const response = await fetch(`${API_BASE_URL}/api/admin/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

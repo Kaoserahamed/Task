@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom'; // Corrected import
+import API_BASE_URL from '../../config/api';
 
 const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, tourId, socket }) => {
   const [message, setMessage] = useState('');
@@ -56,7 +57,7 @@ const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, 
 
     try {
       const response = await axios.post(
-        'https://backend-eight-tan-16.vercel.app/api/wishlist/add',
+        `${API_BASE_URL}/api/wishlist/add`,
         { tourId, email: user?.user?.email }, 
         {
           headers: {

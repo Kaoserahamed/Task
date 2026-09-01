@@ -1,6 +1,7 @@
 import React from 'react';
 import './PackageGallery.css';
 import picture from '../Assets/picture.png';
+import API_BASE_URL from '../../config/api';
 
 const PackageGallery = ({ images, activeImage, setActiveImage }) => {
   // Handle image load error
@@ -25,7 +26,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
     <div className="admin-image-gallery">
       <div className="admin-main-image-container">
         <img
-          src={`https://backend-eight-tan-16.vercel.app/${images[activeImage]}`}
+          src={`${API_BASE_URL}/${images[activeImage]}`}
           alt="Tour"
           className="admin-main-image"
           onError={handleImageError}
@@ -54,7 +55,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
           {images.map((img, index) => (
             <img
               key={index}
-              src={`https://backend-eight-tan-16.vercel.app/${img}`}
+              src={`${API_BASE_URL}/${img}`}
               alt={`Tour ${index + 1}`}
               className={`admin-thumbnail${activeImage === index ? ' admin-active' : ''}`}
               onClick={() => setActiveImage(index)}

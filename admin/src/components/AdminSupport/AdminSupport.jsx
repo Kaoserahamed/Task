@@ -3,6 +3,7 @@ import './AdminSupport.css';
 import avatar from '../Assets/chat_avatar.png'; // Use a default avatar if needed
 import { useAuth } from '../../context/AuthContext';
 import socket from '../../socket'
+import API_BASE_URL from '../../config/api';
 
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; // Valid 24-character hex string
 
@@ -22,7 +23,7 @@ const AdminSupport = () => {
 
   const fetchUserChats = async () => {
     try {
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-all-admin-chats?query=aduse`);
+      const response = await fetch(`${API_BASE_URL}/api/chat/get-all-admin-chats?query=aduse`);
       const data = await response.json();
       if (!response.ok) {
         throw new Error('Failed to fetch user chats');
@@ -37,7 +38,7 @@ const AdminSupport = () => {
 
   const fetchCompanyChats = async () => {
     try {
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app/api/chat/get-all-admin-chats?query=adcom`);
+      const response = await fetch(`${API_BASE_URL}/api/chat/get-all-admin-chats?query=adcom`);
       const data = await response.json();
       if (!response.ok) {
         throw new Error('Failed to fetch company chats');
@@ -138,7 +139,7 @@ const AdminSupport = () => {
 
     try {
       const authtoken = localStorage.getItem('token');
-      const response = await fetch('https://backend-eight-tan-16.vercel.app/api/chat/send-message', {
+      const response = await fetch(`${API_BASE_URL}/api/chat/send-message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

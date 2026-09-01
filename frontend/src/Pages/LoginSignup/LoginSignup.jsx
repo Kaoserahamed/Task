@@ -5,6 +5,7 @@ import AuthForm from '../../Components/AuthForm/AuthForm';
 import AuthTabs from '../../Components/AuthTabs/AuthTabs';
 import SocialLogin from '../../Components/SocialLogin/SocialLogin';
 import './LoginSignup.css';
+import API_BASE_URL from '../../config/api';
 
 const LoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -24,7 +25,7 @@ const LoginSignup = () => {
     
     try {
       const endpoint = isLogin ? '/user/auth/login' : '/user/auth/register';
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

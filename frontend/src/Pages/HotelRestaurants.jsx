@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './HotelRestaurants.css';
+import API_BASE_URL from '../config/api';
 
 const HotelRestaurants = () => {
   const [hotels, setHotels] = useState([]);
@@ -14,8 +15,8 @@ const HotelRestaurants = () => {
       try {
         setLoading(true);
         const [hotelRes, restaurantRes] = await Promise.all([
-          axios.get('https://backend-eight-tan-16.vercel.app/api/hotels'),
-          axios.get('https://backend-eight-tan-16.vercel.app/api/restaurants'),
+          axios.get(`${API_BASE_URL}/api/hotels`),
+          axios.get(`${API_BASE_URL}/api/restaurants`),
         ]);
         setHotels(hotelRes.data || []);
         setRestaurants(restaurantRes.data || []);

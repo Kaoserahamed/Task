@@ -2,6 +2,7 @@ import React, { useState, useContext, useMemo } from 'react';
 import { ToursContext } from '../../Context/ToursContext';
 import { useNavigate } from 'react-router-dom';
 import './UpcomingTours.css';
+import API_BASE_URL from '../../config/api';
 
 const UpcomingTours = () => {
   const { tours = [], loading } = useContext(ToursContext);
@@ -26,7 +27,7 @@ const UpcomingTours = () => {
   // Handle explore now with view increment
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`https://backend-eight-tan-16.vercel.app/api/tours/${tourId}/increment-view`, {
+      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
         method: 'PATCH',
       });
       navigate(`/package/${tourId}`);
@@ -100,7 +101,7 @@ const UpcomingTours = () => {
               const tourPrice = tour.price || 'N/A';
               const tourLocation = tour.weather || 'Location TBD';
               const tourImage = tour.images && tour.images.length > 0
-                ? `https://backend-eight-tan-16.vercel.app/${tour.images[0]}`
+                ? `${API_BASE_URL}/${tour.images[0]}`
                 : 'https://picsum.photos/300/200';
               const daysUntilStart = getDaysUntilStart(tour.startDate);
               const startDate = formatDate(tour.startDate);
