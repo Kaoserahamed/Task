@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload } = require('../index.js');
+const upload = require('../config/upload');
 const tourController = require('../controllers/tour');
 
 

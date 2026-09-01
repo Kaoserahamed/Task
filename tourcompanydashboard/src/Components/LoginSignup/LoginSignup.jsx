@@ -4,10 +4,13 @@ import { useAuth } from '../../Context/AuthContext';
 import AuthForm from '../AuthForm/AuthForm';
 import AuthTabs from '../AuthTabs/AuthTabs';
 import SocialLogin from '../SocialLogin/SocialLogin';
+import API_BASE_URL from '../../config/api';
 import './LoginSignup.css';
 
 const LoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
@@ -21,10 +24,12 @@ const LoginSignup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
     
     try {
       const endpoint = isLogin ? '/company/auth/login' : '/company/auth/register';
-      const response = await fetch(`https://backend-eight-tan-16.vercel.app${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,7 +42,7 @@ const LoginSignup = () => {
       });
 
       const data = await response.json();
-      // console.log(data.company-token) 
+      
       if (!response.ok) {
         throw new Error(data.message || 'Authentication failed');
       }
@@ -54,8 +59,9 @@ const LoginSignup = () => {
 
     } catch (error) {
       console.error('Authentication error:', error);
-      // Here you should show an error message to the user
-      // You can add a state variable for error messages
+      setError(error.message || 'An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,6 +79,20 @@ const LoginSignup = () => {
           </div>
         )}
 
+        {error && (
+          <div className="error-message" style={{
+            backgroundColor: '#fee2e2',
+            border: '1px solid #fca5a5',
+            color: '#991b1b',
+            padding: '12px',
+            borderRadius: '6px',
+            marginBottom: '16px',
+            fontSize: '14px'
+          }}>
+            {error}
+          </div>
+        )}
+
         <AuthTabs isLogin={isLogin} setIsLogin={setIsLogin} />
         
         <AuthForm 
@@ -80,6 +100,7 @@ const LoginSignup = () => {
           formData={formData}
           setFormData={setFormData}
           handleSubmit={handleSubmit}
+          loading={loading}
         />
 
         <SocialLogin />

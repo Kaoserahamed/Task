@@ -3,12 +3,12 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
-const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const config = require('./config/env');
+const upload = require('./config/upload');
 const chatRoutes = require('./routes/chatRoutes');
 const authRoutes = require('./routes/authRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
@@ -37,13 +37,25 @@ if (!config.isVercel) {
 // Updated CORS configuration
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin || config.cors.origins.indexOf(origin) !== -1) {
+    // Allow requests with no origin (like mobile apps, Postman, or curl)
+    if (!origin) return callback(null, true);
+    
+    // Allow all origins in production on Vercel (can be restricted later)
+    if (config.isVercel) {
+      return callback(null, true);
+    }
+    
+    // Check against whitelist for non-Vercel environments
+    if (config.cors.origins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.warn(`Blocked CORS request from origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Middleware
@@ -69,25 +81,11 @@ app.use('/reviews', reviewRoutes);
 
 // Add this test route at the top of your routes
 app.get('/api/test', (req, res) => {
-  console.log('Test route hit');
   res.json({ message: 'API is working' });
 });
 
-// Configure multer for image upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-
-const upload = multer({ storage: storage });
-
-exports.upload = upload;
+// Tour routes with file upload
 app.post('/api/tours', upload.array('images'), tourController.createTour);
-  // Update tour
 app.put('/api/tours/:id', upload.array('newImages'), tourController.updateTour);
 app.use('/api', toursRoutes);
 app.use('/api', require('./routes/weatherRoutes'));
@@ -169,35 +167,60 @@ app.use('/api', placeRoutes);
 const tourRoutes = require('./routes/tours');
 app.use('/api/tours', tourRoutes);
 
-const { recommendTours } = require('./utils/tourRecommender');
 
-// Example: selected destinations by user
-const selected = ['Coxs Bazar', 'Saint Martin'];
-
-recommendTours(selected, (recommended) => {
-  console.log('📌 Recommended Tours:', recommended);
+// Health check endpoints
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    message: 'Backend is running!',
+    environment: config.nodeEnv,
+    isVercel: config.isVercel,
+    timestamp: new Date().toISOString()
+  });
 });
 
-
-app.get('/', (req, res) => {
-  res.send('Backend is running!');
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Connect to MongoDB
-mongoose.connect(config.mongodb.uri)
+const mongooseOptions = {
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  family: 4, // Force IPv4
+};
+
+mongoose.connect(config.mongodb.uri, mongooseOptions)
   .then(result => {
-    console.log('Database connected successfully');
     // Only start server if not in Vercel serverless environment
     if (!config.isVercel) {
       server.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-        console.log(`Environment: ${config.nodeEnv}`);
-        console.log('Socket.IO server initialized');
+        console.log('\n╔════════════════════════════════════════════════════════════╗');
+        console.log('║                 🚀 TASK Backend Server                     ║');
+        console.log('╠════════════════════════════════════════════════════════════╣');
+        console.log(`║  📡 Server Status:      Running                            ║`);
+        console.log(`║  🌐 Port:               ${PORT}                                 ║`);
+        console.log(`║  💾 Database:           Connected                          ║`);
+        console.log(`║  🔌 Socket.IO:          Active                             ║`);
+        console.log(`║  🌍 Environment:        ${config.nodeEnv.padEnd(11)}                     ║`);
+        console.log('╚════════════════════════════════════════════════════════════╝\n');
       });
     }
   })
   .catch(err => {
-    console.error('Database connection failed:', err);
+    console.error('\n❌ Database Connection Failed!');
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.error('Error:', err.message);
+    console.error('\n💡 Troubleshooting:');
+    console.error('  1. Check MongoDB Atlas Network Access (whitelist your IP)');
+    console.error('  2. Verify database credentials in .env file');
+    console.error('  3. Ensure cluster is active in MongoDB Atlas');
+    console.error('  4. Check your internet connection');
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
     process.exit(1);
   });
 

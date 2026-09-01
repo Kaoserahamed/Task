@@ -22,7 +22,6 @@ function loadRules(callback) {
       });
     })
     .on('end', () => {
-      console.log('✅ Association rules loaded');
       callback(rules);
     });
 }
