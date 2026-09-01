@@ -4,27 +4,33 @@ let io;
 
 module.exports = {
     init: httpServer => {
-        // Configure CORS for Socket.io
-        const socketCorsConfig = config.isVercel || config.nodeEnv === 'production'
-            ? {
-                origin: (origin, callback) => {
-                    // Allow all Vercel domains and localhost
-                    if (!origin || origin.includes('.vercel.app') || origin.includes('localhost')) {
-                        callback(null, true);
-                    } else {
-                        callback(null, false);
-                    }
-                },
-                methods: ["GET", "POST"],
-                credentials: true,
-                allowedHeaders: ["Content-Type", "Authorization"]
-            }
-            : {
-                origin: config.cors.origins,
-                methods: ["GET", "POST"],
-                credentials: true,
-                allowedHeaders: ["Content-Type", "Authorization"]
-            };
+        // Configure CORS for Socket.io - Allow both Vercel and localhost
+        const socketCorsConfig = {
+            origin: (origin, callback) => {
+                // Allow requests with no origin (like mobile apps, Postman)
+                if (!origin) return callback(null, true);
+                
+                // Allow all Vercel domains
+                if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
+                    return callback(null, true);
+                }
+                
+                // Allow all localhost origins
+                if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+                    return callback(null, true);
+                }
+                
+                // Check against whitelist
+                if (config.cors.origins.indexOf(origin) !== -1) {
+                    return callback(null, true);
+                }
+                
+                callback(null, false);
+            },
+            methods: ["GET", "POST"],
+            credentials: true,
+            allowedHeaders: ["Content-Type", "Authorization"]
+        };
 
         io = require('socket.io')(httpServer, {
             cors: socketCorsConfig,

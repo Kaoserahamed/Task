@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
 import AuthForm from '../../Components/AuthForm/AuthForm';
 import AuthTabs from '../../Components/AuthTabs/AuthTabs';
-import SocialLogin from '../../Components/SocialLogin/SocialLogin';
 import './LoginSignup.css';
 import API_BASE_URL from '../../config/api';
 
@@ -20,12 +19,13 @@ const LoginSignup = () => {
     confirmPassword: ''
   });
 
-  // Function to fill demo credentials
+  // Function to fill demo credentials (just fills the form, doesn't submit)
   const fillDemoCredentials = () => {
     setFormData({
-      ...formData,
       email: 'user@demo.com',
-      password: 'demo123'
+      password: 'demo123',
+      name: formData.name,
+      confirmPassword: formData.confirmPassword
     });
   };
 
@@ -107,8 +107,6 @@ const LoginSignup = () => {
           setFormData={setFormData}
           handleSubmit={handleSubmit}
         />
-
-        <SocialLogin />
       </div>
     </div>
   );

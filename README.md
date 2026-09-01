@@ -4,8 +4,26 @@ A comprehensive multi-tenant tour booking and management platform enabling custo
 
 ## Live Demo
 
-- **Frontend**: https://frontend-blue-sigma-62.vercel.app/
-- **Backend**: https://backend-eight-tan-16.vercel.app/
+### Production URLs
+- **Frontend (Customer)**: https://frontend-kaoser614-7344s-projects.vercel.app
+- **Admin Dashboard**: https://admin-zeta-swart-18.vercel.app
+- **Company Dashboard**: https://tourcompany-zeta.vercel.app
+- **Backend API**: https://backend-kaoser614-7344s-projects.vercel.app
+
+### Demo Accounts
+Test the system with these pre-configured accounts:
+
+**Customer Account**
+- Email: `user@demo.com`
+- Password: `demo123`
+
+**Admin Account**
+- Email: `admin@demo.com`
+- Password: `demo123`
+
+**Company Account**
+- Email: `company@demo.com`
+- Password: `demo123`
 
 ## Screenshots
 

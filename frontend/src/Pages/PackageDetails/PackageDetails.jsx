@@ -235,53 +235,55 @@ console.log(tour);
   );
   
   return (
-    <div className="package-details-container">
-      {/* Gallery Section */}
-      <div className="gallery-section">
-        <PackageGallery
-          images={tour.images}
-          activeImage={activeImage}
-          setActiveImage={handleImageChange}
-        />
-      </div>
-
-      {/* Main Content Section */}
-      <div className="main-content-section">
-        <PackageInfo 
-          tour={tour} 
-          companyId={tour.companyId} 
-          user={use} 
-          chatType={chatType} 
-          compnayName={tour.compnayName} 
-          chats={chats}
-          weatherCity={weatherCity}
-        />
-      </div>
-
-      {/* Conditional Rendering: Booking Card or Reviews */}
-      {isTourCompleted(tour.startDate) ? (
-        <div className="reviews-container">
-          <ReviewsSection />
+    <div className="package-details-page">
+      <div className="package-details-container">
+        {/* Gallery Section */}
+        <div className="gallery-section">
+          <PackageGallery
+            images={tour.images}
+            activeImage={activeImage}
+            setActiveImage={handleImageChange}
+          />
         </div>
-      ) : (
-        <div className="booking-section">
-          <BookingCard
-            price={tour.price}
-            availableSeats={tour.availableSeats}
-            startDate={tour.startDate}
-            endDate={tour.endDate}
-            tourId={tour._id}
-            socket={socket}
+
+        {/* Main Content Section */}
+        <div className="main-content-section">
+          <PackageInfo 
+            tour={tour} 
+            companyId={tour.companyId} 
+            user={use} 
+            chatType={chatType} 
+            compnayName={tour.compnayName} 
+            chats={chats}
             weatherCity={weatherCity}
           />
         </div>
-        
-      )}
-      <section id="tour-suggestions" className="tour-suggestions">
-            <TourSuggestions weatherCity={weatherCity} />
-          </section>
+
+        {/* Conditional Rendering: Booking Card or Reviews */}
+        {isTourCompleted(tour.startDate) ? (
+          <div className="reviews-container">
+            <ReviewsSection />
+          </div>
+        ) : (
+          <div className="booking-section">
+            <BookingCard
+              price={tour.price}
+              availableSeats={tour.availableSeats}
+              startDate={tour.startDate}
+              endDate={tour.endDate}
+              tourId={tour._id}
+              socket={socket}
+              weatherCity={weatherCity}
+            />
+          </div>
+        )}
+      </div>
+      
+      {/* Related Tours Section - Outside the grid container */}
+      <section className="tour-suggestions-section">
+        <TourSuggestions weatherCity={weatherCity} />
+      </section>
     </div>
-    
   );
 };
 

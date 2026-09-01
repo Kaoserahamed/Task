@@ -34,27 +34,29 @@ if (!config.isVercel) {
   socketInit = require('./socket').init(server);
 }
 
-// Updated CORS configuration
+// Updated CORS configuration - Allow both Vercel and localhost
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps, Postman, or curl)
     if (!origin) return callback(null, true);
     
-    // Allow all .vercel.app domains in production
-    if (config.isVercel || config.nodeEnv === 'production') {
-      // Allow all Vercel domains
-      if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
-        return callback(null, true);
-      }
+    // Allow all .vercel.app domains
+    if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
+      return callback(null, true);
     }
     
-    // Check against whitelist for non-Vercel environments
-    if (config.cors.origins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.warn(`Blocked CORS request from origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
+    // Allow all localhost origins on any port
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
     }
+    
+    // Check against whitelist for other origins
+    if (config.cors.origins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    
+    console.warn(`Blocked CORS request from origin: ${origin}`);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -179,6 +181,10 @@ app.use('/api', placeRoutes);
 const tourRoutes = require('./routes/tours');
 app.use('/api/tours', tourRoutes);
 
+// Seed route for creating demo data
+const seedRoutes = require('./routes/seedRoutes');
+app.use('/api', seedRoutes);
+
 
 // Health check endpoints
 app.get('/', (req, res) => {
@@ -199,9 +205,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Connect to MongoDB
+// Connect to MongoDB with improved DNS handling
 const mongooseOptions = {
-  serverSelectionTimeoutMS: 10000,
+  serverSelectionTimeoutMS: 30000, // Increased timeout
   socketTimeoutMS: 45000,
   family: 4, // Force IPv4
 };

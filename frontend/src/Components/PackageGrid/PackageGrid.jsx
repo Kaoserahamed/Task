@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './PackageGrid.css';
 import API_BASE_URL from '../../config/api';
+import { getImageUrl, handleImageError } from '../../utils/imageHelpers';
 
 const PackageGrid = ({ packages }) => {
   const navigate = useNavigate();
@@ -83,9 +84,10 @@ const PackageGrid = ({ packages }) => {
           <div key={tour._id} className="package-card">
             <div className="package-image">
               <img
-                src={`${API_BASE_URL}/${tour.images[0]}`}
+                src={getImageUrl(tour.images[0])}
                 alt={tour.name}
-                onError={(e) => {
+                onError={handleImageError}
+              />
                   e.target.src = 'https://picsum.photos/300/200';
                 }}
               />

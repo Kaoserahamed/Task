@@ -9,6 +9,19 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
     e.target.src = picture;
   };
 
+  // Helper function to get the correct image URL
+  const getImageUrl = (img) => {
+    if (!img) return picture;
+    
+    // If image is already a full URL (starts with http:// or https://), use it directly
+    if (img.startsWith('http://') || img.startsWith('https://')) {
+      return img;
+    }
+    
+    // If it's a relative path (local storage), prepend API_BASE_URL
+    return `${API_BASE_URL}/${img}`;
+  };
+
   // Ensure images array exists and has items
   if (!images || images.length === 0) {
     return (
@@ -26,7 +39,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
     <div className="image-gallery">
       <div className="main-image-container">
         <img
-          src={`${API_BASE_URL}/${images[activeImage]}`}
+          src={getImageUrl(images[activeImage])}
           alt="Tour"
           className="main-image"
           onError={handleImageError}
@@ -55,7 +68,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
           {images.map((img, index) => (
             <img
               key={index}
-              src={`${API_BASE_URL}/${img}`}
+              src={getImageUrl(img)}
               alt={`Tour ${index + 1}`}
               className={`thumbnail ${activeImage === index ? 'active' : ''}`}
               onClick={() => setActiveImage(index)}
