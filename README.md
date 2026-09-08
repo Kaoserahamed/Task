@@ -27,7 +27,8 @@ Test the system with these pre-configured accounts:
 
 ## Screenshots
 
-Coming soon.
+<img width="1917" height="867" alt="Screenshot 2026-09-08 100815" src="https://github.com/user-attachments/assets/ac3e23c4-fbf5-4475-b0a7-9f3c1341e43a" />
+
 
 ## Key Features
 
