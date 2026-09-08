@@ -1,152 +1,15 @@
-/* ===== GLOBAL RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ===================================================================
+   APP.CSS - Main Application Styles
+   Theme variables now imported from styles/theme.css
+   =================================================================== */
 
-/* ===== CSS CUSTOM PROPERTIES ===== */
-:root {
-  /* Background Colors */
-  --background-primary: #ffffff;
-  --background-secondary: #f8f9fa;
-  --background-tertiary: #f1f3f5;
-  --bg-gradient-start: #f8fafc;
-  --bg-gradient-end: #e2e8f0;
-
-  /* Text Colors */
-  --text-primary: #151515;
-  --text-secondary: #4a5568;
-  --text-muted: #718096;
-  --text-white: #ffffff;
-
-  /* Interactive Colors */
-  --primary-color: #4f46e5;
-  --primary-hover: #5b52ea;
-  --secondary-color: #10b981;
-  --secondary-hover: #34d399;
-  --success-color: #2ecc71;
-  --success-hover: #27ae60;
-  --warning-color: #e67e22;
-  --error-color: #e74c3c;
-
-  /* Surface Colors */
-  --card-bg: #ffffff;
-  --form-bg: #ffffff;
-  --header-bg: #ffffff;
-
-  /* Borders & Shadows */
-  --border-color: #e2e8f0;
-  --border-hover: rgba(79, 70, 229, 0.2);
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --shadow-hover: rgba(0, 0, 0, 0.15);
-
-  /* Effects */
-  --overlay-light: rgba(255, 255, 255, 0.1);
-  --backdrop-blur: blur(10px);
-}
-
-/* ===== DARK THEME ===== */
-[data-theme='dark'] {
-  --background-primary: #0f0f23;
-  --background-secondary: #1a1a2e;
-  --background-tertiary: #16213e;
-  --bg-gradient-start: #0f0f23;
-  --bg-gradient-end: #1a1a2e;
-
-  --text-primary: #f7fafc;
-  --text-secondary: #e2e8f0;
-  --text-muted: #ececf1;
-
-  --primary-color: #6366f1;
-  --primary-hover: #7c3aed;
-  --secondary-color: #10b981;
-  --secondary-hover: #34d399;
-
-  --card-bg: #16213e;
-  --form-bg: #16213e;
-  --header-bg: #1a202c;
-
-  --border-color: #4a5568;
-  --border-hover: rgba(99, 102, 241, 0.3);
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --shadow-hover: rgba(0, 0, 0, 0.4);
-
-  --overlay-light: rgba(255, 255, 255, 0.1);
-}
-
-/* ===== BASE STYLES ===== */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
-  line-height: 1.5;
-  color: var(--text-primary);
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
+/* ===== APP CONTAINER ===== */
 .App {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--background-primary);
-  transition: background-color 0.3s ease;
-}
-
-/* ===== FORM ELEMENTS ===== */
-input,
-select,
-textarea {
-  font-family: inherit;
-  background-color: var(--form-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-
-/* ===== BUTTONS ===== */
-button {
-  font-family: inherit;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: var(--text-white);
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-button:hover {
-  background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ===== LINKS ===== */
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: color 0.3s ease;
-}
-
-a:hover {
-  color: var(--primary-color);
+  transition: background-color var(--transition-base);
 }
 
 /* ===== APP LOGO ANIMATION ===== */
@@ -169,7 +32,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: var(--text-white);
 }
 
 .App-link {
@@ -183,22 +46,4 @@ a:hover {
   to {
     transform: rotate(360deg);
   }
-}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
 }

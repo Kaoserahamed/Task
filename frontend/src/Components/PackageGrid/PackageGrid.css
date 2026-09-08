@@ -1,6 +1,5 @@
-/* PackageGrid.css - Updated with unique class names */
+/* PackageGrid - uses centralized theme */
 
-/* Package Grid Container */
 .package-grid-container {
   width: 100%;
   display: flex;
@@ -11,32 +10,30 @@
 .package-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: var(--spacing-lg);
   justify-content: center;
 }
 
-/* Package Card - Renamed from tour-card to avoid conflicts */
 .package-card {
   width: 100%;
-  max-width: 280px; /* Add max-width for better control */
-  background: var(--card-bg, white);
-  border-radius: 16px;
-  box-shadow: 0 4px 15px var(--shadow-color, rgba(0, 0, 0, 0.1));
+  max-width: 280px;
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid var(--border-color, #dddddd);
+  transition: all var(--transition-base);
+  border: 1px solid var(--border-color);
   position: relative;
   display: flex;
   flex-direction: column;
-  height: auto; /* Remove fixed height */
+  height: auto;
 }
 
 .package-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 30px var(--shadow-color, rgba(0, 0, 0, 0.15));
+  box-shadow: var(--shadow-xl);
 }
 
-/* Package Image */
 .package-image {
   position: relative;
   width: 100%;
@@ -49,7 +46,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-base);
 }
 
 .package-card:hover .package-image img {
@@ -58,96 +55,95 @@
 
 .package-completed-tag {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
   background-color: rgba(220, 53, 69, 0.9);
-  color: white;
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  border-radius: 4px;
+  color: var(--text-white);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-sm);
   z-index: 1;
 }
 
-/* Package Info - Fixed height issues */
 .package-info {
-  padding: 16px;
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Fixed gap */
+  gap: var(--spacing-md);
   flex-grow: 1;
-  min-height: 120px; /* Minimum height instead of excessive flex-grow */
+  min-height: 120px;
 }
 
 .package-info h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   margin: 0;
-  color: var(--text-primary, #333);
-  line-height: 1.3;
-  /* Allow 2 lines max */
+  color: var(--text-primary);
+  line-height: var(--line-height-tight);
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* Package Details - Fixed spacing */
 .package-details {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
   flex-grow: 1;
 }
 
 .package-details span {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  color: var(--text-secondary, #666);
-  line-height: 1.4;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-normal);
 }
 
 .package-details i {
   width: 16px;
-  color: var(--accent-color, #10b981);
+  color: var(--secondary-color);
   flex-shrink: 0;
 }
 
 .package-details strong {
-  color: var(--accent-color, #10b981);
-  font-weight: 600;
+  color: var(--secondary-color);
+  font-weight: var(--font-weight-semibold);
 }
 
-/* Package Actions - Fixed positioning */
 .package-actions {
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: var(--spacing-sm);
 }
 
 .package-view-btn {
-  background: linear-gradient( #4f46e5, #7c3aed);
-  color: var(--accent-text, white);
+  background: var(--gradient-primary);
+  color: var(--text-white);
   text-decoration: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 0.9rem;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
   width: 100%;
   border: none;
 }
 
-
+.package-view-btn:hover {
+  background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
+  transform: translateY(-2px);
+}
 
 .package-view-btn i {
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-base);
   flex-shrink: 0;
 }
 
@@ -155,7 +151,6 @@
   transform: translateX(4px);
 }
 
-/* Empty State */
 .package-grid-empty {
   display: flex;
   flex-direction: column;
@@ -163,32 +158,32 @@
   justify-content: center;
   min-height: 300px;
   text-align: center;
-  color: var(--text-secondary, #666);
-  background: var(--card-bg, white);
-  border-radius: 16px;
-  padding: 2rem;
-  margin: 2rem;
-  border: 1px solid var(--border-color, #ddd);
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl);
+  border: 1px solid var(--border-color);
 }
 
 .package-grid-empty i {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  color: var(--accent-color, #10b981);
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--spacing-md);
+  color: var(--secondary-color);
   opacity: 0.7;
 }
 
 .package-grid-empty p {
-  font-size: 1rem;
-  margin: 0.5rem 0;
-  line-height: 1.6;
+  font-size: var(--font-size-base);
+  margin: var(--spacing-sm) 0;
+  line-height: var(--line-height-relaxed);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .package-grid {
-    gap: 16px;
-    padding: 16px;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
   }
   
   .package-card {
@@ -196,19 +191,19 @@
   }
   
   .package-info {
-    padding: 14px;
+    padding: var(--spacing-md);
     min-height: 100px;
   }
   
   .package-info h3 {
-    font-size: 1.1rem;
+    font-size: var(--font-size-lg);
   }
 }
 
 @media (max-width: 480px) {
   .package-grid {
-    gap: 12px;
-    padding: 12px;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
   }
   
   .package-card {
@@ -216,11 +211,11 @@
   }
   
   .package-info {
-    padding: 12px;
+    padding: var(--spacing-md);
     min-height: 90px;
   }
   
   .package-info h3 {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
   }
 }

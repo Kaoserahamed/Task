@@ -1,61 +1,40 @@
-/* BookingCard.css */
-:root {
-  --bg-card: #fff;
-  --text-color: #000;
-  --subtext-color: #777;
-  --highlight-color: #3498db;
-  --availability-color: #e67e22;
-  --bg-light: #f8f9fa;
-  --btn-primary: #2563eb;
-  --btn-primary-hover: #2980b9;
-  --btn-outline-border: #ddd;
-  --btn-outline-hover: #f8f9fa;
-}
-
-[data-theme='dark'] {
-  --bg-card: #1e1e1e;
-  --text-color: #f1f1f1;
-  --subtext-color: #aaa;
-  --highlight-color: #4ea8de;
-  --availability-color: #f39c12;
-  --bg-light: #2c2c2c;
-  --btn-primary: #3b82f6;
-  --btn-primary-hover: #2563eb;
-  --btn-outline-border: #444;
-  --btn-outline-hover: #333;
-}
+/* BookingCard - uses centralized theme */
 
 .booking-card {
-  background-color: var(--bg-card);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-lg);
   position: sticky;
-  top: 2rem;
-  color: var(--text-color);
+  top: var(--spacing-xl);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-base);
 }
 
 .booking-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
 }
 
 .price-section {
   display: flex;
   align-items: baseline;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
+
 .error-message {
-  background: #ffebee;
-  color: #c62828;
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--error-color);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
   text-align: center;
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   opacity: 1;
   transform: translateY(0);
-  transition: all 0.3s ease-in-out;
+  transition: all var(--transition-base);
   animation: fadeOut 1s ease-in-out forwards;
+  border: 1px solid var(--error-color);
 }
 
 @keyframes fadeOut {
@@ -73,35 +52,37 @@
 .availability {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  color: var(--availability-color);
-  font-weight: 500;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--warning-color);
+  font-weight: var(--font-weight-medium);
 }
 
 .availability i {
-  color: var(--availability-color);
+  color: var(--warning-color);
 }
 
 .date-info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 1.5rem;
-  padding: 15px;
-  background-color: var(--bg-light);
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--background-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-base);
 }
 
 .date-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .date-item i {
-  font-size: 1.2rem;
-  color: var(--highlight-color);
+  font-size: var(--font-size-xl);
+  color: var(--primary-color);
 }
 
 .date-item div {
@@ -110,55 +91,58 @@
 }
 
 .date-item span {
-  font-size: 0.8rem;
-  color: var(--subtext-color);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
 }
 
 .date-item p {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   margin: 0;
   padding: 0;
+  color: var(--text-primary);
 }
 
 .booking-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .booking-actions button {
-  padding: 12px;
-  border-radius: 6px;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
   border: none;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: all 0.2s ease;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-base);
 }
 
 .book-now {
-  background: var(--btn-primary);
-  color: rgb(255, 255, 255);
+  background: var(--gradient-primary);
+  color: var(--text-white);
 }
 
 .book-now:hover {
-  background-color: var(--btn-primary-hover);
+  background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .add-wishlist {
-  background: #ef10e0 !important;
-  border: 1px solid var(--btn-outline-border) !important;
-  color: var(--text-color);
+  background: var(--error-color) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-white);
 }
 
 .add-wishlist:hover {
-  background-color: var(--btn-outline-hover);
-  border-color: var(--btn-outline-border);
+  background-color: var(--error-hover) !important;
+  border-color: var(--error-color) !important;
 }
 
 .booking-actions button i {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
 }

@@ -1,114 +1,95 @@
-/* General Page Styling */
+/* Homepage Styles - uses centralized theme */
 .homepage {
   min-height: 100vh;
-  /* REMOVED: background-color: var(--background-primary); */
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow-x: hidden;
   width: 100%;
-  /* MODIFIED: Only transition color, not background */
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
-/* Hero Section - FIXED */
+/* Hero Section */
 .hero-section {
-  margin-top: 20px;
+  margin-top: var(--spacing-lg);
   width: 90%;
   min-height: 30vh;
   max-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 120px 20px;
+  padding: 120px var(--spacing-lg);
   text-align: center;
-  /* REMOVED: object-fit: cover; - This was breaking the background */
-  /* REMOVED: transition: background-color 0.3s ease, color 0.3s ease; */
-  /* Allow the HeroSection component to handle its own background */
   position: relative;
-  border-radius: 16px;
-  margin-bottom: 40px;
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-3xl);
 }
+
 .tour-suggestions {
   width: 100%;
-  max-width: 1200px;
-  
+  max-width: var(--max-width-container);
 }
 
 .upcoming-section {
-  padding: 0 20px;
+  padding: 0 var(--spacing-lg);
 }
 
 @media (max-width: 768px) {
   .upcoming-section {
-    margin: 40px 0;
-    padding: 0 15px;
+    margin: var(--spacing-3xl) 0;
+    padding: 0 var(--spacing-md);
   }
 }
 
-/* Add background for sections after hero */
+/* Sections */
 .popular-section,
 .categories-section,
 .weather-section {
-  transition: background-color 0.3s ease;
+  transition: background-color var(--transition-base);
 }
 
-/* Popular Tour Packages Section */
 .popular-section {
-  max-width: 1400px;
-  padding: 40px 0;
+  max-width: var(--max-width-2xl);
+  padding: var(--spacing-3xl) 0;
   margin: 0 auto;
 }
 
 .popular-section h2 {
-  font-size: 2rem;
-  margin: 20px;
+  font-size: var(--font-size-3xl);
+  margin: var(--spacing-lg);
   color: var(--text-primary);
   text-align: center;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
-/* Categories Section */
 .categories-section {
-  width: 1200px;
-  padding: 40px 20px;
-  margin-top: 30px;
+  width: var(--max-width-container);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
 }
 
 .categories-section h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-lg);
   color: var(--text-primary);
   text-align: center;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
-/* Weather-Based Recommendations */
 .weather-section {
   width: 100%;
-  max-width: 1400px;
-  padding: 40px 20px;
-  margin-top: 30px;
+  max-width: var(--max-width-2xl);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
 }
 
 .weather-section h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-lg);
   color: var(--text-primary);
   text-align: center;
-  transition: color 0.3s ease;
-}
-
-/* Footer */
-.footer {
-  width: 100%;
-  background: var(--header-bg);
-  color: var(--text-white);
-  padding: 30px 20px;
-  text-align: center;
-  margin-top: 40px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 /* Responsive Design */
@@ -116,11 +97,11 @@
   .popular-section h2,
   .categories-section h2,
   .weather-section h2 {
-    font-size: 1.8rem;
+    font-size: var(--font-size-2xl);
     text-align: center;
   }
   
   .hero-section {
-    padding: 30px 10px;
+    padding: var(--spacing-2xl) var(--spacing-sm);
   }
 }

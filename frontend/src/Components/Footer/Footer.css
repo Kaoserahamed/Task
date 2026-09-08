@@ -3,11 +3,11 @@
 .footer {
   background: linear-gradient(135deg, var(--header-bg) 0%, var(--background-tertiary) 100%);
   color: var(--text-white);
-  padding: 3rem 0 1rem;
+  padding: var(--spacing-2xl) 0 var(--spacing-md);
   margin-top: auto;
   position: relative;
   overflow: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 .footer::before {
@@ -21,12 +21,12 @@
 }
 
 .footer-content {
-  max-width: 1200px;
+  max-width: var(--max-width-container);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--spacing-xl);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 3rem;
+  gap: var(--spacing-2xl);
   align-items: start;
 }
 
@@ -38,13 +38,13 @@
 
 .footer-section h3 {
   color: var(--primary-color);
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin: 0 0 1.5rem 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--spacing-lg) 0;
   position: relative;
-  padding-bottom: 0.5rem;
+  padding-bottom: var(--spacing-sm);
   align-self: flex-start;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .footer-section h3::after {
@@ -55,17 +55,17 @@
   width: 50px;
   height: 2px;
   background: var(--primary-color);
-  border-radius: 2px;
-  transition: background-color 0.3s ease;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-base);
 }
 
 .footer-section p {
-  line-height: 1.7;
+  line-height: var(--line-height-relaxed);
   color: var(--text-secondary);
-  margin: 0 0 1.5rem 0;
-  font-size: 0.95rem;
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: var(--font-size-sm);
   text-align: left;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .footer-section ul {
@@ -79,8 +79,8 @@
 }
 
 .footer-section ul li {
-  margin-bottom: 0.8rem;
-  transition: all 0.3s ease;
+  margin-bottom: var(--spacing-sm);
+  transition: all var(--transition-base);
 }
 
 .footer-section ul li:hover {
@@ -90,8 +90,8 @@
 .footer-section ul li a {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-base);
   display: inline-block;
   position: relative;
 }
@@ -109,7 +109,7 @@
   width: 0;
   height: 2px;
   background: var(--primary-color);
-  transition: width 0.3s ease;
+  transition: width var(--transition-base);
 }
 
 .footer-section ul li a:hover::before {
@@ -124,26 +124,26 @@
   display: flex;
   align-items: center;
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-md);
   text-align: left;
   justify-content: flex-start;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .contact-info li i {
   color: var(--primary-color);
-  margin-right: 0.8rem;
+  margin-right: var(--spacing-sm);
   width: 20px;
   text-align: center;
-  font-size: 1.1rem;
-  transition: color 0.3s ease;
+  font-size: var(--font-size-lg);
+  transition: color var(--transition-base);
 }
 
 .social-links {
   display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
   align-self: flex-start;
 }
 
@@ -154,10 +154,10 @@
   width: 45px;
   height: 45px;
   background: var(--overlay-light);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   color: var(--text-secondary);
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
+  font-size: var(--font-size-xl);
+  transition: all var(--transition-base);
   text-decoration: none;
   backdrop-filter: var(--backdrop-blur);
   border: 1px solid var(--overlay-light);
@@ -187,38 +187,38 @@
 
 .footer-bottom {
   background: var(--shadow-color);
-  margin-top: 2.5rem;
-  padding: 1.5rem 0;
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg) 0;
   text-align: center;
   border-top: 1px solid var(--overlay-light);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .footer-bottom p {
   margin: 0;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   letter-spacing: 0.5px;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 /* Responsive Design */
 @media (max-width: 968px) {
   .footer-content {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
+    gap: var(--spacing-xl);
   }
 }
 
 @media (max-width: 768px) {
   .footer {
-    padding: 2rem 0 1rem;
+    padding: var(--spacing-xl) 0 var(--spacing-md);
   }
   
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 2rem;
-    padding: 0 1rem;
+    gap: var(--spacing-xl);
+    padding: 0 var(--spacing-md);
   }
   
   .footer-section {
@@ -251,16 +251,16 @@
 
 @media (max-width: 480px) {
   .footer-content {
-    padding: 0 1rem;
+    padding: 0 var(--spacing-md);
   }
   
   .footer-section h3 {
-    font-size: 1.2rem;
+    font-size: var(--font-size-lg);
   }
   
   .social-links a {
     width: 40px;
     height: 40px;
-    font-size: 1.1rem;
+    font-size: var(--font-size-lg);
   }
 }

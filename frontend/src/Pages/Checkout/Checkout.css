@@ -1,68 +1,29 @@
-/* Global Checkout Styles */
-:root {
-  --bg-mainee: #e7e2e2;
-  --bg-cardee: #ffffff;
-  --bg-input: #f9fafb;
-  --bg-hover: #f3f4f6;
-  --bg-gradient-header: white;
-  --bg-gradient-main: white;
-  --color-text: #1f2937;
-  --color-subtext: #6b7280;
-  --color-primary: #3b82f6;
-  --color-secondary: #64748b;
-  --color-accent: #10b981;
-  --color-border: #e5e7eb;
-  --color-shadow: rgba(0, 0, 0, 0.1);
-  --color-scrollbar-thumb: #eff1f5;
-  --color-glow: rgba(227, 235, 246, 0.2);
-  --backdrop-blur: blur(10px);
-  --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-[data-theme='dark'] {
-  --bg-mainee: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-  --bg-cardee: rgba(30, 41, 59, 0.8);
-  --bg-input: rgba(15, 23, 42, 0.6);
-  --bg-hover: rgba(59, 130, 246, 0.05);
-  --bg-gradient-header: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-  --bg-gradient-main: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-  --color-text: #e5e7eb;
-  --color-subtext: #94a3b8;
-  --color-primary: #3b82f6;
-  --color-secondary: #cbd5e1;
-  --color-accent: #10b981;
-  --color-border: rgba(59, 130, 246, 0.2);
-  --color-shadow: rgba(0, 0, 0, 0.3);
-  --color-scrollbar-thumb: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  --color-glow: rgba(59, 130, 246, 0.4);
-  --backdrop-blur: blur(20px);
-  --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-}
+/* Checkout Page - uses centralized theme */
 
 /* Base Styles */
 body,
 .checkout-container {
-  background: var(--bg-mainee);
-  color: var(--color-text);
-  font-family: 'Inter', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family-base);
   min-height: 100vh;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 /* Main Layout */
 .main-content {
-  max-width: 1200px;
+  max-width: var(--max-width-container);
   margin: 0 auto;
-  padding: 32px 20px;
+  padding: var(--spacing-xl) var(--spacing-lg);
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--spacing-xl);
 }
 
 .two-col-layout {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--spacing-xl);
 }
 
 .main-column {
@@ -73,25 +34,6 @@ body,
 .sidebar-column {
   flex: 1;
   width: 100%;
-}
-
-/* Scrollbar Styling */
-.checkout-container ::-webkit-scrollbar {
-  width: 8px;
-}
-
-.checkout-container ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 4px;
-}
-
-.checkout-container ::-webkit-scrollbar-thumb {
-  background: var(--color-scrollbar-thumb);
-  border-radius: 4px;
-}
-
-.checkout-container ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
 }
 
 /* Responsive Design */
@@ -112,21 +54,10 @@ body,
 /* Mobile Optimizations */
 @media (max-width: 768px) {
   .checkout-container {
-    font-size: 14px;
+    font-size: var(--font-size-sm);
   }
   
   .main-content {
-    padding: 20px 16px;
+    padding: var(--spacing-lg) var(--spacing-md);
   }
 }
-
-/* System Dark Mode Preference */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-main: linear-gradient(135deg, #0a0a14 0%, #111827 100%);
-    --bg-card: rgba(17, 24, 39, 0.9);
-    --color-border: rgba(59, 130, 246, 0.3);
-  }
-}
-
-/* Theme Toggle Support */

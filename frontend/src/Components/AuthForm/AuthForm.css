@@ -1,52 +1,35 @@
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--text-color);
-  font-weight: 500;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.form-group input:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
+/* AuthForm - uses shared form styles from components.css */
+/* Most styles now inherited from .form-* classes */
 
 .forgot-password {
   text-align: right;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .forgot-password a {
   color: var(--primary-color);
   text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.forgot-password a:hover {
+  color: var(--primary-hover);
 }
 
 .submit-btn {
   width: 100%;
-  padding: 14px;
-  background: var(--primary-color);
-  color: white;
+  padding: var(--spacing-md);
+  background: var(--gradient-primary);
+  color: var(--text-white);
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .submit-btn:hover {
-  background: var(--secondary-color);
+  background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
+  transform: translateY(-1px);
 } 

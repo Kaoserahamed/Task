@@ -1,61 +1,62 @@
+/* Auth Container - LoginSignup Page */
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--background-primary);
-  padding: 20px;
-  transition: background 0.3s ease;
+  padding: var(--spacing-lg);
+  transition: background var(--transition-base);
 }
 
 .auth-box {
   background: var(--card-bg);
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-3xl);
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 10px 25px var(--shadow-color);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  transition: background-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .auth-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: var(--spacing-2xl);
 }
 
 .auth-header h2 {
-  font-size: 2rem;
+  font-size: var(--font-size-3xl);
   color: var(--text-primary);
-  margin-bottom: 10px;
-  transition: color 0.3s ease;
+  margin-bottom: var(--spacing-sm);
+  transition: color var(--transition-base);
 }
 
 .auth-header p {
   color: var(--text-secondary);
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .auth-tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-2xl);
 }
 
 .auth-tabs button {
   flex: 1;
-  padding: 12px;
+  padding: var(--spacing-md);
   border: none;
   background: var(--background-tertiary);
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 8px;
+  transition: all var(--transition-base);
+  border-radius: var(--radius-md);
 }
 
 .auth-tabs button.active {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-white);
 }
 
 .auth-tabs button:hover:not(.active) {
@@ -63,48 +64,18 @@
   color: var(--text-primary);
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--text-primary);
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background-color: var(--background-secondary);
-  color: var(--text-primary);
-}
-
-.form-group input:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.form-group input::placeholder {
-  color: var(--text-muted);
-}
+/* Form elements now use shared .form-* classes from components.css */
+/* Keeping only page-specific overrides */
 
 .forgot-password {
   text-align: right;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .forgot-password a {
   color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .forgot-password a:hover {
@@ -113,19 +84,19 @@
 
 .submit-btn {
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: var(--text-white);
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .submit-btn:hover {
-  background: linear-gradient(135deg, #3730a3, #6b21a8);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
   transform: translateY(-1px);
 }
 
@@ -136,15 +107,15 @@
 }
 
 .social-login {
-  margin-top: 30px;
+  margin-top: var(--spacing-2xl);
   text-align: center;
 }
 
 .social-login p {
   color: var(--text-secondary);
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-md);
   position: relative;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .social-login p::before,
@@ -155,7 +126,7 @@
   width: 30%;
   height: 1px;
   background: var(--border-color);
-  transition: background 0.3s ease;
+  transition: background var(--transition-base);
 }
 
 .social-login p::before {
@@ -169,21 +140,21 @@
 .social-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: var(--spacing-md);
 }
 
 .social-buttons button {
-  padding: 12px;
+  padding: var(--spacing-md);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--card-bg);
   color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .google-btn:hover,
@@ -192,26 +163,7 @@
   border-color: var(--primary-color);
 }
 
-/* Error and success messages */
-.error-message {
-  color: var(--error-color);
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.success-message {
-  color: var(--success-color);
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Loading state */
+/* Loading state uses shared animation from components.css */
 .submit-btn.loading {
   position: relative;
   color: transparent;
@@ -226,8 +178,8 @@
   width: 20px;
   height: 20px;
   border: 2px solid transparent;
-  border-top: 2px solid white;
-  border-radius: 50%;
+  border-top: 2px solid var(--text-white);
+  border-radius: var(--radius-full);
   animation: spin 1s linear infinite;
 }
 
@@ -239,16 +191,16 @@
 /* Mobile responsiveness */
 @media (max-width: 480px) {
   .auth-container {
-    padding: 10px;
+    padding: var(--spacing-sm);
   }
 
   .auth-box {
-    padding: 20px;
-    border-radius: 16px;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
   }
 
   .auth-header h2 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-2xl);
   }
 
   .social-buttons {
@@ -256,33 +208,8 @@
   }
 
   .auth-tabs button {
-    padding: 10px;
-    font-size: 0.9rem;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .auth-box {
-    border: 2px solid var(--border-color);
-  }
-  
-  .submit-btn,
-  .auth-tabs button.active {
-    border: 2px solid currentColor;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .submit-btn,
-  .auth-tabs button,
-  .social-buttons button {
-    transition: none;
-  }
-  
-  .submit-btn:hover {
-    transform: none;
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
   }
 }
 
@@ -290,30 +217,30 @@
 .demo-credentials {
   background: linear-gradient(135deg, #fef3c7, #fde68a);
   border: 2px dashed #f59e0b;
-  border-radius: 12px;
-  padding: 15px;
-  margin: 20px 0;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
   text-align: center;
   animation: pulse-border 2s ease-in-out infinite;
 }
 
 .demo-label {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
   color: #92400e;
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .demo-btn {
   background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
+  color: var(--text-white);
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  margin-bottom: 10px;
-  transition: all 0.3s ease;
+  margin-bottom: var(--spacing-sm);
+  transition: all var(--transition-base);
   box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
 }
 
@@ -328,15 +255,15 @@
 }
 
 .demo-info {
-  font-size: 0.85rem;
+  font-size: var(--font-size-xs);
   color: #78350f;
   margin: 0;
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
 }
 
 .demo-info strong {
   color: #92400e;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 @keyframes pulse-border {
