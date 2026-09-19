@@ -25,7 +25,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "validate-env": "node validate-env.js",
@@ -34,5 +35,10 @@
   "author": "",
   "license": "ISC",
   "keywords": [],
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "mongodb-memory-server": "^11.2.0",
+    "supertest": "^7.2.2"
+  }
 }
