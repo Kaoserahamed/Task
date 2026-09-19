@@ -351,11 +351,18 @@ router.post('/register', async (req, res) => {
       // Update the company
       const company = await Company.findByIdAndUpdate(companyId, updateData, { new: true });
       if (!company) return res.status(404).json({ message: 'Company not found' });
-      const io=require('../socket').getIO();
-      io.emit('verif',{
-        action:'pen',
-        company:company
-      });
+
+      // Emit socket event before sending response
+      try {
+        const io = require('../socket').getIO();
+        io.emit('verif', {
+          action: 'pen',
+          company: company
+        });
+      } catch (socketErr) {
+        console.warn('Socket emit failed:', socketErr.message);
+      }
+
       res.json({ success: true, company });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Failed to update company info', error: error.message });
@@ -375,16 +382,20 @@ router.post('/register', async (req, res) => {
       const company = await Company.findByIdAndUpdate(companyId, updateData, { new: true });
       console.log(company);
       if (!company) return res.status(404).json({ message: 'Company not found' });
-      
+
+      // Emit socket event before sending response
+      try {
+        const io = require('../socket').getIO();
+        io.emit('veri', {
+          action: 'done',
+          company: company
+        });
+      } catch (socketErr) {
+        console.warn('Socket emit failed:', socketErr.message);
+      }
+
       res.json({ success: true, company });
-      const io=require('../socket').getIO();
-      io.emit('veri',{
-        action:'done',
-        company:company
-      });
-    } 
-    
-    catch (error) {
+    } catch (error) {
       res.status(500).json({ success: false, message: 'Failed to update status', error: error.message });
     }
   });

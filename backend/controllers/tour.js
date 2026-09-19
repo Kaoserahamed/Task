@@ -77,13 +77,17 @@ exports.createTour = async (req, res) => {
     await newTour.validate();
     const savedTour = await newTour.save();
     
+    const io = require('../socket').getIO();
+    io.emit('tour_created', {
+      action: 'create',
+      tour: savedTour
+    });
+
     res.status(201).json({
       success: true,
       message: 'Tour created successfully',
       tour: savedTour
     });
-    const io=require('../socket').getIO();
-    io.emit()
   } catch (error) {
     console.error('Error creating tour:', error);
     res.status(400).json({

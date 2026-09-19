@@ -253,7 +253,7 @@ console.log(tour);
             companyId={tour.companyId} 
             user={use} 
             chatType={chatType} 
-            compnayName={tour.compnayName} 
+            companyName={tour.companyName} 
             chats={chats}
             weatherCity={weatherCity}
           />

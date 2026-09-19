@@ -68,15 +68,9 @@ const TourSuggestions = ({ weatherCity }) => {
     const fetchSuggestions = async () => {
       if (!tours || tours.length === 0 || !weatherCity) return;
       const recentViews = JSON.parse(localStorage.getItem('recentTourViews') || '[]');
-      console.log('console'+recentViews);
-      let allSuggestedTours=new Set();
-      if (recentViews.length > 0) {
-      console.log(recentViews);
-        // Get suggestions based on recent views
-        for (const tourName of recentViews.slice(0, 3)) { // Use last 3 viewed tours
-              suggestions.forEach(name => allSuggestedTours.add(tourName));
-        }
-      }
+      console.log('console' + recentViews);
+      let allSuggestedTours = [];
+      
       setLoading(true);
       setError(null);
 
@@ -87,7 +81,7 @@ const TourSuggestions = ({ weatherCity }) => {
           console.log('Suggested data:', suggestedData);
 
           // Flatten all tours from suggestions into a single array
-           allSuggestedTours = suggestedData.reduce((acc, suggestion) => {
+          allSuggestedTours = suggestedData.reduce((acc, suggestion) => {
             return [...acc, ...suggestion.tours];
           }, []);
           console.log(allSuggestedTours);
