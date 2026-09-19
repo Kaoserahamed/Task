@@ -11,19 +11,21 @@ A comprehensive multi-tenant tour booking and management platform enabling custo
 - **Backend API**: https://backend-kaoser614-7344s-projects.vercel.app
 
 ### Demo Accounts
-Test the system with these pre-configured accounts:
+Test the system with these pre-configured accounts. Seed them locally with
+`node backend/scripts/seedDemoAccounts.js` after setting `DEMO_*_PASSWORD`
+values in `backend/.env` (see `backend/.env.example`):
 
 **Customer Account**
 - Email: `user@demo.com`
-- Password: `demo123`
+- Password: value of `DEMO_USER_PASSWORD`
 
 **Admin Account**
 - Email: `admin@demo.com`
-- Password: `demo123`
+- Password: value of `DEMO_ADMIN_PASSWORD`
 
 **Company Account**
 - Email: `company@demo.com`
-- Password: `demo123`
+- Password: value of `DEMO_COMPANY_PASSWORD`
 
 ## Screenshots
 
