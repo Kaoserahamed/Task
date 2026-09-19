@@ -12,10 +12,10 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    // Fill demo credentials
+    // Fill demo credentials from env (see admin/.env.example).
     const fillDemoCredentials = () => {
         setEmail('admin@demo.com');
-        setPassword('demo123');
+        setPassword(process.env.REACT_APP_DEMO_ADMIN_PASSWORD || '');
     };
 
     const handleSubmit = async (e) => {
@@ -71,7 +71,7 @@ const Login = () => {
                     Fill Demo Credentials
                 </button>
                 <p style={{ fontSize: '0.85rem', color: '#78350f', margin: 0 }}>
-                    Email: <strong>admin@demo.com</strong> | Password: <strong>demo123</strong>
+                    Email: <strong>admin@demo.com</strong> | Password: <strong>{process.env.REACT_APP_DEMO_ADMIN_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_ADMIN_PASSWORD'}</strong>
                 </p>
             </div>
 
