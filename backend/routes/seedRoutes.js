@@ -11,8 +11,15 @@ router.get('/seed-tours', async (req, res) => {
     let demoCompany = await Company.findOne({ email: 'company@demo.com' });
     
     if (!demoCompany) {
+      const demoCompanyPassword = process.env.DEMO_COMPANY_PASSWORD;
+      if (!demoCompanyPassword) {
+        return res.status(500).json({
+          success: false,
+          message: 'Missing DEMO_COMPANY_PASSWORD env var — see backend/.env.example.'
+        });
+      }
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('demo123', salt);
+      const hashedPassword = await bcrypt.hash(demoCompanyPassword, salt);
       
       demoCompany = await Company.create({
         name: 'Demo Travel Company',

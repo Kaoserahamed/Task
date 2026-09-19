@@ -9,11 +9,12 @@ const bcrypt = require('bcryptjs');
 const Company = require('../models/company');
 const User = require('../models/User');
 
-// Demo account credentials
+// Demo account credentials come only from environment variables.
+// Never commit real passwords here; see backend/.env.example (DEMO_*_PASSWORD).
 const DEMO_COMPANY = {
   name: 'Adventure Tours Ltd',
   email: 'demo@adventuretours.com',
-  password: 'demo123',
+  password: process.env.DEMO_COMPANY_PASSWORD,
   phone: '+1-555-0100',
   address: '123 Travel Street, New York, NY 10001',
   website: 'https://adventuretours.com',
@@ -33,9 +34,14 @@ const DEMO_COMPANY = {
 const DEMO_USER = {
   name: 'Demo User',
   email: 'user@demo.com',
-  password: 'demo123',
+  password: process.env.DEMO_USER_PASSWORD,
   phone: '+1-555-0200',
 };
+
+if (!DEMO_COMPANY.password || !DEMO_USER.password) {
+  // Fail fast instead of seeding accounts with a default password.
+  throw new Error('Missing DEMO_USER_PASSWORD / DEMO_COMPANY_PASSWORD env vars — see backend/.env.example.');
+}
 
 router.get('/create-accounts', async (req, res) => {
   try {
@@ -66,7 +72,6 @@ router.get('/create-accounts', async (req, res) => {
         results.company = {
           status: 'created',
           email: DEMO_COMPANY.email,
-          password: DEMO_COMPANY.password,
           id: company._id
         };
       }
@@ -95,7 +100,6 @@ router.get('/create-accounts', async (req, res) => {
         results.user = {
           status: 'created',
           email: DEMO_USER.email,
-          password: DEMO_USER.password,
           id: user._id
         };
       }
@@ -109,12 +113,10 @@ router.get('/create-accounts', async (req, res) => {
       results,
       credentials: {
         company: {
-          email: DEMO_COMPANY.email,
-          password: DEMO_COMPANY.password
+          email: DEMO_COMPANY.email
         },
         user: {
-          email: DEMO_USER.email,
-          password: DEMO_USER.password
+          email: DEMO_USER.email
         }
       }
     });
