@@ -6,10 +6,11 @@
 ```bash
 node scripts/seedDemoAccounts.js
 ```
-Creates demo accounts for:
-- User: `user@demo.com` / `demo123`
-- Admin: `admin@demo.com` / `demo123`
-- Company: `company@demo.com` / `demo123`
+Requires `DEMO_USER_PASSWORD`, `DEMO_ADMIN_PASSWORD`, and `DEMO_COMPANY_PASSWORD`
+in `backend/.env` (see `backend/.env.example`). Creates demo accounts for:
+- User: `user@demo.com` (password from `DEMO_USER_PASSWORD`)
+- Admin: `admin@demo.com` (password from `DEMO_ADMIN_PASSWORD`)
+- Company: `company@demo.com` (password from `DEMO_COMPANY_PASSWORD`)
 
 ### Create Sample Tour Packages
 ```bash

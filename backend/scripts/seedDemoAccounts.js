@@ -11,23 +11,34 @@ const User = require('../models/User');
 const { Admin, AdminProfile } = require('../models/Admin');
 const Company = require('../models/company');
 
+// Demo credentials — override via environment variables; never commit real secrets.
+// Seed scripts/routes read these same variables so seeded data matches local login hints.
+const DEMO_USER_PASSWORD = process.env.DEMO_USER_PASSWORD;
+const DEMO_ADMIN_PASSWORD = process.env.DEMO_ADMIN_PASSWORD || process.env.DEMO_USER_PASSWORD;
+const DEMO_COMPANY_PASSWORD = process.env.DEMO_COMPANY_PASSWORD || process.env.DEMO_USER_PASSWORD;
+
+if (!DEMO_USER_PASSWORD) {
+  console.warn('Missing DEMO_USER_PASSWORD env var — refusing to seed demo accounts with a default password.');
+  process.exit(1);
+}
+
 const demoAccounts = {
   user: {
     name: 'Demo User',
     email: 'user@demo.com',
-    password: 'demo123',
+    password: DEMO_USER_PASSWORD,
     phone: '+1234567890'
   },
   admin: {
     name: 'Demo Admin',
     email: 'admin@demo.com',
-    password: 'demo123',
+    password: DEMO_ADMIN_PASSWORD,
     role: 'admin'
   },
   company: {
     name: 'Demo Travel Company',
     email: 'company@demo.com',
-    password: 'demo123',
+    password: DEMO_COMPANY_PASSWORD,
     description: 'A demo travel company for testing',
     phone: '+1234567890',
     website: 'https://demo-company.com',
@@ -138,15 +149,15 @@ async function seedDemoAccounts() {
     console.log('┌─────────────────────────────────────────┐');
     console.log('│ 👤 User Account                         │');
     console.log('│    Email:    user@demo.com              │');
-    console.log('│    Password: demo123                    │');
+    console.log('│    Password: (from DEMO_USER_PASSWORD)    │');
     console.log('├─────────────────────────────────────────┤');
     console.log('│ 👨‍💼 Admin Account                        │');
     console.log('│    Email:    admin@demo.com             │');
-    console.log('│    Password: demo123                    │');
+    console.log('│    Password: (from DEMO_ADMIN_PASSWORD)   │');
     console.log('├─────────────────────────────────────────┤');
     console.log('│ 🏢 Company Account                      │');
     console.log('│    Email:    company@demo.com           │');
-    console.log('│    Password: demo123                    │');
+    console.log('│    Password: (from DEMO_COMPANY_PASSWORD) │');
     console.log('└─────────────────────────────────────────┘\n');
 
     process.exit(0);

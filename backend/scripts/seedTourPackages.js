@@ -372,9 +372,14 @@ async function seedTourPackages() {
     let demoCompany = await Company.findOne({ email: 'company@demo.com' });
     
     if (!demoCompany) {
+      const demoCompanyPassword = process.env.DEMO_COMPANY_PASSWORD;
+      if (!demoCompanyPassword) {
+        console.error('Missing DEMO_COMPANY_PASSWORD env var — see backend/.env.example.');
+        process.exit(1);
+      }
       const bcrypt = require('bcryptjs');
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('demo123', salt);
+      const hashedPassword = await bcrypt.hash(demoCompanyPassword, salt);
       
       demoCompany = await Company.create({
         name: 'Demo Travel Company',
