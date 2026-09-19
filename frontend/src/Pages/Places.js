@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './Places.css';
 
-const PLACES_API_KEY = 'AIzaSyCfoKSQIcf9b3mH10oKLmEV4sS--2_NhFE';
+const PLACES_API_KEY = process.env.PLACES_API_KEY || process.env.REACT_APP_PLACES_API_KEY || '';
+if (!PLACES_API_KEY) {
+  console.warn('Missing PLACES_API_KEY or REACT_APP_PLACES_API_KEY env var — Places will not load.');
+}
 
 const Places = () => {
   const [hotels, setHotels] = useState([]);
