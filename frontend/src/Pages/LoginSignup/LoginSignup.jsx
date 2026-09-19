@@ -20,10 +20,12 @@ const LoginSignup = () => {
   });
 
   // Function to fill demo credentials (just fills the form, doesn't submit)
+  // Demo password is injected via REACT_APP_DEMO_USER_PASSWORD env var.
+  // Seed the matching account with DEMO_USER_PASSWORD in backend/.env (see backend/.env.example).
   const fillDemoCredentials = () => {
     setFormData({
       email: 'user@demo.com',
-      password: 'demo123',
+      password: process.env.REACT_APP_DEMO_USER_PASSWORD || '',
       name: formData.name,
       confirmPassword: formData.confirmPassword
     });
@@ -96,7 +98,7 @@ const LoginSignup = () => {
               Fill Demo Credentials
             </button>
             <p className="demo-info">
-              Email: <strong>user@demo.com</strong> | Password: <strong>demo123</strong>
+              Email: <strong>user@demo.com</strong> | Password: <strong>{process.env.REACT_APP_DEMO_USER_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_USER_PASSWORD'}</strong>
             </p>
           </div>
         )}
