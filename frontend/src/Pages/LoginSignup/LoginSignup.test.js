@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import LoginSignup from './Pages/LoginSignup/LoginSignup';
+import LoginSignup from './LoginSignup';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
