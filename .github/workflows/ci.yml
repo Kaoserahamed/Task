@@ -4,14 +4,16 @@ on:
   pull_request:
     branches:
       - main
+      - develop
   push:
     branches:
+      - main
       - develop
 
 jobs:
-  validate-backend:
+  test-backend:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,25 +21,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install backend dependencies
         working-directory: ./backend
         run: npm ci
 
-      - name: Validate environment configuration
-        working-directory: ./backend
-        run: |
-          cp .env.example .env
-          node validate-env.js || echo "Environment validation requires actual credentials"
-
       - name: Run backend tests
         working-directory: ./backend
-        run: npm test || echo "No tests configured"
+        env:
+          JWT_SECRET: test-secret
+        run: npm test
 
-  build-frontend:
+  test-frontend:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -45,7 +43,31 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: ./frontend
+        env:
+          CI: 'true'
+          REACT_APP_DEMO_USER_PASSWORD: demo-user-password
+        run: npm test -- --watchAll=false
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    needs: test-frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
       - name: Install frontend dependencies
         working-directory: ./frontend
@@ -57,9 +79,9 @@ jobs:
           REACT_APP_API_URL: http://localhost:4000
         run: npm run build
 
-  build-admin:
+  test-admin:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -67,7 +89,31 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
+
+      - name: Install admin dependencies
+        working-directory: ./admin
+        run: npm ci
+
+      - name: Run admin tests
+        working-directory: ./admin
+        env:
+          CI: 'true'
+          REACT_APP_DEMO_ADMIN_PASSWORD: demo-admin-password
+        run: npm test -- --watchAll=false
+
+  build-admin:
+    runs-on: ubuntu-latest
+    needs: test-admin
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
       - name: Install admin dependencies
         working-directory: ./admin
@@ -79,9 +125,9 @@ jobs:
           REACT_APP_API_URL: http://localhost:4000
         run: npm run build
 
-  build-company:
+  test-company:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -89,7 +135,31 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
+
+      - name: Install company dashboard dependencies
+        working-directory: ./tourcompanydashboard
+        run: npm ci
+
+      - name: Run company dashboard tests
+        working-directory: ./tourcompanydashboard
+        env:
+          CI: 'true'
+          REACT_APP_DEMO_COMPANY_PASSWORD: demo-company-password
+        run: npm test -- --watchAll=false
+
+  build-company:
+    runs-on: ubuntu-latest
+    needs: test-company
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
       - name: Install company dashboard dependencies
         working-directory: ./tourcompanydashboard
@@ -100,4 +170,5 @@ jobs:
         env:
           REACT_APP_API_URL: http://localhost:4000
         run: npm run build
+
 
