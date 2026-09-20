@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
 jest.mock('./Context/AuthContext', () => ({
@@ -13,11 +12,7 @@ jest.mock('./Context/ToursContext', () => ({
 }));
 
 test('renders company login when logged out', () => {
-  render(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>
-  );
+  render(<App />);
   expect(screen.getByText(/Welcome Back!/i)).toBeInTheDocument();
   expect(screen.getByText(/Try Demo Company Account/i)).toBeInTheDocument();
 });
