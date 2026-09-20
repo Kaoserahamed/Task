@@ -8,7 +8,7 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({ state: {} }),
 }));
 
-jest.mock('./Context/AuthContext', () => ({
+jest.mock('../../Context/AuthContext', () => ({
   useAuth: () => ({ login: jest.fn() }),
 }));
 
