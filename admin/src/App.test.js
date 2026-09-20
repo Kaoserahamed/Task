@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+﻿import { render, screen } from '@testing-library/react';
 import App from './App';
 
 jest.mock('./context/AuthContext', () => ({
@@ -11,5 +11,4 @@ test('renders admin login page', () => {
   expect(screen.getByText(/Admin Login/i)).toBeInTheDocument();
   expect(screen.getByText(/Try Demo Admin Account/i)).toBeInTheDocument();
 });
-
 
