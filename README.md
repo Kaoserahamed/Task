@@ -145,6 +145,27 @@ Task/
 - Sendinblue account (for email notifications)
 - OpenWeatherMap API key (for weather features)
 
+### Docker (one-command startup)
+
+The fastest way to run the backend API and MongoDB is Docker Compose:
+
+```bash
+# Start MongoDB + backend API (http://localhost:4000)
+docker compose up -d
+
+# Stop everything
+docker compose down
+
+# Reset the database volume as well
+docker compose down -v
+```
+
+The compose file starts:
+- **mongo** — MongoDB 7 with a persistent data volume (`mongo_data`) and a health check the backend waits on
+- **backend** — the Express API, pre-wired to `mongodb://mongo:27017/tourmate`
+
+Optional secrets (Cloudinary, Pusher, email, demo passwords) can be provided by uncommenting the `env_file` line in `docker-compose.yml` or by passing environment variables.
+
 ### Local Development Setup
 
 1. **Clone and navigate to project**
