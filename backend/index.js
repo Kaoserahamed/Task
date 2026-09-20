@@ -14,6 +14,7 @@ const authRoutes = require('./routes/authRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const errorHandler = require('./middleware/errorHandler');
+const { validateTour } = require('./middleware/validate');
 const toursRoutes = require('./routes/tours');
 const tourController = require('./controllers/tour');
 const getSuggestions  = require('./controllers/SuggestionController');
@@ -96,8 +97,8 @@ app.get('/api/test', (req, res) => {
 });
 
 // Tour routes with file upload
-app.post('/api/tours', upload.array('images'), tourController.createTour);
-app.put('/api/tours/:id', upload.array('newImages'), tourController.updateTour);
+app.post('/api/tours', upload.array('images'), validateTour, tourController.createTour);
+app.put('/api/tours/:id', upload.array('newImages'), validateTour, tourController.updateTour);
 app.use('/api', toursRoutes);
 app.use('/api', require('./routes/weatherRoutes'));
 

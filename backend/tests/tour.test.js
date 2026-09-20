@@ -2,6 +2,7 @@ const request = require('supertest');
 const express = require('express');
 const Tour = require('../models/tours');
 const tourController = require('../controllers/tour');
+const { validateTour } = require('../middleware/validate');
 
 jest.mock('../socket', () => ({
   init: jest.fn(),
@@ -11,6 +12,7 @@ jest.mock('../socket', () => ({
 function buildTourPayload(overrides = {}) {
   const base = {
     name: 'Test Tour',
+    description: 'A beautiful test tour',
     packageCategories: JSON.stringify(['Beach']),
     tourType: JSON.stringify({ single: true, group: false }),
     duration: JSON.stringify({ days: 3, nights: 2 }),
@@ -57,7 +59,7 @@ describe('tour controller', () => {
     app.get('/api/tours', tourController.getTours);
     app.get('/api/tours/:id', tourController.getTourById);
     app.delete('/api/tours/:id', tourController.deleteTour);
-    app.post('/api/tours', (req, res) => {
+    app.post('/api/tours', validateTour, (req, res) => {
       req.files = [];
       return tourController.createTour(req, res);
     });
@@ -116,5 +118,67 @@ describe('tour controller', () => {
 
     expect(res.status).toBe(404);
     expect(res.body.success).toBe(false);
+  });
+});
+
+describe('validateTour middleware', () => {
+  let app;
+
+  beforeEach(() => {
+    app = express();
+    app.use(express.json());
+    app.post('/api/tours', validateTour, (req, res) => {
+      req.files = [];
+      return tourController.createTour(req, res);
+    });
+  });
+
+  test('returns 400 VALIDATION_ERROR for malformed destinations JSON', async () => {
+    const res = await request(app)
+      .post('/api/tours')
+      .send(buildTourPayload({ destinations: 'not-json' }));
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('VALIDATION_ERROR');
+    expect(res.body.error).toMatch(/destinations/);
+  });
+
+  test('returns 400 VALIDATION_ERROR for non-object meals', async () => {
+    const res = await request(app)
+      .post('/api/tours')
+      .send(buildTourPayload({ meals: JSON.stringify(['breakfast']) }));
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_ERROR');
+  });
+
+  test('returns 400 VALIDATION_ERROR for malformed transportation JSON', async () => {
+    const res = await request(app)
+      .post('/api/tours')
+      .send(buildTourPayload({ transportation: '{broken' }));
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_ERROR');
+  });
+
+  test('returns 400 VALIDATION_ERROR for missing required fields', async () => {
+    const payload = buildTourPayload();
+    delete payload.description;
+
+    const res = await request(app).post('/api/tours').send(payload);
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_ERROR');
+    expect(res.body.error).toMatch(/description/);
+  });
+
+  test('returns 400 VALIDATION_ERROR for invalid duration', async () => {
+    const res = await request(app)
+      .post('/api/tours')
+      .send(buildTourPayload({ duration: JSON.stringify({ days: 'x' }) }));
+
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_ERROR');
   });
 });
