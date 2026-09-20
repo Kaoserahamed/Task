@@ -1,5 +1,6 @@
 // jest-dom adds custom jest matchers for asserting on DOM nodes
 import '@testing-library/jest-dom';
+/* global globalThis */
 
 // Mock socket.io-client so components don't open live websocket
 // connections (they log after tests finish, failing CI runs)

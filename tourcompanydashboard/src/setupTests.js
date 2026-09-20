@@ -4,6 +4,8 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
+/* global globalThis */
+
 // Mock socket.io-client so components don't open live websocket
 // connections (they log after tests finish, failing CI runs)
 jest.mock('socket.io-client', () => {
