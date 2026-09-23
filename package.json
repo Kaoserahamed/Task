@@ -1,0 +1,40 @@
+{
+  "name": "task-tour-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tour Management System monorepo root: one-command install, test, lint and verification across the Express + MongoDB API and the React applications. See README.md.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "npm ci && npm ci --prefix backend && npm ci --prefix frontend && npm ci --prefix admin && npm ci --prefix tourcompanydashboard",
+    "test": "npm run test:backend && npm run test:web",
+    "test:backend": "npm --prefix backend test",
+    "test:web": "npm --prefix frontend run test:ci && npm --prefix admin run test:ci && npm --prefix tourcompanydashboard run test:ci",
+    "test:coverage": "npm --prefix backend run test:coverage && npm --prefix frontend run test:coverage && npm --prefix admin run test:coverage && npm --prefix tourcompanydashboard run test:coverage",
+    "lint": "npm --prefix backend run lint && npm --prefix frontend run lint && npm --prefix admin run lint && npm --prefix tourcompanydashboard run lint",
+    "typecheck": "npm --prefix backend run typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:root": "eslint scripts",
+    "verify:repo": "node scripts/verify-repo.mjs",
+    "verify": "npm run lint && npm run lint:root && npm run format:check && npm run typecheck && npm run verify:repo && npm test",
+    "stack:up": "docker compose up --build",
+    "stack:test:up": "docker compose -f docker-compose.test.yml up -d",
+    "stack:test:down": "docker compose -f docker-compose.test.yml down -v"
+  },
+  "keywords": [
+    "tour-management",
+    "express",
+    "mongodb",
+    "react"
+  ],
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^15.0.0",
+    "prettier": "^3.9.8"
+  }
+}
