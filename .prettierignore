@@ -21,3 +21,8 @@ package-lock.json
 *.ico
 *.webp
 *.pdf
+
+# Files without a recognised Prettier parser — skip formatting
+.github/CODEOWNERS
+.github/dependabot.yml
+
