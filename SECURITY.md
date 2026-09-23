@@ -32,16 +32,16 @@ back-ported at the maintainers' discretion.
 
 ## Practice we already follow
 
-| Control                | Where it lives                                                 |
-| ---------------------- | -------------------------------------------------------------- |
-| Secret scanning        | `.env` files are git-ignored; only `.env.example` placeholders |
-| Dependency updates     | `.github/dependabot.yml` opens weekly PRs per package          |
-| Dependency audit       | `npm audit --audit-level=high` in CI                           |
-| Least-privilege CI     | `permissions: contents: read` in `.github/workflows/ci.yml`    |
-| Password storage       | `bcrypt` hashes, never reversible                              |
-| Brute-force protection | `backend/middleware/rateLimit.js` on credential endpoints      |
-| Origin control         | Exact-match CORS allow-list in `backend/config/cors.js`        |
-| Error hygiene          | One error envelope, no stacks or driver messages to clients    |
-| Seeding                | Disabled unless `SEED_ENABLED=true` is set deliberately        |
+| Control                | Where it lives                                                       |
+| ---------------------- | -------------------------------------------------------------------- |
+| Secret scanning        | `.env` files are git-ignored; only `.env.example` placeholders       |
+| Dependency updates     | `.github/dependabot.yml` opens weekly PRs per package                |
+| Dependency audit       | `npm audit --audit-level=high` in CI                                 |
+| Least-privilege CI     | `permissions: contents: read` in `.github/workflows/ci.yml`          |
+| Password storage       | one bcryptjs implementation at cost 10 (`backend/utils/password.js`) |
+| Brute-force protection | `backend/middleware/rateLimit.js` on credential endpoints            |
+| Origin control         | Exact-match CORS allow-list in `backend/config/cors.js`              |
+| Error hygiene          | One error envelope, no stacks or driver messages to clients          |
+| Seeding                | Disabled unless `SEED_ENABLED=true` is set deliberately              |
 
 Details and rationale: [docs/security.md](docs/security.md).
