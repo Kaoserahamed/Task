@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EditTour.css';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
 
 const EditTour = () => {
   const { tourId } = useParams();
@@ -86,8 +87,7 @@ const EditTour = () => {
 
   const fetchTourDetails = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`);
-      const data = await response.json();
+      const data = await toursApi.fetchTour(tourId);
 
       if (data.success) {
         const tour = data.tour;
@@ -148,21 +148,12 @@ const EditTour = () => {
     });
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        alert('Tour updated successfully');
-        navigate('/manage-tours');
-      } else {
-        alert(`Failed to update tour: ${result.error}`);
-      }
+      await toursApi.updateTour(tourId, formData);
+      alert('Tour updated successfully');
+      navigate('/manage-tours');
     } catch (error) {
       console.error('Error updating tour:', error);
-      alert('An error occurred while updating the tour');
+      alert(`Failed to update tour: ${error.message}`);
     }
   };
 

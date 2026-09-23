@@ -17,7 +17,7 @@ import socket from '../../socket';
 import { useAuth } from '../../Context/AuthContext';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const Navbar = () => {
   const location = useLocation();
@@ -33,19 +33,10 @@ const Navbar = () => {
   const fetchCompanyDetails = useCallback(async (id) => {
     if (!id) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/api/company/${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // You might need an Authorization header here if this route is protected
-          // 'Authorization': `Bearer ${yourAuthToken}`,
-        },
-      });
-      const data = await response.json();
-      console.log(data);
+      const data = await authApi.fetchCompanyById(id);
+
       if (data.success) {
         setCompanyDetails(data.company);
-        console.log('Fetched company details from API:', data.company);
       } else {
         console.error('Failed to fetch company details:', data.message);
       }

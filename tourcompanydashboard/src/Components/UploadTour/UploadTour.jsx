@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UploadTour.css'; // Import the CSS file for styling
 import { useAuth } from '../../Context/AuthContext';
-import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
 
 const UploadTour = () => {
   const { company } = useAuth();
@@ -244,22 +244,13 @@ const UploadTour = () => {
     });
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tours`, {
-        method: 'POST',
-        body: formData,
-      });
+      await toursApi.createTour(formData);
 
-      const result = await response.json();
-      if (response.ok) {
-        alert('Tour uploaded successfully');
-        console.log(result);
-        navigate('manage-tours'); // Redirect to manage tours page
-      } else {
-        alert(`Failed to upload tour: ${result.error}`);
-      }
+      alert('Tour uploaded successfully');
+      navigate('manage-tours'); // Redirect to manage tours page
     } catch (error) {
       console.error('Error uploading tour:', error);
-      alert('An error occurred while uploading the tour');
+      alert(`Failed to upload tour: ${error.message}`);
     }
   };
 

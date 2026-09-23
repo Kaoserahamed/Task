@@ -4,6 +4,7 @@ import './AllBookingsList.css';
 import socket from '../../socket';
 import { useTours } from '../../Context/ToursContext';
 import API_BASE_URL from '../../config/api';
+import * as bookingsApi from '../../api/bookings';
 
 const AllBookingsList = () => {
   const { tours, loading, error, fetchToursWithBookings } = useTours();
@@ -18,21 +19,19 @@ const AllBookingsList = () => {
       return;
     }
     setStatsLoading(true);
-    const token = localStorage.getItem('company-token');
     try {
       const toursStats = await Promise.all(
         tours.map(async (tour) => {
           // Fetch bookings for this tour
-          const res = await fetch(`${API_BASE_URL}/api/bookings/tour/${tour._id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await res.json();
-          const bookings = data.success ? data.bookings : [];
-          const bookingCount = bookings.length;
-          const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
-          return { ...tour, bookingCount, totalRevenue, bookings };
+          try {
+            const data = await bookingsApi.fetchBookingsForTour(tour._id);
+            const bookings = data.success ? data.bookings : [];
+            const bookingCount = bookings.length;
+            const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+            return { ...tour, bookingCount, totalRevenue, bookings };
+          } catch {
+            return { ...tour, bookingCount: 0, totalRevenue: 0, bookings: [] };
+          }
         })
       );
       setToursWithStats(toursStats);
@@ -82,13 +81,7 @@ const AllBookingsList = () => {
 
   const fetchAllBookings = async () => {
     try {
-      const token = localStorage.getItem('company-token');
-      const response = await fetch(`${API_BASE_URL}/api/bookings/admin/all`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
+      const data = await bookingsApi.fetchAllBookings();
       if (data.success) {
         setAllBookings(data.bookings);
       }

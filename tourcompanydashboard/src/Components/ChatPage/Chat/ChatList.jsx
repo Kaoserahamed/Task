@@ -2,7 +2,8 @@ import React from 'react';
 import './ChatList.css';
 import avatar from '../../Assets/chat_avatar.png';
 import { useState, useEffect } from 'react';
-import API_BASE_URL from '../../../config/api';
+import * as chatApi from '../../../api/chat';
+import * as usersApi from '../../../api/users';
 
 const ChatList = ({
   chatType,
@@ -22,25 +23,13 @@ const ChatList = ({
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   console.log(username);
-  let response, responseData;
   const fetchChats = async () => {
     setIsloading(true);
     try {
-      console.log('useEffect triggered. Token:', token, 'Company ID:', companyId);
-      const authtoken = localStorage.getItem('company-token');
-      console.log('token', authtoken);
       if (!token) {
         throw new Error('No token found');
       }
-      console.log(token);
-      response = await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'comuse'}`, {
-        method: 'GET',
-      });
-      responseData = await response.json();
-      console.log(responseData);
-      if (!response.ok) {
-        throw new Error('Failed to fetch chats');
-      }
+      const responseData = await chatApi.fetchChats(companyId, 'comuse');
       setChats(responseData || []);
     } catch (error) {
       console.error('Error fetching chats:', error);
@@ -84,16 +73,7 @@ const ChatList = ({
 
     setIsSearching(true);
     try {
-      const authtoken = localStorage.getItem('company-token');
-      const response = await fetch(
-        `${API_BASE_URL}/user/auth/search?query=${encodeURIComponent(query)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await usersApi.searchUsers(query);
       if (data.success) {
         setSearchResults(data.users || []);
       } else {

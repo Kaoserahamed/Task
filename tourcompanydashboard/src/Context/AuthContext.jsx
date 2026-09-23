@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import API_BASE_URL from '../config/api';
+import * as authApi from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -27,23 +27,8 @@ export const AuthProvider = ({ children }) => {
   const updateCompany = async (updatedData) => {
     try {
       setLoading(true);
-      // Get the current token
-      const token = localStorage.getItem('company-token');
 
-      // Make API call to update user data
-      const response = await fetch(`${API_BASE_URL}/company/auth/update-info`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update user');
-      }
-      const updatedUser = await response.json();
+      const updatedUser = await authApi.updateCompanyInfo(updatedData);
       // Merge updated company info into local state
       const newUserData = { ...company, company: { ...company.company, ...updatedUser.company } };
       localStorage.setItem('company', JSON.stringify(newUserData));

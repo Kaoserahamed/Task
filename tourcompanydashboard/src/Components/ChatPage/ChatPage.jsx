@@ -4,7 +4,7 @@ import ChatWindow from './Chat/ChatWindow';
 import { useAuth } from '../../Context/AuthContext';
 import socket from '../../socket';
 import './ChatPage.css';
-import API_BASE_URL from '../../config/api';
+import * as chatApi from '../../api/chat';
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1';
 const ChatPage = () => {
   const [chatType, setChatType] = useState('comuse'); // 'companies' or 'admin'
@@ -22,31 +22,13 @@ const ChatPage = () => {
   const companyId = company?.company?._id;
   const companyname = company?.company?.name;
   const username = company?.company?.userName;
-  console.log(companyId, ' + ', companyname);
-  console.log('token is ', company.token);
-  let response, responseData;
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        console.log('useEffect triggered. Token:', company.token, 'Company ID:', companyId);
-        const authtoken = localStorage.getItem('company-token');
-        console.log('token', authtoken);
-        if (!authtoken) {
+        if (!company?.token) {
           throw new Error('No token found');
         }
-        console.log(authtoken);
-        response = await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'adcom'}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authtoken}`,
-          },
-        });
-        responseData = await response.json();
-        console.log(responseData);
-        if (!response.ok) {
-          throw new Error('Failed to fetch chats');
-        }
+        const responseData = await chatApi.fetchChats(companyId, 'adcom');
         setChats(responseData || []);
       } catch (error) {
         console.error('Error fetching chats:', error);
@@ -57,12 +39,10 @@ const ChatPage = () => {
       fetchChats();
     }
   }, [companyId]);
-  console.log('finally ok:  ' + chats);
   // Admin chat data
   let adminChat;
   if (chats.length > 0) {
     adminChat = chats[0];
-    console.log(adminChat);
   } else {
     adminChat = {
       _id: null,

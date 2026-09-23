@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import API_BASE_URL from '../config/api';
+import * as toursApi from '../api/tours';
+import * as bookingsApi from '../api/bookings';
 
 const ToursContext = createContext(null); // Initialize with null
 
@@ -10,13 +11,6 @@ export const ToursProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const { company, authLoading } = useAuth(); // <-- get authLoading
 
-  useEffect(() => {
-    if (company) {
-      console.log('Current logged in company:', company);
-      console.log('Company ID:', company._id);
-    }
-  }, [company]);
-
   const fetchcompanyTours = useCallback(async () => {
     try {
       setLoading(true);
@@ -24,10 +18,7 @@ export const ToursProvider = ({ children }) => {
         throw new Error('No company logged in');
       }
       const companyId = company.company._id;
-      console.log('Fetching tours for company ID:', companyId);
-      const response = await fetch(`${API_BASE_URL}/api/companytours/${companyId}`);
-      const data = await response.json();
-      console.log(response);
+      const data = await toursApi.fetchCompanyTours(companyId);
       if (data.success) {
         setTours(data.tours);
       } else {
@@ -44,8 +35,7 @@ export const ToursProvider = ({ children }) => {
   const fetchTours = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/tours`);
-      const data = await response.json();
+      const data = await toursApi.fetchTours();
 
       if (data.success) {
         setTours(data.tours);
@@ -65,19 +55,18 @@ export const ToursProvider = ({ children }) => {
       setLoading(true);
       if (!company) throw new Error('No company logged in');
       const companyId = company.company._id;
-      const response = await fetch(`${API_BASE_URL}/api/companytours/${companyId}`);
-      const data = await response.json();
+      const data = await toursApi.fetchCompanyTours(companyId);
       if (!data.success) throw new Error(data.error);
 
-      const token = localStorage.getItem('company-token');
       const toursWithBookings = await Promise.all(
         data.tours.map(async (tour) => {
-          const res = await fetch(`${API_BASE_URL}/api/bookings/tour/${tour._id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const bookingsData = await res.json();
-          const bookings = bookingsData.success ? bookingsData.bookings : [];
-          return { ...tour, bookings };
+          try {
+            const bookingsData = await bookingsApi.fetchBookingsForTour(tour._id);
+            const bookings = bookingsData.success ? bookingsData.bookings : [];
+            return { ...tour, bookings };
+          } catch {
+            return { ...tour, bookings: [] };
+          }
         })
       );
       setTours(toursWithBookings);
@@ -91,10 +80,7 @@ export const ToursProvider = ({ children }) => {
 
   const deleteTour = async (tourId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`, {
-        method: 'DELETE',
-      });
-      const data = await response.json();
+      const data = await toursApi.deleteTour(tourId);
 
       if (data.success) {
         setTours(tours.filter((tour) => tour._id !== tourId));
@@ -110,14 +96,7 @@ export const ToursProvider = ({ children }) => {
 
   const updateTourStatus = async (tourId, status) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status }),
-      });
-      const data = await response.json();
+      const data = await toursApi.updateTourStatus(tourId, status);
 
       if (data.success) {
         setTours(tours.map((tour) => (tour._id === tourId ? { ...tour, status: status } : tour)));

@@ -3,7 +3,7 @@ import { useAuth } from '../../Context/AuthContext';
 import socket from '../../socket';
 import jsPDF from 'jspdf';
 import './License.css';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const emptySocialLinks = {
   facebook: '',
@@ -57,8 +57,7 @@ const License = () => {
     // Always fetch the latest company info on mount
     const fetchCompany = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
-        const data = await res.json();
+        const data = await authApi.fetchCompanyRegistrations();
         // Find this company by id
         const myCompany = (data.companies || []).find((c) => c._id === company?.company?._id);
         if (myCompany) {
@@ -79,8 +78,7 @@ const License = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
-        const data = await res.json();
+        const data = await authApi.fetchCompanyRegistrations();
         const myCompany = (data.companies || []).find((c) => c._id === company?.company?._id);
         if (myCompany) {
           if (myCompany.verificationStatus === 'pending') setStatus('Pending');
@@ -163,16 +161,7 @@ const License = () => {
     setPasswordError('');
     try {
       // Verify password before saving
-      const token = localStorage.getItem('company-token');
-      const res = await fetch(`${API_BASE_URL}/company/auth/verify-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ password }),
-      });
-      const data = await res.json();
+      const data = await authApi.verifyPassword(password);
       if (!data.success) {
         setPasswordError(data.message || 'Incorrect password');
         setLoading(false);

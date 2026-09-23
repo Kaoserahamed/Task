@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ChatWindow.css';
 import avatar from '../../Assets/chat_avatar.png';
 import { useAuth } from '../../../Context/AuthContext';
-import API_BASE_URL from '../../../config/api';
+import * as chatApi from '../../../api/chat';
 
 const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => {
   const [newMessage, setNewMessage] = useState('');
@@ -17,7 +17,6 @@ const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  console.log(selectedChat);
   useEffect(() => {
     scrollToBottom();
   }, [messages?.length]);
@@ -83,24 +82,16 @@ const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => 
     if (!newMessage.trim() || !selectedChat) return;
 
     try {
-      const authtoken = localStorage.getItem('company-token');
-      const response = await fetch(`${API_BASE_URL}/api/chat/send-message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authtoken}`,
-        },
-        body: JSON.stringify({
-          chatId: selectedChat._id,
-          content: newMessage,
-          userId: selectedChat.userId,
-          adminId: selectedChat.adminId,
-          companyName: selectedChat.companyName,
-          userName: selectedChat.userName || null,
-          chatType: chatType,
-          companyId: selectedChat.companyId || null,
-          senderId: companyId,
-        }),
+      await chatApi.sendMessage({
+        chatId: selectedChat._id,
+        content: newMessage,
+        userId: selectedChat.userId,
+        adminId: selectedChat.adminId,
+        companyName: selectedChat.companyName,
+        userName: selectedChat.userName || null,
+        chatType: chatType,
+        companyId: selectedChat.companyId || null,
+        senderId: companyId,
       });
     } catch (error) {
       console.error('Error sending message:', error);

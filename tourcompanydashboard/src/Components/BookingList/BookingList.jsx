@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './BookingList.css';
 import socket from '../../socket';
-import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as bookingsApi from '../../api/bookings';
 const BookingList = () => {
   const { tourId } = useParams(); // Get tourId from URL parameters
   const navigate = useNavigate();
@@ -14,7 +15,6 @@ const BookingList = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log('TourId from params:', tourId); // Debug log
     if (tourId && tourId !== 'undefined') {
       fetchTourBookings();
       fetchTourInfo();
@@ -26,14 +26,8 @@ const BookingList = () => {
 
   const fetchTourInfo = async () => {
     try {
-      const token = localStorage.getItem('company-token');
-      const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const data = await toursApi.fetchTour(tourId);
 
-      const data = await response.json();
       if (data.success) {
         setTourInfo(data.tour);
       }
@@ -47,17 +41,10 @@ const BookingList = () => {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem('company-token');
-      const response = await fetch(
-        `${API_BASE_URL}/api/bookings/tour/${tourId}?page=${currentPage}&limit=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
+      const data = await bookingsApi.fetchBookingsForTour(tourId, {
+        page: currentPage,
+        limit: 10,
+      });
 
       if (data.success) {
         setBookings(data.bookings);
