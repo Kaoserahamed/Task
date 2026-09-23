@@ -57,7 +57,6 @@ const License = () => {
     // Always fetch the latest company info on mount
     const fetchCompany = async () => {
       try {
-        const token = localStorage.getItem('company-token');
         const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
         const data = await res.json();
         // Find this company by id
@@ -74,8 +73,7 @@ const License = () => {
       }
     };
     fetchCompany();
-    // eslint-disable-next-line
-  }, []);
+  }, [company?.company?._id]);
 
   // On mount, fetch initial status from DB
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../Context/AuthContext';
-import { useNavigate } from 'react-router-dom'; // Corrected import
+import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config/api';
 
 const BookingCard = ({
