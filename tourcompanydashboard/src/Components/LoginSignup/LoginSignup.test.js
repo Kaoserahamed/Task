@@ -8,17 +8,11 @@ jest.mock('../../api/auth', () => ({
   register: jest.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => jest.fn(),
-  useLocation: () => ({ state: {} }),
-}));
-
 jest.mock('../../Context/AuthContext', () => ({
   useAuth: () => ({ login: jest.fn() }),
 }));
 
-test('renders login form with demo credentials button', () => {
+test('renders the company login form', () => {
   render(
     <MemoryRouter>
       <LoginSignup />
@@ -26,7 +20,6 @@ test('renders login form with demo credentials button', () => {
   );
   expect(screen.getByText(/Welcome Back!/i)).toBeInTheDocument();
   expect(screen.getByText(/Fill Demo Credentials/i)).toBeInTheDocument();
-  expect(screen.getByText(/Try Demo Account/i)).toBeInTheDocument();
 });
 
 test('switches to register mode and collects name plus password confirmation', () => {
@@ -44,7 +37,7 @@ test('switches to register mode and collects name plus password confirmation', (
 });
 
 test('submits registration details to the api layer', async () => {
-  authApi.register.mockResolvedValue({ token: 'jwt', user: { email: 'ada@example.com' } });
+  authApi.register.mockResolvedValue({ token: 'jwt', company: { name: 'Contoso' } });
 
   render(
     <MemoryRouter>
@@ -54,10 +47,10 @@ test('submits registration details to the api layer', async () => {
 
   fireEvent.click(screen.getByRole('button', { name: 'Sign Up' }));
   fireEvent.change(screen.getByPlaceholderText('Enter your name'), {
-    target: { value: 'Ada Lovelace' },
+    target: { value: 'Contoso Tours' },
   });
   fireEvent.change(screen.getByPlaceholderText('Enter your email'), {
-    target: { value: 'ada@example.com' },
+    target: { value: 'ops@contoso.com' },
   });
   fireEvent.change(screen.getByPlaceholderText('Enter your password'), {
     target: { value: 'secret-123' },
@@ -67,8 +60,8 @@ test('submits registration details to the api layer', async () => {
 
   await waitFor(() =>
     expect(authApi.register).toHaveBeenCalledWith({
-      name: 'Ada Lovelace',
-      email: 'ada@example.com',
+      name: 'Contoso Tours',
+      email: 'ops@contoso.com',
       password: 'secret-123',
     })
   );
