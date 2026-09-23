@@ -1,174 +1,119 @@
-name: Continuous Integration
+﻿name: Continuous Integration
+
+# CI gates the monorepo on:
+#   - lint (errors fail) everywhere
+#   - unit tests + coverage artifact (backend)
+#   - production build (React apps)
+#
+# The `verify` script in the root package.json mirrors these jobs locally:
+#   npm run verify   (lint + format:check + test across all packages)
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
 
 jobs:
-  test-backend:
+  # ---------------------------------------------------------------------------
+  # Backend: lint
+  # ---------------------------------------------------------------------------
+  lint-backend:
+    name: Lint - backend
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install dependencies
+        run: npm ci --prefix backend
+      - name: Lint backend
+        run: npm run lint --prefix backend
 
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: npm ci
-
-      - name: Run backend tests
-        working-directory: ./backend
-        env:
-          JWT_SECRET: test-secret
-        run: npm test
-
-  test-frontend:
+  # ---------------------------------------------------------------------------
+  # Backend: tests + coverage
+  # ---------------------------------------------------------------------------
+  backend-tests:
+    name: Test - backend
     runs-on: ubuntu-latest
-
+    env:
+      CI: true
+      JWT_SECRET: test-secret
+      # mongodb-memory-server downloads its own mongod binary on Linux.
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install dependencies
+        run: npm ci --prefix backend
+      - name: Run tests with coverage
+        run: npm run test:coverage --prefix backend
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage/
+          if-no-files-found: warn
 
-      - name: Install frontend dependencies
-        working-directory: ./frontend
-        run: npm ci
-
-      - name: Run frontend tests
-        working-directory: ./frontend
-        env:
-          CI: 'true'
-          REACT_APP_DEMO_USER_PASSWORD: demo-user-password
-        run: npm test -- --watchAll=false
-
-  build-frontend:
+  # ---------------------------------------------------------------------------
+  # Web apps (frontend, admin, tourcompanydashboard): lint + test + build
+  # ---------------------------------------------------------------------------
+  web:
+    name: ${{ matrix.app }} - lint/test/build
     runs-on: ubuntu-latest
-    needs: test-frontend
-
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - frontend
+          - admin
+          - tourcompanydashboard
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Install frontend dependencies
-        working-directory: ./frontend
-        run: npm ci
-
-      - name: Build frontend
-        working-directory: ./frontend
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+      - name: Install dependencies
+        run: npm ci --prefix ${{ matrix.app }}
+      - name: Lint
+        run: npm run lint --prefix ${{ matrix.app }}
+      - name: Test
+        run: npm run test:ci --prefix ${{ matrix.app }}
+      - name: Build
+        run: npm run build --prefix ${{ matrix.app }}
         env:
+          CI: true
           REACT_APP_API_URL: http://localhost:4000
-        run: npm run build
 
-  test-admin:
+  # ---------------------------------------------------------------------------
+  # Backend: TypeScript typecheck
+  # ---------------------------------------------------------------------------
+  typecheck-backend:
+    name: Typecheck - backend
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Install admin dependencies
-        working-directory: ./admin
-        run: npm ci
-
-      - name: Run admin tests
-        working-directory: ./admin
-        env:
-          CI: 'true'
-          REACT_APP_DEMO_ADMIN_PASSWORD: demo-admin-password
-        run: npm test -- --watchAll=false
-
-  build-admin:
-    runs-on: ubuntu-latest
-    needs: test-admin
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install admin dependencies
-        working-directory: ./admin
-        run: npm ci
-
-      - name: Build admin
-        working-directory: ./admin
-        env:
-          REACT_APP_API_URL: http://localhost:4000
-        run: npm run build
-
-  test-company:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install company dashboard dependencies
-        working-directory: ./tourcompanydashboard
-        run: npm ci
-
-      - name: Run company dashboard tests
-        working-directory: ./tourcompanydashboard
-        env:
-          CI: 'true'
-          REACT_APP_DEMO_COMPANY_PASSWORD: demo-company-password
-        run: npm test -- --watchAll=false
-
-  build-company:
-    runs-on: ubuntu-latest
-    needs: test-company
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install company dashboard dependencies
-        working-directory: ./tourcompanydashboard
-        run: npm ci
-
-      - name: Build company dashboard
-        working-directory: ./tourcompanydashboard
-        env:
-          REACT_APP_API_URL: http://localhost:4000
-        run: npm run build
-
-
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install dependencies
+        run: npm ci --prefix backend
+      - name: TypeScript typecheck
+        run: npm run typecheck --prefix backend
