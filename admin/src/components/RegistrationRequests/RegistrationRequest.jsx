@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './RegistrationRequest.css';
 import socket from '../../socket';
-import API_BASE_URL from '../../config/api';
+import * as companiesApi from '../../api/companies';
 
 const emptySocialLinks = {
   facebook: '',
@@ -27,8 +27,7 @@ const RegistrationRequest = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
-        const data = await res.json();
+        const data = await companiesApi.fetchCompanyRegistrations();
         const found = (data.companies || []).find((c) => c._id === id);
         setCompany(found || null);
         if (!found) setError('Company not found.');
@@ -46,19 +45,12 @@ const RegistrationRequest = () => {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`${API_BASE_URL}/company/auth/update-status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          companyId: company._id,
-          verificationStatus: status,
-          isVerified: status === 'approved',
-        }),
+      const data = await companiesApi.updateCompanyStatus({
+        companyId: company._id,
+        verificationStatus: status,
+        isVerified: status === 'approved',
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.message || 'Failed to update status');
+      if (!data.success) throw new Error(data.message || 'Failed to update status');
       setSuccess(`Company ${status === 'approved' ? 'approved' : 'declined'} successfully.`);
       setCompany(data.company);
       // Emit socket event to the company with status and isVerified

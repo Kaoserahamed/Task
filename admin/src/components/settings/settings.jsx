@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './settings.css';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const Settings = () => {
   const { user, login } = useAuth();
@@ -33,10 +33,7 @@ const Settings = () => {
     async function fetchProfile() {
       setProfileLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/profile`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('admin-token')}` },
-        });
-        const data = await res.json();
+        const data = await authApi.fetchProfile();
         if (data.success && data.profile) {
           setFormData((prev) => ({
             ...prev,
@@ -79,24 +76,16 @@ const Settings = () => {
       return;
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/api/admin/profile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          address: formData.address,
-          nid: formData.nid,
-          image: formData.image,
-          tradeLicenseNo: formData.tradeLicenseNo,
-          bankAccountNo: formData.bankAccountNo,
-          password: profilePassword,
-        }),
+      const data = await authApi.updateProfile({
+        name: formData.name,
+        phone: formData.phone,
+        address: formData.address,
+        nid: formData.nid,
+        image: formData.image,
+        tradeLicenseNo: formData.tradeLicenseNo,
+        bankAccountNo: formData.bankAccountNo,
+        password: profilePassword,
       });
-      const data = await res.json();
       if (data.success) {
         setMessage({ type: 'success', text: 'Profile updated successfully' });
         setProfileEdit(false);
@@ -105,7 +94,10 @@ const Settings = () => {
         setMessage({ type: 'error', text: data.message || 'Failed to update profile' });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'An error occurred while updating profile' });
+      setMessage({
+        type: 'error',
+        text: error.message || 'An error occurred while updating profile',
+      });
     } finally {
       setProfileLoading(false);
     }
@@ -138,55 +130,29 @@ const Settings = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/change-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
-        },
-        body: JSON.stringify({
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword,
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'Password updated successfully' });
-        setFormData((prev) => ({
-          ...prev,
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        }));
-      } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to update password' });
-      }
+      await authApi.changePassword(formData.currentPassword, formData.newPassword);
+      setMessage({ type: 'success', text: 'Password updated successfully' });
+      setFormData((prev) => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      }));
     } catch (error) {
-      setMessage({ type: 'error', text: 'An error occurred while updating password' });
+      setMessage({ type: 'error', text: error.message || 'Failed to update password' });
     }
   };
 
   const handleNotificationSettings = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/update-notifications`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
-        },
-        body: JSON.stringify(formData.notificationSettings),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'Notification settings updated successfully' });
-      } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to update notification settings' });
-      }
+      await authApi.updateNotificationSettings(formData.notificationSettings);
+      setMessage({ type: 'success', text: 'Notification settings updated successfully' });
     } catch (error) {
-      setMessage({ type: 'error', text: 'An error occurred while updating notification settings' });
+      setMessage({
+        type: 'error',
+        text: error.message || 'Failed to update notification settings',
+      });
     }
   };
 

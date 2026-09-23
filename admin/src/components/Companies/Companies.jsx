@@ -12,7 +12,7 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './Companies.css';
-import API_BASE_URL from '../../config/api';
+import * as companiesApi from '../../api/companies';
 
 const Companies = () => {
   const [companies, setCompanies] = useState([]);
@@ -29,13 +29,7 @@ const Companies = () => {
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('admin-token');
-      const response = await fetch(`${API_BASE_URL}/api/companies`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
+      const data = await companiesApi.fetchCompanies();
 
       if (data.success) {
         setCompanies(data.companies);

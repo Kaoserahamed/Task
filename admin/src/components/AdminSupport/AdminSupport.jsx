@@ -3,7 +3,7 @@ import './AdminSupport.css';
 import avatar from '../Assets/chat_avatar.png'; // Use a default avatar if needed
 import { useAuth } from '../../context/AuthContext';
 import socket from '../../socket';
-import API_BASE_URL from '../../config/api';
+import * as chatApi from '../../api/chat';
 
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; // Valid 24-character hex string
 
@@ -23,12 +23,7 @@ const AdminSupport = () => {
 
   const fetchUserChats = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/get-all-admin-chats?query=aduse`);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error('Failed to fetch user chats');
-      }
-      console.log('User chats:', data);
+      const data = await chatApi.fetchAdminChats('aduse');
       setUserChats(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching user chats:', error);
@@ -38,12 +33,7 @@ const AdminSupport = () => {
 
   const fetchCompanyChats = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat/get-all-admin-chats?query=adcom`);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error('Failed to fetch company chats');
-      }
-      console.log('Company chats:', data);
+      const data = await chatApi.fetchAdminChats('adcom');
       setCompanyChats(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching company chats:', error);
@@ -147,30 +137,20 @@ const AdminSupport = () => {
     if (!newMessage.trim() || !activeChat) return;
 
     try {
-      const authtoken = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/chat/send-message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authtoken}`,
-        },
-        body: JSON.stringify({
-          chatId: activeChat._id,
-          content: newMessage,
-          userId: activeChat.userId || null,
-          adminId: DEFAULT_ADMIN_ID,
-          companyId: activeChat.companyId || null,
-          companyName: activeChat.companyName || null,
-          userName: activeChat.userName || null,
-          chatType: filter === 'users' ? 'aduse' : 'adcom',
-          senderId: DEFAULT_ADMIN_ID,
-        }),
+      await chatApi.sendMessage({
+        chatId: activeChat._id,
+        content: newMessage,
+        userId: activeChat.userId || null,
+        adminId: DEFAULT_ADMIN_ID,
+        companyId: activeChat.companyId || null,
+        companyName: activeChat.companyName || null,
+        userName: activeChat.userName || null,
+        chatType: filter === 'users' ? 'aduse' : 'adcom',
+        senderId: DEFAULT_ADMIN_ID,
       });
 
-      if (response.ok) {
-        setNewMessage('');
-        // Socket event will handle the state update and auto-scrolling
-      }
+      setNewMessage('');
+      // Socket event will handle the state update and auto-scrolling
     } catch (error) {
       console.error('Error sending message:', error);
     }

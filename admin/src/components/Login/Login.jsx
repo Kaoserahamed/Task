@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const DEMO_ADMIN_EMAIL = process.env.REACT_APP_DEMO_ADMIN_EMAIL || '';
 const DEMO_ADMIN_PASSWORD = process.env.REACT_APP_DEMO_ADMIN_PASSWORD || '';
@@ -24,20 +24,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        login(data); // data contains { token, user }
-        navigate('/');
-      } else {
-        setError(data.error);
-      }
+      const data = await authApi.login(email, password);
+      login(data); // data contains { token, user }
+      navigate('/');
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError(err.message || 'An error occurred. Please try again.');
     }
   };
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
-import axios from 'axios';
-import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
 
 const PendingTours = ({ id, name, applicant, date, status, price }) => {
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -10,12 +9,9 @@ const PendingTours = ({ id, name, applicant, date, status, price }) => {
   const handleStatusUpdate = async (newStatus) => {
     try {
       setIsLoading(true);
-      console.log('key', id);
-      const response = await axios.patch(`${API_BASE_URL}/api/tours/${id}/status`, {
-        status: newStatus,
-      });
+      const data = await toursApi.updateTourStatus(id, { status: newStatus });
 
-      if (response.data.success) {
+      if (data.success) {
         setCurrentStatus(newStatus);
       }
     } catch (error) {

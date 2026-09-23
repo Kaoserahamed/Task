@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import './TourMonitoring.css';
 import PackageInfo from '../TourDetails/PackageInfo';
 import PackageGallery from '../TourDetails/PackageGallery';
-import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as bookingsApi from '../../api/bookings';
 
 const TourMonitoring = () => {
   const [tours, setTours] = useState([]);
@@ -22,8 +22,8 @@ const TourMonitoring = () => {
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/tours`);
-        const fetchedTours = Array.isArray(res.data) ? res.data : res.data.tours;
+        const data = await toursApi.fetchTours();
+        const fetchedTours = Array.isArray(data) ? data : data.tours;
         setTours(fetchedTours || []);
       } catch (err) {
         console.error('Failed to fetch tours:', err);
@@ -45,13 +45,13 @@ const TourMonitoring = () => {
       } else {
         // Fetch from API if not found
         setModalLoading(true);
-        axios
-          .get(`${API_BASE_URL}/api/tours/${selectedTourId}`)
-          .then((res) => {
-            setSelectedTour(res.data.tour || res.data);
+        toursApi
+          .fetchTour(selectedTourId)
+          .then((data) => {
+            setSelectedTour(data.tour || data);
             setGalleryActiveImage(0);
           })
-          .catch((err) => {
+          .catch(() => {
             setSelectedTour(null);
           })
           .finally(() => setModalLoading(false));
@@ -67,8 +67,8 @@ const TourMonitoring = () => {
       const revenues = {};
       for (const tour of tours) {
         try {
-          const res = await axios.get(`${API_BASE_URL}/api/bookings/tour/${tour._id}`);
-          const bookings = res.data.bookings || [];
+          const data = await bookingsApi.fetchBookingsForTour(tour._id);
+          const bookings = data.bookings || [];
           revenues[tour._id] = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0) * 0.1;
         } catch (e) {
           revenues[tour._id] = 0;
@@ -81,11 +81,10 @@ const TourMonitoring = () => {
 
   const handleStatusChange = async (id, newStatus, review) => {
     try {
-      await axios.patch(`${API_BASE_URL}/api/tours/${id}/status`, {
+      await toursApi.updateTourStatus(id, {
         status: newStatus,
         review: review,
       });
-      console.log(review);
       setTours(
         tours.map((tour) =>
           tour._id === id ? { ...tour, status: newStatus, review: review } : tour

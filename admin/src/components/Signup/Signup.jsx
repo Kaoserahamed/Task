@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Signup.css';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const Signup = () => {
   const { login } = useAuth();
@@ -18,20 +18,11 @@ const Signup = () => {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        login(data); // Update context with user data including token
-        window.location.href = '/';
-      } else {
-        setError(data.error);
-      }
+      const data = await authApi.signup(email, password);
+      login(data); // Update context with user data including token
+      window.location.href = '/';
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError(err.message || 'An error occurred. Please try again.');
     }
   };
 

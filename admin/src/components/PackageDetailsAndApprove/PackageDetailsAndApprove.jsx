@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './PackageDetailsAndApprove.css';
 import socket from '../../socket';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
 
 const PackageDetailsAndApprove = () => {
   const { id } = useParams();
@@ -12,8 +13,7 @@ const PackageDetailsAndApprove = () => {
 
   useEffect(() => {
     async function fetchTour() {
-      const res = await fetch(`${API_BASE_URL}/api/tours/${id}`);
-      const data = await res.json();
+      const data = await toursApi.fetchTour(id);
       if (data.success) setTour(data.tour);
       setLoading(false);
     }
@@ -21,11 +21,7 @@ const PackageDetailsAndApprove = () => {
   }, [id]);
 
   const handleApprove = async () => {
-    await fetch(`${API_BASE_URL}/api/tours/${id}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'approved' }),
-    });
+    await toursApi.updateTourStatus(id, { status: 'approved' });
     // Emit socket event
     socket.emit('tour_status_update', {
       tourId: id,
@@ -34,17 +30,12 @@ const PackageDetailsAndApprove = () => {
       tourName: tour.name,
       timestamp: new Date(),
     });
-    console.log('Emited from admin, approved');
     navigate('/');
   };
 
   const handleReject = async () => {
     const review = window.prompt('Enter a reason for rejection (optional):', '');
-    await fetch(`${API_BASE_URL}/api/tours/${id}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'rejected', review }),
-    });
+    await toursApi.updateTourStatus(id, { status: 'rejected', review });
     // Emit socket event
     socket.emit('tour_status_update', {
       tourId: id,
@@ -54,7 +45,6 @@ const PackageDetailsAndApprove = () => {
       tourName: tour.name,
       timestamp: new Date(),
     });
-    console.log('Emited from admin, rejected');
     navigate('/');
   };
 
