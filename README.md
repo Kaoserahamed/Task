@@ -5,25 +5,30 @@ A comprehensive multi-tenant tour booking and management platform enabling custo
 ## Live Demo
 
 ### Production URLs
+
 - **Frontend (Customer)**: https://frontend-kaoser614-7344s-projects.vercel.app
 - **Admin Dashboard**: https://admin-zeta-swart-18.vercel.app
 - **Company Dashboard**: https://tourcompany-zeta.vercel.app
 - **Backend API**: https://backend-kaoser614-7344s-projects.vercel.app
 
 ### Demo Accounts
+
 Test the system with these pre-configured accounts. Seed them locally with
 `node backend/scripts/seedDemoAccounts.js` after setting `DEMO_*_PASSWORD`
 values in `backend/.env` (see `backend/.env.example`):
 
 **Customer Account**
+
 - Email: `user@demo.com`
 - Password: value of `DEMO_USER_PASSWORD`
 
 **Admin Account**
+
 - Email: `admin@demo.com`
 - Password: value of `DEMO_ADMIN_PASSWORD`
 
 **Company Account**
+
 - Email: `company@demo.com`
 - Password: value of `DEMO_COMPANY_PASSWORD`
 
@@ -31,10 +36,10 @@ values in `backend/.env` (see `backend/.env.example`):
 
 <img width="1917" height="867" alt="Screenshot 2026-09-08 100815" src="https://github.com/user-attachments/assets/ac3e23c4-fbf5-4475-b0a7-9f3c1341e43a" />
 
-
 ## Key Features
 
 **For Customers**
+
 - Browse tours with filtering and search capabilities
 - Make bookings with real-time availability checking
 - Save favorite tours to wishlist
@@ -45,6 +50,7 @@ values in `backend/.env` (see `backend/.env.example`):
 - Account management and booking history
 
 **For Tour Operators/Companies**
+
 - Create and manage tour packages with detailed information
 - Real-time booking management dashboard
 - Communicate with customers through chat
@@ -53,6 +59,7 @@ values in `backend/.env` (see `backend/.env.example`):
 - License and registration management
 
 **For Administrators**
+
 - Approve/reject tour submissions from companies
 - Manage user accounts and registrations
 - Monitor system-wide analytics and reports
@@ -63,6 +70,7 @@ values in `backend/.env` (see `backend/.env.example`):
 ## Tech Stack
 
 **Backend**
+
 - Node.js + Express.js
 - MongoDB with Mongoose ODM
 - JWT authentication
@@ -72,6 +80,7 @@ values in `backend/.env` (see `backend/.env.example`):
 - Sendinblue for email notifications
 
 **Frontend Applications**
+
 - React 19 with React Router v7
 - Axios for API requests
 - Context API for state management
@@ -80,6 +89,7 @@ values in `backend/.env` (see `backend/.env.example`):
 - Stripe integration for payments
 
 **Infrastructure**
+
 - Vercel for hosting (backend and frontend)
 - MongoDB Atlas for database
 - Cloudinary for media storage and CDN
@@ -161,6 +171,7 @@ docker compose down -v
 ```
 
 The compose file starts:
+
 - **mongo** — MongoDB 7 with a persistent data volume (`mongo_data`) and a health check the backend waits on
 - **backend** — the Express API, pre-wired to `mongodb://mongo:27017/tourmate`
 
@@ -169,12 +180,14 @@ Optional secrets (Cloudinary, Pusher, email, demo passwords) can be provided by 
 ### Local Development Setup
 
 1. **Clone and navigate to project**
+
 ```bash
 git clone <repository-url>
 cd Task
 ```
 
 2. **Install dependencies for all applications**
+
 ```bash
 # Backend
 cd backend && npm install && cd ..
@@ -186,6 +199,7 @@ cd tourcompanydashboard && npm install && cd ..
 ```
 
 3. **Configure environment variables**
+
 ```bash
 cd backend
 cp .env.example .env
@@ -194,6 +208,7 @@ cp .env.example .env
 Edit `backend/.env` with your credentials (see [Environment Configuration](#environment-variables) below).
 
 4. **Start all services in separate terminals**
+
 ```bash
 # Terminal 1: Backend API (port 4000)
 cd backend && npm start
@@ -211,6 +226,7 @@ cd tourcompanydashboard && npm start
 ### Validation
 
 Run the environment validation before deployment:
+
 ```bash
 cd backend && npm run validate-env
 ```
@@ -251,6 +267,7 @@ COMPANY_URL=http://localhost:3002
 ## How the System Works
 
 ### Authentication Flow
+
 1. Users create account with email and password
 2. Backend validates credentials and issues JWT token
 3. Frontend stores token in localStorage
@@ -258,6 +275,7 @@ COMPANY_URL=http://localhost:3002
 5. Password reset via email link with secure tokens
 
 ### Tour Booking Flow
+
 1. Customers browse available tours filtered by category, price, duration
 2. Customer selects tour and books with personal/payment details
 3. System creates booking record and notifies tour operator
@@ -265,18 +283,21 @@ COMPANY_URL=http://localhost:3002
 5. Customer receives confirmation and booking updates via email
 
 ### Real-time Communication
+
 1. Customer and operator initiate chat conversation
 2. Messages transmitted via Socket.IO for instant delivery
 3. System maintains chat history in MongoDB
 4. Notifications sent for new messages and booking updates
 
 ### Tour Recommendations
+
 1. System analyzes booking transaction patterns
 2. Association rule mining identifies destination relationships
 3. When customer selects destination, engine recommends related tours
 4. Weather API provides seasonal tour recommendations
 
 ### Image Management
+
 1. Tour operators upload images via form
 2. Multer middleware processes uploads to Cloudinary
 3. Cloudinary returns optimized image URLs
@@ -287,12 +308,14 @@ COMPANY_URL=http://localhost:3002
 ### Main API Endpoints
 
 **Authentication**
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
 - `POST /api/auth/reset-password` - Reset password
 - `POST /api/auth/new-password` - Set new password
 
 **Tours**
+
 - `GET /api/tours` - Get all tours with filters
 - `GET /api/tours/:id` - Get tour details
 - `POST /api/tours` - Create new tour (company)
@@ -300,24 +323,29 @@ COMPANY_URL=http://localhost:3002
 - `DELETE /api/tours/:id` - Delete tour (company)
 
 **Bookings**
+
 - `POST /api/bookings` - Create booking
 - `GET /api/bookings` - Get user bookings
 - `GET /api/bookings/:id` - Get booking details
 - `PUT /api/bookings/:id/status` - Update booking status
 
 **Chat**
+
 - `GET /api/chat/conversations` - Get user conversations
 - `POST /api/chat/send` - Send message
 - `GET /api/chat/:conversationId/messages` - Get conversation history
 
 **Reviews**
+
 - `POST /api/reviews` - Submit tour review
 - `GET /api/reviews/:tourId` - Get tour reviews
 
 **Weather**
+
 - `GET /api/weather/:destination` - Get weather for destination
 
 **Wishlist**
+
 - `POST /api/wishlist` - Add tour to wishlist
 - `GET /api/wishlist` - Get user wishlist
 - `DELETE /api/wishlist/:tourId` - Remove from wishlist
@@ -327,6 +355,7 @@ COMPANY_URL=http://localhost:3002
 ### Core Models
 
 **User**
+
 ```
 - name, email, password (hashed)
 - avatar URL
@@ -336,6 +365,7 @@ COMPANY_URL=http://localhost:3002
 ```
 
 **Tour**
+
 ```
 - name, description
 - duration (days/nights)
@@ -352,6 +382,7 @@ COMPANY_URL=http://localhost:3002
 ```
 
 **Booking**
+
 ```
 - user/email reference
 - tour reference
@@ -364,6 +395,7 @@ COMPANY_URL=http://localhost:3002
 ```
 
 **Chat**
+
 - participants (user, company, admin)
 - message history with timestamps
 - chat type (admin-company, admin-user, company-user)
@@ -371,6 +403,7 @@ COMPANY_URL=http://localhost:3002
 - last message reference
 
 **Company**
+
 - company name and details
 - license information
 - tours owned
@@ -378,6 +411,7 @@ COMPANY_URL=http://localhost:3002
 - contact information
 
 **Review**
+
 - rating (1-5 stars)
 - review text
 - user reference
@@ -387,6 +421,7 @@ COMPANY_URL=http://localhost:3002
 ## AI/ML Methodology & Results
 
 ### Approach
+
 Uses **Association Rule Mining** to identify patterns in tour booking behaviors:
 
 1. **Data Collection**: Aggregates historical booking transactions
@@ -397,12 +432,14 @@ Uses **Association Rule Mining** to identify patterns in tour booking behaviors:
    - Lift: Strength of association vs random chance
 
 ### Implementation
+
 - Data stored in `tour_association_rules.csv` and transaction files
 - `tourRecommender.js` loads rules and matches user selections
 - Real-time recommendation engine suggests related tours
 - Weather API provides seasonal adjustments
 
 ### Results
+
 - Increased cross-tour bookings through recommendations
 - Personalized suggestion engine based on user preferences
 - Contextual recommendations (e.g., beach tours during summer)
@@ -461,11 +498,13 @@ Deploy using provided scripts:
 ```
 
 Windows users can use:
+
 ```powershell
 .\deploy.ps1
 ```
 
 ### Environment Setup on Vercel
+
 1. Set all environment variables in Vercel project settings
 2. Ensure MongoDB URI is accessible from Vercel servers
 3. Configure Cloudinary credentials in Vercel environment
@@ -486,18 +525,21 @@ Windows users can use:
 ## Development
 
 ### Running Tests
+
 ```bash
 cd backend
 npm test
 ```
 
 ### Development Mode with Auto-reload
+
 ```bash
 cd backend
 npm run dev  # Uses nodemon
 ```
 
 ### Environment Validation
+
 ```bash
 cd backend
 npm run validate-env
@@ -506,6 +548,7 @@ npm run validate-env
 ## Troubleshooting
 
 **Port Already in Use**
+
 ```bash
 # Find and kill process on port 4000
 lsof -i :4000
@@ -513,11 +556,13 @@ kill -9 <PID>
 ```
 
 **MongoDB Connection Issues**
+
 - Verify MongoDB URI in `.env`
 - Check IP whitelisting in MongoDB Atlas
 - Ensure credentials are correct
 
 **Cloudinary Upload Failures**
+
 - Verify Cloudinary credentials
 - Check file size limits
 - Ensure CORS is enabled

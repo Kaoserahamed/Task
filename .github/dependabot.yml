@@ -1,0 +1,59 @@
+version: 2
+updates:
+  # Root tooling (Prettier, ESLint flat-config deps, release scripts)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    target-branch: main
+    groups:
+      root-tooling:
+        patterns:
+          - '*'
+
+  # Backend dependencies
+  - package-ecosystem: npm
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    target-branch: main
+
+  # Frontend dependencies
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    target-branch: main
+
+  # Admin dashboard dependencies
+  - package-ecosystem: npm
+    directory: /admin
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    target-branch: main
+
+  # Tour-company dashboard dependencies
+  - package-ecosystem: npm
+    directory: /tourcompanydashboard
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    target-branch: main
+
+  # GitHub Actions and Docker base images
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    target-branch: main
