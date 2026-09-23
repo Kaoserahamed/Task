@@ -9,11 +9,11 @@ services:
     image: mongo:7
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,7 +27,7 @@ services:
       mongo:
         condition: service_healthy
     ports:
-      - "4000:4000"
+      - '4000:4000'
     environment:
       - NODE_ENV=development
       - PORT=4000
