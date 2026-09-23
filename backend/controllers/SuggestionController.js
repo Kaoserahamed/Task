@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parser'); // Make sure to install with: npm i csv-parser
 const Tours = require('../models/tours');
+
+const logger = require('../utils/logger');
 const rulesPath = path.join(__dirname, '../data/tour_association_rules.csv');
 
 // Helper function to check if a tour is upcoming
@@ -18,12 +20,12 @@ const isTourUpcoming = (startDate) => {
 exports.getSuggestions = async (req, res) => {
   const { tourName } = req.params;
   const suggestions = [];
-  console.log('Searching for suggestions for:', tourName);
+  logger.info('Searching for suggestions for:', tourName);
 
   try {
     // First get all tours to search through
     const allTours = await Tours.find({});
-    console.log('Found', allTours.length, 'tours to search through');
+    logger.info('Found', allTours.length, 'tours to search through');
 
     fs.createReadStream(rulesPath)
       .pipe(csv())
@@ -50,7 +52,7 @@ exports.getSuggestions = async (req, res) => {
             }
           }
         } catch (err) {
-          console.error('Parse error:', err);
+          logger.error('Parse error:', err);
         }
       })
       .on('end', async () => {
@@ -65,19 +67,19 @@ exports.getSuggestions = async (req, res) => {
             tours: s.tours,
           }));
 
-          console.log('Found', sortedSuggestions.length, 'suggestions with upcoming tours');
+          logger.info('Found', sortedSuggestions.length, 'suggestions with upcoming tours');
           res.json(sortedSuggestions);
         } catch (err) {
-          console.error('Error processing suggestions:', err);
+          logger.error('Error processing suggestions:', err);
           res.status(500).json({ error: 'Error processing suggestions' });
         }
       })
       .on('error', (error) => {
-        console.error('Error reading CSV:', error);
+        logger.error('Error reading CSV:', error);
         res.status(500).json({ error: 'Error reading suggestions' });
       });
   } catch (err) {
-    console.error('Error fetching tours:', err);
+    logger.error('Error fetching tours:', err);
     res.status(500).json({ error: 'Error fetching tours' });
   }
 };

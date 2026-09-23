@@ -9,6 +9,8 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 
+const logger = require('../utils/logger');
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -56,7 +58,7 @@ const deleteImage = async (publicId) => {
     const result = await cloudinary.uploader.destroy(publicId);
     return result;
   } catch (error) {
-    console.error('Error deleting image from Cloudinary:', error);
+    logger.error('Error deleting image from Cloudinary:', error);
     throw error;
   }
 };

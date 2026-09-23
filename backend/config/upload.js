@@ -1,16 +1,17 @@
 const config = require('./env');
+const logger = require('../utils/logger');
 
 // Choose upload strategy based on environment
 let upload;
 
 if (config.isVercel || config.nodeEnv === 'production') {
   // Use Cloudinary for production/Vercel
-  console.log('📦 Using Cloudinary for file uploads');
+  logger.info('📦 Using Cloudinary for file uploads');
   const cloudinaryConfig = require('./cloudinary');
   upload = cloudinaryConfig.upload;
 } else {
   // Use local storage for development
-  console.log('📁 Using local storage for file uploads');
+  logger.info('📁 Using local storage for file uploads');
   const multer = require('multer');
   const path = require('path');
 

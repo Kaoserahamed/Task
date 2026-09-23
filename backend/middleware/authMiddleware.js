@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 
+const logger = require('../utils/logger');
+
 const authMiddleware = (req, res, next) => {
   // Get token from headers
 
   const token = req.header('Authorization')?.split(' ')[1];
-  console.log(token);
+  logger.info(token);
 
   if (!token) {
     return res.status(401).json({ message: 'No token, authorization denied' });
@@ -20,7 +22,7 @@ const authMiddleware = (req, res, next) => {
     // Proceed to the next middleware or route handler
     next();
   } catch (err) {
-    console.error('Token verification failed:', err);
+    logger.error('Token verification failed:', err);
     res.status(401).json({ message: 'Token is not valid' });
   }
 };

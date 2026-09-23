@@ -8,6 +8,8 @@ const User = require('../models/User');
 const authMiddleware = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload'); // Assuming you have a multer setup in index.js
 
+const logger = require('../utils/logger');
+
 // Sendinblue API config (Best Practice)
 const defaultClient = sibApiV3Sdk.ApiClient.instance;
 const apiKey = defaultClient.authentications['api-key'];
@@ -55,7 +57,7 @@ router.post('/register', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Register error:', error);
+    logger.error('Register error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -89,7 +91,7 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -116,7 +118,7 @@ router.get('/search', async (req, res) => {
       users,
     });
   } catch (error) {
-    console.error('Search error:', error);
+    logger.error('Search error:', error);
     res.status(500).json({
       success: false,
       message: 'Error searching companies',
@@ -150,15 +152,15 @@ router.put('/update', authMiddleware, async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Update error:', error);
+    logger.error('Update error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 router.post('/avatar', upload.single('avatar'), async (req, res) => {
   try {
-    console.log('Avatar upload request received');
-    console.log('File:', req.file);
-    console.log('Body:', req.body);
+    logger.info('Avatar upload request received');
+    logger.info('File:', req.file);
+    logger.info('Body:', req.body);
 
     if (!req.file) {
       return res.status(400).json({
@@ -178,8 +180,8 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
     // Store the file path (relative to uploads directory)
     const avatarPath = req.file.path.replace(/\\/g, '/');
 
-    console.log('Updating user with email:', email);
-    console.log('Avatar path:', avatarPath);
+    logger.info('Updating user with email:', email);
+    logger.info('Avatar path:', avatarPath);
 
     const user = await User.findOneAndUpdate(
       { email },
@@ -194,7 +196,7 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
       });
     }
 
-    console.log('User updated successfully:', user);
+    logger.info('User updated successfully:', user);
 
     res.json({
       success: true,
@@ -208,7 +210,7 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error uploading avatar:', error);
+    logger.error('Error uploading avatar:', error);
     res.status(500).json({
       success: false,
       message: 'Avatar upload failed.',
@@ -239,7 +241,7 @@ router.get('/me', authMiddleware, async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    logger.error('Error fetching user data:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -267,7 +269,7 @@ router.post('/reset', async (req, res) => {
     user.resetToken = token;
     user.resetTokenExpiration = Date.now() + 3600000; // 1 hour
     await user.save();
-    console.log(user);
+    logger.info(user);
     // Send reset email
     const receiver = [{ email }];
     await transEmail.sendTransacEmail({
@@ -317,7 +319,7 @@ router.post('/reset', async (req, res) => {
       message: 'Password reset email sent successfully',
     });
   } catch (error) {
-    console.error('Reset password error:', error);
+    logger.error('Reset password error:', error);
     res.status(500).json({
       success: false,
       message: 'Error sending reset password email',
@@ -328,11 +330,11 @@ router.post('/reset', async (req, res) => {
 router.post('/reset-password', async (req, res) => {
   const newPassword = req.body.password;
   const passwordToken = req.body.token;
-  console.log(newPassword + ' ' + passwordToken);
+  logger.info(newPassword + ' ' + passwordToken);
   let resetUser;
   try {
     const user = await User.findOne({ resetToken: passwordToken });
-    console.log(user);
+    logger.info(user);
     resetUser = user;
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     ((resetUser.password = hashedPassword), (resetUser.resetToken = undefined));

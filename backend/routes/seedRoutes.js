@@ -3,6 +3,8 @@ const router = express.Router();
 const Tour = require('../models/tours');
 const Company = require('../models/company');
 const bcrypt = require('bcryptjs');
+
+const logger = require('../utils/logger');
 const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
 
 // Seed demo tour packages - GET endpoint for easy browser testing
@@ -258,7 +260,7 @@ router.get('/seed-tours', async (req, res) => {
       })),
     });
   } catch (error) {
-    console.error('Seed error:', error);
+    logger.error('Seed error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to seed tour packages',

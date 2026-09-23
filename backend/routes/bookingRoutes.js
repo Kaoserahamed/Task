@@ -5,6 +5,8 @@ const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
 const socketIO = require('../socket');
 
+const logger = require('../utils/logger');
+
 // Get all bookings for a specific tour (for tour companies)
 router.get('/tour/:tourId', authMiddleware, async (req, res) => {
   try {
@@ -19,7 +21,7 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
       });
     }
 
-    console.log('Fetching bookings for tourId:', tourId); // Debug log
+    logger.info('Fetching bookings for tourId:', tourId); // Debug log
 
     const bookings = await Booking.find({ tourId: new mongoose.Types.ObjectId(tourId) })
       .populate('tourId', 'title location price')
@@ -55,7 +57,7 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
       total,
     });
   } catch (error) {
-    console.error('Error fetching tour bookings:', error);
+    logger.error('Error fetching tour bookings:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -101,7 +103,7 @@ router.post('/add', authMiddleware, async (req, res) => {
       });
     }
 
-    console.log('Creating booking for tourId:', tourId); // Debug log
+    logger.info('Creating booking for tourId:', tourId); // Debug log
 
     // Check if tour is already booked by this user
     const existing = await Booking.findOne({
@@ -167,7 +169,7 @@ router.post('/add', authMiddleware, async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error adding booking:', error);
+    logger.error('Error adding booking:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to book tour',
@@ -221,7 +223,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.json({ success: true, upcoming, completed });
   } catch (error) {
-    console.error('Error fetching bookings:', error);
+    logger.error('Error fetching bookings:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch bookings',
@@ -257,7 +259,7 @@ router.get('/tour/:tourId/count', authMiddleware, async (req, res) => {
       totalRevenue: totalRevenue[0]?.total || 0,
     });
   } catch (error) {
-    console.error('Error fetching booking count:', error);
+    logger.error('Error fetching booking count:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',

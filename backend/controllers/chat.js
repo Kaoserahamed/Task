@@ -1,11 +1,13 @@
 const Chat = require('../models/Chat');
 
+const logger = require('../utils/logger');
+
 exports.getChat = async (req, res) => {
   try {
     const { companyId } = req.params;
     const chatType = req.query;
-    console.log('পারামস', companyId);
-    console.log(chatType.query);
+    logger.info('পারামস', companyId);
+    logger.info(chatType.query);
     const chat = await Chat.find({
       companyId,
       chatType: chatType.query,
@@ -15,7 +17,7 @@ exports.getChat = async (req, res) => {
       )
       .populate('messages');
     res.status(200).json(chat);
-    console.log(chat);
+    logger.info(chat);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -23,7 +25,7 @@ exports.getChat = async (req, res) => {
 exports.getAdminchat = async (req, res) => {
   try {
     const chatType = req.query;
-    console.log(chatType.query);
+    logger.info(chatType.query);
     const chat = await Chat.find({
       chatType: chatType.query,
     })
@@ -34,7 +36,7 @@ exports.getAdminchat = async (req, res) => {
       .populate('messages');
 
     res.status(200).json(chat);
-    console.log(chat);
+    logger.info(chat);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -44,8 +46,8 @@ exports.getuserChat = async (req, res) => {
   try {
     const { userId } = req.params;
     const chatType = req.query;
-    console.log(chatType);
-    console.log('স্পপ্সপ্স');
+    logger.info(chatType);
+    logger.info('স্পপ্সপ্স');
     const chat = await Chat.find({
       participants: userId,
       chatType: chatType.query,
@@ -61,7 +63,7 @@ exports.getuserChat = async (req, res) => {
       chat,
     });
 
-    console.log(chat);
+    logger.info(chat);
 
     res.status(200).json(chat);
   } catch (error) {
@@ -83,7 +85,7 @@ exports.usersendMessage = async (req, res) => {
     // so they stay `let`; everything else is read-only.
     let { chatId, companyId } = req.body;
     const { content, senderId, chatType, companyName, userName, adminId, userId } = req.body;
-    console.log('Received message request:', {
+    logger.info('Received message request:', {
       chatId,
       content,
       senderId,
@@ -99,11 +101,11 @@ exports.usersendMessage = async (req, res) => {
     if (chatId === null || (typeof chatId === 'string' && chatId.startsWith('temp_'))) {
       if (typeof chatId === 'string' && chatId.startsWith('temp_')) {
         companyId = chatId.substring(5);
-        console.log('Temporary chatId detected, extracted companyId:', companyId);
+        logger.info('Temporary chatId detected, extracted companyId:', companyId);
       }
 
       if (!chat) {
-        console.log('Creating new chat...');
+        logger.info('Creating new chat...');
         chat = new Chat({
           participants: userId,
           chatType,
@@ -114,7 +116,7 @@ exports.usersendMessage = async (req, res) => {
           messages: [], // Start with an empty messages array
         });
         await chat.save();
-        console.log('New chat created with ID:', chat._id);
+        logger.info('New chat created with ID:', chat._id);
       }
       // Update chatId with the real chat ID for the new message
       chatId = chat._id;
@@ -123,8 +125,8 @@ exports.usersendMessage = async (req, res) => {
     }
 
     if (chat) {
-      console.log('Chat object before adding message:', chat);
-      console.log(senderId);
+      logger.info('Chat object before adding message:', chat);
+      logger.info(senderId);
       const newMessage = {
         senderId,
         content,
@@ -153,11 +155,11 @@ exports.usersendMessage = async (req, res) => {
     } else {
       // This case should ideally not be reached if logic is correct,
       // but included as a fallback.
-      console.error('Error: Chat object is null after processing.');
+      logger.error('Error: Chat object is null after processing.');
       res.status(404).json({ message: 'Chat not found after processing ID.' });
     }
   } catch (error) {
-    console.error('Error in usersendMessage catch block:', error);
+    logger.error('Error in usersendMessage catch block:', error);
     res.status(500).json({ message: 'Failed to send message', error: error.message });
   }
 };

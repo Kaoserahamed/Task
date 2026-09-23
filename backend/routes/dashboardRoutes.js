@@ -3,10 +3,12 @@ const router = express.Router();
 const Booking = require('../models/Booking');
 const Tour = require('../models/tours');
 
+const logger = require('../utils/logger');
+
 // GET /api/dashboard/stats
 router.get('/dashboard/stats', async (req, res) => {
   try {
-    console.log('I am currently inside dashboard stat backend');
+    logger.info('I am currently inside dashboard stat backend');
     const today = new Date();
     const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const last30Days = new Date(today);
@@ -93,7 +95,7 @@ router.get('/dashboard/stats', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Dashboard stats error:', error);
+    logger.error('Dashboard stats error:', error);
     res
       .status(500)
       .json({ success: false, message: 'Failed to fetch dashboard stats', error: error.message });

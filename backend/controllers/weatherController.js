@@ -1,6 +1,8 @@
 const axios = require('axios');
 const Tour = require('../models/tours'); // or '../models/tours' if file name is lowercase
 
+const logger = require('../utils/logger');
+
 // ✅ Get weather for all tour places (from DB)
 exports.getWeatherAndTours = async (req, res) => {
   const apiKey = process.env.WEATHER_API_KEY;
@@ -31,7 +33,7 @@ exports.getWeatherAndTours = async (req, res) => {
 
     res.json({ suggestions: results });
   } catch (error) {
-    console.error('❌ Weather fetch failed:', error.message);
+    logger.error('❌ Weather fetch failed:', error.message);
     res.status(500).json({ error: 'Weather fetch failed' });
   }
 };
