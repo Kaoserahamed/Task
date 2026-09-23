@@ -29,6 +29,31 @@ cd ../tourcompanydashboard && npm ci
 updated `package.json` **and** `package-lock.json`, then run `npm run
 lint:fix` and `npm run format` before pushing.
 
+## Dev container (zero-install onboarding)
+
+`.devcontainer/devcontainer.json` gives you Node 20, Docker-in-Docker (for
+`docker compose`), the GitHub CLI and the ESLint/Prettier/MongoDB extensions in
+one click — locally in VS Code via _Dev Containers: Reopen in Container_, or in
+a Codespace. It runs `npm run setup` on creation and forwards the ports the rest
+of this guide uses:
+
+| Port  | What                    |
+| ----- | ----------------------- |
+| 4000  | API (`backend/`)        |
+| 3000  | Customer storefront     |
+| 3001  | Admin dashboard         |
+| 3002  | Tour-company dashboard  |
+| 27017 | MongoDB (compose stack) |
+
+Inside the container the database is the compose one, so the shortest path to a
+running API is:
+
+```bash
+cp backend/.env.example backend/.env    # set JWT_SECRET and MONGODB_URI
+docker compose up -d mongo
+npm --prefix backend run dev
+```
+
 ## Scripts reference (run from the package directory)
 
 ### Backend (`backend/`)
@@ -40,9 +65,15 @@ lint:fix` and `npm run format` before pushing.
 | `lint` / `lint:fix`       | ESLint (flat config)        |
 | `format` / `format:check` | Prettier over `backend/`    |
 | `typecheck`               | `tsc --noEmit`              |
-| `test`                    | `jest --runInBand`          |
-| `test:coverage`           | Jest with coverage          |
+| `test`                    | Jest, unit suite only       |
+| `test:integration`        | Jest against a real MongoDB |
+| `test:coverage`           | Jest with coverage + floors |
 | `verify-env`              | Validates required env vars |
+
+Operator commands (`node scripts/...`) are listed in
+[`backend/scripts/README.md`](../backend/scripts/README.md); database changes go
+through [`scripts/run-migrations.js`](../backend/scripts/run-migrations.js) — see
+[migrations.md](migrations.md).
 
 ### React apps (`frontend/`, `admin/`, `tourcompanydashboard/`)
 

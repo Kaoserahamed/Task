@@ -23,6 +23,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Documentation tree under `docs/` with an index, architecture, API, security,
   operations, testing and CI guides, plus architecture decision records.
 - Container support: `docker-compose.test.yml` for integration work.
+- Onboarding and delivery: a dev container (`.devcontainer/`), a pull request
+  template, CODEOWNERS entries for the new paths, and a Dependabot `docker`
+  ecosystem entry for the API base image.
+- Database evolution: numbered migrations applied by
+  `backend/scripts/run-migrations.js`, with a `_migrations` ledger, a documented
+  format and `docs/migrations.md`.
 
 ### Changed
 
@@ -34,6 +40,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   no credential is committed.
 - `/api/tours` mutations are declared in `routes/tours.js` next to the reads
   rather than inline in the entry point.
+- The API image runs as the unprivileged `node` user with a `HEALTHCHECK` on
+  `/health/live`, installs locked production dependencies only, and builds from a
+  context that excludes tests, coverage, secrets and data.
+- The front-end CSS notes moved out of `frontend/` into the docs tree; the
+  documentation index links every page.
 
 ### Fixed
 

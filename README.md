@@ -169,11 +169,19 @@ Task/
 
 ### Prerequisites
 
-- Node.js 14+ and npm
+- Node.js 20+ and npm (see `.nvmrc`)
 - MongoDB (local or MongoDB Atlas account)
+- Docker (optional — for the compose stack and the integration suite)
 - Cloudinary account (free tier available)
 - Sendinblue account (for email notifications)
 - OpenWeatherMap API key (for weather features)
+
+### Dev container (zero-install)
+
+Open the repository in a dev container (VS Code _Dev Containers: Reopen in
+Container_, or a Codespace): it installs Node 20, Docker, the workspace
+dependencies and the editor extensions for you. See
+[docs/development.md](docs/development.md#dev-container-zero-install-onboarding).
 
 ### Docker (one-command startup)
 
@@ -194,6 +202,11 @@ The compose file starts:
 
 - **mongo** — MongoDB 7 with a persistent data volume (`mongo_data`) and a health check the backend waits on
 - **backend** — the Express API, pre-wired to `mongodb://mongo:27017/tourmate`
+
+The image installs locked production dependencies, runs as the unprivileged
+`node` user (never root) and declares a `HEALTHCHECK` against `/health/live`, so
+a database outage does not restart a healthy container. Details and the exact
+guarantees: [docs/operations.md](docs/operations.md#the-api-image).
 
 Optional secrets (Cloudinary, Pusher, email, demo passwords) can be provided by uncommenting the `env_file` line in `docker-compose.yml` or by passing environment variables.
 

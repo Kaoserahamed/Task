@@ -57,3 +57,12 @@ updates:
       day: monday
     open-pull-requests-limit: 4
     target-branch: main
+
+  # The API base image (node:20-alpine in backend/Dockerfile)
+  - package-ecosystem: docker
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    target-branch: main

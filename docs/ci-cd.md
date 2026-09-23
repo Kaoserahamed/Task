@@ -16,12 +16,19 @@ runs on every push and pull-request to `main` / `develop`. It mirrors the local
 
 ### Jobs
 
-| Job                 | Runs                                                    | Fails on                                      |
-| ------------------- | ------------------------------------------------------- | --------------------------------------------- |
-| `lint-backend`      | `npm run lint --prefix backend`                         | any ESLint error                              |
-| `backend-tests`     | `npm run test:coverage --prefix backend`                | test failure **or** coverage threshold breach |
-| `web`               | matrix over `frontend`, `admin`, `tourcompanydashboard` | lint error, test failure, or build failure    |
-| `typecheck-backend` | `npm run typecheck --prefix backend`                    | any TypeScript error                          |
+| Job                 | Runs                                                                   | Fails on                                              |
+| ------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------- |
+| `lint-backend`      | `npm run lint --prefix backend`                                        | any ESLint error                                      |
+| `backend-tests`     | `npm run test:coverage --prefix backend`                               | test failure **or** coverage threshold breach         |
+| `integration`       | `npm run test:integration --prefix backend` on a `mongo:` service      | test failure                                          |
+| `web`               | matrix over `frontend`, `admin`, `tourcompanydashboard`                | lint error, test failure, or build failure            |
+| `typecheck-backend` | `npm run typecheck --prefix backend`                                   | any TypeScript error                                  |
+| `fresh-clone`       | `npm ci` + `npm run verify:repo` from a clean checkout                 | install or repository drift                           |
+| `docker`            | `docker compose -f docker-compose.test.yml build` and the image health | build failure or a container that never turns healthy |
+
+The `fresh-clone` job is what makes the README's Quick Start executable: it runs
+the documented commands on a checkout with no `node_modules`, so a missing
+lockfile or an undocumented script fails CI before a contributor hits it.
 
 ### Node version
 
@@ -49,5 +56,11 @@ a failing CI build always corresponds to a build that would fail to deploy.
 
 ## Dependabot
 
-`.github/dependabot.yml` opens weekly `npm` and `github-actions` PRs with a
-4-open-PR cap, scoped per workspace so upgrades are isolated and reviewable.
+`.github/dependabot.yml` opens weekly `npm`, `github-actions` and `docker` PRs
+with a 4-open-PR cap, scoped per workspace so upgrades are isolated and
+reviewable — the API base image (`backend/Dockerfile`) moves with its own PR.
+
+A pull request is reviewed against the template in
+`.github/pull_request_template.md`: it repeats the gate (`npm run verify`), asks
+for the test that covers the change, and requires a `CHANGELOG.md` entry — the
+review checklist that `CONTRIBUTING.md` describes in full.

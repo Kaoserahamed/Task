@@ -8,9 +8,19 @@
 /.github/CODEOWNERS        @task/maintainers
 /.github/dependabot.yml    @task/maintainers
 /.github/workflows/ci.yml  @task/maintainers
+/.github/pull_request_template.md @task/maintainers
 /*.json                     @task/maintainers
 /*.md                       @task/maintainers
 /.gitignore                @task/maintainers
+
+# Onboarding and delivery tooling
+/.devcontainer/            @task/maintainers
+/docker-compose.yml        @task/maintainers
+/docker-compose.test.yml   @task/maintainers
+/scripts/                  @task/maintainers
+
+# Documentation tree
+/docs/                     @task/maintainers
 
 # Backend (Express + MongoDB API)
 /backend/                  @task/backend
