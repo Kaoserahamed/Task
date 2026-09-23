@@ -1,0 +1,44 @@
+# Test stack: a real MongoDB for the integration suite.
+#
+#   npm run stack:test:up     # start MongoDB on 27017
+#   npm run test:backend:integration
+#   npm run stack:test:down   # stop and delete the data volume
+#
+# The integration tests read MONGODB_URI_TEST, so nothing else on your machine
+# has to change. `docker-compose.yml` (the development stack) is untouched.
+
+services:
+  mongo-test:
+    image: mongo:7
+    container_name: task-mongo-test
+    restart: 'no'
+    ports:
+      - '27017:27017'
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', 'db.adminCommand({ ping: 1 })']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - mongo_test_data:/data/db
+
+  backend-test:
+    build:
+      context: ./backend
+    container_name: task-backend-test
+    depends_on:
+      mongo-test:
+        condition: service_healthy
+    environment:
+      NODE_ENV: test
+      PORT: 4000
+      MONGODB_URI: mongodb://mongo-test:27017/task
+      MONGODB_URI_TEST: mongodb://mongo-test:27017/task-integration
+      JWT_SECRET: docker-test-secret
+      SEED_ENABLED: 'false'
+    ports:
+      - '4000:4000'
+    command: ['npm', 'run', 'test:integration']
+
+volumes:
+  mongo_test_data:
