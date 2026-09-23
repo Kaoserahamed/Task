@@ -67,7 +67,30 @@ for (const stack of ['', ...STACKS]) {
   }
 }
 
-// 3. The entry points a fresh clone needs are actually declared.
+// 3. Every declared dependency must exist in the lockfile: a manifest that
+//    drifts ahead of its lock breaks `npm ci` on a fresh clone and in CI.
+for (const stack of ['', ...STACKS]) {
+  const manifestPath = stack === '' ? 'package.json' : `${stack}/package.json`;
+  const lockfilePath = stack === '' ? 'package-lock.json' : `${stack}/package-lock.json`;
+  if (!existsSync(path.join(repoRoot, lockfilePath))) {
+    continue;
+  }
+
+  const manifest = readJson(manifestPath);
+  const lock = readJson(lockfilePath);
+  const locked = {
+    ...((lock.packages && lock.packages[''] && lock.packages[''].dependencies) || {}),
+    ...((lock.packages && lock.packages[''] && lock.packages[''].devDependencies) || {}),
+  };
+
+  for (const name of Object.keys({ ...manifest.dependencies, ...manifest.devDependencies })) {
+    if (!(name in locked)) {
+      fail(`${lockfilePath} is missing "${name}" declared in ${manifestPath} — npm ci would fail`);
+    }
+  }
+}
+
+// 4. The entry points a fresh clone needs are actually declared.
 for (const script of REQUIRED_SCRIPTS) {
   if (!root.scripts || !root.scripts[script]) {
     fail(`root package.json is missing the "${script}" script`);
