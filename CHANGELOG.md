@@ -53,6 +53,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Malformed multipart JSON in tour payloads returned a 500 instead of a typed 400.
 - `origin.includes('vercel.app')` accepted attacker-controlled origins such as
   `evil-vercel.app.attacker.example`.
+- The three React apps set `CI` with a POSIX-only `CI=… command` prefix, so
+  `npm test` and `npm run build` failed in `cmd.exe`; the scripts now use the
+  `cross-env` already installed in each app, and `verify:repo` rejects a script
+  that starts with an inline environment assignment.
 
 ### Security
 

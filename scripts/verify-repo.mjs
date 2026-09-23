@@ -204,6 +204,21 @@ for (const relativePath of [
   }
 }
 
+// 11. Scripts are portable: a leading `VAR=value` prefix is a POSIX shell
+//     construct that cmd.exe does not understand, so the same npm script would
+//     fail on a Windows checkout. `cross-env` is the documented escape hatch and
+//     is already a devDependency of the apps that need it.
+for (const stack of ['', ...STACKS]) {
+  const manifestPath = stack === '' ? 'package.json' : `${stack}/package.json`;
+  const manifest = readJson(manifestPath);
+
+  for (const [name, script] of Object.entries(manifest.scripts || {})) {
+    if (/^[A-Z_][A-Z0-9_]*=\S*\s/.test(script)) {
+      fail(`${manifestPath} script "${name}" starts with an inline env assignment — use cross-env`);
+    }
+  }
+}
+
 if (failures.length > 0) {
   for (const failure of failures) {
     process.stderr.write(`verify-repo: ${failure}\n`);
