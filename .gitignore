@@ -1,13 +1,31 @@
 # Environment files
-# Allow .env.example files (templates with placeholder values)
-# Block all other .env files (actual secrets)
+# Allow .env.example / .env.*.example templates (placeholders only).
+# Block every other .env file (real secrets).
 *.env
 *.env.*
 !.env.example
 !.env.*.example
+
+# Dependencies
 node_modules
-uploads/
-dist/
+
+# Build output
 build/
+dist/
+
+# Test output
+coverage/
+coverage-final.json
+
+# Runtime uploads are user data, not source. Keep the directories in git with a
+# .gitkeep marker so a fresh clone still has a writable uploads path.
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+
+# Editor / OS noise
 .DS_Store
+Thumbs.db
 *.log
+.vercel
