@@ -26,6 +26,12 @@ const config = {
     enabled: process.env.SEED_ENABLED === 'true',
   },
 
+  // Migrations rewrite data, so they too are an explicit operator action: the
+  // runner refuses to touch a production database without this flag.
+  migrations: {
+    enabled: process.env.MIGRATIONS_ENABLED === 'true',
+  },
+
   // Database Configuration
   mongodb: {
     uri: process.env.MONGODB_URI,

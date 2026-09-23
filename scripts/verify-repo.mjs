@@ -10,7 +10,7 @@
  * Covered by CI (the `fresh-clone` job runs it via `npm run verify:repo`).
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -125,6 +125,82 @@ for (const rule of [
 for (const keep of ['backend/uploads/.gitkeep', 'backend/public/uploads/.gitkeep']) {
   if (!existsSync(path.join(repoRoot, keep))) {
     fail(`missing ${keep} — the uploads directory would not survive a clone`);
+  }
+}
+
+// 7. The delivery files a contributor and GitHub Actions rely on are present and
+//    consistent: onboarding (dev container), review (PR template), ownership and
+//    the versioned database story.
+for (const relativePath of [
+  '.github/CODEOWNERS',
+  '.github/dependabot.yml',
+  '.github/pull_request_template.md',
+  '.github/workflows/ci.yml',
+  '.devcontainer/devcontainer.json',
+  'backend/.dockerignore',
+  'backend/scripts/migrations/README.md',
+  'docs/migrations.md',
+  'docs/ci-cd.md',
+  'docs/operations.md',
+]) {
+  if (!existsSync(path.join(repoRoot, relativePath))) {
+    fail(`missing ${relativePath}`);
+  }
+}
+
+// 8. The API image runs unprivileged, probes itself and installs locked
+//    production dependencies only.
+{
+  const dockerfile = readFileSync(path.join(repoRoot, 'backend', 'Dockerfile'), 'utf8');
+  const expectations = [
+    [/^USER node$/m, 'runs as the unprivileged node user'],
+    [/^HEALTHCHECK /m, 'declares a HEALTHCHECK'],
+    [/npm ci --omit=dev/, 'installs locked production dependencies'],
+  ];
+
+  for (const [pattern, what] of expectations) {
+    if (!pattern.test(dockerfile)) {
+      fail(`backend/Dockerfile no longer ${what}`);
+    }
+  }
+
+  const dockerignore = readFileSync(path.join(repoRoot, 'backend', '.dockerignore'), 'utf8');
+  for (const rule of ['node_modules', 'uploads', '.env', 'tests']) {
+    if (!new RegExp(`^${rule.replace('.', '\\.')}$`, 'm').test(dockerignore)) {
+      fail(`backend/.dockerignore no longer excludes ${rule}`);
+    }
+  }
+}
+
+// 9. Passwords are hashed by exactly one library: two implementations in the
+//    manifest is how two costs (and two incompatible call sites) appear.
+{
+  const manifest = readJson('backend/package.json');
+  const declared = { ...manifest.dependencies, ...manifest.devDependencies };
+
+  if (!declared.bcryptjs) {
+    fail('backend/package.json must declare bcryptjs');
+  }
+  if ('bcrypt' in declared) {
+    fail('backend/package.json must not declare the native bcrypt binding next to bcryptjs');
+  }
+  if (!existsSync(path.join(repoRoot, 'backend', 'utils', 'password.js'))) {
+    fail('missing backend/utils/password.js — hashing must have a single implementation');
+  }
+}
+
+// 10. Docs own docs: every top-level page in docs/ is reachable from the index.
+{
+  const docsDir = path.join(repoRoot, 'docs');
+  const index = readFileSync(path.join(docsDir, 'README.md'), 'utf8');
+
+  for (const entry of readdirSync(docsDir)) {
+    if (!entry.endsWith('.md') || entry === 'README.md') {
+      continue;
+    }
+    if (!index.includes(entry)) {
+      fail(`docs/${entry} is not linked from docs/README.md`);
+    }
   }
 }
 

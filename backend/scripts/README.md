@@ -1,38 +1,42 @@
 # Backend Scripts
 
-## Seed Demo Data
+Operator commands. None of them run as part of the server boot, and every one
+that writes data is documented in [docs/](../../docs/README.md).
 
-### Create Demo Accounts
+| Script                | Purpose                                          |
+| --------------------- | ------------------------------------------------ |
+| `seedDemoAccounts.js` | Create/refresh the demo user, admin and company  |
+| `seedTourPackages.js` | Create five sample tour packages                 |
+| `run-migrations.js`   | Apply the versioned migrations in `migrations/`  |
+| `check-coverage.js`   | Coverage floors (run by `npm run test:coverage`) |
 
-```bash
-node scripts/seedDemoAccounts.js
-```
+## Seeding demo data
 
-Requires `DEMO_USER_PASSWORD`, `DEMO_ADMIN_PASSWORD`, and `DEMO_COMPANY_PASSWORD`
-in `backend/.env` (see `backend/.env.example`). Creates demo accounts for:
-
-- User: `user@demo.com` (password from `DEMO_USER_PASSWORD`)
-- Admin: `admin@demo.com` (password from `DEMO_ADMIN_PASSWORD`)
-- Company: `company@demo.com` (password from `DEMO_COMPANY_PASSWORD`)
-
-### Create Sample Tour Packages
+Both seed scripts read their secrets from the environment and never from the
+source tree:
 
 ```bash
-node scripts/seedTourPackages.js
+cd backend
+node scripts/seedDemoAccounts.js    # needs DEMO_*_EMAIL and DEMO_*_PASSWORD
+node scripts/seedTourPackages.js    # needs DEMO_COMPANY_EMAIL, DEMO_COMPANY_PASSWORD
 ```
 
-Creates 5 sample tour packages with complete details.
+They exit with an error when the variables are missing, so an unattended run
+cannot silently create an account with a guessed password. See
+`backend/.env.example`.
 
-**OR** use the API endpoint (easier):
+The HTTP equivalents (`GET /api/seed-tours`, `POST /api/demo/create-accounts`)
+exist for browser testing, but they are mounted **only** when
+`SEED_ENABLED=true`; otherwise the paths 404 like any other unknown route.
 
+## Migrations
+
+```bash
+cd backend
+node scripts/run-migrations.js --dry-run   # what would run
+node scripts/run-migrations.js             # apply and record
 ```
-GET http://localhost:4000/api/seed-tours
-```
 
-This creates:
-
-1. Cox's Bazar Beach Tour
-2. Sundarbans Adventure
-3. Sajek Valley Trek
-4. Historical Dhaka Tour
-5. Sylhet Tea Garden Tour
+Format, contract and rollback story:
+[`migrations/README.md`](migrations/README.md) and
+[`docs/migrations.md`](../../docs/migrations.md).
