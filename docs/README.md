@@ -13,11 +13,13 @@ answers.
 
 ## Design and behaviour
 
-| Document                           | Answers                                                     |
-| ---------------------------------- | ----------------------------------------------------------- |
-| [architecture.md](architecture.md) | How is the code organised, and where does a change belong?  |
-| [api.md](api.md)                   | What endpoints exist, and what does a response look like?   |
-| [adr/](adr/)                       | Why was this decision made, and what were the alternatives? |
+| Document                                             | Answers                                                            |
+| ---------------------------------------------------- | ------------------------------------------------------------------ |
+| [architecture.md](architecture.md)                   | How is the code organised, and where does a change belong?         |
+| [api.md](api.md)                                     | What endpoints exist, and what does a response look like?          |
+| [frontend-theme-guide.md](frontend-theme-guide.md)   | How does the storefront theme system work, and how do I extend it? |
+| [frontend-css-refactor.md](frontend-css-refactor.md) | What did the front-end CSS refactor change?                        |
+| [adr/](adr/)                                         | Why was this decision made, and what were the alternatives?        |
 
 ## Quality and delivery
 
@@ -26,6 +28,7 @@ answers.
 | [testing.md](testing.md)       | What test layers exist, and how do I write one?      |
 | [ci-cd.md](ci-cd.md)           | What does CI run, and how do I reproduce it locally? |
 | [operations.md](operations.md) | How do I run, probe, log and roll back a deployment? |
+| [migrations.md](migrations.md) | How does the database schema evolve after a release? |
 
 ## Security
 
@@ -37,6 +40,10 @@ answers.
 ## Conventions
 
 - Documents are Markdown, one topic each, and link to their neighbours.
+- Backend operator commands are documented in
+  [../backend/scripts/README.md](../backend/scripts/README.md), with the
+  migration format next to the code in
+  [../backend/scripts/migrations/README.md](../backend/scripts/migrations/README.md).
 - New architecture decisions get an ADR instead of a code comment nobody reads:
   copy `adr/0001-layered-backend-architecture.md` and number the next one.
 - A change that alters behaviour described here updates this documentation in

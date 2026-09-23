@@ -342,7 +342,7 @@ After refactoring each file:
 
 ## Documentation
 
-- Full theme documentation: See `CSS_REFACTORING_GUIDE.md`
+- Full theme documentation: See [frontend-theme-guide.md](frontend-theme-guide.md)
 - Variable reference: See `src/styles/theme.css`
 - Component examples: See `src/styles/components.css`
 

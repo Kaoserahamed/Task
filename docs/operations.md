@@ -51,6 +51,37 @@ Graceful shutdown: on `SIGTERM`/`SIGINT` the API stops accepting connections,
 finishes in-flight requests, closes the Mongo connection and exits `0`
 (bounded by the orchestrator's kill timeout — keep it above a few seconds).
 
+### The API image
+
+`backend/Dockerfile` is the deployable artefact, and the properties that matter
+are asserted by `backend/tests/unit/contracts/delivery.test.js`:
+
+| Property                        | Why                                                         |
+| ------------------------------- | ----------------------------------------------------------- |
+| `USER node`                     | the process never runs as root; `uploads/` is chowned to it |
+| `HEALTHCHECK` on `/health/live` | a Mongo outage must not restart a healthy container         |
+| `npm ci --omit=dev`             | the image contains locked production dependencies only      |
+| `.dockerignore`                 | no `node_modules`, `.env`, `uploads/`, coverage or tests    |
+
+`/health/ready` stays the readiness probe for the _platform_ (load balancer,
+orchestrator) — it reports `503` when Mongo is unreachable, which is what takes
+an instance out of rotation without killing it.
+
+### Changing data
+
+Schema changes are migrations, applied by an operator and never at boot:
+
+```bash
+cd backend
+node scripts/run-migrations.js --dry-run   # what would run
+node scripts/run-migrations.js             # apply and record
+```
+
+Against a production database the runner refuses to start unless
+`MIGRATIONS_ENABLED=true`, and it stops if the database records a migration that
+is missing from the tree. The procedure, the `schemaVersion` convention and the
+rollback path are in [migrations.md](migrations.md).
+
 ## Runbook
 
 **The API answers 503 on `/health/ready`.**
@@ -72,6 +103,14 @@ raised.
 `FILE_TOO_LARGE` means the image exceeded 5 MB (`config/upload.js`);
 `PAYLOAD_TOO_LARGE` means the JSON body exceeded `JSON_BODY_LIMIT` (1 MB).
 Both are typed errors, visible in the logs with the request id.
+
+**A migration must run.**
+`node scripts/run-migrations.js --dry-run` lists what is pending; if the runner
+answers `the database records migrations that are not in this tree`, a migration
+file was renamed or deleted after it was applied — restore it before running
+anything else. A failed migration is not recorded, so fixing the cause and
+running the command again resumes from the same place. See
+[migrations.md](migrations.md).
 
 **A deploy shipped a regression.**
 `main` is deployable at every commit: revert the merge/squash commit, push, and
