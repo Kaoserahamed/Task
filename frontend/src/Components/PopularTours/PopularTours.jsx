@@ -3,6 +3,8 @@ import { ToursContext } from '../../Context/ToursContext';
 import { Link, useNavigate } from 'react-router-dom';
 import './PopularTours.css';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as reviewsApi from '../../api/reviews';
 
 const PopularTours = () => {
   const { tours, loading, error } = useContext(ToursContext);
@@ -13,8 +15,7 @@ const PopularTours = () => {
   useEffect(() => {
     const computePopularityAndSort = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/reviews`);
-        const reviews = await res.json();
+        const reviews = await reviewsApi.fetchReviews();
 
         const ratingMap = {};
         const countMap = {};
@@ -65,9 +66,7 @@ const PopularTours = () => {
 
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
-        method: 'PATCH',
-      });
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);

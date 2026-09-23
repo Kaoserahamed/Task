@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ChatWindow.css';
 import avatar from '../Assets/chat_avatar.png';
 import { useAuth } from '../../Context/AuthContext';
-import API_BASE_URL from '../../config/api';
+import * as chatApi from '../../api/chat';
 
 const ChatWindow = ({ chatType, selectedChat, userId, socket }) => {
   const [newMessage, setNewMessage] = useState('');
@@ -82,35 +82,21 @@ const ChatWindow = ({ chatType, selectedChat, userId, socket }) => {
     if (!newMessage.trim() || !selectedChat) return;
 
     try {
-      const authtoken = localStorage.getItem('token');
-      if (!authtoken) {
+      if (!localStorage.getItem('token')) {
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/chat/send-message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authtoken}`,
-        },
-        body: JSON.stringify({
-          chatId: selectedChat._id,
-          content: newMessage,
-          userId: userId,
-          chatType: selectedChat.chatType,
-          companyId: selectedChat.companyId || null,
-          companyName: selectedChat.companyName || null,
-          userName: selectedChat.userName,
-          senderId: userId,
-        }),
+      const updatedChat = await chatApi.sendMessage({
+        chatId: selectedChat._id,
+        content: newMessage,
+        userId: userId,
+        chatType: selectedChat.chatType,
+        companyId: selectedChat.companyId || null,
+        companyName: selectedChat.companyName || null,
+        userName: selectedChat.userName,
+        senderId: userId,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to send message');
-      }
-
-      const updatedChat = await response.json();
       setMessages(updatedChat.messages || []);
       setNewMessage('');
     } catch (error) {

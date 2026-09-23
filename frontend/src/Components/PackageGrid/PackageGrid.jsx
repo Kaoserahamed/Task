@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './PackageGrid.css';
-import API_BASE_URL from '../../config/api';
 import { getImageUrl, handleImageError } from '../../utils/imageHelpers';
+import * as toursApi from '../../api/tours';
+import * as reviewsApi from '../../api/reviews';
 
 const PackageGrid = ({ packages }) => {
   const navigate = useNavigate();
@@ -18,9 +19,7 @@ const PackageGrid = ({ packages }) => {
 
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
-        method: 'PATCH',
-      });
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -31,8 +30,7 @@ const PackageGrid = ({ packages }) => {
   useEffect(() => {
     const fetchAverageRatings = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/reviews`);
-        const reviews = await res.json();
+        const reviews = await reviewsApi.fetchReviews();
 
         const ratingMap = {};
         const countMap = {};

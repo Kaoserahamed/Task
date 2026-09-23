@@ -4,6 +4,9 @@ import { ToursContext } from '../../Context/ToursContext';
 import { useAuth } from '../../Context/AuthContext';
 import './TourSuggestions.css';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as reviewsApi from '../../api/reviews';
+import * as suggestionsApi from '../../api/suggestions';
 
 const TourSuggestions = ({ weatherCity }) => {
   const [suggestions, setSuggestions] = useState([]);
@@ -22,8 +25,7 @@ const TourSuggestions = ({ weatherCity }) => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/reviews`);
-        const reviews = await res.json();
+        const reviews = await reviewsApi.fetchReviews();
 
         const ratingMap = {};
         const countMap = {};
@@ -75,42 +77,33 @@ const TourSuggestions = ({ weatherCity }) => {
       setError(null);
 
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/Suggestion/${encodeURIComponent(weatherCity)}`
+        const suggestedData = await suggestionsApi.fetchSuggestions(weatherCity);
+
+        // Flatten all tours from suggestions into a single array
+        allSuggestedTours = suggestedData.reduce((acc, suggestion) => {
+          return [...acc, ...suggestion.tours];
+        }, []);
+        // Remove duplicates based on tour ID and ensure tours are upcoming
+        const uniqueTours = Array.from(
+          new Map(
+            allSuggestedTours
+              .filter((tour) => isTourUpcoming(tour.startDate))
+              .map((tour) => [tour._id, tour])
+          ).values()
         );
-        if (response.ok) {
-          const suggestedData = await response.json();
-          console.log('Suggested data:', suggestedData);
 
-          // Flatten all tours from suggestions into a single array
-          allSuggestedTours = suggestedData.reduce((acc, suggestion) => {
-            return [...acc, ...suggestion.tours];
-          }, []);
-          console.log(allSuggestedTours);
-          // Remove duplicates based on tour ID and ensure tours are upcoming
-          const uniqueTours = Array.from(
-            new Map(
-              allSuggestedTours
-                .filter((tour) => isTourUpcoming(tour.startDate))
-                .map((tour) => [tour._id, tour])
-            ).values()
-          );
+        // Sort by confidence (if available) and limit to 6
+        const sortedTours = uniqueTours
+          .sort((a, b) => {
+            const confidenceA =
+              suggestedData.find((s) => s.tours.some((t) => t._id === a._id))?.confidence || 0;
+            const confidenceB =
+              suggestedData.find((s) => s.tours.some((t) => t._id === b._id))?.confidence || 0;
+            return confidenceB - confidenceA;
+          })
+          .slice(0, 6);
 
-          // Sort by confidence (if available) and limit to 6
-          const sortedTours = uniqueTours
-            .sort((a, b) => {
-              const confidenceA =
-                suggestedData.find((s) => s.tours.some((t) => t._id === a._id))?.confidence || 0;
-              const confidenceB =
-                suggestedData.find((s) => s.tours.some((t) => t._id === b._id))?.confidence || 0;
-              return confidenceB - confidenceA;
-            })
-            .slice(0, 6);
-
-          setSuggestions(sortedTours);
-        } else {
-          throw new Error('Failed to fetch suggestions');
-        }
+        setSuggestions(sortedTours);
       } catch (err) {
         console.error('Error fetching suggestions:', err);
         setError('Failed to load suggestions');
@@ -130,9 +123,7 @@ const TourSuggestions = ({ weatherCity }) => {
   const handleExploreNow = async (tourId, tourName) => {
     try {
       // Increment view count
-      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
-        method: 'PATCH',
-      });
+      await toursApi.incrementTourView(tourId);
 
       // Save to recent views
       const recentViews = JSON.parse(localStorage.getItem('recentTourViews') || '[]');

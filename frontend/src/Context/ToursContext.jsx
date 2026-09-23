@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import API_BASE_URL from '../config/api';
+import * as toursApi from '../api/tours';
 
 export const ToursContext = createContext();
 
@@ -11,11 +11,7 @@ export const ToursProvider = ({ children }) => {
   const fetchTours = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/tours/approved`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch tours');
-      }
-      const data = await response.json();
+      const data = await toursApi.fetchApprovedTours();
 
       if (data.success) {
         setTours(data.tours);
@@ -32,11 +28,7 @@ export const ToursProvider = ({ children }) => {
 
   const fetchTourById = useCallback(async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/tours/${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch tour');
-      }
-      const data = await response.json();
+      const data = await toursApi.fetchTour(id);
 
       if (data.success) {
         return data.tour;

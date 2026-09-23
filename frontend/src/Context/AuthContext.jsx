@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
-import API_BASE_URL from '../config/api';
+import * as authApi from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -17,19 +16,17 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/user/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const data = await authApi.fetchCurrentUser();
 
-      if (response.data.success) {
-        const updatedUserData = { ...user, user: response.data.user };
+      if (data.success) {
+        const updatedUserData = { ...user, user: data.user };
         localStorage.setItem('user', JSON.stringify(updatedUserData));
         setUser(updatedUserData);
       }
     } catch (error) {
       console.error('Error refreshing user data:', error);
-      // If token is invalid, logout
-      if (error.response?.status === 401) {
+      // If the token is rejected, drop the session.
+      if (error.status === 401) {
         logout();
       }
     }
@@ -60,24 +57,9 @@ export const AuthProvider = ({ children }) => {
   const updateUser = async (updatedData) => {
     try {
       setLoading(true);
-      // Get the current token
-      const token = localStorage.getItem('token');
 
       // Make API call to update user data
-      const response = await fetch(`${API_BASE_URL}/user/auth/update`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update user');
-      }
-
-      const updatedUser = await response.json();
+      const updatedUser = await authApi.updateProfile(updatedData);
 
       // Update local storage and state
       const newUserData = { ...user, ...updatedUser };

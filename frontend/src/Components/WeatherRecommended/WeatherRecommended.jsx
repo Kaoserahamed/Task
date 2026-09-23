@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ToursContext } from '../../Context/ToursContext';
 import './WeatherRecommended.css';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as reviewsApi from '../../api/reviews';
 
 const WeatherRecommended = () => {
   const navigate = useNavigate();
@@ -14,9 +16,7 @@ const WeatherRecommended = () => {
   };
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
-        method: 'PATCH',
-      });
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -27,8 +27,7 @@ const WeatherRecommended = () => {
     // Fetch all reviews and compute average ratings
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/reviews`);
-        const reviews = await res.json();
+        const reviews = await reviewsApi.fetchReviews();
 
         const ratingMap = {};
 

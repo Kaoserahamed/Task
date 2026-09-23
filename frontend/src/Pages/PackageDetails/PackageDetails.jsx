@@ -8,8 +8,8 @@ import { useAuth } from '../../Context/AuthContext';
 import './PackageDetails.css';
 import socket from '../../socket';
 import TourSuggestions from '../../Components/TourSuggestions/TourSuggestions';
-import axios from 'axios';
-import API_BASE_URL from '../../config/api';
+import * as chatApi from '../../api/chat';
+import * as reviewsApi from '../../api/reviews';
 
 const PackageDetails = () => {
   const { id } = useParams();
@@ -46,27 +46,11 @@ const PackageDetails = () => {
   const fetchChats = async () => {
     setIsloading(true);
     try {
-      const authtoken = localStorage.getItem('token');
-      if (!authtoken) {
+      if (!localStorage.getItem('token')) {
         throw new Error('No token found');
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authtoken}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch chats');
-      }
-
-      const responseData = await response.json();
+      const responseData = await chatApi.fetchUserChats(userId, chatType);
       setChats(responseData || []);
     } catch (error) {
       console.error('Error fetching chats:', error);
@@ -88,8 +72,8 @@ const PackageDetails = () => {
   const fetchReviews = async (tourId) => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get(`${API_BASE_URL}/reviews/tour/${tourId}`);
-      setReviews(response.data);
+      const reviewData = await reviewsApi.fetchTourReviews(tourId);
+      setReviews(reviewData);
       setErrorReviews(null);
     } catch (error) {
       setErrorReviews('Failed to load reviews.');

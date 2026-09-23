@@ -3,7 +3,8 @@ import './ChatList.css';
 import avatar from '../Assets/chat_avatar.png';
 import { useAuth } from '../../Context/AuthContext';
 import { useState, useEffect } from 'react';
-import API_BASE_URL from '../../config/api';
+import * as chatApi from '../../api/chat';
+import * as companiesApi from '../../api/companies';
 
 const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, socket }) => {
   const { user } = useAuth();
@@ -18,27 +19,11 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
   const fetchChats = async () => {
     setIsloading(true);
     try {
-      const authtoken = localStorage.getItem('token');
-      if (!authtoken) {
+      if (!localStorage.getItem('token')) {
         throw new Error('No token found');
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authtoken}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch chats');
-      }
-
-      const responseData = await response.json();
+      const responseData = await chatApi.fetchUserChats(userId, chatType);
       setChats(responseData || []);
     } catch (error) {
       console.error('Error fetching chats:', error);
@@ -88,16 +73,7 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
 
     setIsSearching(true);
     try {
-      const authtoken = localStorage.getItem('token');
-      const response = await fetch(
-        `${API_BASE_URL}/company/auth/search?query=${encodeURIComponent(query)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authtoken}`,
-          },
-        }
-      );
-      const data = await response.json();
+      const data = await companiesApi.searchCompanies(query);
       if (data.success) {
         setSearchResults(data.companies || []);
       } else {

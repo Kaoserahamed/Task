@@ -2,7 +2,7 @@ import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { ToursContext } from '../../Context/ToursContext';
 import PackageGrid from '../../Components/PackageGrid/PackageGrid';
 import './PopularTours.css';
-import API_BASE_URL from '../../config/api';
+import * as reviewsApi from '../../api/reviews';
 
 const PopularTours = () => {
   const { tours = [], loading } = useContext(ToursContext);
@@ -13,8 +13,7 @@ const PopularTours = () => {
   useEffect(() => {
     const fetchAverageRatings = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/reviews`);
-        const reviews = await res.json();
+        const reviews = await reviewsApi.fetchReviews();
 
         const ratingMap = {};
         const countMap = {};

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './NewPassword.css';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const NewPassword = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +19,6 @@ const NewPassword = () => {
     e.preventDefault();
     setError('');
     setMessage('');
-    console.log('Submit');
     // Validate passwords
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -32,22 +31,7 @@ const NewPassword = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/auth/reset-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-      console.log(data);
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to reset password');
-      }
+      await authApi.resetPassword(token, formData.password);
 
       setMessage('Password has been reset successfully');
       setTimeout(() => {
@@ -57,7 +41,6 @@ const NewPassword = () => {
       setError(error.message);
     }
   };
-  console.log(message);
 
   return (
     <div className="new-password-page">

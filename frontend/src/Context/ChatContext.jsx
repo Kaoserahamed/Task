@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import API_BASE_URL from '../config/api';
+import * as chatApi from '../api/chat';
 
 const ChatContext = createContext();
 
@@ -25,19 +25,7 @@ export const ChatProvider = ({ children }) => {
 
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const response = await fetch(
-          `${API_BASE_URL}/api/chat/get-user-chat/${user.user._id}?query=${chatType}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) throw new Error('Failed to fetch chats');
-        const data = await response.json();
+        const data = await chatApi.fetchUserChats(user.user._id, chatType);
         setChats(data || []);
       } catch (err) {
         setError(err.message);
@@ -51,18 +39,7 @@ export const ChatProvider = ({ children }) => {
 
   const sendMessage = useCallback(async (messageData) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/chat/send-message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(messageData),
-      });
-
-      if (!response.ok) throw new Error('Failed to send message');
-      return await response.json();
+      return await chatApi.sendMessage(messageData);
     } catch (err) {
       setError(err.message);
       console.error('Error sending message:', err);

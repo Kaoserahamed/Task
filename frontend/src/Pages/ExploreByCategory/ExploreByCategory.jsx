@@ -4,6 +4,8 @@ import { ToursContext } from '../../Context/ToursContext';
 import CategoryTabs from '../../Components/CategoryTabs/CategoryTabs';
 import './ExploreByCategory.css';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as reviewsApi from '../../api/reviews';
 
 const ExploreByCategory = () => {
   const { category } = useParams();
@@ -16,8 +18,7 @@ const ExploreByCategory = () => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/reviews`);
-        const reviews = await res.json();
+        const reviews = await reviewsApi.fetchReviews();
 
         const ratingMap = {};
         const countMap = {};
@@ -49,9 +50,7 @@ const ExploreByCategory = () => {
   }, [tours]);
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
-        method: 'PATCH',
-      });
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);

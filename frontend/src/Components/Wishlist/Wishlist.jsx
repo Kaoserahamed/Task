@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './Wishlist.css';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as wishlistApi from '../../api/wishlist';
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -13,7 +14,7 @@ const Wishlist = () => {
 
   const handleViewDetails = async (tourId) => {
     try {
-      await axios.patch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`);
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -36,19 +37,9 @@ const Wishlist = () => {
       }
 
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/wishlist`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            email: user.user.email, // Send email as a query parameter
-          },
-        });
+        const data = await wishlistApi.fetchWishlist(user.user.email);
 
-        // Log the response to see the returned data
-        console.log('Wishlist Response:', response.data);
-
-        setWishlistItems(response.data.wishlist);
+        setWishlistItems(data.wishlist);
       } catch (error) {
         setError('Failed to load wishlist items.');
         console.error(error);
@@ -71,14 +62,7 @@ const Wishlist = () => {
     }
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/wishlist/remove/${tourId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          email: user.user.email, // Send email in request body when removing an item
-        },
-      });
+      await wishlistApi.removeFromWishlist(tourId, user.user.email);
 
       // Remove the item from the state after successful deletion
       setWishlistItems((prevItems) => prevItems.filter((item) => item.tourId._id !== tourId));

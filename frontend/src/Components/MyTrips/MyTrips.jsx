@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './MyTrips.css';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as bookingsApi from '../../api/bookings';
 const MyTrips = () => {
   const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -12,7 +13,7 @@ const MyTrips = () => {
   const navigate = useNavigate();
   const handleViewDetails = async (tourId) => {
     try {
-      await axios.patch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`);
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -33,19 +34,11 @@ const MyTrips = () => {
       }
 
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/bookings`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { email: user.user.email },
-        });
-
-        console.log('Bookings API response:', response.data);
+        const data = await bookingsApi.fetchMyBookings(user.user.email);
 
         // The API returns {success: true, upcoming: Array, completed: Array}
-        if (response.data.success) {
-          const allBookings = [
-            ...(response.data.upcoming || []),
-            ...(response.data.completed || []),
-          ];
+        if (data.success) {
+          const allBookings = [...(data.upcoming || []), ...(data.completed || [])];
           setBookings(allBookings);
           setError('');
         } else {

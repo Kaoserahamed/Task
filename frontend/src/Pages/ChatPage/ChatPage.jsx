@@ -5,7 +5,7 @@ import { useAuth } from '../../Context/AuthContext';
 import socket from '../../socket';
 import { useLocation } from 'react-router-dom';
 import './ChatPage.css';
-import API_BASE_URL from '../../config/api';
+import * as chatApi from '../../api/chat';
 
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1';
 
@@ -16,7 +16,6 @@ const ChatPage = () => {
   const [chats, setChats] = useState([]);
   const { user } = useAuth();
 
-  console.log(selectedChat);
   const directChat = location.state?.directChat || false;
 
   useEffect(() => {
@@ -31,25 +30,11 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const authtoken = localStorage.getItem('token');
-        if (!authtoken) {
+        if (!localStorage.getItem('token')) {
           throw new Error('No token found');
         }
 
-        const response = await fetch(
-          `${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${authtoken}`,
-            },
-          }
-        );
-        const responseData = await response.json();
-        if (!response.ok) {
-          throw new Error('Failed to fetch chats');
-        }
+        const responseData = await chatApi.fetchUserChats(userId, chatType);
         setChats(responseData || []);
       } catch (error) {
         console.error('Error fetching chats:', error);

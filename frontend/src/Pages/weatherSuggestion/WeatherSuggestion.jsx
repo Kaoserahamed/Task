@@ -1,11 +1,13 @@
 // Updated WeatherSuggestion component with proper city matching
 
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './WeatherSuggestion.css';
 import { ToursContext } from '../../Context/ToursContext';
 import fallbackImage from './pexels-pixabay-76969.jpg';
+import API_BASE_URL from '../../config/api';
+import * as weatherApi from '../../api/weather';
+import * as toursApi from '../../api/tours';
 
 const WeatherSuggestion = () => {
   const navigate = useNavigate();
@@ -228,31 +230,22 @@ const WeatherSuggestion = () => {
     setWeatherError('');
 
     try {
-      console.log(
-        '📡 Making API call to:',
-        `${process.env.REACT_APP_BACKEND_URL}/api/weather/${cityName}`
-      );
-      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/weather/${cityName}`);
+      const data = await weatherApi.fetchWeather(cityName);
 
-      console.log('📡 Weather API Response:', res.data);
-
-      if (res.data && (res.data.weather || res.data.temp)) {
+      if (data && (data.weather || data.temp)) {
         const weatherData = {
-          city: res.data.city || matchingCity,
-          condition: res.data.weather,
-          temp: res.data.temp,
-          description: res.data.weather,
-          humidity: res.data.humidity,
-          windSpeed: res.data.windSpeed,
+          city: data.city || matchingCity,
+          condition: data.weather,
+          temp: data.temp,
+          description: data.weather,
+          humidity: data.humidity,
+          windSpeed: data.windSpeed,
         };
-
-        console.log('🌤️ Processed weather data:', res.data.city);
 
         setCurrentWeather(weatherData);
         setSelectedCity(weatherData.city);
 
         // Call filterToursByWeather with weather data
-        console.log('🔄 About to call filterToursByWeather...');
         filterToursByWeather(weatherData);
       } else {
         throw new Error('Weather data not available');
@@ -282,7 +275,7 @@ const WeatherSuggestion = () => {
 
   const handleTourClick = async (tourId) => {
     try {
-      await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/api/tours/${tourId}/increment-view`);
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);
@@ -380,7 +373,7 @@ const WeatherSuggestion = () => {
                 const isSameCity =
                   normalizeCity(tour.weather?.city || '') === normalizeCity(currentWeather.city);
                 const imageUrl = tour.images?.length
-                  ? `${process.env.REACT_APP_BACKEND_URL}/${tour.images[0]}`
+                  ? `${API_BASE_URL}/${tour.images[0]}`
                   : 'https://picsum.photos/300/200';
 
                 return (

@@ -8,7 +8,8 @@ import PaymentInfoForm from './PaymentInfoForm';
 import OrderSummary from './OrderSummary';
 import './Checkout.css';
 import socket from '../../socket';
-import API_BASE_URL from '../../config/api';
+import * as bookingsApi from '../../api/bookings';
+import * as toursApi from '../../api/tours';
 
 const Checkout = () => {
   const [step, setStep] = useState(1);
@@ -82,51 +83,28 @@ const Checkout = () => {
       // Calculate total amount
       const totalAmount = selectedTour.price * requestedTravelers;
 
-      const bookingResponse = await fetch(`${API_BASE_URL}/api/bookings/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          tourId: tourId,
-          email: user?.user?.email || formData.email,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          country: formData.country,
-          travelers: requestedTravelers,
-          startDate: selectedTour?.startDate || new Date().toISOString(),
-          specialRequests: formData.specialRequests,
-          paymentMethod: formData.paymentMethod,
-          cardHolder: formData.cardHolder,
-          cardNumber: formData.cardNumber,
-          totalAmount: totalAmount,
-          userId: user?.user?._id,
-        }),
+      const bookingData = await bookingsApi.createBooking({
+        tourId: tourId,
+        email: user?.user?.email || formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        country: formData.country,
+        travelers: requestedTravelers,
+        startDate: selectedTour?.startDate || new Date().toISOString(),
+        specialRequests: formData.specialRequests,
+        paymentMethod: formData.paymentMethod,
+        cardHolder: formData.cardHolder,
+        cardNumber: formData.cardNumber,
+        totalAmount: totalAmount,
+        userId: user?.user?._id,
       });
-
-      const bookingData = await bookingResponse.json();
-
-      if (!bookingResponse.ok) {
-        throw new Error(bookingData.message || 'Failed to save booking');
-      }
 
       // Update tour seats
-      const updateResponse = await fetch(`${API_BASE_URL}/api/tours/${tourId}/book-seats`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          seatsToBook: requestedTravelers,
-        }),
-      });
-
-      if (updateResponse.ok) {
-        const updatedTour = await updateResponse.json();
+      try {
+        const updatedTour = await toursApi.bookSeats(tourId, requestedTravelers);
         if (updateTour) {
           updateTour(updatedTour.tour);
         }
@@ -138,6 +116,8 @@ const Checkout = () => {
             travelers: requestedTravelers,
           });
         }
+      } catch (error) {
+        console.error('Failed to update tour seats:', error);
       }
 
       alert(

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import './HotelRestaurants.css';
-import API_BASE_URL from '../config/api';
+import * as placesApi from '../api/places';
 
 const HotelRestaurants = () => {
   const [hotels, setHotels] = useState([]);
@@ -14,12 +13,12 @@ const HotelRestaurants = () => {
     const fetchPlaces = async () => {
       try {
         setLoading(true);
-        const [hotelRes, restaurantRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/api/hotels`),
-          axios.get(`${API_BASE_URL}/api/restaurants`),
+        const [hotelsData, restaurantsData] = await Promise.all([
+          placesApi.fetchHotels(),
+          placesApi.fetchRestaurants(),
         ]);
-        setHotels(hotelRes.data || []);
-        setRestaurants(restaurantRes.data || []);
+        setHotels(hotelsData || []);
+        setRestaurants(restaurantsData || []);
       } catch (error) {
         console.error('API fetch failed:', error);
       } finally {

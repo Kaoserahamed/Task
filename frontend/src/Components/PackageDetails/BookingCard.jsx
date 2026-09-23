@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../../config/api';
+import * as wishlistApi from '../../api/wishlist';
 
 const BookingCard = ({
   price,
@@ -63,20 +62,11 @@ const BookingCard = ({
     console.log('Adding to wishlist - Email:', user?.user?.email, 'Tour ID:', tourId);
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/api/wishlist/add`,
-        { tourId, email: user?.user?.email },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
+      const data = await wishlistApi.addToWishlist(tourId, user?.user?.email);
 
-      setMessage(response.data.message);
+      setMessage(data.message);
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Error adding to wishlist');
+      setMessage(error.message || 'Error adding to wishlist');
     }
   };
 

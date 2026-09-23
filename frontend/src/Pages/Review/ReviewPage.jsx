@@ -3,9 +3,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useContext } from 'react';
 import { ToursContext } from '../../Context/ToursContext'; // Import ToursContext
 import { Star, X, Upload, Check, AlertCircle } from 'lucide-react';
-import axios from 'axios';
 import './ReviewPage.css';
 import API_BASE_URL from '../../config/api';
+import * as reviewsApi from '../../api/reviews';
 
 const ReviewPage = () => {
   const { tours, loading } = useContext(ToursContext); // Get tours from context
@@ -51,8 +51,8 @@ const ReviewPage = () => {
   const fetchAllReviews = async () => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get(`${API_BASE_URL}/reviews`);
-      setReviews(response.data);
+      const data = await reviewsApi.fetchReviews();
+      setReviews(data);
     } catch (error) {
       console.error('Error fetching reviews:', error);
       // Fallback to empty array if API fails
@@ -65,8 +65,8 @@ const ReviewPage = () => {
   const fetchReviewsForTour = async (tourId) => {
     try {
       setLoadingReviews(true);
-      const response = await axios.get(`${API_BASE_URL}/reviews/tour/${tourId}`);
-      setReviews(response.data);
+      const data = await reviewsApi.fetchTourReviews(tourId);
+      setReviews(data);
     } catch (error) {
       console.error(`Error fetching reviews for tour ${tourId}:`, error);
       // Fallback to empty array if API fails
@@ -188,15 +188,10 @@ const ReviewPage = () => {
         formData.append('photos', photo.file);
       });
 
-      // Submit review to API - use the correct path
-      const response = await axios.post(`${API_BASE_URL}/reviews`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // Submit review to API
+      const newReview = await reviewsApi.createReview(formData);
 
       // Add the new review to the local state for immediate display
-      const newReview = response.data;
       setReviews((prevReviews) => [newReview, ...prevReviews]);
 
       // Show success message

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
 import './ProfileInfo.css';
 import { useAuth } from '../../Context/AuthContext';
 import API_BASE_URL from '../../config/api';
+import * as wishlistApi from '../../api/wishlist';
+import * as bookingsApi from '../../api/bookings';
+import * as authApi from '../../api/auth';
 
 const ProfileInfo = () => {
   const { user, updateUserLocal, refreshUserData } = useAuth();
@@ -40,21 +42,12 @@ const ProfileInfo = () => {
 
       try {
         // Fetch Wishlist Count
-        const wishlistRes = await axios.get(`${API_BASE_URL}/api/wishlist`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { email: userData.email },
-        });
-        setWishlistCount(wishlistRes.data.wishlist?.length || 0);
+        const wishlistData = await wishlistApi.fetchWishlist(userData.email);
+        setWishlistCount(wishlistData.wishlist?.length || 0);
 
         // Fetch Bookings (trips)
-        const bookingRes = await axios.get(`${API_BASE_URL}/api/bookings`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { email: userData.email },
-        });
-        const totalTrips = [
-          ...(bookingRes.data.upcoming || []),
-          ...(bookingRes.data.completed || []),
-        ];
+        const bookingData = await bookingsApi.fetchMyBookings(userData.email);
+        const totalTrips = [...(bookingData.upcoming || []), ...(bookingData.completed || [])];
         setTripsCount(totalTrips.length);
       } catch (err) {
         console.error('Error fetching counts:', err);
@@ -111,32 +104,24 @@ const ProfileInfo = () => {
     formData.append('email', userData.email);
 
     try {
-      console.log('Uploading avatar for:', userData.email);
+      const data = await authApi.uploadAvatar(formData);
 
-      const response = await axios.post(`${API_BASE_URL}/user/auth/avatar`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      console.log('Upload response:', response.data);
-
-      if (response.data.success) {
+      if (data.success) {
         // Update the avatar URL with cache busting
-        const newAvatarUrl = `${API_BASE_URL}/${response.data.user.avatar}?t=${Date.now()}`;
+        const newAvatarUrl = `${API_BASE_URL}/${data.user.avatar}?t=${Date.now()}`;
         setAvatarPreview(newAvatarUrl);
         setImageError(false);
         setError('');
 
         // Update the user context with new avatar data
-        updateUserLocal({ avatar: response.data.user.avatar });
+        updateUserLocal({ avatar: data.user.avatar });
 
         // Optionally refresh all user data from server
         setTimeout(() => {
           refreshUserData();
         }, 1000);
       } else {
-        setError(response.data.message || 'Upload failed');
+        setError(data.message || 'Upload failed');
         setAvatarPreview(originalAvatar);
       }
     } catch (err) {
@@ -144,17 +129,7 @@ const ProfileInfo = () => {
 
       // Revert to original avatar on error
       setAvatarPreview(originalAvatar);
-
-      if (err.response) {
-        console.error('Error response:', err.response.data);
-        setError(err.response.data.message || `Server error: ${err.response.status}`);
-      } else if (err.request) {
-        console.error('No response received:', err.request);
-        setError('No response from server. Check your connection.');
-      } else {
-        console.error('Request setup error:', err.message);
-        setError('Error setting up the request.');
-      }
+      setError(err.message || 'Upload failed. Please try again.');
     } finally {
       setUploadLoading(false);
     }

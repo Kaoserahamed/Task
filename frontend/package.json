@@ -6,7 +6,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "axios": "^1.8.3",
     "lucide-react": "^0.486.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -52,8 +51,7 @@
     "moduleNameMapper": {
       "^react-router-dom$": "<rootDir>/node_modules/react-router-dom/dist/index.js",
       "^react-router/dom$": "<rootDir>/node_modules/react-router/dist/development/dom-export.js",
-      "^react-router$": "<rootDir>/node_modules/react-router/dist/development/index.js",
-      "^axios$": "<rootDir>/node_modules/axios/dist/node/axios.cjs"
+      "^react-router$": "<rootDir>/node_modules/react-router/dist/development/index.js"
     }
   }
 }

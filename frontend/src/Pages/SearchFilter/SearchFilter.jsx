@@ -6,6 +6,8 @@ import './SearchFilter.css';
 import SearchBox from '../../Components/SearchBox/SearchBox';
 import { Star, Calendar, Clock, MapPin } from 'lucide-react';
 import API_BASE_URL from '../../config/api';
+import * as toursApi from '../../api/tours';
+import * as reviewsApi from '../../api/reviews';
 
 const SearchFilter = () => {
   const { tours, loading, error } = useContext(ToursContext);
@@ -62,8 +64,7 @@ const SearchFilter = () => {
   useEffect(() => {
     const fetchRatingsFromReviews = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/reviews`);
-        const reviews = await response.json();
+        const reviews = await reviewsApi.fetchReviews();
 
         const ratingMap = {};
         const countMap = {};
@@ -96,9 +97,7 @@ const SearchFilter = () => {
   }, []);
   const handleExploreNow = async (tourId) => {
     try {
-      await fetch(`${API_BASE_URL}/api/tours/${tourId}/increment-view`, {
-        method: 'PATCH',
-      });
+      await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
       console.error('Failed to increment view count:', error);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResetPasswordForm from '../../Components/ResetPasswordForm/ResetPasswordForm';
 import './ResetPassword.css';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({ email: '' });
@@ -23,22 +23,7 @@ const ResetPassword = () => {
     setMessage('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/user/auth/reset`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          resetUrl: currentUrl,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to send reset password email');
-      }
+      const data = await authApi.requestPasswordReset(formData.email, currentUrl);
 
       setMessage(data.message || 'Password reset instructions have been sent to your email');
       setTimeout(() => {

@@ -4,7 +4,7 @@ import { useAuth } from '../../Context/AuthContext';
 import AuthForm from '../../Components/AuthForm/AuthForm';
 import AuthTabs from '../../Components/AuthTabs/AuthTabs';
 import './LoginSignup.css';
-import API_BASE_URL from '../../config/api';
+import * as authApi from '../../api/auth';
 
 const DEMO_USER_EMAIL = process.env.REACT_APP_DEMO_USER_EMAIL || '';
 const DEMO_USER_PASSWORD = process.env.REACT_APP_DEMO_USER_PASSWORD || '';
@@ -38,24 +38,12 @@ const LoginSignup = () => {
     e.preventDefault();
 
     try {
-      const endpoint = isLogin ? '/user/auth/login' : '/user/auth/register';
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Authentication failed');
-      }
+      const credentials = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      };
+      const data = isLogin ? await authApi.login(credentials) : await authApi.register(credentials);
 
       // Pass the complete data object to login
       await login(data);
