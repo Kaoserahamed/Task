@@ -1,5 +1,5 @@
 # Backend API image — the Express server in backend/.
-FROM node:20-alpine
+FROM node:25-alpine
 
 WORKDIR /app
 
