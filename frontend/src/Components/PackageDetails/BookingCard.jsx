@@ -4,10 +4,17 @@ import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom'; // Corrected import
 import API_BASE_URL from '../../config/api';
 
-const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, tourId, socket }) => {
+const BookingCard = ({
+  price,
+  availableSeats: initialSeats,
+  startDate,
+  endDate,
+  tourId,
+  socket,
+}) => {
   const [message, setMessage] = useState('');
   const [availableSeats, setAvailableSeats] = useState(initialSeats);
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const navigate = useNavigate(); // Corrected hook
 
   // Update available seats when initialSeats prop changes
@@ -45,7 +52,7 @@ const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, 
     }
   }, [message]);
 
-  console.log("User in BookingCard:", user?.user?.email);
+  console.log('User in BookingCard:', user?.user?.email);
 
   const handleAddToWishlist = async () => {
     if (!user) {
@@ -53,18 +60,19 @@ const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, 
       return;
     }
 
-    console.log("Adding to wishlist - Email:", user?.user?.email, "Tour ID:", tourId);
+    console.log('Adding to wishlist - Email:', user?.user?.email, 'Tour ID:', tourId);
 
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/wishlist/add`,
-        { tourId, email: user?.user?.email }, 
+        { tourId, email: user?.user?.email },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-        });
+        }
+      );
 
       setMessage(response.data.message);
     } catch (error) {
@@ -101,11 +109,10 @@ const BookingCard = ({ price, availableSeats: initialSeats, startDate, endDate, 
           <i className="far fa-heart"></i>
           Add to Wishlist
         </button>
-        {message&&<p className='error-message'>{message}</p>}
+        {message && <p className="error-message">{message}</p>}
       </div>
     </div>
   );
 };
 
 export default BookingCard;
-

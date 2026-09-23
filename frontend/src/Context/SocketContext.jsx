@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       const newSocket = io(`${API_BASE_URL}`, {
-        query: { userId: user._id }
+        query: { userId: user._id },
       });
 
       setSocket(newSocket);
@@ -25,9 +25,5 @@ export const SocketProvider = ({ children }) => {
     }
   }, [user]);
 
-  return (
-    <SocketContext.Provider value={socket}>
-      {children}
-    </SocketContext.Provider>
-  );
-}; 
+  return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
+};

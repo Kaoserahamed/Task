@@ -16,7 +16,9 @@ const PackageItinerary = ({ destinations }) => {
             <div className="day-content">
               <h3>{destination.name}</h3>
               <p>{destination.description}</p>
-              <p><strong>Stay Duration:</strong> {destination.stayDuration}</p>
+              <p>
+                <strong>Stay Duration:</strong> {destination.stayDuration}
+              </p>
             </div>
           </div>
         ))}
@@ -26,4 +28,3 @@ const PackageItinerary = ({ destinations }) => {
 };
 
 export default PackageItinerary;
-

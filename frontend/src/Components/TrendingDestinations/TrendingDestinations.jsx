@@ -12,7 +12,7 @@ const TrendingDestinations = () => {
       reviews: 1250,
       image: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e',
       price: 1499,
-      description: 'Iconic white-washed buildings and stunning sunsets'
+      description: 'Iconic white-washed buildings and stunning sunsets',
     },
     {
       id: 2,
@@ -22,7 +22,7 @@ const TrendingDestinations = () => {
       reviews: 2100,
       image: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1',
       price: 1899,
-      description: 'Ancient Incan citadel set high in the Andes Mountains'
+      description: 'Ancient Incan citadel set high in the Andes Mountains',
     },
     {
       id: 3,
@@ -32,7 +32,7 @@ const TrendingDestinations = () => {
       reviews: 3300,
       image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c',
       price: 2299,
-      description: 'Ultra-modern architecture and luxury shopping'
+      description: 'Ultra-modern architecture and luxury shopping',
     },
     {
       id: 4,
@@ -42,8 +42,8 @@ const TrendingDestinations = () => {
       reviews: 1800,
       image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e',
       price: 1699,
-      description: 'Traditional temples and beautiful gardens'
-    }
+      description: 'Traditional temples and beautiful gardens',
+    },
   ];
 
   return (
@@ -58,13 +58,11 @@ const TrendingDestinations = () => {
       </div>
 
       <div className="destinations-grid">
-        {destinations.map(destination => (
+        {destinations.map((destination) => (
           <div key={destination.id} className="destination-card">
             <div className="destination-image">
               <img src={destination.image} alt={destination.name} />
-              <div className="destination-price">
-                From ${destination.price}
-              </div>
+              <div className="destination-price">From ${destination.price}</div>
             </div>
             <div className="destination-content">
               <div className="destination-header">
@@ -98,4 +96,4 @@ const TrendingDestinations = () => {
   );
 };
 
-export default TrendingDestinations; 
+export default TrendingDestinations;

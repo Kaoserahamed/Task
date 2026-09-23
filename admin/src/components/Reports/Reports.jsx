@@ -12,13 +12,14 @@ const Reports = () => {
     {
       id: 1,
       type: 'user',
-      title: 'Poor service during Cox\'s Bazar tour',
+      title: "Poor service during Cox's Bazar tour",
       submittedBy: 'Rahul Ahmed',
       submittedAgainst: 'Travel Buddy Ltd',
       date: '2023-05-15',
       status: 'pending',
       priority: 'high',
-      description: 'The tour guide was not knowledgeable and the accommodation was below the standard promised in the package.',
+      description:
+        'The tour guide was not knowledgeable and the accommodation was below the standard promised in the package.',
     },
     {
       id: 2,
@@ -29,7 +30,8 @@ const Reports = () => {
       date: '2023-05-12',
       status: 'resolved',
       priority: 'medium',
-      description: 'The customer repeatedly ignored safety instructions during the boat tour in Sundarbans, putting themselves and others at risk.',
+      description:
+        'The customer repeatedly ignored safety instructions during the boat tour in Sundarbans, putting themselves and others at risk.',
     },
     {
       id: 3,
@@ -40,7 +42,8 @@ const Reports = () => {
       date: '2023-05-10',
       status: 'in-progress',
       priority: 'high',
-      description: 'The tour package advertised 4-star accommodation but we were provided with a 2-star hotel. The food quality was also poor.',
+      description:
+        'The tour package advertised 4-star accommodation but we were provided with a 2-star hotel. The food quality was also poor.',
     },
     {
       id: 4,
@@ -51,7 +54,8 @@ const Reports = () => {
       date: '2023-05-08',
       status: 'pending',
       priority: 'low',
-      description: 'The customer damaged furniture in the hotel room and refused to pay for repairs.',
+      description:
+        'The customer damaged furniture in the hotel room and refused to pay for repairs.',
     },
     {
       id: 5,
@@ -62,7 +66,8 @@ const Reports = () => {
       date: '2023-05-05',
       status: 'resolved',
       priority: 'high',
-      description: 'My tour was cancelled just 2 days before the departure date and I was only refunded 50% of the amount.',
+      description:
+        'My tour was cancelled just 2 days before the departure date and I was only refunded 50% of the amount.',
     },
     {
       id: 6,
@@ -74,31 +79,33 @@ const Reports = () => {
       status: 'in-progress',
       priority: 'medium',
       description: 'The customer was verbally abusive to our female staff members during the tour.',
-    }
+    },
   ]);
 
   // Filter reports based on active tab and search term
-  const filteredReports = reports.filter(report => {
+  const filteredReports = reports.filter((report) => {
     // Filter by tab
     if (activeTab !== 'all' && report.type !== activeTab && report.status !== activeTab) {
       return false;
     }
-    
+
     // Filter by search term
-    if (searchTerm && 
-        !report.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
-        !report.submittedBy.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !report.submittedAgainst.toLowerCase().includes(searchTerm.toLowerCase())) {
+    if (
+      searchTerm &&
+      !report.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !report.submittedBy.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !report.submittedAgainst.toLowerCase().includes(searchTerm.toLowerCase())
+    ) {
       return false;
     }
-    
+
     return true;
   });
 
   // Sort reports
   const sortedReports = [...filteredReports].sort((a, b) => {
     if (sortBy === 'date') {
-      return sortOrder === 'asc' 
+      return sortOrder === 'asc'
         ? new Date(a.date) - new Date(b.date)
         : new Date(b.date) - new Date(a.date);
     } else if (sortBy === 'priority') {
@@ -111,26 +118,34 @@ const Reports = () => {
   });
 
   const handleStatusChange = (id, newStatus) => {
-    setReports(reports.map(report => 
-      report.id === id ? { ...report, status: newStatus } : report
-    ));
+    setReports(
+      reports.map((report) => (report.id === id ? { ...report, status: newStatus } : report))
+    );
   };
 
   const getStatusClass = (status) => {
-    switch(status) {
-      case 'pending': return 'status-pending';
-      case 'in-progress': return 'status-in-progress';
-      case 'resolved': return 'status-resolved';
-      default: return '';
+    switch (status) {
+      case 'pending':
+        return 'status-pending';
+      case 'in-progress':
+        return 'status-in-progress';
+      case 'resolved':
+        return 'status-resolved';
+      default:
+        return '';
     }
   };
 
   const getPriorityClass = (priority) => {
-    switch(priority) {
-      case 'high': return 'priority-high';
-      case 'medium': return 'priority-medium';
-      case 'low': return 'priority-low';
-      default: return '';
+    switch (priority) {
+      case 'high':
+        return 'priority-high';
+      case 'medium':
+        return 'priority-medium';
+      case 'low':
+        return 'priority-low';
+      default:
+        return '';
     }
   };
 
@@ -139,9 +154,9 @@ const Reports = () => {
       <div className="reports-header">
         <h2>Reports & Complaints</h2>
         <div className="search-container">
-          <input 
-            type="text" 
-            placeholder="Search by title, submitted by, or against..." 
+          <input
+            type="text"
+            placeholder="Search by title, submitted by, or against..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -151,38 +166,38 @@ const Reports = () => {
 
       <div className="reports-filters">
         <div className="filter-tabs">
-          <button 
-            className={activeTab === 'all' ? 'active' : ''} 
+          <button
+            className={activeTab === 'all' ? 'active' : ''}
             onClick={() => setActiveTab('all')}
           >
             All Reports
           </button>
-          <button 
-            className={activeTab === 'user' ? 'active' : ''} 
+          <button
+            className={activeTab === 'user' ? 'active' : ''}
             onClick={() => setActiveTab('user')}
           >
             User Reports
           </button>
-          <button 
-            className={activeTab === 'company' ? 'active' : ''} 
+          <button
+            className={activeTab === 'company' ? 'active' : ''}
             onClick={() => setActiveTab('company')}
           >
             Company Reports
           </button>
-          <button 
-            className={activeTab === 'pending' ? 'active' : ''} 
+          <button
+            className={activeTab === 'pending' ? 'active' : ''}
             onClick={() => setActiveTab('pending')}
           >
             Pending
           </button>
-          <button 
-            className={activeTab === 'in-progress' ? 'active' : ''} 
+          <button
+            className={activeTab === 'in-progress' ? 'active' : ''}
             onClick={() => setActiveTab('in-progress')}
           >
             In Progress
           </button>
-          <button 
-            className={activeTab === 'resolved' ? 'active' : ''} 
+          <button
+            className={activeTab === 'resolved' ? 'active' : ''}
             onClick={() => setActiveTab('resolved')}
           >
             Resolved
@@ -206,11 +221,13 @@ const Reports = () => {
       </div>
 
       <div className="reports-list">
-        {sortedReports.map(report => (
+        {sortedReports.map((report) => (
           <div key={report.id} className="report-card">
             <div className="report-header">
               <div className="report-title-section">
-                <span className={`report-type ${report.type === 'user' ? 'user-report' : 'company-report'}`}>
+                <span
+                  className={`report-type ${report.type === 'user' ? 'user-report' : 'company-report'}`}
+                >
                   {report.type === 'user' ? 'User Report' : 'Company Report'}
                 </span>
                 <h3>{report.title}</h3>
@@ -220,7 +237,9 @@ const Reports = () => {
                   {report.priority.charAt(0).toUpperCase() + report.priority.slice(1)} Priority
                 </span>
                 <span className={`report-status ${getStatusClass(report.status)}`}>
-                  {report.status === 'in-progress' ? 'In Progress' : report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                  {report.status === 'in-progress'
+                    ? 'In Progress'
+                    : report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                 </span>
               </div>
             </div>
@@ -229,15 +248,26 @@ const Reports = () => {
               <div className="report-info">
                 <div className="info-item">
                   <i className="fas fa-user"></i>
-                  <span><strong>Submitted by:</strong> {report.submittedBy}</span>
+                  <span>
+                    <strong>Submitted by:</strong> {report.submittedBy}
+                  </span>
                 </div>
                 <div className="info-item">
                   <i className="fas fa-user-shield"></i>
-                  <span><strong>Against:</strong> {report.submittedAgainst}</span>
+                  <span>
+                    <strong>Against:</strong> {report.submittedAgainst}
+                  </span>
                 </div>
                 <div className="info-item">
                   <i className="fas fa-calendar-alt"></i>
-                  <span><strong>Date:</strong> {new Date(report.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  <span>
+                    <strong>Date:</strong>{' '}
+                    {new Date(report.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
                 </div>
               </div>
 
@@ -250,27 +280,28 @@ const Reports = () => {
               <button className="action-btn view-btn">
                 <i className="fas fa-eye"></i> View Details
               </button>
-              
+
               {report.status === 'pending' && (
-                <button 
+                <button
                   className="action-btn process-btn"
                   onClick={() => handleStatusChange(report.id, 'in-progress')}
                 >
                   <i className="fas fa-tasks"></i> Process Report
                 </button>
               )}
-              
+
               {report.status === 'in-progress' && (
-                <button 
+                <button
                   className="action-btn resolve-btn"
                   onClick={() => handleStatusChange(report.id, 'resolved')}
                 >
                   <i className="fas fa-check-circle"></i> Mark as Resolved
                 </button>
               )}
-              
+
               <button className="action-btn contact-btn">
-                <i className="fas fa-envelope"></i> Contact {report.type === 'user' ? 'User' : 'Company'}
+                <i className="fas fa-envelope"></i> Contact{' '}
+                {report.type === 'user' ? 'User' : 'Company'}
               </button>
             </div>
           </div>
@@ -286,6 +317,5 @@ const Reports = () => {
     </div>
   );
 };
-
 
 export default Reports;

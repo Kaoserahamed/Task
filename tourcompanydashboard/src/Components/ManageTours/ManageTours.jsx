@@ -8,7 +8,14 @@ import API_BASE_URL from '../../config/api';
 
 const ManageTours = () => {
   const { company } = useAuth();
-  const { tours: allTours, loading, error, deleteTour, updateTourStatus, fetchcompanyTours } = useTours();
+  const {
+    tours: allTours,
+    loading,
+    error,
+    deleteTour,
+    updateTourStatus,
+    fetchcompanyTours,
+  } = useTours();
   const [filteredTours, setFilteredTours] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeTourType, setActiveTourType] = useState('all');
@@ -46,7 +53,7 @@ const ManageTours = () => {
     'Family',
     'Honeymoon',
     'Educational',
-    'Seasonal'
+    'Seasonal',
   ];
 
   useEffect(() => {
@@ -59,7 +66,7 @@ const ManageTours = () => {
 
     // First filter by category
     if (activeCategory !== 'all') {
-      filtered = filtered.filter(tour => {
+      filtered = filtered.filter((tour) => {
         let categories = tour.packageCategories;
 
         if (Array.isArray(categories) && categories.length > 0) {
@@ -74,15 +81,13 @@ const ManageTours = () => {
                 .replace('[', '')
                 .replace(']', '')
                 .split(',')
-                .map(cat => cat.trim());
+                .map((cat) => cat.trim());
             }
 
             // Case-insensitive comparison
-            return categories.some(cat =>
-              cat.toLowerCase() === activeCategory.toLowerCase()
-            );
+            return categories.some((cat) => cat.toLowerCase() === activeCategory.toLowerCase());
           } catch (error) {
-            console.error("Error parsing categories for tour:", tour.name, error);
+            console.error('Error parsing categories for tour:', tour.name, error);
             return false;
           }
         }
@@ -92,18 +97,15 @@ const ManageTours = () => {
 
     // Then filter by tour type
     if (activeTourType !== 'all') {
-      filtered = filtered.filter(tour => tour.tourType?.[activeTourType]);
+      filtered = filtered.filter((tour) => tour.tourType?.[activeTourType]);
     }
-     // Then filter by tour type
-     if (activeTourType !== 'all') {
-      filtered = filtered.filter(tour => 
-        tour.tourType && tour.tourType[activeTourType] === true
-      );
+    // Then filter by tour type
+    if (activeTourType !== 'all') {
+      filtered = filtered.filter((tour) => tour.tourType && tour.tourType[activeTourType] === true);
     }
 
     setFilteredTours(filtered);
   }, [activeCategory, activeTourType, allTours]);
-
 
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
@@ -132,11 +134,11 @@ const ManageTours = () => {
     try {
       console.log('Starting status update for tour:', tourId);
       const result = await updateTourStatus(tourId, status);
-      
+
       if (result.success) {
         if (status === 'pending') {
           // Find the tour details
-          const tourDetails = filteredTours.find(tour => tour._id === tourId);
+          const tourDetails = filteredTours.find((tour) => tour._id === tourId);
           if (tourDetails) {
             // Prepare event data
             const eventData = {
@@ -146,13 +148,13 @@ const ManageTours = () => {
               tourName: tourDetails.name,
               price: tourDetails.price,
               status: 'pending',
-              timestamp: new Date()
+              timestamp: new Date(),
             };
-            
+
             // Log and emit the socket event
             console.log('Socket connected status:', socket.connected);
             console.log('Emitting tour_approval_request:', eventData);
-            
+
             socket.emit('tour_approval_request', eventData, (error) => {
               if (error) {
                 console.error('Error emitting event:', error);
@@ -178,11 +180,9 @@ const ManageTours = () => {
   useEffect(() => {
     const handleTourStatusUpdate = (data) => {
       if (data.companyId === company.company._id) {
-        setFilteredTours(prev =>
-          prev.map(tour =>
-            tour._id === data.tourId
-              ? { ...tour, status: data.status, review: data.review }
-              : tour
+        setFilteredTours((prev) =>
+          prev.map((tour) =>
+            tour._id === data.tourId ? { ...tour, status: data.status, review: data.review } : tour
           )
         );
         // Optionally, show a notification
@@ -232,7 +232,8 @@ const ManageTours = () => {
     return `${days}D/${nights}N`;
   };
 
-  const fallbackImageUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN88B8AAsUB4ZtvXtIAAAAASUVORK5CYII=';
+  const fallbackImageUrl =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mN88B8AAsUB4ZtvXtIAAAAASUVORK5CYII=';
 
   if (loading) return <div className="loading">Loading tours...</div>;
   if (error) return <div className="error">Error: {error}</div>;
@@ -251,7 +252,7 @@ const ManageTours = () => {
             >
               All Categories
             </button>
-            {packageCategories.map(category => (
+            {packageCategories.map((category) => (
               <button
                 key={category}
                 className={activeCategory === category ? 'active' : ''}
@@ -301,7 +302,7 @@ const ManageTours = () => {
       ) : (
         <>
           <div className="tours-grid">
-            {filteredTours.map(tour => (
+            {filteredTours.map((tour) => (
               <div key={tour._id} className="tour-card">
                 <div className="tour-image">
                   {tour.images && tour.images[0] ? (
@@ -313,10 +314,7 @@ const ManageTours = () => {
                       }}
                     />
                   ) : (
-                    <img
-                      src={fallbackImageUrl}
-                      alt="No image available"
-                    />
+                    <img src={fallbackImageUrl} alt="No image available" />
                   )}
                   <span className={`status ${tour.status || 'draft'}`}>
                     {tour.status || 'draft'}
@@ -334,23 +332,25 @@ const ManageTours = () => {
                         </span>
                       ))}
                       {tour.customCategory && (
-                        <span className="category-tag custom">
-                          {tour.customCategory}
-                        </span>
+                        <span className="category-tag custom">{tour.customCategory}</span>
                       )}
                     </div>
                     <div className="tour-type-tags">
                       {tour.tourType?.single && <span className="type-tag">Single</span>}
                       {tour.tourType?.group && <span className="type-tag">Group</span>}
                     </div>
-                    <p><strong>Duration:</strong> {getDuration(tour)}</p>
-                    <p><strong>Price:</strong> ${tour.price || 'N/A'}</p>
+                    <p>
+                      <strong>Duration:</strong> {getDuration(tour)}
+                    </p>
+                    <p>
+                      <strong>Price:</strong> ${tour.price || 'N/A'}
+                    </p>
                     {tour.tourType.group && (
                       <p>
-                        <strong>Available Seats:</strong> {' '}
-                        {tour.availableSeats !== undefined ?
-                          `${tour.availableSeats}/${tour.maxGroupSize || 'N/A'}` :
-                          'N/A'}
+                        <strong>Available Seats:</strong>{' '}
+                        {tour.availableSeats !== undefined
+                          ? `${tour.availableSeats}/${tour.maxGroupSize || 'N/A'}`
+                          : 'N/A'}
                       </p>
                     )}
                   </div>
@@ -374,16 +374,14 @@ const ManageTours = () => {
                   <div className="tour-dates">
                     {tour.startDate && (
                       <p>
-                        <strong>Dates:</strong> {formatDate(tour.startDate)} - {formatDate(tour.endDate)}
+                        <strong>Dates:</strong> {formatDate(tour.startDate)} -{' '}
+                        {formatDate(tour.endDate)}
                       </p>
                     )}
                   </div>
 
                   <div className="tour-actions">
-                    <button
-                      className="edit-btn"
-                      onClick={() => handleEdit(tour._id)}
-                    >
+                    <button className="edit-btn" onClick={() => handleEdit(tour._id)}>
                       Edit
                     </button>
                     {(!tour.status || tour.status !== 'approved') && (
@@ -395,10 +393,7 @@ const ManageTours = () => {
                         {tour.status === 'pending' ? 'Pending' : 'Send for Approval'}
                       </button>
                     )}
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(tour._id)}
-                    >
+                    <button className="delete-btn" onClick={() => handleDelete(tour._id)}>
                       Delete
                     </button>
                   </div>
@@ -408,9 +403,7 @@ const ManageTours = () => {
           </div>
 
           {filteredTours.length === 0 && !filterLoading && (
-            <div className="no-tours">
-              No tours found for this category
-            </div>
+            <div className="no-tours">No tours found for this category</div>
           )}
         </>
       )}
@@ -419,4 +412,3 @@ const ManageTours = () => {
 };
 
 export default ManageTours;
-

@@ -4,21 +4,21 @@ import './ProfileTabs.css';
 const ProfileTabs = ({ activeTab, setActiveTab }) => {
   return (
     <div className="profile-tabs">
-      <button 
+      <button
         className={`tab-btn ${activeTab === 'trips' ? 'active' : ''}`}
         onClick={() => setActiveTab('trips')}
       >
         <i className="fas fa-suitcase"></i>
         My Trips
       </button>
-      <button 
+      <button
         className={`tab-btn ${activeTab === 'wishlist' ? 'active' : ''}`}
         onClick={() => setActiveTab('wishlist')}
       >
         <i className="fas fa-heart"></i>
         Wishlist
       </button>
-      <button 
+      <button
         className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
         onClick={() => setActiveTab('settings')}
       >
@@ -29,4 +29,4 @@ const ProfileTabs = ({ activeTab, setActiveTab }) => {
   );
 };
 
-export default ProfileTabs; 
+export default ProfileTabs;

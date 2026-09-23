@@ -1,7 +1,6 @@
 import React from 'react';
 import './ResetPasswordForm.css';
 
-
 const ResetPasswordForm = ({ formData, setFormData, handleSubmit }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -11,7 +10,7 @@ const ResetPasswordForm = ({ formData, setFormData, handleSubmit }) => {
           type="email"
           placeholder="Enter your email"
           value={formData.email}
-          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
       </div>
 
@@ -22,4 +21,4 @@ const ResetPasswordForm = ({ formData, setFormData, handleSubmit }) => {
   );
 };
 
-export default ResetPasswordForm; 
+export default ResetPasswordForm;

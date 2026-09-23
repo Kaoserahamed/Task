@@ -1,4 +1,4 @@
-.hotel-restaurant-page { 
+.hotel-restaurant-page {
   padding: 2rem;
   background: linear-gradient(to right, var(--bg-gradient-start), var(--bg-gradient-end));
   min-height: 100vh;
@@ -39,10 +39,10 @@
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 6px 18px var(--shadow-color);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
-
-
 
 .card-image-wrapper {
   height: 200px;

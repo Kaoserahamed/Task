@@ -32,7 +32,7 @@ const WeatherRecommended = () => {
 
         const ratingMap = {};
 
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           const tourId = review.tourId;
           if (!ratingMap[tourId]) {
             ratingMap[tourId] = { total: 0, count: 0 };
@@ -49,7 +49,7 @@ const WeatherRecommended = () => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error("Error fetching reviews:", err);
+        console.error('Error fetching reviews:', err);
       }
     };
 
@@ -81,7 +81,7 @@ const WeatherRecommended = () => {
       </div>
       <div className="tour-scroll-container">
         <div className="tour-row">
-          {tours.slice(0,4).map(tour => {
+          {tours.slice(0, 4).map((tour) => {
             const averageRating = averageRatings[tour._id];
             return (
               <div key={tour._id} className="tour-card">
@@ -109,7 +109,11 @@ const WeatherRecommended = () => {
                     </span>
                   </div>
                   <div className="tour-actions">
-                    <Link to="#" onClick={() => handleExploreNow(tour._id)} className="view-details-btn">
+                    <Link
+                      to="#"
+                      onClick={() => handleExploreNow(tour._id)}
+                      className="view-details-btn"
+                    >
                       Explore Now <i className="fas fa-arrow-right"></i>
                     </Link>
                   </div>

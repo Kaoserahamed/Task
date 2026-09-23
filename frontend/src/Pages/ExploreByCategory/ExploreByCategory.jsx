@@ -22,7 +22,7 @@ const ExploreByCategory = () => {
         const ratingMap = {};
         const countMap = {};
 
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           const tourId = review.tourId;
           if (!ratingMap[tourId]) {
             ratingMap[tourId] = 0;
@@ -39,7 +39,7 @@ const ExploreByCategory = () => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error("Error fetching reviews:", err);
+        console.error('Error fetching reviews:', err);
       }
     };
 
@@ -61,29 +61,29 @@ const ExploreByCategory = () => {
 
   // Fetch tours when component mounts
   useEffect(() => {
-    console.log("Active Category:", activeCategory);
-    console.log("All Tours:", tours);
+    console.log('Active Category:', activeCategory);
+    console.log('All Tours:', tours);
 
     if (activeCategory === 'all') {
       setFilteredTours(tours);
     } else {
       // Add debugging logs to see the structure of packageCategories
-      tours.forEach(tour => {
+      tours.forEach((tour) => {
         console.log(`Tour "${tour.name}" categories:`, tour.packageCategories);
       });
 
-      const filtered = tours.filter(tour => {
+      const filtered = tours.filter((tour) => {
         console.log(`Checking tour: ${tour.name}`);
         console.log(`Categories for this tour:`, tour.packageCategories);
 
         // Check if packageCategories exists and has content
         if (!tour.packageCategories || tour.packageCategories.length === 0) {
-          console.log("No categories found for this tour");
+          console.log('No categories found for this tour');
           return false;
         }
 
         // Try this simplified approach that handles multiple potential formats
-        const matchFound = tour.packageCategories.some(cat => {
+        const matchFound = tour.packageCategories.some((cat) => {
           let categoryValue = cat;
 
           // If it's a string that might be an array in string format
@@ -91,14 +91,14 @@ const ExploreByCategory = () => {
             try {
               // Try to extract categories from various string formats
               const cleanedStr = cat.replace(/[$$$$']/g, '');
-              const possibleCategories = cleanedStr.split(',').map(c => c.trim());
+              const possibleCategories = cleanedStr.split(',').map((c) => c.trim());
               console.log(`Parsed categories from string: ${possibleCategories}`);
 
-              return possibleCategories.some(c =>
-                c.toLowerCase() === activeCategory.toLowerCase()
+              return possibleCategories.some(
+                (c) => c.toLowerCase() === activeCategory.toLowerCase()
               );
             } catch (e) {
-              console.error("Error parsing category:", e);
+              console.error('Error parsing category:', e);
               // Fall back to direct comparison
               return cat.toLowerCase() === activeCategory.toLowerCase();
             }
@@ -112,7 +112,7 @@ const ExploreByCategory = () => {
         return matchFound;
       });
 
-      console.log("Filtered tours:", filtered);
+      console.log('Filtered tours:', filtered);
       setFilteredTours(filtered);
     }
   }, [activeCategory, tours]);
@@ -159,7 +159,7 @@ const isTourCompleted = (startDate) => {
 const ExploreTourCard = ({ tour, onExplore, averageRating }) => {
   // Fix the rating calculation to ensure it's always a number
   const displayRating = averageRating || tour.averageRating || tour.popularity?.rating || 0;
-  
+
   // Ensure displayRating is a number before calling toFixed
   const ratingValue = typeof displayRating === 'number' ? displayRating : 0;
 
@@ -176,25 +176,38 @@ const ExploreTourCard = ({ tour, onExplore, averageRating }) => {
     <div className="explore-tour-card">
       <div className="explore-tour-image">
         <img
-          src={tour.images && tour.images.length > 0 ? `${API_BASE_URL}/${tour.images[0]}` : 'https://picsum.photos/300/200'}
+          src={
+            tour.images && tour.images.length > 0
+              ? `${API_BASE_URL}/${tour.images[0]}`
+              : 'https://picsum.photos/300/200'
+          }
           alt={tour.name}
-          onError={(e) => { e.target.src = 'https://picsum.photos/300/200'; }}
+          onError={(e) => {
+            e.target.src = 'https://picsum.photos/300/200';
+          }}
         />
         {completed && <span className="tour-completed-tag">Completed</span>}
       </div>
       <div className="explore-tour-info">
         <h3>{tour.name || 'Untitled Tour'}</h3>
         <div className="explore-tour-details">
-          <span>Price: <strong>${tour.price ?? 'N/A'}</strong></span>
-          <span><i className="fas fa-tag"></i> {categoriesDisplay}</span>
+          <span>
+            Price: <strong>${tour.price ?? 'N/A'}</strong>
+          </span>
+          <span>
+            <i className="fas fa-tag"></i> {categoriesDisplay}
+          </span>
           {/* Updated rating display with proper number check: */}
           <span>
-            <i className="fas fa-star"></i> 
+            <i className="fas fa-star"></i>
             {ratingValue > 0 ? `${ratingValue.toFixed(1)} / 5` : 'No Rating'}
           </span>
         </div>
         <div className="explore-tour-actions">
-          <button onClick={() => onExplore && onExplore(tour._id)} className="explore-view-details-btn">
+          <button
+            onClick={() => onExplore && onExplore(tour._id)}
+            className="explore-view-details-btn"
+          >
             Explore Now <i className="fas fa-arrow-right"></i>
           </button>
         </div>
@@ -208,10 +221,10 @@ const ExplorePackageGrid = ({ packages, onExplore, averageRatings }) => {
   return (
     <div className="explore-tour-row">
       {packages.length === 0 && <p className="explore-no-tours-message">No tours found.</p>}
-      {packages.map(tour => (
-        <ExploreTourCard 
-          key={tour._id} 
-          tour={tour} 
+      {packages.map((tour) => (
+        <ExploreTourCard
+          key={tour._id}
+          tour={tour}
           onExplore={onExplore}
           averageRating={averageRatings[tour._id]} // Add this line
         />

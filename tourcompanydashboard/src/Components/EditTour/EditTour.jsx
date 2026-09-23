@@ -16,16 +16,10 @@ const EditTour = () => {
     'Family',
     'Honeymoon',
     'Educational',
-    'Seasonal'
+    'Seasonal',
   ];
 
-  const transportationTypes = [
-    'Bus',
-    'Mini Bus',
-    'Car',
-    'Premium Car',
-    'Other'
-  ];
+  const transportationTypes = ['Bus', 'Mini Bus', 'Car', 'Premium Car', 'Other'];
 
   const weatherConditions = [
     'Sunny',
@@ -37,7 +31,7 @@ const EditTour = () => {
     'Foggy',
     'Hot',
     'Cold',
-    'Mild'
+    'Mild',
   ];
 
   const [tourDetails, setTourDetails] = useState({
@@ -46,32 +40,34 @@ const EditTour = () => {
     customCategory: '',
     tourType: {
       single: false,
-      group: false
+      group: false,
     },
     duration: {
       days: '',
-      nights: ''
+      nights: '',
     },
     startDate: '',
     endDate: '',
     meals: {
       breakfast: false,
       lunch: false,
-      dinner: false
+      dinner: false,
     },
     transportation: {
       type: '',
-      details: ''
+      details: '',
     },
     tourGuide: false,
     price: '',
     maxGroupSize: '',
     availableSeats: '',
-    destinations: [{ 
-      name: '', 
-      description: '',
-      stayDuration: '' 
-    }],
+    destinations: [
+      {
+        name: '',
+        description: '',
+        stayDuration: '',
+      },
+    ],
     images: [],
     includes: [''],
     excludes: [''],
@@ -80,8 +76,8 @@ const EditTour = () => {
     weather: {
       city: '',
       condition: '',
-      temp: ''
-    }
+      temp: '',
+    },
   });
 
   useEffect(() => {
@@ -107,7 +103,7 @@ const EditTour = () => {
           destinations: tour.destinations || [{ name: '', description: '', stayDuration: '' }],
           includes: tour.includes || [''],
           excludes: tour.excludes || [''],
-          weather: tour.weather || { city: '', condition: '', temp: '' }
+          weather: tour.weather || { city: '', condition: '', temp: '' },
         });
       } else {
         throw new Error(data.error || 'Failed to fetch tour details');
@@ -133,16 +129,17 @@ const EditTour = () => {
       return;
     }
 
-    Object.keys(tourDetails).forEach(key => {
+    Object.keys(tourDetails).forEach((key) => {
       if (key === 'images') {
-        tourDetails.images.forEach(image => {
+        tourDetails.images.forEach((image) => {
           if (image instanceof File) {
             formData.append('newImages', image);
           }
         });
-        formData.append('existingImages', JSON.stringify(
-          tourDetails.images.filter(img => !(img instanceof File))
-        ));
+        formData.append(
+          'existingImages',
+          JSON.stringify(tourDetails.images.filter((img) => !(img instanceof File)))
+        );
       } else if (typeof tourDetails[key] === 'object') {
         formData.append(key, JSON.stringify(tourDetails[key]));
       } else {
@@ -173,20 +170,20 @@ const EditTour = () => {
     const { name, value } = e.target;
     setTourDetails({
       ...tourDetails,
-      [name]: value
+      [name]: value,
     });
   };
 
   const handleDurationChange = (e) => {
     const { name, value } = e.target;
     const parsedValue = value === '' ? '' : Math.max(0, parseInt(value) || 0);
-    
+
     setTourDetails({
       ...tourDetails,
       duration: {
         ...tourDetails.duration,
-        [name]: parsedValue
-      }
+        [name]: parsedValue,
+      },
     });
   };
 
@@ -195,8 +192,8 @@ const EditTour = () => {
       ...tourDetails,
       meals: {
         ...tourDetails.meals,
-        [meal]: !tourDetails.meals[meal]
-      }
+        [meal]: !tourDetails.meals[meal],
+      },
     });
   };
 
@@ -206,27 +203,27 @@ const EditTour = () => {
       ...tourDetails,
       transportation: {
         ...tourDetails.transportation,
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   };
 
   const handleCategoryChange = (category) => {
-    setTourDetails(prev => ({
+    setTourDetails((prev) => ({
       ...prev,
       packageCategories: prev.packageCategories.includes(category)
-        ? prev.packageCategories.filter(c => c !== category)
-        : [...prev.packageCategories, category]
+        ? prev.packageCategories.filter((c) => c !== category)
+        : [...prev.packageCategories, category],
     }));
   };
 
   const handleTourTypeChange = (type) => {
-    setTourDetails(prev => ({
+    setTourDetails((prev) => ({
       ...prev,
       tourType: {
         ...prev.tourType,
-        [type]: !prev.tourType[type]
-      }
+        [type]: !prev.tourType[type],
+      },
     }));
   };
 
@@ -235,14 +232,14 @@ const EditTour = () => {
     updatedArray[index] = value;
     setTourDetails({
       ...tourDetails,
-      [field]: updatedArray
+      [field]: updatedArray,
     });
   };
 
   const addArrayField = (field) => {
     setTourDetails({
       ...tourDetails,
-      [field]: [...tourDetails[field], '']
+      [field]: [...tourDetails[field], ''],
     });
   };
 
@@ -252,14 +249,14 @@ const EditTour = () => {
     newDestinations[index][field] = value;
     setTourDetails({
       ...tourDetails,
-      destinations: newDestinations
+      destinations: newDestinations,
     });
   };
 
   const addDestination = () => {
     setTourDetails({
       ...tourDetails,
-      destinations: [...tourDetails.destinations, { name: '', description: '', stayDuration: '' }]
+      destinations: [...tourDetails.destinations, { name: '', description: '', stayDuration: '' }],
     });
   };
 
@@ -267,7 +264,7 @@ const EditTour = () => {
     const files = Array.from(e.target.files);
     setTourDetails({
       ...tourDetails,
-      images: [...tourDetails.images, ...files]
+      images: [...tourDetails.images, ...files],
     });
   };
 
@@ -275,7 +272,7 @@ const EditTour = () => {
     const updatedImages = tourDetails.images.filter((_, i) => i !== index);
     setTourDetails({
       ...tourDetails,
-      images: updatedImages
+      images: updatedImages,
     });
   };
 
@@ -285,8 +282,8 @@ const EditTour = () => {
       ...tourDetails,
       weather: {
         ...(tourDetails.weather || { city: '', condition: '', temp: '' }),
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   };
 
@@ -440,7 +437,9 @@ const EditTour = () => {
             >
               <option value="">Select Transportation Type</option>
               {transportationTypes.map((type) => (
-                <option key={type} value={type}>{type}</option>
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
             <input
@@ -457,10 +456,12 @@ const EditTour = () => {
               <input
                 type="checkbox"
                 checked={tourDetails.tourGuide}
-                onChange={(e) => setTourDetails({
-                  ...tourDetails,
-                  tourGuide: e.target.checked
-                })}
+                onChange={(e) =>
+                  setTourDetails({
+                    ...tourDetails,
+                    tourGuide: e.target.checked,
+                  })
+                }
               />
               Tour Guide Available
             </label>
@@ -493,7 +494,9 @@ const EditTour = () => {
               />
             </div>
           ))}
-          <button type="button" onClick={addDestination}>Add Destination</button>
+          <button type="button" onClick={addDestination}>
+            Add Destination
+          </button>
         </div>
 
         <div className="form-section">
@@ -508,10 +511,7 @@ const EditTour = () => {
                 onChange={(e) => handleArrayFieldChange(index, 'includes', e.target.value)}
               />
             ))}
-            <button 
-              type="button" 
-              onClick={() => addArrayField('includes')}
-            >
+            <button type="button" onClick={() => addArrayField('includes')}>
               Add Included Item
             </button>
           </div>
@@ -526,10 +526,7 @@ const EditTour = () => {
                 onChange={(e) => handleArrayFieldChange(index, 'excludes', e.target.value)}
               />
             ))}
-            <button 
-              type="button" 
-              onClick={() => addArrayField('excludes')}
-            >
+            <button type="button" onClick={() => addArrayField('excludes')}>
               Add Excluded Item
             </button>
           </div>
@@ -575,7 +572,9 @@ const EditTour = () => {
             >
               <option value="">Select Weather Condition</option>
               {weatherConditions.map((condition) => (
-                <option key={condition} value={condition}>{condition}</option>
+                <option key={condition} value={condition}>
+                  {condition}
+                </option>
               ))}
             </select>
             <input
@@ -592,17 +591,16 @@ const EditTour = () => {
         <div className="form-section">
           <h2>Images</h2>
           <div className="file-upload">
-            <input
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              accept="image/*"
-            />
+            <input type="file" multiple onChange={handleFileChange} accept="image/*" />
             <div className="image-preview">
               {tourDetails.images.map((image, index) => (
                 <div key={index} className="image-preview-item">
                   <img
-                    src={image instanceof File ? URL.createObjectURL(image) : `${API_BASE_URL}/${image}`}
+                    src={
+                      image instanceof File
+                        ? URL.createObjectURL(image)
+                        : `${API_BASE_URL}/${image}`
+                    }
                     alt={`preview-${index}`}
                     className="image-thumbnail"
                   />
@@ -619,7 +617,9 @@ const EditTour = () => {
           </div>
         </div>
 
-        <button type="submit" className="submit-button">Update Package</button>
+        <button type="submit" className="submit-button">
+          Update Package
+        </button>
       </form>
     </div>
   );

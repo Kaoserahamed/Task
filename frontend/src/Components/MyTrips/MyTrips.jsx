@@ -20,8 +20,6 @@ const MyTrips = () => {
     }
   };
   useEffect(() => {
-
-
     const fetchBookings = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -36,8 +34,8 @@ const MyTrips = () => {
 
       try {
         const response = await axios.get(`${API_BASE_URL}/api/bookings`, {
-          headers: { 'Authorization': `Bearer ${token}` },
-          params: { email: user.user.email }
+          headers: { Authorization: `Bearer ${token}` },
+          params: { email: user.user.email },
         });
 
         console.log('Bookings API response:', response.data);
@@ -46,7 +44,7 @@ const MyTrips = () => {
         if (response.data.success) {
           const allBookings = [
             ...(response.data.upcoming || []),
-            ...(response.data.completed || [])
+            ...(response.data.completed || []),
           ];
           setBookings(allBookings);
           setError('');
@@ -65,7 +63,7 @@ const MyTrips = () => {
   }, [user]);
 
   // Filter bookings based on status
-  const filteredTrips = bookings.filter(trip => {
+  const filteredTrips = bookings.filter((trip) => {
     if (filter === 'all') return true;
     if (!trip.startDate) return false;
 
@@ -88,13 +86,11 @@ const MyTrips = () => {
       tripDate: trip.startDate,
       tripTimestamp: tripDate.getTime(),
       todayTimestamp: today.getTime(),
-      result: tripDate.getTime() >= today.getTime()
+      result: tripDate.getTime() >= today.getTime(),
     });
-
 
     return true;
   });
-
 
   if (error) {
     return <div className="error-message">{error}</div>;
@@ -105,12 +101,8 @@ const MyTrips = () => {
       <div className="trips-header">
         <h3>My Trips</h3>
         <div className="trip-filters">
-          {['all', 'upcoming', 'completed'].map(f => (
-            <button
-              key={f}
-              className={filter === f ? 'active' : ''}
-              onClick={() => setFilter(f)}
-            >
+          {['all', 'upcoming', 'completed'].map((f) => (
+            <button key={f} className={filter === f ? 'active' : ''} onClick={() => setFilter(f)}>
               {f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
           ))}
@@ -126,10 +118,7 @@ const MyTrips = () => {
           {filteredTrips.map((trip, index) => (
             <div key={trip._id || index} className="trip-card">
               <div className="trip-image">
-                <img
-                  src={`${API_BASE_URL}/${trip.images?.[0]}`}
-                  alt={trip.name || 'Trip'}
-                />
+                <img src={`${API_BASE_URL}/${trip.images?.[0]}`} alt={trip.name || 'Trip'} />
                 <span className={`status ${trip.status?.toLowerCase() || 'pending'}`}>
                   {trip.status || 'Pending'}
                 </span>
@@ -154,7 +143,6 @@ const MyTrips = () => {
                   >
                     View Details
                   </button>
-
                 </div>
               </div>
             </div>

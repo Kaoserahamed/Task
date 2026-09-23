@@ -36,15 +36,15 @@
 }
 
 /* Dark mode specific enhancements */
-[data-theme="dark"] .profile-content {
+[data-theme='dark'] .profile-content {
   border: 1px solid var(--border-color);
 }
 
-[data-theme="dark"] .tab-btn:hover {
+[data-theme='dark'] .tab-btn:hover {
   background-color: var(--border-hover);
 }
 
-[data-theme="dark"] .tab-btn.active {
+[data-theme='dark'] .tab-btn.active {
   background-color: var(--border-hover);
 }
 
@@ -59,7 +59,7 @@
   .tab-btn span {
     display: none;
   }
-  
+
   .profile-page {
     padding: 20px 10px;
   }

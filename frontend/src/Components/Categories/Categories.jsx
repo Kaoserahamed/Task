@@ -12,13 +12,13 @@ const Categories = () => {
     { id: 'Educational', name: 'Educational', icon: 'graduation-cap', color: '#ec4899' }, // graduation cap for educational
     { id: 'Nature & Eco', name: 'Nature & Eco', icon: 'tree', color: '#22c55e' }, // tree for nature
     { id: 'Honeymoon', name: 'Honeymoon', icon: 'heart', color: '#f43f5e' }, // heart for honeymoon
-    { id: 'Seasonal', name: 'Seasonal', icon: 'calendar', color: '#f43f5e' } // calendar for seasonal
-];
+    { id: 'Seasonal', name: 'Seasonal', icon: 'calendar', color: '#f43f5e' }, // calendar for seasonal
+  ];
   return (
     <div className="categories-container">
-      {categories.map(category => (
-        <div 
-          key={category.id} 
+      {categories.map((category) => (
+        <div
+          key={category.id}
           className="category-card"
           style={{ '--category-color': category.color }}
           onClick={() => navigate(`/explore/${category.id}`)}
@@ -33,4 +33,4 @@ const Categories = () => {
   );
 };
 
-export default Categories; 
+export default Categories;

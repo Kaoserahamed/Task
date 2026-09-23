@@ -13,9 +13,9 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
 
     // Validate tourId
     if (!tourId || tourId === 'undefined' || !mongoose.Types.ObjectId.isValid(tourId)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid or missing tour ID' 
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or missing tour ID',
       });
     }
 
@@ -30,7 +30,7 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
     const total = await Booking.countDocuments({ tourId: new mongoose.Types.ObjectId(tourId) });
 
     // Format booking data for tour company view
-    const formattedBookings = bookings.map(booking => ({
+    const formattedBookings = bookings.map((booking) => ({
       _id: booking._id,
       bookingReference: booking.bookingReference,
       customerName: `${booking.firstName} ${booking.lastName}`,
@@ -44,7 +44,7 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
       bookingStatus: booking.bookingStatus,
       specialRequests: booking.specialRequests,
       bookingDate: booking.createdAt,
-      tourInfo: booking.tourId
+      tourInfo: booking.tourId,
     }));
 
     res.json({
@@ -52,15 +52,14 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
       bookings: formattedBookings,
       totalPages: Math.ceil(total / limit),
       currentPage: parseInt(page),
-      total
+      total,
     });
-
   } catch (error) {
     console.error('Error fetching tour bookings:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error', 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message,
     });
   }
 });
@@ -68,9 +67,9 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
 // Add Booking (enhanced version with better validation)
 router.post('/add', authMiddleware, async (req, res) => {
   try {
-    const { 
-      tourId, 
-      email, 
+    const {
+      tourId,
+      email,
       firstName,
       lastName,
       phone,
@@ -84,37 +83,36 @@ router.post('/add', authMiddleware, async (req, res) => {
       cardHolder,
       cardNumber,
       totalAmount,
-      userId
     } = req.body;
 
     // Validate required fields
     if (!email || !tourId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Email and tour ID are required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Email and tour ID are required',
       });
     }
 
     // Validate tourId
     if (!mongoose.Types.ObjectId.isValid(tourId)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid tour ID format' 
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid tour ID format',
       });
     }
 
     console.log('Creating booking for tourId:', tourId); // Debug log
 
     // Check if tour is already booked by this user
-    const existing = await Booking.findOne({ 
-      email, 
-      tourId: new mongoose.Types.ObjectId(tourId) 
+    const existing = await Booking.findOne({
+      email,
+      tourId: new mongoose.Types.ObjectId(tourId),
     });
-    
+
     if (existing) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Tour already booked' 
+      return res.status(400).json({
+        success: false,
+        message: 'Tour already booked',
       });
     }
 
@@ -135,7 +133,7 @@ router.post('/add', authMiddleware, async (req, res) => {
       cardHolder: cardHolder || '',
       cardLastFour: cardNumber ? cardNumber.slice(-4) : null,
       totalAmount: totalAmount || 0,
-      userId: req.userId || null
+      userId: req.userId || null,
     };
 
     const booking = new Booking(bookingData);
@@ -147,33 +145,33 @@ router.post('/add', authMiddleware, async (req, res) => {
       // Emit booking event
       io.emit('book', {
         action: 'krlam',
-        booking: booking,
-        tourId: tourId,
-        availableSeats: booking.tourId.availableSeats
+        booking,
+        tourId,
+        availableSeats: booking.tourId.availableSeats,
       });
 
       // Emit seats update event
       io.emit('seatsUpdated', {
-        tourId: tourId,
+        tourId,
         availableSeats: booking.tourId.availableSeats,
-        travelers: booking.travelers
+        travelers: booking.travelers,
       });
     }
 
-    res.status(201).json({ 
-      success: true, 
+    res.status(201).json({
+      success: true,
       message: 'Tour booked successfully',
       booking: {
         ...booking.toObject(),
-        bookingReference: booking.bookingReference
-      }
+        bookingReference: booking.bookingReference,
+      },
     });
   } catch (error) {
-    console.error("Error adding booking:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to book tour', 
-      error: error.message 
+    console.error('Error adding booking:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to book tour',
+      error: error.message,
     });
   }
 });
@@ -184,9 +182,9 @@ router.get('/', authMiddleware, async (req, res) => {
     const { email } = req.query;
 
     if (!email) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Email is required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required',
       });
     }
 
@@ -210,8 +208,8 @@ router.get('/', authMiddleware, async (req, res) => {
           bookingStatus: booking.bookingStatus,
           paymentStatus: booking.paymentStatus,
           createdAt: booking.createdAt,
-          specialRequests: booking.specialRequests
-        }
+          specialRequests: booking.specialRequests,
+        },
       };
 
       if (startDate >= today) {
@@ -223,10 +221,10 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.json({ success: true, upcoming, completed });
   } catch (error) {
-    console.error("Error fetching bookings:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to fetch bookings' 
+    console.error('Error fetching bookings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch bookings',
     });
   }
 });
@@ -238,32 +236,31 @@ router.get('/tour/:tourId/count', authMiddleware, async (req, res) => {
 
     // Validate tourId
     if (!tourId || tourId === 'undefined' || !mongoose.Types.ObjectId.isValid(tourId)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid or missing tour ID' 
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or missing tour ID',
       });
     }
 
-    const count = await Booking.countDocuments({ 
-      tourId: new mongoose.Types.ObjectId(tourId) 
+    const count = await Booking.countDocuments({
+      tourId: new mongoose.Types.ObjectId(tourId),
     });
 
     const totalRevenue = await Booking.aggregate([
       { $match: { tourId: new mongoose.Types.ObjectId(tourId) } },
-      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+      { $group: { _id: null, total: { $sum: '$totalAmount' } } },
     ]);
 
     res.json({
       success: true,
       count,
-      totalRevenue: totalRevenue[0]?.total || 0
+      totalRevenue: totalRevenue[0]?.total || 0,
     });
-
   } catch (error) {
     console.error('Error fetching booking count:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error' 
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
     });
   }
 });
@@ -274,8 +271,10 @@ router.get('/all', async (req, res) => {
     const bookings = await Booking.find();
     res.json({ success: true, bookings });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to fetch all bookings', error: error.message });
+    res
+      .status(500)
+      .json({ success: false, message: 'Failed to fetch all bookings', error: error.message });
   }
 });
 
-module.exports = router; 
+module.exports = router;

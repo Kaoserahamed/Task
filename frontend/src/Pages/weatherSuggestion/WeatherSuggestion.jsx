@@ -11,17 +11,29 @@ const WeatherSuggestion = () => {
   const navigate = useNavigate();
   const { tours = [], loading: toursLoading } = useContext(ToursContext);
   const [filteredTours, setFilteredTours] = useState([]);
-  const [citySearch, setCitySearch] = useState("");
-  const [selectedCity, setSelectedCity] = useState(""); // This will store the normalized city name
+  const [citySearch, setCitySearch] = useState('');
+  const [selectedCity, setSelectedCity] = useState(''); // This will store the normalized city name
   const [currentWeather, setCurrentWeather] = useState(null);
-  const [weatherError, setWeatherError] = useState("");
+  const [weatherError, setWeatherError] = useState('');
   const [weatherLoading, setWeatherLoading] = useState(false);
 
   // Bangladesh cities
   const bangladeshCities = [
-    'Dhaka', 'Chittagong', 'Sylhet', 'Khulna', 'Rajshahi',
-    'Barisal', 'Rangpur', 'Comilla', 'Mymensingh', 'Cox\'s Bazar',
-    'Bandarban', 'Rangamati', 'Jessore', 'Bogra', 'Dinajpur'
+    'Dhaka',
+    'Chittagong',
+    'Sylhet',
+    'Khulna',
+    'Rajshahi',
+    'Barisal',
+    'Rangpur',
+    'Comilla',
+    'Mymensingh',
+    "Cox's Bazar",
+    'Bandarban',
+    'Rangamati',
+    'Jessore',
+    'Bogra',
+    'Dinajpur',
   ];
 
   // Normalize city names for comparison
@@ -33,31 +45,36 @@ const WeatherSuggestion = () => {
   // Find the proper city name from our list
   const findMatchingCity = (searchCity) => {
     const normalized = normalizeCity(searchCity);
-    return bangladeshCities.find(city =>
-      normalizeCity(city) === normalized ||
-      normalizeCity(city).includes(normalized) ||
-      normalized.includes(normalizeCity(city))
-    ) || searchCity;
+    return (
+      bangladeshCities.find(
+        (city) =>
+          normalizeCity(city) === normalized ||
+          normalizeCity(city).includes(normalized) ||
+          normalized.includes(normalizeCity(city))
+      ) || searchCity
+    );
   };
 
   // Simple weather condition similarity check
   const isWeatherSimilar = (condition1, condition2) => {
     const similar = {
-      'Clear': ['Sunny', 'Clear', 'Hot'],
-      'Sunny': ['Clear', 'Sunny', 'Hot'],
-      'Clouds': ['Cloudy', 'Clouds', 'Partly Cloudy'],
-      'Cloudy': ['Clouds', 'Cloudy', 'Partly Cloudy'],
-      'Rain': ['Rainy', 'Rain', 'Drizzle'],
-      'Rainy': ['Rain', 'Rainy', 'Drizzle'],
-      'Snow': ['Snowy', 'Snow', 'Cold'],
-      'Thunderstorm': ['Stormy', 'Thunderstorm']
+      Clear: ['Sunny', 'Clear', 'Hot'],
+      Sunny: ['Clear', 'Sunny', 'Hot'],
+      Clouds: ['Cloudy', 'Clouds', 'Partly Cloudy'],
+      Cloudy: ['Clouds', 'Cloudy', 'Partly Cloudy'],
+      Rain: ['Rainy', 'Rain', 'Drizzle'],
+      Rainy: ['Rain', 'Rainy', 'Drizzle'],
+      Snow: ['Snowy', 'Snow', 'Cold'],
+      Thunderstorm: ['Stormy', 'Thunderstorm'],
     };
 
     const condition1Variants = similar[condition1] || [condition1];
     const condition2Variants = similar[condition2] || [condition2];
 
-    return condition1Variants.some(c => condition2Variants.includes(c)) ||
-      condition2Variants.some(c => condition1Variants.includes(c));
+    return (
+      condition1Variants.some((c) => condition2Variants.includes(c)) ||
+      condition2Variants.some((c) => condition1Variants.includes(c))
+    );
   };
 
   // Simple temperature tolerance check (within 10 degrees)
@@ -69,18 +86,18 @@ const WeatherSuggestion = () => {
   // Simplified filter function - only show tours matching the searched city with similar weather
   // Simplified filter function - only show tours matching the searched city with similar weather
   const filterToursByWeather = (weatherData) => {
-    console.log("🔥 filterToursByWeather called!");
-    console.log("📊 Weather data received:", weatherData);
-    console.log("🏢 Tours array length:", tours.length);
+    console.log('🔥 filterToursByWeather called!');
+    console.log('📊 Weather data received:', weatherData);
+    console.log('🏢 Tours array length:', tours.length);
 
     if (!weatherData) {
-      console.log("❌ No weather data provided");
+      console.log('❌ No weather data provided');
       setFilteredTours([]);
       return;
     }
 
     if (!tours.length) {
-      console.log("❌ No tours available");
+      console.log('❌ No tours available');
       setFilteredTours([]);
       return;
     }
@@ -89,17 +106,17 @@ const WeatherSuggestion = () => {
     const currentCondition = weatherData.condition || weatherData.main;
     const currentCity = weatherData.city;
 
-    console.log("🔍 Filtering tours for:");
-    console.log("  - City:", currentCity);
-    console.log("  - Condition:", currentCondition);
-    console.log("  - Temperature:", currentTemp);
+    console.log('🔍 Filtering tours for:');
+    console.log('  - City:', currentCity);
+    console.log('  - Condition:', currentCondition);
+    console.log('  - Temperature:', currentTemp);
 
     const filtered = tours.filter((tour, index) => {
       console.log(`\n🧪 Processing Tour #${index + 1}: ${tour.name}`);
 
       // Check if tour has weather data
       if (!tour.weather || !tour.weather.city) {
-        console.log("  - ❌ Tour has no weather data, excluding");
+        console.log('  - ❌ Tour has no weather data, excluding');
         return false;
       }
 
@@ -107,18 +124,18 @@ const WeatherSuggestion = () => {
       const tourCondition = tour.weather.condition;
       const tourTemp = tour.weather.temp;
 
-      console.log("  - Tour city:", tourCity);
-      console.log("  - Tour condition:", tourCondition);
-      console.log("  - Tour temp:", tourTemp);
+      console.log('  - Tour city:', tourCity);
+      console.log('  - Tour condition:', tourCondition);
+      console.log('  - Tour temp:', tourTemp);
 
       // EXACT city match (after normalization)
       const normalizedTourCity = normalizeCity(tourCity);
       const normalizedCurrentCity = normalizeCity(currentCity);
       const cityMatch = normalizedTourCity === normalizedCurrentCity;
 
-      console.log("  - Normalized tour city:", normalizedTourCity);
-      console.log("  - Normalized current city:", normalizedCurrentCity);
-      console.log("  - City exact match:", cityMatch);
+      console.log('  - Normalized tour city:', normalizedTourCity);
+      console.log('  - Normalized current city:', normalizedCurrentCity);
+      console.log('  - City exact match:', cityMatch);
 
       // If city doesn't match exactly, exclude this tour
       if (!cityMatch) {
@@ -127,15 +144,26 @@ const WeatherSuggestion = () => {
       }
 
       // Weather condition similarity check
-      const conditionMatch = tourCondition && currentCondition ?
-        isWeatherSimilar(currentCondition, tourCondition) : false;
+      const conditionMatch =
+        tourCondition && currentCondition
+          ? isWeatherSimilar(currentCondition, tourCondition)
+          : false;
 
       // Temperature similarity check (within tolerance)
-      const tempMatch = (tourTemp !== null && tourTemp !== undefined && currentTemp !== null && currentTemp !== undefined) ?
-        isTemperatureSimilar(currentTemp, tourTemp) : false;
+      const tempMatch =
+        tourTemp !== null &&
+        tourTemp !== undefined &&
+        currentTemp !== null &&
+        currentTemp !== undefined
+          ? isTemperatureSimilar(currentTemp, tourTemp)
+          : false;
 
-      console.log("  - Condition match:", conditionMatch, `(Tour: ${tourCondition}, Current: ${currentCondition})`);
-      console.log("  - Temp match:", tempMatch, `(Tour: ${tourTemp}, Current: ${currentTemp})`);
+      console.log(
+        '  - Condition match:',
+        conditionMatch,
+        `(Tour: ${tourCondition}, Current: ${currentCondition})`
+      );
+      console.log('  - Temp match:', tempMatch, `(Tour: ${tourTemp}, Current: ${currentTemp})`);
 
       // Must match city AND at least one weather parameter (condition OR temperature)
       // For stricter filtering, change to: cityMatch && conditionMatch && tempMatch
@@ -144,21 +172,25 @@ const WeatherSuggestion = () => {
       // For VERY strict filtering (all must match), use this instead:
       // const finalMatch = cityMatch && conditionMatch && tempMatch;
 
-      console.log("  - Final match result:", finalMatch);
+      console.log('  - Final match result:', finalMatch);
 
       return finalMatch;
     });
 
-    console.log("✅ Filtered tours count:", filtered.length);
-    console.log("✅ Filtered tours:", filtered);
+    console.log('✅ Filtered tours count:', filtered.length);
+    console.log('✅ Filtered tours:', filtered);
 
     // Sort by weather similarity (temperature difference first, then condition)
     const sorted = filtered.sort((a, b) => {
       // Primary sort: temperature difference
-      const aTempDiff = (a.weather?.temp !== null && a.weather?.temp !== undefined) ?
-        Math.abs(currentTemp - a.weather.temp) : 999;
-      const bTempDiff = (b.weather?.temp !== null && b.weather?.temp !== undefined) ?
-        Math.abs(currentTemp - b.weather.temp) : 999;
+      const aTempDiff =
+        a.weather?.temp !== null && a.weather?.temp !== undefined
+          ? Math.abs(currentTemp - a.weather.temp)
+          : 999;
+      const bTempDiff =
+        b.weather?.temp !== null && b.weather?.temp !== undefined
+          ? Math.abs(currentTemp - b.weather.temp)
+          : 999;
 
       if (aTempDiff !== bTempDiff) {
         return aTempDiff - bTempDiff;
@@ -171,35 +203,38 @@ const WeatherSuggestion = () => {
       return aConditionMatch - bConditionMatch;
     });
 
-    console.log("✅ Final sorted tours:", sorted);
+    console.log('✅ Final sorted tours:', sorted);
     setFilteredTours(sorted);
   };
   const fetchCityWeather = async (cityName) => {
-    console.log("🌤️ Fetching weather for:", cityName);
+    console.log('🌤️ Fetching weather for:', cityName);
 
     const matchingCity = findMatchingCity(cityName);
-    console.log("🎯 Matching city found:", matchingCity);
+    console.log('🎯 Matching city found:', matchingCity);
 
-    if (!bangladeshCities.some(city => normalizeCity(city) === normalizeCity(matchingCity))) {
+    if (!bangladeshCities.some((city) => normalizeCity(city) === normalizeCity(matchingCity))) {
       const errorMsg = `${cityName} is not a valid city in our list.`;
-      console.log("❌", errorMsg);
+      console.log('❌', errorMsg);
       setWeatherError(errorMsg);
       return;
     }
 
     if (!cityName.trim()) {
-      console.log("❌ Empty city name");
+      console.log('❌ Empty city name');
       return;
     }
 
     setWeatherLoading(true);
-    setWeatherError("");
+    setWeatherError('');
 
     try {
-      console.log("📡 Making API call to:", `${process.env.REACT_APP_BACKEND_URL}/api/weather/${cityName}`);
+      console.log(
+        '📡 Making API call to:',
+        `${process.env.REACT_APP_BACKEND_URL}/api/weather/${cityName}`
+      );
       const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/weather/${cityName}`);
 
-      console.log("📡 Weather API Response:", res.data);
+      console.log('📡 Weather API Response:', res.data);
 
       if (res.data && (res.data.weather || res.data.temp)) {
         const weatherData = {
@@ -208,28 +243,27 @@ const WeatherSuggestion = () => {
           temp: res.data.temp,
           description: res.data.weather,
           humidity: res.data.humidity,
-          windSpeed: res.data.windSpeed
+          windSpeed: res.data.windSpeed,
         };
 
-        console.log("🌤️ Processed weather data:", res.data.city);
+        console.log('🌤️ Processed weather data:', res.data.city);
 
         setCurrentWeather(weatherData);
         setSelectedCity(weatherData.city);
 
         // Call filterToursByWeather with weather data
-        console.log("🔄 About to call filterToursByWeather...");
+        console.log('🔄 About to call filterToursByWeather...');
         filterToursByWeather(weatherData);
-
       } else {
         throw new Error('Weather data not available');
       }
     } catch (err) {
-      console.error("❌ Error fetching weather:", err);
+      console.error('❌ Error fetching weather:', err);
       const errorMsg = `Could not fetch weather data for ${cityName}. Please try another city.`;
       setWeatherError(errorMsg);
       setCurrentWeather(null);
       setFilteredTours([]);
-      setSelectedCity("");
+      setSelectedCity('');
     }
     setWeatherLoading(false);
   };
@@ -311,14 +345,10 @@ const WeatherSuggestion = () => {
             <div className="weather-details">
               <div className="temperature">{currentWeather.temp}°C</div>
               <div className="condition">{currentWeather.condition}</div>
-              
+
               <div className="additional-info">
-                {currentWeather.humidity && (
-                  <span>💧 Humidity: {currentWeather.humidity}%</span>
-                )}
-                {currentWeather.windSpeed && (
-                  <span>💨 Wind: {currentWeather.windSpeed} m/s</span>
-                )}
+                {currentWeather.humidity && <span>💧 Humidity: {currentWeather.humidity}%</span>}
+                {currentWeather.windSpeed && <span>💨 Wind: {currentWeather.windSpeed} m/s</span>}
               </div>
             </div>
           </div>
@@ -328,7 +358,9 @@ const WeatherSuggestion = () => {
       {/* Loading State */}
       {isLoading && (
         <div className="loading">
-          <p>🔄 {toursLoading ? 'Loading tours...' : 'Loading weather and tour recommendations...'}</p>
+          <p>
+            🔄 {toursLoading ? 'Loading tours...' : 'Loading weather and tour recommendations...'}
+          </p>
         </div>
       )}
 
@@ -345,21 +377,21 @@ const WeatherSuggestion = () => {
           {filteredTours.length > 0 ? (
             <div className="city-grid">
               {filteredTours.map((tour) => {
-                const isSameCity = normalizeCity(tour.weather?.city || '') === normalizeCity(currentWeather.city);
+                const isSameCity =
+                  normalizeCity(tour.weather?.city || '') === normalizeCity(currentWeather.city);
                 const imageUrl = tour.images?.length
                   ? `${process.env.REACT_APP_BACKEND_URL}/${tour.images[0]}`
                   : 'https://picsum.photos/300/200';
 
                 return (
-                  <div
-                    key={tour._id}
-                    className="explore-tour-card"
-                  >
+                  <div key={tour._id} className="explore-tour-card">
                     <div className="explore-tour-image">
                       <img
                         src={imageUrl}
                         alt={tour.name}
-                        onError={(e) => { e.target.src = 'https://picsum.photos/300/200'; }}
+                        onError={(e) => {
+                          e.target.src = 'https://picsum.photos/300/200';
+                        }}
                       />
                       {isSameCity && <span className="tour-completed-tag">📍 Same City</span>}
                     </div>
@@ -367,7 +399,9 @@ const WeatherSuggestion = () => {
                     <div className="explore-tour-info">
                       <h3>{tour.name || 'Untitled Tour'}</h3>
                       <div className="explore-tour-details">
-                        <span>💰 Price: <strong>${tour.price ?? 'N/A'}</strong></span>
+                        <span>
+                          💰 Price: <strong>${tour.price ?? 'N/A'}</strong>
+                        </span>
                         <span>🌤️ Weather: {tour.weather?.condition || 'N/A'}</span>
                         <span>🌡️ Temp: {tour.weather?.temp || 'N/A'}°C</span>
                         <span>📍 Location: {tour.weather?.city || 'Unknown'}</span>
@@ -385,7 +419,6 @@ const WeatherSuggestion = () => {
                   </div>
                 );
               })}
-
             </div>
           ) : (
             <div className="no-tours">
@@ -401,7 +434,10 @@ const WeatherSuggestion = () => {
         <div className="initial-state">
           <div className="welcome-message">
             <h3>🗺️ Welcome to Weather-Based Tour Discovery</h3>
-            <p>Search for any city in Bangladesh to find tours that match the current weather conditions</p>
+            <p>
+              Search for any city in Bangladesh to find tours that match the current weather
+              conditions
+            </p>
           </div>
         </div>
       )}

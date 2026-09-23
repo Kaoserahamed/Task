@@ -18,9 +18,9 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await axios.get(`${API_BASE_URL}/user/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       if (response.data.success) {
         const updatedUserData = { ...user, user: response.data.user };
         localStorage.setItem('user', JSON.stringify(updatedUserData));
@@ -62,15 +62,15 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       // Get the current token
       const token = localStorage.getItem('token');
-      
+
       // Make API call to update user data
       const response = await fetch(`${API_BASE_URL}/user/auth/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedData)
+        body: JSON.stringify(updatedData),
       });
 
       if (!response.ok) {
@@ -78,12 +78,12 @@ export const AuthProvider = ({ children }) => {
       }
 
       const updatedUser = await response.json();
-      
+
       // Update local storage and state
       const newUserData = { ...user, ...updatedUser };
       localStorage.setItem('user', JSON.stringify(newUserData));
       setUser(newUserData);
-      
+
       return updatedUser;
     } catch (error) {
       console.error('Update error:', error);
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }) => {
   const updateUserLocal = (updatedUserData) => {
     const newUserData = {
       ...user,
-      user: { ...user.user, ...updatedUserData }
+      user: { ...user.user, ...updatedUserData },
     };
     localStorage.setItem('user', JSON.stringify(newUserData));
     setUser(newUserData);
@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateUser,
     updateUserLocal,
-    refreshUserData
+    refreshUserData,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

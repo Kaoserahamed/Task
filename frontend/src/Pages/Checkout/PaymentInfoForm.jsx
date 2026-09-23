@@ -10,7 +10,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
         <div className="form-group">
           <label className="label">Payment Method</label>
           <div className="payment-method-grid">
-            <label className={`payment-method-option ${formData.paymentMethod === 'credit-card' ? 'payment-method-selected' : ''}`}>
+            <label
+              className={`payment-method-option ${formData.paymentMethod === 'credit-card' ? 'payment-method-selected' : ''}`}
+            >
               <input
                 type="radio"
                 name="paymentMethod"
@@ -22,7 +24,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
               <CreditCard size={16} className="payment-method-icon" />
               <span>Credit Card</span>
             </label>
-            <label className={`payment-method-option ${formData.paymentMethod === 'paypal' ? 'payment-method-selected' : ''}`}>
+            <label
+              className={`payment-method-option ${formData.paymentMethod === 'paypal' ? 'payment-method-selected' : ''}`}
+            >
               <input
                 type="radio"
                 name="paymentMethod"
@@ -33,7 +37,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
               />
               <span>PayPal</span>
             </label>
-            <label className={`payment-method-option ${formData.paymentMethod === 'bank-transfer' ? 'payment-method-selected' : ''}`}>
+            <label
+              className={`payment-method-option ${formData.paymentMethod === 'bank-transfer' ? 'payment-method-selected' : ''}`}
+            >
               <input
                 type="radio"
                 name="paymentMethod"
@@ -50,7 +56,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
         {formData.paymentMethod === 'credit-card' && (
           <>
             <div className="form-group">
-              <label htmlFor="cardNumber" className="label">Card Number</label>
+              <label htmlFor="cardNumber" className="label">
+                Card Number
+              </label>
               <div className="input-wrapper">
                 <div className="input-icon">
                   <CreditCard size={16} />
@@ -69,7 +77,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
             </div>
 
             <div className="form-group">
-              <label htmlFor="cardHolder" className="label">Card Holder Name</label>
+              <label htmlFor="cardHolder" className="label">
+                Card Holder Name
+              </label>
               <div className="input-wrapper">
                 <div className="input-icon">
                   <User size={16} />
@@ -88,7 +98,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
 
             <div className="form-grid form-grid-2col">
               <div className="form-group">
-                <label htmlFor="expiryDate" className="label">Expiry Date</label>
+                <label htmlFor="expiryDate" className="label">
+                  Expiry Date
+                </label>
                 <div className="input-wrapper">
                   <div className="input-icon">
                     <Calendar size={16} />
@@ -106,7 +118,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
                 </div>
               </div>
               <div className="form-group">
-                <label htmlFor="cvv" className="label">CVV</label>
+                <label htmlFor="cvv" className="label">
+                  CVV
+                </label>
                 <input
                   type="text"
                   id="cvv"
@@ -124,8 +138,9 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
 
         {formData.paymentMethod === 'paypal' && (
           <div className="payment-info-box">
-            <p style={{textAlign: 'center'}}>
-              You will be redirected to PayPal to complete your payment after you click "Complete Booking".
+            <p style={{ textAlign: 'center' }}>
+              You will be redirected to PayPal to complete your payment after you click "Complete
+              Booking".
             </p>
           </div>
         )}
@@ -137,16 +152,14 @@ const PaymentInfoForm = ({ formData, handleChange, handlePaymentSubmit, setStep 
             <p className="contact-info-text">Account Name: Travel Adventures</p>
             <p className="contact-info-text">Account Number: 1234567890</p>
             <p className="contact-info-text">SWIFT/BIC: GLBANK123</p>
-            <p className="note">Please include your booking reference in the transfer description.</p>
+            <p className="note">
+              Please include your booking reference in the transfer description.
+            </p>
           </div>
         )}
 
         <div className="flex-between">
-          <button
-            type="button"
-            onClick={() => setStep(1)}
-            className="button button-secondary"
-          >
+          <button type="button" onClick={() => setStep(1)} className="button button-secondary">
             Back
           </button>
           <button type="submit" className="button button-primary">

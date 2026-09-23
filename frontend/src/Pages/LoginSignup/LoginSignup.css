@@ -16,7 +16,9 @@
   width: 100%;
   max-width: 500px;
   box-shadow: var(--shadow-lg);
-  transition: background-color var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .auth-header {
@@ -184,8 +186,12 @@
 }
 
 @keyframes spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 /* Mobile responsiveness */
@@ -267,7 +273,8 @@
 }
 
 @keyframes pulse-border {
-  0%, 100% {
+  0%,
+  100% {
     border-color: #f59e0b;
   }
   50% {
@@ -276,19 +283,19 @@
 }
 
 /* Dark mode support for demo credentials */
-[data-theme="dark"] .demo-credentials {
+[data-theme='dark'] .demo-credentials {
   background: linear-gradient(135deg, #78350f, #92400e);
   border-color: #f59e0b;
 }
 
-[data-theme="dark"] .demo-label {
+[data-theme='dark'] .demo-label {
   color: #fcd34d;
 }
 
-[data-theme="dark"] .demo-info {
+[data-theme='dark'] .demo-info {
   color: #fde68a;
 }
 
-[data-theme="dark"] .demo-info strong {
+[data-theme='dark'] .demo-info strong {
   color: #fcd34d;
 }

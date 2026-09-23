@@ -28,9 +28,9 @@ const ResetPassword = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: formData.email,
-          resetUrl: currentUrl
+          resetUrl: currentUrl,
         }),
       });
 
@@ -71,4 +71,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword; 
+export default ResetPassword;

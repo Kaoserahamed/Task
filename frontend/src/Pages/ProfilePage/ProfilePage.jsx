@@ -14,7 +14,7 @@ const ProfilePage = () => {
     <div className="profile-page">
       <div className="profile-container">
         <ProfileInfo user={user} />
-        
+
         <div className="profile-content">
           <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <p>{user.name}</p>
@@ -29,4 +29,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage; 
+export default ProfilePage;

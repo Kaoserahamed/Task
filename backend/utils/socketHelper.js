@@ -1,6 +1,6 @@
 /**
  * Socket.IO Helper for Vercel Deployment
- * 
+ *
  * Note: Socket.IO doesn't work on Vercel serverless functions.
  * This helper provides fallback behavior.
  */
@@ -62,5 +62,5 @@ module.exports = {
   getIO,
   emitEvent,
   emitToRoom,
-  isSocketAvailable: () => io !== null
+  isSocketAvailable: () => io !== null,
 };

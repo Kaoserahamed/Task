@@ -16,5 +16,3 @@ test('renders company login when logged out', () => {
   expect(screen.getByText(/Welcome Back!/i)).toBeInTheDocument();
   expect(screen.getByText(/Try Demo Company Account/i)).toBeInTheDocument();
 });
-
-

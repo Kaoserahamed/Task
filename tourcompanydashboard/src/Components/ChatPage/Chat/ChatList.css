@@ -64,7 +64,7 @@
 }
 
 .chat-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .chat-item:hover {
@@ -243,4 +243,4 @@
   .chats {
     max-height: 300px;
   }
-} 
+}

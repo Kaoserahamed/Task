@@ -20,19 +20,19 @@ const SearchFilters = ({ activeFilter, setActiveFilter }) => {
       <div className="filter-group">
         <h3>Duration</h3>
         <div className="duration-filters">
-          <button 
+          <button
             className={activeFilter === '1-3' ? 'active' : ''}
             onClick={() => setActiveFilter('1-3')}
           >
             1-3 Days
           </button>
-          <button 
+          <button
             className={activeFilter === '4-7' ? 'active' : ''}
             onClick={() => setActiveFilter('4-7')}
           >
             4-7 Days
           </button>
-          <button 
+          <button
             className={activeFilter === '7+' ? 'active' : ''}
             onClick={() => setActiveFilter('7+')}
           >
@@ -66,4 +66,4 @@ const SearchFilters = ({ activeFilter, setActiveFilter }) => {
   );
 };
 
-export default SearchFilters; 
+export default SearchFilters;

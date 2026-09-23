@@ -4,165 +4,181 @@ const mongoose = require('mongoose');
 const tourSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
-  },
-  packageCategories: [{
-    type: String,
     required: true,
-    set: value => value.replace(/["']/g, '') // Remove quotes when saving
-  }],
+  },
+  packageCategories: [
+    {
+      type: String,
+      required: true,
+      set: (value) => value.replace(/["']/g, ''), // Remove quotes when saving
+    },
+  ],
   customCategory: {
-    type: String
+    type: String,
   },
   tourType: {
     single: {
       type: Boolean,
-      default: false
+      default: false,
     },
     group: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   duration: {
     days: {
       type: Number,
       required: true,
       min: 1,
-
     },
     nights: {
       type: Number,
       required: true,
       min: 0,
-
-    }
+    },
   },
   startDate: {
     type: Date,
-    required: function () { return this.packageType === 'Group'; }
+    required: function () {
+      return this.packageType === 'Group';
+    },
   },
   endDate: {
     type: Date,
-    required: function () { return this.packageType === 'Group'; }
+    required: function () {
+      return this.packageType === 'Group';
+    },
   },
   meals: {
     breakfast: {
       type: Boolean,
-      default: false
+      default: false,
     },
     lunch: {
       type: Boolean,
-      default: false
+      default: false,
     },
     dinner: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   transportation: {
     type: {
       type: String,
-      required: true
+      required: true,
     },
     details: {
-      type: String
-    }
+      type: String,
+    },
   },
   tourGuide: {
     type: Boolean,
-    default: false
+    default: false,
   },
   price: {
     type: Number,
-    required: true
+    required: true,
   },
   maxGroupSize: {
     type: Number,
-    required: function () { return this.packageType === 'Group'; }
+    required: function () {
+      return this.packageType === 'Group';
+    },
   },
   availableSeats: {
     type: Number,
-    required: function () { return this.packageType === 'Group'; }
+    required: function () {
+      return this.packageType === 'Group';
+    },
   },
-  destinations: [{
-    name: {
-      type: String,
-      required: true
+  destinations: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+      stayDuration: {
+        type: String,
+        required: true,
+      },
     },
-    description: {
-      type: String,
-      required: true
+  ],
+  images: [
+    {
+      type: String, // This will store the image file paths
+      required: true,
     },
-    stayDuration: {
+  ],
+  includes: [
+    {
       type: String,
-      required: true
-    }
-  }],
-  images: [{
-    type: String,  // This will store the image file paths
-    required: true
-  }],
-  includes: [{
-    type: String
-  }],
-  excludes: [{
-    type: String
-  }],
+    },
+  ],
+  excludes: [
+    {
+      type: String,
+    },
+  ],
   specialNote: {
-    type: String
+    type: String,
   },
   cancellationPolicy: {
-    type: String
+    type: String,
   },
   status: {
     type: String,
     enum: ['draft', 'pending', 'approved', 'rejected'],
-    default: 'draft'
+    default: 'draft',
   },
   review: {
     type: String,
-    default: null
+    default: null,
   },
   companyId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'company'
+    ref: 'company',
   },
   companyName: {
     type: String,
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   popularity: {
     bookings: {
       type: Number,
-      default: 0
+      default: 0,
     },
     views: {
       type: Number,
-      default: 0
+      default: 0,
     },
     rating: {
       average: {
         type: Number,
         default: 0,
         min: 0,
-        max: 5
+        max: 5,
       },
       count: {
         type: Number,
-        default: 0
-      }
+        default: 0,
+      },
     },
     wishlistCount: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   weather: {
-    city:{
+    city: {
       type: String,
       required: false, // or true if weather is always expected
     },
@@ -175,7 +191,6 @@ const tourSchema = new mongoose.Schema({
       required: false,
     },
   },
-
 });
 
 const Tour = mongoose.model('Tour', tourSchema);

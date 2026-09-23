@@ -1,12 +1,10 @@
 const Tour = require('../models/tours');
-
 const fs = require('fs');
-const socketIO = require('../socket');
 
 exports.createTour = async (req, res) => {
   try {
     // Process the uploaded data
-    let tourData = {
+    const tourData = {
       ...req.body,
       destinations: JSON.parse(req.body.destinations),
       meals: JSON.parse(req.body.meals),
@@ -16,10 +14,10 @@ exports.createTour = async (req, res) => {
       // ✅ Add weather parsing
       weather: JSON.parse(req.body.weather || '{}'),
       companyId: req.body.companyId,
-      companyName: req.body.companyName  // Make sure this is explicitly set
+      companyName: req.body.companyName, // Make sure this is explicitly set
     };
-    console.log("new name: "+req.body.companyName);
-    console.log("Tour data before saving:", tourData); // Debug log
+    console.log('new name: ' + req.body.companyName);
+    console.log('Tour data before saving:', tourData); // Debug log
 
     // Process packageCategories
     if (req.body.packageCategories) {
@@ -29,8 +27,7 @@ exports.createTour = async (req, res) => {
         } catch (e) {
           tourData.packageCategories = req.body.packageCategories
             .split(',')
-            .map(cat => cat.trim().toLowerCase());
-
+            .map((cat) => cat.trim().toLowerCase());
         }
       }
       if (!Array.isArray(tourData.packageCategories)) {
@@ -40,7 +37,7 @@ exports.createTour = async (req, res) => {
 
     // Add image paths/URLs to the tour data
     if (req.files) {
-      tourData.images = req.files.map(file => {
+      tourData.images = req.files.map((file) => {
         // Cloudinary returns 'path' as URL, local storage uses 'path' as file path
         return file.path || file.url;
       });
@@ -50,7 +47,7 @@ exports.createTour = async (req, res) => {
     const duration = JSON.parse(req.body.duration);
     tourData.duration = {
       days: parseInt(duration.days) || 0,
-      nights: parseInt(duration.nights) || 0
+      nights: parseInt(duration.nights) || 0,
     };
 
     // Convert other string numbers to actual numbers
@@ -73,26 +70,26 @@ exports.createTour = async (req, res) => {
 
     // Create new tour
     const newTour = new Tour(tourData);
-    
+
     await newTour.validate();
     const savedTour = await newTour.save();
-    
+
     const io = require('../socket').getIO();
     io.emit('tour_created', {
       action: 'create',
-      tour: savedTour
+      tour: savedTour,
     });
 
     res.status(201).json({
       success: true,
       message: 'Tour created successfully',
-      tour: savedTour
+      tour: savedTour,
     });
   } catch (error) {
     console.error('Error creating tour:', error);
     res.status(400).json({
       success: false,
-      error: error.message || 'Failed to create tour'
+      error: error.message || 'Failed to create tour',
     });
   }
 };
@@ -100,26 +97,26 @@ exports.createTour = async (req, res) => {
 exports.getCompanyTours = async (req, res) => {
   try {
     const { companyId } = req.params;
-    console.log("Fetching tours for company:", companyId);
-    
+    console.log('Fetching tours for company:', companyId);
+
     if (!companyId) {
       return res.status(400).json({
         success: false,
-        error: 'Company ID is required'
+        error: 'Company ID is required',
       });
     }
 
     const tours = await Tour.find({ companyId });
-    
+
     res.json({
       success: true,
-      tours
+      tours,
     });
   } catch (error) {
     console.error('Error fetching company tours:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch company tours'
+      error: 'Failed to fetch company tours',
     });
   }
 };
@@ -130,12 +127,12 @@ exports.getTours = async (req, res) => {
     const tours = await Tour.find();
     res.json({
       success: true,
-      tours
+      tours,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch tours'
+      error: 'Failed to fetch tours',
     });
   }
 };
@@ -143,29 +140,29 @@ exports.getTours = async (req, res) => {
 exports.getApprovedTours = async (req, res) => {
   try {
     console.log('Fetching approved tours...'); // Debug log
-    
+
     const tours = await Tour.find({ status: 'approved' });
     console.log('Found tours:', tours.length); // Debug log
-    
+
     if (!tours || tours.length === 0) {
       return res.status(200).json({
         success: true,
         message: 'No approved tours found',
-        tours: []
+        tours: [],
       });
     }
 
     res.json({
       success: true,
       count: tours.length,
-      tours
+      tours,
     });
   } catch (error) {
     console.error('Error fetching approved tours:', error); // Debug log
     res.status(500).json({
       success: false,
       error: 'Failed to fetch approved tours',
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -177,17 +174,17 @@ exports.getTourById = async (req, res) => {
     if (!tour) {
       return res.status(404).json({
         success: false,
-        error: 'Tour not found'
+        error: 'Tour not found',
       });
     }
     res.json({
       success: true,
-      tour
+      tour,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch tour'
+      error: 'Failed to fetch tour',
     });
   }
 };
@@ -199,12 +196,12 @@ exports.deleteTour = async (req, res) => {
     if (!tour) {
       return res.status(404).json({
         success: false,
-        error: 'Tour not found'
+        error: 'Tour not found',
       });
     }
 
     // Delete associated images
-    tour.images.forEach(imagePath => {
+    tour.images.forEach((imagePath) => {
       try {
         fs.unlinkSync(imagePath);
       } catch (err) {
@@ -215,12 +212,12 @@ exports.deleteTour = async (req, res) => {
     await Tour.findByIdAndDelete(req.params.id);
     res.json({
       success: true,
-      message: 'Tour deleted successfully'
+      message: 'Tour deleted successfully',
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to delete tour'
+      error: 'Failed to delete tour',
     });
   }
 };
@@ -237,13 +234,13 @@ exports.updateTourStatus = async (req, res) => {
     if (!['approved', 'rejected', 'pending'].includes(status)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid status value'
+        error: 'Invalid status value',
       });
     }
 
     // Create update object
-    const updateData = { 
-      status: status
+    const updateData = {
+      status,
     };
 
     // Add review if status is rejected
@@ -264,21 +261,20 @@ exports.updateTourStatus = async (req, res) => {
     if (!tour) {
       return res.status(404).json({
         success: false,
-        error: 'Tour not found'
+        error: 'Tour not found',
       });
     }
 
     res.json({
       success: true,
       message: `Tour status updated to ${status}`,
-      tour
+      tour,
     });
-
   } catch (error) {
     console.error('Error updating tour status:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to update tour status'
+      error: 'Failed to update tour status',
     });
   }
 };
@@ -292,15 +288,15 @@ exports.updateTour = async (req, res) => {
     if (typeof req.body.duration === 'string') {
       tourData.duration = JSON.parse(req.body.duration);
     }
-    
+
     tourData.duration = {
       days: Number(tourData.duration.days) || 0,
-      nights: Number(tourData.duration.nights) || 0
+      nights: Number(tourData.duration.nights) || 0,
     };
 
     // Handle existing and new images
     const existingImages = JSON.parse(req.body.existingImages || '[]');
-    const newImagePaths = req.files ? req.files.map(file => file.path) : [];
+    const newImagePaths = req.files ? req.files.map((file) => file.path) : [];
     tourData.images = [...existingImages, ...newImagePaths];
 
     // Parse JSON strings back to objects
@@ -309,7 +305,7 @@ exports.updateTour = async (req, res) => {
     tourData.transportation = JSON.parse(req.body.transportation);
     tourData.includes = JSON.parse(req.body.includes);
     tourData.excludes = JSON.parse(req.body.excludes);
-    
+
     // ✅ Add weather parsing for updates
     if (req.body.weather) {
       tourData.weather = JSON.parse(req.body.weather);
@@ -317,7 +313,7 @@ exports.updateTour = async (req, res) => {
         tourData.weather.temp = Number(tourData.weather.temp) || null;
       }
     }
-    
+
     tourData.status = 'draft';
 
     // Safely convert numeric fields
@@ -333,7 +329,7 @@ exports.updateTour = async (req, res) => {
         } catch (e) {
           tourData.packageCategories = req.body.packageCategories
             .split(',')
-            .map(cat => cat.trim().toLowerCase());
+            .map((cat) => cat.trim().toLowerCase());
         }
       }
       if (!Array.isArray(tourData.packageCategories)) {
@@ -345,29 +341,28 @@ exports.updateTour = async (req, res) => {
     delete tourData.existingImages;
     delete tourData.newImages;
 
-    const updatedTour = await Tour.findByIdAndUpdate(
-      tourId,
-      tourData,
-      { new: true, runValidators: true }
-    );
+    const updatedTour = await Tour.findByIdAndUpdate(tourId, tourData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedTour) {
       return res.status(404).json({
         success: false,
-        error: 'Tour not found'
+        error: 'Tour not found',
       });
     }
 
     res.json({
       success: true,
       message: 'Tour updated successfully',
-      tour: updatedTour
+      tour: updatedTour,
     });
   } catch (error) {
     console.error('Error updating tour:', error);
     res.status(400).json({
       success: false,
-      error: error.message || 'Failed to update tour'
+      error: error.message || 'Failed to update tour',
     });
   }
 };
@@ -377,7 +372,7 @@ exports.filterTours = async (req, res) => {
     const { category, tourType } = req.query;
     console.log('Received filter request:', { category, tourType });
 
-    let query = {};
+    const query = {};
 
     if (category && category !== 'all') {
       if (category === 'custom') {
@@ -392,16 +387,16 @@ exports.filterTours = async (req, res) => {
     }
 
     const tours = await Tour.find(query).sort({ createdAt: -1 });
-    
+
     res.json({
       success: true,
-      tours
+      tours,
     });
   } catch (error) {
     console.error('Filter endpoint error:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch filtered tours'
+      error: 'Failed to fetch filtered tours',
     });
   }
 };
@@ -411,12 +406,12 @@ exports.getPendingTours = async (req, res) => {
     const tours = await Tour.find({ status: 'pending' });
     res.json({
       success: true,
-      tours
+      tours,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch pending tours'
+      error: 'Failed to fetch pending tours',
     });
   }
 };
@@ -430,7 +425,7 @@ exports.incrementViewCount = async (req, res) => {
   try {
     const tour = await Tour.findByIdAndUpdate(
       req.params.id,
-      { $inc: { 'popularity.views': 1 } },  // ✅ Correct nested path
+      { $inc: { 'popularity.views': 1 } }, // ✅ Correct nested path
       { new: true }
     );
 
@@ -441,7 +436,7 @@ exports.incrementViewCount = async (req, res) => {
     res.json({
       success: true,
       message: 'View count incremented',
-      views: tour.popularity.views  // ✅ Correct path for response
+      views: tour.popularity.views, // ✅ Correct path for response
     });
   } catch (error) {
     console.error('Increment error:', error);
@@ -464,7 +459,7 @@ exports.incrementBookingCount = async (req, res) => {
     res.json({
       success: true,
       message: 'Booking count incremented',
-      bookings: tour.popularity.bookings
+      bookings: tour.popularity.bookings,
     });
   } catch (error) {
     console.error('Increment booking error:', error);
@@ -480,7 +475,7 @@ exports.bookSeats = async (req, res) => {
     if (!seatsToBook || seatsToBook < 1) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid number of seats to book'
+        error: 'Invalid number of seats to book',
       });
     }
 
@@ -488,7 +483,7 @@ exports.bookSeats = async (req, res) => {
     if (!tour) {
       return res.status(404).json({
         success: false,
-        error: 'Tour not found'
+        error: 'Tour not found',
       });
     }
 
@@ -496,7 +491,7 @@ exports.bookSeats = async (req, res) => {
       return res.status(400).json({
         success: false,
         error: `Only ${tour.availableSeats} seat${tour.availableSeats !== 1 ? 's' : ''} available`,
-        availableSeats: tour.availableSeats
+        availableSeats: tour.availableSeats,
       });
     }
 
@@ -509,15 +504,14 @@ exports.bookSeats = async (req, res) => {
       message: 'Seats booked successfully',
       tour,
       seatsBooked: seatsToBook,
-      remainingSeats: tour.availableSeats
+      remainingSeats: tour.availableSeats,
     });
-
   } catch (error) {
     console.error('Error booking seats:', error);
     res.status(500).json({
       success: false,
       error: 'Server error while booking seats',
-      details: error.message
+      details: error.message,
     });
   }
 };
@@ -529,7 +523,7 @@ exports.releaseSeats = async (req, res) => {
     if (!seatsToRelease || seatsToRelease < 1) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid number of seats to release'
+        error: 'Invalid number of seats to release',
       });
     }
 
@@ -537,7 +531,7 @@ exports.releaseSeats = async (req, res) => {
     if (!tour) {
       return res.status(404).json({
         success: false,
-        error: 'Tour not found'
+        error: 'Tour not found',
       });
     }
 
@@ -557,14 +551,13 @@ exports.releaseSeats = async (req, res) => {
       message: 'Seats released successfully',
       tour,
       seatsReleased: seatsToRelease,
-      availableSeats: tour.availableSeats
+      availableSeats: tour.availableSeats,
     });
-
   } catch (error) {
     console.error('Error releasing seats:', error);
     res.status(500).json({
       success: false,
-      error: 'Server error while releasing seats'
+      error: 'Server error while releasing seats',
     });
   }
 };
@@ -575,7 +568,7 @@ exports.getSeatAvailability = async (req, res) => {
     if (!tour) {
       return res.status(404).json({
         success: false,
-        error: 'Tour not found'
+        error: 'Tour not found',
       });
     }
 
@@ -585,14 +578,13 @@ exports.getSeatAvailability = async (req, res) => {
       tourName: tour.name,
       maxGroupSize: tour.maxGroupSize || null,
       availableSeats: tour.availableSeats,
-      totalBookings: tour.popularity.bookings
+      totalBookings: tour.popularity.bookings,
     });
-
   } catch (error) {
     console.error('Error getting seat availability:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get seat availability'
+      error: 'Failed to get seat availability',
     });
   }
 };
@@ -604,24 +596,24 @@ exports.suggestTours = async (req, res) => {
     if (!destinations) {
       return res.status(400).json({
         success: false,
-        error: 'Destinations parameter is required'
+        error: 'Destinations parameter is required',
       });
     }
 
     const destinationList = Array.isArray(destinations) ? destinations : [destinations];
     const tours = await Tour.find({
       'destinations.name': { $in: destinationList },
-      status: 'approved'
+      status: 'approved',
     });
 
     res.json({
       success: true,
-      tours
+      tours,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Failed to suggest tours'
+      error: 'Failed to suggest tours',
     });
   }
 };
@@ -630,22 +622,22 @@ exports.suggestTours = async (req, res) => {
 exports.getSuggestions = async (req, res) => {
   try {
     const { tourName } = req.params;
-    
+
     // Find tours with similar names
     const suggestions = await Tour.find({
       name: { $regex: tourName, $options: 'i' },
-      status: 'approved'
+      status: 'approved',
     }).limit(5);
 
     res.json({
       success: true,
-      suggestions
+      suggestions,
     });
   } catch (error) {
     console.error('Error getting suggestions:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get suggestions'
+      error: 'Failed to get suggestions',
     });
   }
 };

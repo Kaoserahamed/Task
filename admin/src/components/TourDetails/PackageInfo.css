@@ -105,7 +105,7 @@
 }
 
 .admin-includes-list li:before {
-  content: "✓";
+  content: '✓';
   color: #2ecc71;
   position: absolute;
   left: -1.2rem;

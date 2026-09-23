@@ -30,13 +30,13 @@ const demoAccounts = {
     name: 'Demo User',
     email: DEMO_USER_EMAIL,
     password: DEMO_USER_PASSWORD,
-    phone: '+1234567890'
+    phone: '+1234567890',
   },
   admin: {
     name: 'Demo Admin',
     email: DEMO_ADMIN_EMAIL,
     password: DEMO_ADMIN_PASSWORD,
-    role: 'admin'
+    role: 'admin',
   },
   company: {
     name: 'Demo Travel Company',
@@ -45,8 +45,8 @@ const demoAccounts = {
     description: 'A demo travel company for testing',
     phone: '+1234567890',
     website: 'https://demo-company.com',
-    address: '123 Demo Street, Demo City'
-  }
+    address: '123 Demo Street, Demo City',
+  },
 };
 
 async function seedDemoAccounts() {
@@ -67,7 +67,7 @@ async function seedDemoAccounts() {
     // 1. Create/Update Demo User
     console.log('👤 Creating/Updating Demo User...');
     const existingUser = await User.findOne({ email: demoAccounts.user.email });
-    
+
     if (existingUser) {
       existingUser.password = hashedPassword;
       existingUser.name = demoAccounts.user.name;
@@ -77,7 +77,7 @@ async function seedDemoAccounts() {
     } else {
       await User.create({
         ...demoAccounts.user,
-        password: hashedPassword
+        password: hashedPassword,
       });
       console.log('✅ Demo User created');
     }
@@ -87,12 +87,12 @@ async function seedDemoAccounts() {
     // 2. Create/Update Demo Admin
     console.log('👨‍💼 Creating/Updating Demo Admin...');
     const existingAdmin = await Admin.findOne({ email: demoAccounts.admin.email });
-    
+
     if (existingAdmin) {
       existingAdmin.password = hashedPassword;
       await existingAdmin.save();
       console.log('✅ Demo Admin updated');
-      
+
       // Update or create admin profile
       const existingProfile = await AdminProfile.findOne({ adminId: existingAdmin._id });
       if (existingProfile) {
@@ -101,21 +101,21 @@ async function seedDemoAccounts() {
       } else {
         await AdminProfile.create({
           adminId: existingAdmin._id,
-          name: demoAccounts.admin.name
+          name: demoAccounts.admin.name,
         });
       }
     } else {
       const newAdmin = await Admin.create({
         email: demoAccounts.admin.email,
-        password: hashedPassword
+        password: hashedPassword,
       });
-      
+
       // Create admin profile
       await AdminProfile.create({
         adminId: newAdmin._id,
-        name: demoAccounts.admin.name
+        name: demoAccounts.admin.name,
       });
-      
+
       console.log('✅ Demo Admin created');
     }
     console.log(`   📧 Email: ${demoAccounts.admin.email}`);
@@ -124,7 +124,7 @@ async function seedDemoAccounts() {
     // 3. Create/Update Demo Company
     console.log('🏢 Creating/Updating Demo Company...');
     const existingCompany = await Company.findOne({ email: demoAccounts.company.email });
-    
+
     if (existingCompany) {
       existingCompany.password = hashedPassword;
       existingCompany.name = demoAccounts.company.name;
@@ -137,7 +137,7 @@ async function seedDemoAccounts() {
     } else {
       await Company.create({
         ...demoAccounts.company,
-        password: hashedPassword
+        password: hashedPassword,
       });
       console.log('✅ Demo Company created');
     }
@@ -147,7 +147,7 @@ async function seedDemoAccounts() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('🎉 All demo accounts have been created/updated!');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-    
+
     console.log('📋 Demo Credentials Summary:');
     console.log('┌─────────────────────────────────────────┐');
     console.log('│ 👤 User Account                         │');

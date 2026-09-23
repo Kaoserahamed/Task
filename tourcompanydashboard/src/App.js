@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { ToursProvider } from './Context/ToursContext';
 import { AuthProvider } from './Context/AuthContext';
 import Dashboard from './Components/Dashboard/Dashboard';
-import Navbar from './Components/Navbar/Navbar'; 
+import Navbar from './Components/Navbar/Navbar';
 import UploadTour from './Components/UploadTour/UploadTour';
 import ManageTours from './Components/ManageTours/ManageTours';
 import { useAuth } from './Context/AuthContext';
@@ -18,7 +18,7 @@ import License from './Components/License/License';
 // Import the Navbar component
 
 const AppContent = () => {
-  const {company, logout} = useAuth();
+  const { company, logout } = useAuth();
   console.log(company);
 
   return (
@@ -33,11 +33,11 @@ const AppContent = () => {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/reset-password/:token" element={<NewPassword />} />
               <Route path="/upload-tour" element={<UploadTour />} />
-              <Route path="/chat" element={<ChatPage/>}/>
+              <Route path="/chat" element={<ChatPage />} />
               <Route path="/manage-tours" element={<ManageTours />} />
               <Route path="/edit-tour/:tourId" element={<EditTour />} />
               <Route path="/login" element={<LoginSignup />} />
-               <Route path="/bookings" element={<AllBookingsList />} />
+              <Route path="/bookings" element={<AllBookingsList />} />
               <Route path="/bookings/:tourId" element={<BookingList />} />
               <Route path="/license" element={<License />} />
             </Routes>
@@ -46,9 +46,9 @@ const AppContent = () => {
       ) : (
         <div className="app">
           <Routes>
-          <Route path="/" element={<LoginSignup />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/reset-password/:token" element={<NewPassword />} />
+            <Route path="/" element={<LoginSignup />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/reset-password/:token" element={<NewPassword />} />
           </Routes>
         </div>
       )}
@@ -67,4 +67,3 @@ const App = () => {
 };
 
 export default App;
-

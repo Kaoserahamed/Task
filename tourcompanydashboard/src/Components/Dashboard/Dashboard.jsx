@@ -1,5 +1,12 @@
 import React, { useMemo } from 'react';
-import { FaUsers, FaSuitcase, FaMoneyBillWave, FaStar, FaChartLine, FaCalendarCheck } from 'react-icons/fa';
+import {
+  FaUsers,
+  FaSuitcase,
+  FaMoneyBillWave,
+  FaStar,
+  FaChartLine,
+  FaCalendarCheck,
+} from 'react-icons/fa';
 import { Pie, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -9,22 +16,14 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 import { useTours } from '../../Context/ToursContext';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
-ChartJS.register(
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
   const { tours, loading, error } = useTours();
@@ -49,10 +48,10 @@ const Dashboard = () => {
     let allBookings = [];
     let allCustomerEmails = new Set();
     let allRatings = [];
-    tours.forEach(tour => {
+    tours.forEach((tour) => {
       if (Array.isArray(tour.bookings)) {
         allBookings = allBookings.concat(tour.bookings);
-        tour.bookings.forEach(b => {
+        tour.bookings.forEach((b) => {
           if (b.email) allCustomerEmails.add(b.email);
           // Assign revenue to the correct month of the current year
           if (b.bookingDate) {
@@ -67,12 +66,17 @@ const Dashboard = () => {
         allRatings.push(tour.popularity.rating.average);
       }
     });
-    const activePackages = tours.filter(t => new Date(t.startDate) <= now && new Date(t.endDate) >= now).length;
-    const completedTours = tours.filter(t => new Date(t.endDate) < now).length;
+    const activePackages = tours.filter(
+      (t) => new Date(t.startDate) <= now && new Date(t.endDate) >= now
+    ).length;
+    const completedTours = tours.filter((t) => new Date(t.endDate) < now).length;
     const lifetimeRevenue = allBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
-    const customerRating = allRatings.length > 0 ? (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(2) : 'N/A';
+    const customerRating =
+      allRatings.length > 0
+        ? (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(2)
+        : 'N/A';
     const newBookings = allBookings.length;
-    const packageRevenue = tours.map(tour => {
+    const packageRevenue = tours.map((tour) => {
       const revenue = Array.isArray(tour.bookings)
         ? tour.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
         : 0;
@@ -81,7 +85,7 @@ const Dashboard = () => {
     // Popular packages: top 3 by revenue
     // Attach bookings, price, and rating info for display
     const popularPackages = [...tours]
-      .map(tour => {
+      .map((tour) => {
         const bookings = Array.isArray(tour.bookings) ? tour.bookings.length : 0;
         const revenue = Array.isArray(tour.bookings)
           ? tour.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
@@ -92,12 +96,12 @@ const Dashboard = () => {
           bookings,
           price: tour.price || 0,
           rating: tour.popularity?.rating?.average || 'N/A',
-          revenue
+          revenue,
         };
       })
       .sort((a, b) => b.revenue - a.revenue)
       .slice(0, 3);
-    const recentFeedback = tours.flatMap(t => t.reviews || []).slice(0, 5);
+    const recentFeedback = tours.flatMap((t) => t.reviews || []).slice(0, 5);
     return {
       activePackages,
       completedTours,
@@ -108,50 +112,91 @@ const Dashboard = () => {
       packageRevenue,
       popularPackages,
       recentFeedback,
-      customerRating
+      customerRating,
     };
   }, [tours]);
 
-  if (loading) return <div className="dashboard"><h2>Loading dashboard...</h2></div>;
-  if (error) return <div className="dashboard"><h2>Error: {error}</h2></div>;
-  if (!stats) return <div className="dashboard"><h2>No data available.</h2></div>;
+  if (loading)
+    return (
+      <div className="dashboard">
+        <h2>Loading dashboard...</h2>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="dashboard">
+        <h2>Error: {error}</h2>
+      </div>
+    );
+  if (!stats)
+    return (
+      <div className="dashboard">
+        <h2>No data available.</h2>
+      </div>
+    );
 
   // Prepare chart data
   const monthlyRevenue = {
     labels: stats.monthlyRevenue.labels,
-    datasets: [{
-      label: 'Monthly Revenue',
-      data: stats.monthlyRevenue.data,
-      backgroundColor: '#3498db',
-      borderColor: '#2980b9',
-      borderWidth: 1
-    }]
+    datasets: [
+      {
+        label: 'Monthly Revenue',
+        data: stats.monthlyRevenue.data,
+        backgroundColor: '#3498db',
+        borderColor: '#2980b9',
+        borderWidth: 1,
+      },
+    ],
   };
 
   const pieData = {
-    labels: stats.packageRevenue.map(pkg => pkg.name),
-    datasets: [{
-      data: stats.packageRevenue.map(pkg => pkg.revenue),
-      backgroundColor: ['#2ecc71', '#e74c3c', '#f1c40f', '#3498db', '#9b59b6', '#f39c12', '#1abc9c', '#e67e22', '#34495e', '#95a5a6'],
-      borderColor: ['#27ae60', '#c0392b', '#f1c40f', '#2980b9', '#8e44ad', '#e67e22', '#16a085', '#d35400', '#2c3e50', '#7f8c8d'],
-      borderWidth: 1
-    }]
+    labels: stats.packageRevenue.map((pkg) => pkg.name),
+    datasets: [
+      {
+        data: stats.packageRevenue.map((pkg) => pkg.revenue),
+        backgroundColor: [
+          '#2ecc71',
+          '#e74c3c',
+          '#f1c40f',
+          '#3498db',
+          '#9b59b6',
+          '#f39c12',
+          '#1abc9c',
+          '#e67e22',
+          '#34495e',
+          '#95a5a6',
+        ],
+        borderColor: [
+          '#27ae60',
+          '#c0392b',
+          '#f1c40f',
+          '#2980b9',
+          '#8e44ad',
+          '#e67e22',
+          '#16a085',
+          '#d35400',
+          '#2c3e50',
+          '#7f8c8d',
+        ],
+        borderWidth: 1,
+      },
+    ],
   };
 
   const pieOptions = {
     responsive: true,
     plugins: {
       legend: { position: 'top' },
-      title: { display: true, text: 'Package Revenue Distribution' }
-    }
+      title: { display: true, text: 'Package Revenue Distribution' },
+    },
   };
 
   const barOptions = {
     responsive: true,
     plugins: {
       legend: { position: 'top' },
-      title: { display: true, text: 'Revenue across the year' }
-    }
+      title: { display: true, text: 'Revenue across the year' },
+    },
   };
 
   return (
@@ -234,7 +279,12 @@ const Dashboard = () => {
                   <p>Revenue: ${(pkg.price * (pkg.bookings || 0)).toLocaleString()}</p>
                 </div>
                 <div className="package-chart">
-                  <div className="chart-bar" style={{ height: `${(pkg.bookings || 0) / (stats.popularPackages[0]?.bookings || 1) * 100}%` }}></div>
+                  <div
+                    className="chart-bar"
+                    style={{
+                      height: `${((pkg.bookings || 0) / (stats.popularPackages[0]?.bookings || 1)) * 100}%`,
+                    }}
+                  ></div>
                 </div>
               </div>
             ))}
@@ -244,7 +294,10 @@ const Dashboard = () => {
           <h2>Recent Feedback</h2>
           <div className="feedback-list">
             {stats.recentFeedback.map((feedback, idx) => (
-              <div key={(feedback._id || feedback.name || 'feedback') + '-' + idx} className="feedback-item">
+              <div
+                key={(feedback._id || feedback.name || 'feedback') + '-' + idx}
+                className="feedback-item"
+              >
                 <div className="feedback-header">
                   <h3>{feedback.name}</h3>
                   <div className="feedback-rating">
@@ -262,4 +315,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

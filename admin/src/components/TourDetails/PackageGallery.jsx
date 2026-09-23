@@ -13,11 +13,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
   if (!images || images.length === 0) {
     return (
       <div className="admin-image-gallery">
-        <img
-          src={picture}
-          alt="Default Tour"
-          className="admin-main-image"
-        />
+        <img src={picture} alt="Default Tour" className="admin-main-image" />
       </div>
     );
   }
@@ -34,13 +30,13 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
         {/* Optional: Add navigation arrows */}
         {images.length > 1 && (
           <>
-            <button 
+            <button
               className="admin-nav-button admin-prev"
               onClick={() => setActiveImage((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
             >
               <i className="fas fa-chevron-left"></i>
             </button>
-            <button 
+            <button
               className="admin-nav-button admin-next"
               onClick={() => setActiveImage((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
             >
@@ -49,7 +45,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
           </>
         )}
       </div>
-      
+
       {images.length > 1 && (
         <div className="admin-image-thumbnails">
           {images.map((img, index) => (

@@ -7,7 +7,7 @@ import API_BASE_URL from '../../config/api';
 const ProfileInfo = () => {
   const { user, updateUserLocal, refreshUserData } = useAuth();
   const userData = user?.user || user;
-  
+
   const [wishlistCount, setWishlistCount] = useState(0);
   const [tripsCount, setTripsCount] = useState(0);
   const [error, setError] = useState('');
@@ -42,18 +42,18 @@ const ProfileInfo = () => {
         // Fetch Wishlist Count
         const wishlistRes = await axios.get(`${API_BASE_URL}/api/wishlist`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { email: userData.email }
+          params: { email: userData.email },
         });
         setWishlistCount(wishlistRes.data.wishlist?.length || 0);
 
         // Fetch Bookings (trips)
         const bookingRes = await axios.get(`${API_BASE_URL}/api/bookings`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { email: userData.email }
+          params: { email: userData.email },
         });
         const totalTrips = [
           ...(bookingRes.data.upcoming || []),
-          ...(bookingRes.data.completed || [])
+          ...(bookingRes.data.completed || []),
         ];
         setTripsCount(totalTrips.length);
       } catch (err) {
@@ -112,9 +112,9 @@ const ProfileInfo = () => {
 
     try {
       console.log('Uploading avatar for:', userData.email);
-      
+
       const response = await axios.post(`${API_BASE_URL}/user/auth/avatar`, formData, {
-        headers: { 
+        headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -135,17 +135,16 @@ const ProfileInfo = () => {
         setTimeout(() => {
           refreshUserData();
         }, 1000);
-        
       } else {
         setError(response.data.message || 'Upload failed');
         setAvatarPreview(originalAvatar);
       }
     } catch (err) {
       console.error('Upload failed:', err);
-      
+
       // Revert to original avatar on error
       setAvatarPreview(originalAvatar);
-      
+
       if (err.response) {
         console.error('Error response:', err.response.data);
         setError(err.response.data.message || `Server error: ${err.response.status}`);
@@ -165,14 +164,14 @@ const ProfileInfo = () => {
     <div className="profile-info">
       <div className="profile-header">
         <div className="profile-avatar">
-          <img 
-            src={avatarPreview} 
-            alt="Profile" 
+          <img
+            src={avatarPreview}
+            alt="Profile"
             onError={handleImageError}
             onLoad={handleImageLoad}
-            style={{ 
+            style={{
               opacity: uploadLoading ? 0.7 : 1,
-              transition: 'opacity 0.3s ease'
+              transition: 'opacity 0.3s ease',
             }}
           />
           <label htmlFor="avatar-upload" className="edit-avatar">
@@ -182,20 +181,24 @@ const ProfileInfo = () => {
               <i className="fas fa-camera"></i>
             )}
           </label>
-          <input 
-            id="avatar-upload" 
-            type="file" 
-            accept="image/*" 
-            onChange={handleAvatarChange} 
+          <input
+            id="avatar-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
             disabled={uploadLoading}
-            hidden 
+            hidden
           />
         </div>
         <h2>{userData?.name || 'User Name'}</h2>
         <p>{userData?.phone || 'No phone number'}</p>
       </div>
 
-      {error && <p className="error-message" style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+      {error && (
+        <p className="error-message" style={{ color: 'red', marginTop: '10px' }}>
+          {error}
+        </p>
+      )}
 
       <div className="profile-stats">
         <div className="stat-item">

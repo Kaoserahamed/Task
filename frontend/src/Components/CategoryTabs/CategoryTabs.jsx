@@ -10,17 +10,19 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }) => {
     { id: 'Educational', name: 'Educational', icon: 'graduation-cap', color: '#ec4899' }, // graduation cap for educational
     { id: 'Nature & Eco', name: 'Nature & Eco', icon: 'tree', color: '#22c55e' }, // tree for nature
     { id: 'Honeymoon', name: 'Honeymoon', icon: 'heart', color: '#f43f5e' }, // heart for honeymoon
-    { id: 'Seasonal', name: 'Seasonal', icon: 'calendar', color: '#f43f5e' } // calendar for seasonal
-];
+    { id: 'Seasonal', name: 'Seasonal', icon: 'calendar', color: '#f43f5e' }, // calendar for seasonal
+  ];
 
   return (
     <div className="category-tabs">
-      {categories.map(category => (
+      {categories.map((category) => (
         <button
           key={category.id}
           className={`category-tab ${activeCategory === category.id ? 'active' : ''}`}
           onClick={() => onCategoryChange(category.id)}
-          style={{ backgroundColor: activeCategory === category.id ? category.color : 'transparent' }}
+          style={{
+            backgroundColor: activeCategory === category.id ? category.color : 'transparent',
+          }}
         >
           <i className={`fas fa-${category.icon}`}></i>
           <span>{category.name}</span>
@@ -31,4 +33,3 @@ const CategoryTabs = ({ activeCategory, onCategoryChange }) => {
 };
 
 export default CategoryTabs;
-

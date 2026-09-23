@@ -7,30 +7,32 @@ exports.getWeatherAndTours = async (req, res) => {
 
   try {
     const tours = await Tour.find(); // fetch from DB
-    const results = await Promise.all(tours.map(async (tour) => {
-      const query = `${encodeURIComponent(tour.name)},Bangladesh`;
-      try {
-        const response = await axios.get(
-          `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${query}`
-        );
-        return {
-          ...tour.toObject(),
-          weather: response.data.current.condition.text,
-          temp: response.data.current.temp_c
-        };
-      } catch (err) {
-        return {
-          ...tour.toObject(),
-          weather: "Unavailable",
-          temp: "N/A"
-        };
-      }
-    }));
+    const results = await Promise.all(
+      tours.map(async (tour) => {
+        const query = `${encodeURIComponent(tour.name)},Bangladesh`;
+        try {
+          const response = await axios.get(
+            `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${query}`
+          );
+          return {
+            ...tour.toObject(),
+            weather: response.data.current.condition.text,
+            temp: response.data.current.temp_c,
+          };
+        } catch (err) {
+          return {
+            ...tour.toObject(),
+            weather: 'Unavailable',
+            temp: 'N/A',
+          };
+        }
+      })
+    );
 
     res.json({ suggestions: results });
   } catch (error) {
-    console.error("❌ Weather fetch failed:", error.message);
-    res.status(500).json({ error: "Weather fetch failed" });
+    console.error('❌ Weather fetch failed:', error.message);
+    res.status(500).json({ error: 'Weather fetch failed' });
   }
 };
 
@@ -45,12 +47,12 @@ exports.getSingleCityWeather = async (req, res) => {
     );
     res.json({
       weather: response.data.current.condition.text,
-      temp: response.data.current.temp_c
+      temp: response.data.current.temp_c,
     });
   } catch (err) {
     res.json({
-      weather: "Unavailable",
-      temp: "N/A"
+      weather: 'Unavailable',
+      temp: 'N/A',
     });
   }
 };

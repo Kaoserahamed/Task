@@ -40,7 +40,9 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
       <form onSubmit={handleSubmitContactInfo}>
         <div className="form-grid form-grid-2col">
           <div className="form-group">
-            <label htmlFor="firstName" className="label">First Name</label>
+            <label htmlFor="firstName" className="label">
+              First Name
+            </label>
             <div className="input-wrapper">
               <div className="input-icon">
                 <User size={16} />
@@ -57,7 +59,9 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="lastName" className="label">Last Name</label>
+            <label htmlFor="lastName" className="label">
+              Last Name
+            </label>
             <div className="input-wrapper">
               <div className="input-icon">
                 <User size={16} />
@@ -76,7 +80,9 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
         </div>
 
         <div className="form-group">
-          <label htmlFor="email" className="label">Email Address</label>
+          <label htmlFor="email" className="label">
+            Email Address
+          </label>
           <div className="input-wrapper">
             <div className="input-icon">
               <Mail size={16} />
@@ -95,7 +101,9 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
 
         <div className="form-grid form-grid-2col">
           <div className="form-group">
-            <label htmlFor="phone" className="label">Phone Number</label>
+            <label htmlFor="phone" className="label">
+              Phone Number
+            </label>
             <div className="input-wrapper">
               <div className="input-icon">
                 <Phone size={16} />
@@ -111,12 +119,14 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
               />
             </div>
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="travelers" className="label">
               Number of Travelers
               {isGroupTour && (
-                <span style={{ fontSize: '12px', color: 'var(--color-subtext)', fontWeight: 'normal' }}>
+                <span
+                  style={{ fontSize: '12px', color: 'var(--color-subtext)', fontWeight: 'normal' }}
+                >
                   ({maxTravelers} seats available)
                 </span>
               )}
@@ -153,7 +163,9 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
         </div>
 
         <div className="form-group">
-          <label htmlFor="address" className="label">Address</label>
+          <label htmlFor="address" className="label">
+            Address
+          </label>
           <div className="input-wrapper">
             <div className="input-icon">
               <MapPin size={16} />
@@ -172,7 +184,9 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
 
         <div className="form-grid form-grid-2col">
           <div className="form-group">
-            <label htmlFor="city" className="label">City</label>
+            <label htmlFor="city" className="label">
+              City
+            </label>
             <input
               type="text"
               id="city"
@@ -184,7 +198,9 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
             />
           </div>
           <div className="form-group">
-            <label htmlFor="country" className="label">Country</label>
+            <label htmlFor="country" className="label">
+              Country
+            </label>
             <input
               type="text"
               id="country"
@@ -213,8 +229,8 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
         </div>
 
         <div className="flex-end">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="button button-primary"
             disabled={isGroupTour && maxTravelers === 0}
           >

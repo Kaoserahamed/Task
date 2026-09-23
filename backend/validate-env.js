@@ -1,7 +1,7 @@
 /**
  * Environment Variable Validation Script
  * Run this before deploying to catch missing or invalid environment variables
- * 
+ *
  * Usage: node validate-env.js
  */
 
@@ -18,13 +18,10 @@ const requiredVars = [
   'COMPANY_URL',
   'CLOUDINARY_CLOUD_NAME',
   'CLOUDINARY_API_KEY',
-  'CLOUDINARY_API_SECRET'
+  'CLOUDINARY_API_SECRET',
 ];
 
-const optionalVars = [
-  'WEATHER_API_KEY',
-  'SENDINBLUE_API_KEY'
-];
+const optionalVars = ['WEATHER_API_KEY', 'SENDINBLUE_API_KEY'];
 
 console.log('🔍 Validating Environment Variables...\n');
 
@@ -33,7 +30,7 @@ let hasWarnings = false;
 
 // Check required variables
 console.log('✅ Required Variables:');
-requiredVars.forEach(varName => {
+requiredVars.forEach((varName) => {
   const value = process.env[varName];
   if (!value) {
     console.log(`   ❌ ${varName} - MISSING`);
@@ -48,7 +45,7 @@ requiredVars.forEach(varName => {
 
 // Check optional variables
 console.log('\n📋 Optional Variables:');
-optionalVars.forEach(varName => {
+optionalVars.forEach((varName) => {
   const value = process.env[varName];
   if (!value) {
     console.log(`   ⚠️  ${varName} - Not set (some features may not work)`);
@@ -63,14 +60,18 @@ console.log('\n🔬 Format Validation:');
 
 // MongoDB URI
 if (process.env.MONGODB_URI) {
-  if (process.env.MONGODB_URI.startsWith('mongodb+srv://') || 
-      process.env.MONGODB_URI.startsWith('mongodb://')) {
+  if (
+    process.env.MONGODB_URI.startsWith('mongodb+srv://') ||
+    process.env.MONGODB_URI.startsWith('mongodb://')
+  ) {
     console.log('   ✓ MONGODB_URI - Valid format');
   } else {
-    console.log('   ❌ MONGODB_URI - Invalid format (should start with mongodb:// or mongodb+srv://)');
+    console.log(
+      '   ❌ MONGODB_URI - Invalid format (should start with mongodb:// or mongodb+srv://)'
+    );
     hasErrors = true;
   }
-  
+
   if (process.env.MONGODB_URI.includes('<password>')) {
     console.log('   ❌ MONGODB_URI - Contains placeholder <password>');
     hasErrors = true;
@@ -80,7 +81,9 @@ if (process.env.MONGODB_URI) {
 // JWT Secret length
 if (process.env.JWT_SECRET) {
   if (process.env.JWT_SECRET.length < 32) {
-    console.log(`   ⚠️  JWT_SECRET - Too short (${process.env.JWT_SECRET.length} chars, recommended: 32+)`);
+    console.log(
+      `   ⚠️  JWT_SECRET - Too short (${process.env.JWT_SECRET.length} chars, recommended: 32+)`
+    );
     hasWarnings = true;
   } else {
     console.log(`   ✓ JWT_SECRET - Good length (${process.env.JWT_SECRET.length} chars)`);
@@ -89,7 +92,7 @@ if (process.env.JWT_SECRET) {
 
 // URLs format
 const urlVars = ['FRONTEND_URL', 'ADMIN_URL', 'COMPANY_URL'];
-urlVars.forEach(varName => {
+urlVars.forEach((varName) => {
   const value = process.env[varName];
   if (value) {
     if (value.startsWith('http://') || value.startsWith('https://')) {

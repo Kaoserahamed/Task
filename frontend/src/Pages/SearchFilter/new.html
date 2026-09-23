@@ -1,274 +1,261 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ট্যুর সার্চ এবং ফিল্টার</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Hind Siliguri', sans-serif;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Hind Siliguri', sans-serif;
+      }
 
-        body {
-            background-color: #f8f9fa;
+      body {
+        background-color: #f8f9fa;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      /* হেডার স্টাইল */
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: white;
+        border-radius: 15px;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      /* মেইন কনটেন্ট লেআউট */
+      .main-content {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+      }
+
+      /* ফিল্টার সাইডবার */
+      .filter-sidebar {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+      }
+
+      .filter-section {
+        margin-bottom: 2rem;
+      }
+
+      .filter-section h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      /* ফিল্টার অপশনস */
+      .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .filter-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* প্রাইস রেঞ্জ স্লাইডার */
+      .price-range {
+        padding: 1rem 0;
+      }
+
+      .price-slider {
+        width: 100%;
+        margin: 1rem 0;
+      }
+
+      /* টুর রেজাল্টস সেকশন */
+      .tour-results {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .sort-dropdown {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+
+      /* টুর কার্ড গ্রিড */
+      .tour-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .tour-card {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.2s;
+      }
+
+      .tour-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .tour-image {
+        width: 100%;
+        height: 200px;
+        background-color: #f0f0f0;
+        object-fit: cover;
+      }
+
+      .tour-details {
+        padding: 1rem;
+      }
+
+      .tour-title {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+
+      .tour-info {
+        display: flex;
+        justify-content: space-between;
+        color: #666;
+        margin-top: 1rem;
+      }
+
+      .tour-price {
+        color: #2ecc71;
+        font-weight: bold;
+      }
+
+      /* রেসপনসিভ ডিজাইন */
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
+          padding: 1rem;
         }
 
-        /* হেডার স্টাইল */
         .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: white;
-            border-radius: 15px;
+          padding: 1.5rem;
         }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        /* মেইন কনটেন্ট লেআউট */
-        .main-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
-        }
-
-        /* ফিল্টার সাইডবার */
-        .filter-sidebar {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            height: fit-content;
-        }
-
-        .filter-section {
-            margin-bottom: 2rem;
-        }
-
-        .filter-section h3 {
-            color: #333;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        /* ফিল্টার অপশনস */
-        .filter-options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .filter-option {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* প্রাইস রেঞ্জ স্লাইডার */
-        .price-range {
-            padding: 1rem 0;
-        }
-
-        .price-slider {
-            width: 100%;
-            margin: 1rem 0;
-        }
-
-        /* টুর রেজাল্টস সেকশন */
-        .tour-results {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .sort-dropdown {
-            padding: 0.5rem;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        /* টুর কার্ড গ্রিড */
-        .tour-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .tour-card {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-
-        .tour-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .tour-image {
-            width: 100%;
-            height: 200px;
-            background-color: #f0f0f0;
-            object-fit: cover;
-        }
-
-        .tour-details {
-            padding: 1rem;
-        }
-
-        .tour-title {
-            font-size: 1.2rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .tour-info {
-            display: flex;
-            justify-content: space-between;
-            color: #666;
-            margin-top: 1rem;
-        }
-
-        .tour-price {
-            color: #2ecc71;
-            font-weight: bold;
-        }
-
-        /* রেসপনসিভ ডিজাইন */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
-            .container {
-                padding: 1rem;
-            }
-
-            .header {
-                padding: 1.5rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header class="header">
-            <h1>আপনার পছন্দের ট্যুর খুঁজুন</h1>
-            <p>বাংলাদেশের সেরা ট্যুর প্যাকেজ সমূহ</p>
-        </header>
+      <header class="header">
+        <h1>আপনার পছন্দের ট্যুর খুঁজুন</h1>
+        <p>বাংলাদেশের সেরা ট্যুর প্যাকেজ সমূহ</p>
+      </header>
 
-        <div class="main-content">
-            <!-- ফিল্টার সাইডবার -->
-            <aside class="filter-sidebar">
-                <div class="filter-section">
-                    <h3>মূল্য সীমা</h3>
-                    <div class="price-range">
-                        <input type="range" class="price-slider" min="0" max="100000" step="1000">
-                        <div class="price-values">
-                            <span>৳০</span> - <span>৳১০০,০০০</span>
-                        </div>
-                    </div>
+      <div class="main-content">
+        <!-- ফিল্টার সাইডবার -->
+        <aside class="filter-sidebar">
+          <div class="filter-section">
+            <h3>মূল্য সীমা</h3>
+            <div class="price-range">
+              <input type="range" class="price-slider" min="0" max="100000" step="1000" />
+              <div class="price-values"><span>৳০</span> - <span>৳১০০,০০০</span></div>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h3>ট্যুরের ধরন</h3>
+            <div class="filter-options">
+              <label class="filter-option"> <input type="checkbox" /> এডভেঞ্চার </label>
+              <label class="filter-option"> <input type="checkbox" /> বিচ </label>
+              <label class="filter-option"> <input type="checkbox" /> পাহাড় </label>
+              <label class="filter-option"> <input type="checkbox" /> ঐতিহাসিক </label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h3>সময়কাল</h3>
+            <div class="filter-options">
+              <label class="filter-option"> <input type="checkbox" /> ১-২ দিন </label>
+              <label class="filter-option"> <input type="checkbox" /> ৩-৫ দিন </label>
+              <label class="filter-option"> <input type="checkbox" /> ৫+ দিন </label>
+            </div>
+          </div>
+        </aside>
+
+        <!-- টুর রেজাল্টস -->
+        <main class="tour-results">
+          <div class="results-header">
+            <h2>সর্বমোট ১২টি ট্যুর পাওয়া গেছে</h2>
+            <select class="sort-dropdown">
+              <option>সর্বনিম্ন মূল্য</option>
+              <option>সর্বোচ্চ মূল্য</option>
+              <option>জনপ্রিয়তা</option>
+            </select>
+          </div>
+
+          <div class="tour-grid">
+            <!-- টুর কার্ড ১ -->
+            <div class="tour-card">
+              <img src="tour1.jpg" alt="সুন্দরবন" class="tour-image" />
+              <div class="tour-details">
+                <h3 class="tour-title">সুন্দরবন অ্যাডভেঞ্চার</h3>
+                <p>৩ দিন ২ রাত</p>
+                <div class="tour-info">
+                  <span>রেটিং: ⭐⭐⭐⭐⭐</span>
+                  <span class="tour-price">৳১২,০০০</span>
                 </div>
+              </div>
+            </div>
 
-                <div class="filter-section">
-                    <h3>ট্যুরের ধরন</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox"> এডভেঞ্চার
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox"> বিচ
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox"> পাহাড়
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox"> ঐতিহাসিক
-                        </label>
-                    </div>
+            <!-- টুর কার্ড ২ -->
+            <div class="tour-card">
+              <img src="tour2.jpg" alt="কক্সবাজার" class="tour-image" />
+              <div class="tour-details">
+                <h3 class="tour-title">কক্সবাজার সী-বিচ</h3>
+                <p>৪ দিন ৩ রাত</p>
+                <div class="tour-info">
+                  <span>রেটিং: ⭐⭐⭐⭐</span>
+                  <span class="tour-price">৳১৫,০০০</span>
                 </div>
+              </div>
+            </div>
 
-                <div class="filter-section">
-                    <h3>সময়কাল</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox"> ১-২ দিন
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox"> ৩-৫ দিন
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox"> ৫+ দিন
-                        </label>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- টুর রেজাল্টস -->
-            <main class="tour-results">
-                <div class="results-header">
-                    <h2>সর্বমোট ১২টি ট্যুর পাওয়া গেছে</h2>
-                    <select class="sort-dropdown">
-                        <option>সর্বনিম্ন মূল্য</option>
-                        <option>সর্বোচ্চ মূল্য</option>
-                        <option>জনপ্রিয়তা</option>
-                    </select>
-                </div>
-
-                <div class="tour-grid">
-                    <!-- টুর কার্ড ১ -->
-                    <div class="tour-card">
-                        <img src="tour1.jpg" alt="সুন্দরবন" class="tour-image">
-                        <div class="tour-details">
-                            <h3 class="tour-title">সুন্দরবন অ্যাডভেঞ্চার</h3>
-                            <p>৩ দিন ২ রাত</p>
-                            <div class="tour-info">
-                                <span>রেটিং: ⭐⭐⭐⭐⭐</span>
-                                <span class="tour-price">৳১২,০০০</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- টুর কার্ড ২ -->
-                    <div class="tour-card">
-                        <img src="tour2.jpg" alt="কক্সবাজার" class="tour-image">
-                        <div class="tour-details">
-                            <h3 class="tour-title">কক্সবাজার সী-বিচ</h3>
-                            <p>৪ দিন ৩ রাত</p>
-                            <div class="tour-info">
-                                <span>রেটিং: ⭐⭐⭐⭐</span>
-                                <span class="tour-price">৳১৫,০০০</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- আরও টুর কার্ড যোগ করুন -->
-                </div>
-            </main>
-        </div>
+            <!-- আরও টুর কার্ড যোগ করুন -->
+          </div>
+        </main>
+      </div>
     </div>
-</body>
+  </body>
 </html>

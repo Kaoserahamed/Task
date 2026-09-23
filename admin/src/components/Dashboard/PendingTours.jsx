@@ -10,9 +10,9 @@ const PendingTours = ({ id, name, applicant, date, status, price }) => {
   const handleStatusUpdate = async (newStatus) => {
     try {
       setIsLoading(true);
-      console.log('key',id);
-      const response = await axios.patch(`${API_BASE_URL}/api/tours/${id}/status`,{
-        status:newStatus
+      console.log('key', id);
+      const response = await axios.patch(`${API_BASE_URL}/api/tours/${id}/status`, {
+        status: newStatus,
       });
 
       if (response.data.success) {
@@ -35,20 +35,20 @@ const PendingTours = ({ id, name, applicant, date, status, price }) => {
         <p className="approval-date">Created: {date}</p>
       </div>
       <div className="approval-actions">
-        <button 
-          className="approve-btn" 
+        <button
+          className="approve-btn"
           onClick={() => handleStatusUpdate('approved')}
           disabled={isLoading || currentStatus === 'approved'}
         >
-          <i className="fas fa-check"></i> 
+          <i className="fas fa-check"></i>
           {isLoading ? 'Processing...' : 'Approve'}
         </button>
-        <button 
-          className="reject-btn" 
+        <button
+          className="reject-btn"
           onClick={() => handleStatusUpdate('rejected')}
           disabled={isLoading || currentStatus === 'rejected'}
         >
-          <i className="fas fa-times"></i> 
+          <i className="fas fa-times"></i>
           {isLoading ? 'Processing...' : 'Reject'}
         </button>
       </div>

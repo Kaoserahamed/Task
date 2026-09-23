@@ -25,12 +25,12 @@
   .review-container {
     flex-direction: row;
   }
-  
+
   .review-form-section {
     flex: 1;
     max-width: 550px;
   }
-  
+
   .reviews-section {
     flex: 1;
   }
@@ -44,7 +44,9 @@
   padding: 1.5rem;
   height: 100%;
   min-height: 600px; /* Ensure minimum height */
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .review-form-section h2 {
@@ -53,7 +55,9 @@
   font-size: 1.5rem;
   border-bottom: 2px solid var(--border-color);
   padding-bottom: 0.8rem;
-  transition: color 0.3s ease, border-color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .review-form {
@@ -75,29 +79,38 @@
   transition: color 0.3s ease;
 }
 
-.tour-select{
+.tour-select {
   background-color: var(--form-bg);
   color: var(--text-primary);
 }
 
-select, textarea, input {
+select,
+textarea,
+input {
   padding: 0.75rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-family: inherit;
   font-size: 1rem;
-  transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+  transition:
+    border-color 0.3s,
+    background-color 0.3s,
+    color 0.3s;
   background-color: var(--form-bg);
   color: var(--text-primary);
 }
 
-select:focus, textarea:focus, input:focus {
+select:focus,
+textarea:focus,
+input:focus {
   border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 0 2px var(--border-hover);
 }
 
-select.error, textarea.error, input.error {
+select.error,
+textarea.error,
+input.error {
   border-color: var(--error-color);
 }
 
@@ -146,7 +159,9 @@ select.error, textarea.error, input.error {
   padding: 1rem;
   border-radius: 6px;
   background-color: var(--background-secondary);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .upload-container {
@@ -198,7 +213,9 @@ select.error, textarea.error, input.error {
   overflow: hidden;
   border: 1px solid var(--border-color);
   background-color: var(--background-secondary);
-  transition: border-color 0.3s ease, background-color 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .photo-preview img {
@@ -236,7 +253,9 @@ select.error, textarea.error, input.error {
   text-overflow: ellipsis;
   background-color: var(--background-secondary);
   color: var(--text-secondary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Submit button */
@@ -270,12 +289,20 @@ select.error, textarea.error, input.error {
   gap: 0.5rem;
   animation: fadeIn 0.3s ease-out;
   border: 1px solid var(--success-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Reviews section */
@@ -288,7 +315,9 @@ select.error, textarea.error, input.error {
   min-height: 600px; /* Ensure minimum height */
   display: flex;
   flex-direction: column;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .reviews-section h2 {
@@ -297,7 +326,9 @@ select.error, textarea.error, input.error {
   font-size: 1.5rem;
   border-bottom: 2px solid var(--border-color);
   padding-bottom: 0.8rem;
-  transition: color 0.3s ease, border-color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .reviews-list {
@@ -335,7 +366,11 @@ select.error, textarea.error, input.error {
   border-radius: 6px;
   overflow: hidden;
   background-color: var(--card-bg);
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .review-card:hover {
@@ -350,7 +385,9 @@ select.error, textarea.error, input.error {
   background-color: var(--background-secondary);
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .reviewer-info {
@@ -423,7 +460,10 @@ select.error, textarea.error, input.error {
   min-height: 300px; /* Ensure minimum height */
   margin-top: auto;
   margin-bottom: auto;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 /* Loading states */
@@ -446,5 +486,8 @@ select.error, textarea.error, input.error {
   background-color: var(--background-secondary);
   font-size: 0.8rem;
   color: var(--text-muted);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
 }

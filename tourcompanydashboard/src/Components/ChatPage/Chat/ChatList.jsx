@@ -1,58 +1,59 @@
 import React from 'react';
 import './ChatList.css';
 import avatar from '../../Assets/chat_avatar.png';
-import {useState,useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import API_BASE_URL from '../../../config/api';
 
-const ChatList = ({ chatType, selectedChat, setSelectedChat,companyId,companyname,username,token ,socket}) => {
-  
-  const [chats,setChats]=useState([]);
-  const [isloading,setIsloading]=useState(false);
-  const [filter,setFilter]=useState('all');
+const ChatList = ({
+  chatType,
+  selectedChat,
+  setSelectedChat,
+  companyId,
+  companyname,
+  username,
+  token,
+  socket,
+}) => {
+  const [chats, setChats] = useState([]);
+  const [isloading, setIsloading] = useState(false);
+  const [filter, setFilter] = useState('all');
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   console.log(username);
-let response,responseData;
-const fetchChats=async()=>{
-  setIsloading(true);
-  try {
-    console.log("useEffect triggered. Token:", token, "Company ID:", companyId);
-    const authtoken=localStorage.getItem('company-token');
-    console.log("token",authtoken);
-    if(!token){
-      throw new Error('No token found');
+  let response, responseData;
+  const fetchChats = async () => {
+    setIsloading(true);
+    try {
+      console.log('useEffect triggered. Token:', token, 'Company ID:', companyId);
+      const authtoken = localStorage.getItem('company-token');
+      console.log('token', authtoken);
+      if (!token) {
+        throw new Error('No token found');
+      }
+      console.log(token);
+      response = await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'comuse'}`, {
+        method: 'GET',
+      });
+      responseData = await response.json();
+      console.log(responseData);
+      if (!response.ok) {
+        throw new Error('Failed to fetch chats');
+      }
+      setChats(responseData || []);
+    } catch (error) {
+      console.error('Error fetching chats:', error);
+      setChats([]);
+    } finally {
+      setIsloading(false);
     }
-    console.log(token)
-     response=await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'comuse'}`
-, {
-      method: 'GET',
-  
-     
-    }
-     )
-    responseData=await response.json();
-    console.log(responseData);
-    if(!response.ok){
-      throw new Error('Failed to fetch chats');
-    }
-    setChats(responseData || []);
-  }
-  catch(error){
-    console.error('Error fetching chats:',error);
-    setChats([]);
-  }
-  finally{
-    setIsloading(false);
-  }                           
-}
-  useEffect(()=>{
-    
+  };
+  useEffect(() => {
     if (companyId) {
       fetchChats();
     }
-  },[companyId]);
+  }, [companyId]);
   useEffect(() => {
     if (socket) {
       socket.on('posts', (data) => {
@@ -75,22 +76,23 @@ const fetchChats=async()=>{
     };
   }, [socket, selectedChat?._id]);
 
-   
-
   const searchCompanies = async (query) => {
     if (!query.trim()) {
       setSearchResults([]);
       return;
     }
-    
+
     setIsSearching(true);
     try {
       const authtoken = localStorage.getItem('company-token');
-      const response = await fetch(`${API_BASE_URL}/user/auth/search?query=${encodeURIComponent(query)}`, {
-        headers: {
-          'Authorization': `Bearer ${authtoken}`
+      const response = await fetch(
+        `${API_BASE_URL}/user/auth/search?query=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authtoken}`,
+          },
         }
-      });
+      );
       const data = await response.json();
       if (data.success) {
         setSearchResults(data.users || []);
@@ -113,30 +115,29 @@ const fetchChats=async()=>{
   };
 
   const handlecompanySelect = async (user) => {
-    const selectedData = chats.find(chat=>chat.userId===user._id);
+    const selectedData = chats.find((chat) => chat.userId === user._id);
     let tempchat;
-    if(!selectedData){
-     let companylogo
-    // Create a temporary chat object without saving to database
-    tempchat = {
-      _id: null, // Temporary ID
-      companyName: companyname,
-      userName:user.name,
-      userId:user._id,
-      logo: companylogo || avatar,
-      lastMessage: '',
-      messages:[],
-      lastMessageTime: new Date(),
-      chatType:'comuse',
-      unreadCount: 0,
-      online: false,
-      companyId: companyId,
-      isTemporary: true // Flag to identify this is a temporary chat
-    };
-  }
-  else{
-     tempchat=selectedData;
-  }
+    if (!selectedData) {
+      let companylogo;
+      // Create a temporary chat object without saving to database
+      tempchat = {
+        _id: null, // Temporary ID
+        companyName: companyname,
+        userName: user.name,
+        userId: user._id,
+        logo: companylogo || avatar,
+        lastMessage: '',
+        messages: [],
+        lastMessageTime: new Date(),
+        chatType: 'comuse',
+        unreadCount: 0,
+        online: false,
+        companyId: companyId,
+        isTemporary: true, // Flag to identify this is a temporary chat
+      };
+    } else {
+      tempchat = selectedData;
+    }
 
     setSelectedChat(tempchat);
     setShowSearch(false);
@@ -164,11 +165,14 @@ const fetchChats=async()=>{
             onChange={handleSearchChange}
             className="search-input"
           />
-          <button className="search-close-btn" onClick={() => {
-            setShowSearch(false);
-            setSearchQuery('');
-            setSearchResults([]);
-          }}>
+          <button
+            className="search-close-btn"
+            onClick={() => {
+              setShowSearch(false);
+              setSearchQuery('');
+              setSearchResults([]);
+            }}
+          >
             <i className="fas fa-times"></i>
           </button>
         </div>
@@ -179,7 +183,7 @@ const fetchChats=async()=>{
           {isSearching ? (
             <div className="loading">Searching...</div>
           ) : searchResults.length > 0 ? (
-            searchResults.map(user => (
+            searchResults.map((user) => (
               <div
                 key={user._id}
                 className="search-result-item"
@@ -202,8 +206,8 @@ const fetchChats=async()=>{
         {isloading ? (
           <div className="loading">Loading chats...</div>
         ) : chats.length > 0 ? (
-          chats.map(chat => (
-            <div 
+          chats.map((chat) => (
+            <div
               key={chat._id}
               className={`chat-item ${selectedChat?._id === chat._id ? 'active' : ''}`}
               onClick={() => setSelectedChat(chat)}
@@ -216,9 +220,7 @@ const fetchChats=async()=>{
                 <h3>{chat.userName}</h3>
                 <p>{chat.lastMessage}</p>
               </div>
-              {chat.unreadCount > 0 && (
-                <span className="unread-count">{chat.unreadCount}</span>
-              )}
+              {chat.unreadCount > 0 && <span className="unread-count">{chat.unreadCount}</span>}
             </div>
           ))
         ) : (
@@ -229,4 +231,4 @@ const fetchChats=async()=>{
   );
 };
 
-export default ChatList; 
+export default ChatList;

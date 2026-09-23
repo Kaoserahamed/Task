@@ -1,7 +1,8 @@
 /* SearchFilter - Using Global Theme Variables */
 
 /* Full Page Layout */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -25,7 +26,9 @@ html, body {
   width: 100%;
   padding: 1.5rem;
   background-color: var(--background-primary);
-  box-shadow: var(--shadow-color) 0 1px 3px 0, var(--shadow-color) 0 1px 2px 0;
+  box-shadow:
+    var(--shadow-color) 0 1px 3px 0,
+    var(--shadow-color) 0 1px 2px 0;
   z-index: 10;
 }
 
@@ -45,7 +48,9 @@ html, body {
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
   transition: width 0.3s ease;
-  box-shadow: var(--shadow-color) 0 1px 3px 0, var(--shadow-color) 0 1px 2px 0;
+  box-shadow:
+    var(--shadow-color) 0 1px 3px 0,
+    var(--shadow-color) 0 1px 2px 0;
 }
 
 .tour-search-filter-header {
@@ -67,7 +72,9 @@ html, body {
   margin-bottom: 2rem;
   padding: 1rem;
   background-color: var(--card-bg);
-  box-shadow: var(--shadow-color) 0 1px 3px 0, var(--shadow-color) 0 1px 2px 0;
+  box-shadow:
+    var(--shadow-color) 0 1px 3px 0,
+    var(--shadow-color) 0 1px 2px 0;
   border-radius: 8px;
   border: 1px solid var(--border-color);
 }
@@ -98,7 +105,7 @@ html, body {
   background-color: var(--background-secondary);
 }
 
-.tour-search-filter-option input[type="checkbox"] {
+.tour-search-filter-option input[type='checkbox'] {
   margin-right: 0.75rem;
   accent-color: var(--primary-color);
 }
@@ -177,7 +184,9 @@ html, body {
 .tour-search-card {
   background-color: var(--card-bg);
   border-radius: 12px;
-  box-shadow: var(--shadow-color) 0 1px 3px 0, var(--shadow-color) 0 1px 2px 0;
+  box-shadow:
+    var(--shadow-color) 0 1px 3px 0,
+    var(--shadow-color) 0 1px 2px 0;
   transition: all 0.3s ease;
   text-decoration: none;
   color: var(--text-primary);
@@ -188,7 +197,9 @@ html, body {
 
 .tour-search-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-color) 0 10px 15px -3px, var(--shadow-color) 0 4px 6px -2px;
+  box-shadow:
+    var(--shadow-color) 0 10px 15px -3px,
+    var(--shadow-color) 0 4px 6px -2px;
   border-color: var(--primary-color);
 }
 
@@ -241,8 +252,13 @@ html, body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Card Details - Compact Design */
@@ -393,8 +409,12 @@ html, body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive Adjustments */

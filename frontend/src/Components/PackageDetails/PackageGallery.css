@@ -8,11 +8,10 @@
   gap: 2rem;
   background-color: var(--card-bg);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
-
-
-
 
 .error-container {
   display: flex;
@@ -49,15 +48,15 @@
   .package-details-container {
     grid-template-columns: 2fr 1fr;
   }
-  
+
   .gallery-section {
     grid-column: 1 / -1;
   }
-  
+
   .main-content-section {
     grid-column: 1 / 2;
   }
-  
+
   .booking-section {
     grid-column: 2 / 3;
   }
@@ -103,12 +102,12 @@
   height: 40px;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.3s ease, background-color 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    background-color 0.3s ease;
   z-index: 2;
   backdrop-filter: var(--backdrop-blur);
 }
-
-
 
 .image-thumbnails {
   display: flex;
@@ -141,7 +140,10 @@
   border-radius: 4px;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease,
+    border-color 0.3s ease;
   border: 2px solid transparent;
 }
 
@@ -160,7 +162,7 @@
   .main-image-container {
     height: 300px;
   }
-  
+
   .thumbnail {
     width: 80px;
     height: 60px;
@@ -176,7 +178,10 @@
   position: sticky;
   top: 2rem;
   border: 1px solid var(--border-color);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .booking-header {
@@ -213,7 +218,9 @@
   background-color: var(--background-secondary);
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .date-item {

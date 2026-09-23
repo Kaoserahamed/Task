@@ -185,16 +185,16 @@
     gap: var(--spacing-md);
     padding: var(--spacing-md);
   }
-  
+
   .package-card {
     max-width: 280px;
   }
-  
+
   .package-info {
     padding: var(--spacing-md);
     min-height: 100px;
   }
-  
+
   .package-info h3 {
     font-size: var(--font-size-lg);
   }
@@ -205,16 +205,16 @@
     gap: var(--spacing-md);
     padding: var(--spacing-md);
   }
-  
+
   .package-card {
     max-width: 100%;
   }
-  
+
   .package-info {
     padding: var(--spacing-md);
     min-height: 90px;
   }
-  
+
   .package-info h3 {
     font-size: var(--font-size-base);
   }

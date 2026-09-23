@@ -5,7 +5,9 @@
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  transition: background-color var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .nav-container {
@@ -136,7 +138,9 @@
   height: 40px;
   cursor: pointer;
   margin-right: var(--spacing-sm);
-  transition: background-color var(--transition-base), color var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
 }
 
 .theme-toggle-btn:hover {

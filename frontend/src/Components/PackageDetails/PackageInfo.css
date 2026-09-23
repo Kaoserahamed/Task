@@ -8,11 +8,10 @@
   gap: 2rem;
   background-color: var(--card-bg);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
-
-
-
 
 .error-container {
   display: flex;
@@ -49,15 +48,15 @@
   .package-details-container {
     grid-template-columns: 2fr 1fr;
   }
-  
+
   .gallery-section {
     grid-column: 1 / -1;
   }
-  
+
   .main-content-section {
     grid-column: 1 / 2;
   }
-  
+
   .booking-section {
     grid-column: 2 / 3;
   }
@@ -103,7 +102,9 @@
   height: 40px;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.3s ease, background-color 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    background-color 0.3s ease;
   z-index: 2;
   backdrop-filter: var(--backdrop-blur);
 }
@@ -147,7 +148,9 @@
   border-radius: 4px;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.3s ease, transform 0.2s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease;
 }
 
 .thumbnail:hover {
@@ -165,7 +168,7 @@
   .main-image-container {
     height: 300px;
   }
-  
+
   .thumbnail {
     width: 80px;
     height: 60px;
@@ -180,7 +183,9 @@
   padding: 1.5rem;
   position: sticky;
   top: 2rem;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .booking-header {
@@ -387,7 +392,7 @@
 }
 
 /* Dark theme specific styling for special note */
-[data-theme="dark"] .special-note {
+[data-theme='dark'] .special-note {
   background-color: var(--background-tertiary);
 }
 
@@ -410,7 +415,7 @@
 }
 
 .includes-list li:before {
-  content: "✓";
+  content: '✓';
   color: var(--success-color);
   position: absolute;
   left: -1.2rem;
@@ -418,7 +423,7 @@
 }
 
 /* Dark theme checkmark color */
-[data-theme="dark"] .includes-list li:before {
+[data-theme='dark'] .includes-list li:before {
   color: var(--success-color);
 }
 
@@ -521,11 +526,11 @@
 }
 
 /* Dark theme specific button styling */
-[data-theme="dark"] .company-details button {
+[data-theme='dark'] .company-details button {
   background-color: var(--success-color);
 }
 
-[data-theme="dark"] .company-details button:hover {
+[data-theme='dark'] .company-details button:hover {
   background-color: var(--success-hover);
 }
 
@@ -533,7 +538,7 @@
   .company-details button {
     background-color: var(--success-color);
   }
-  
+
   .company-details button:hover {
     background-color: var(--success-hover);
   }

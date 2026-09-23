@@ -203,7 +203,8 @@
   border-color: var(--accent-color);
 }
 
-.approval-list, .activity-list {
+.approval-list,
+.activity-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -245,7 +246,8 @@
   gap: 10px;
 }
 
-.approve-btn, .reject-btn {
+.approve-btn,
+.reject-btn {
   padding: 8px 12px;
   border: none;
   border-radius: 6px;
@@ -274,7 +276,8 @@
   background-color: #5a6268;
 }
 
-.approve-btn i, .reject-btn i {
+.approve-btn i,
+.reject-btn i {
   margin-right: 5px;
 }
 
@@ -339,16 +342,16 @@
   .analytics-overview {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-  
+
   .dashboard-content {
     grid-template-columns: 1fr;
   }
-  
+
   .approval-item {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .approval-actions {
     margin-top: 15px;
     width: 100%;
@@ -398,7 +401,9 @@
 .modern-card {
   background: #fff;
   border-radius: 1.2rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.08),
+    0 1.5px 4px rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: center;
   padding: 1.5rem 2rem;
@@ -409,7 +414,9 @@
   position: relative;
 }
 .modern-card:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .modern-card-avatar {
@@ -460,7 +467,10 @@
   font-size: 0.98rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    box-shadow 0.18s;
   outline: none;
   margin-bottom: 0.2rem;
 }
@@ -474,7 +484,7 @@
 .modern-btn.approve {
   background: #38b2ac;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(56,178,172,0.08);
+  box-shadow: 0 2px 8px rgba(56, 178, 172, 0.08);
 }
 .modern-btn.approve:hover {
   background: #319795;
@@ -482,7 +492,7 @@
 .modern-btn.reject {
   background: #f56565;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(245,101,101,0.08);
+  box-shadow: 0 2px 8px rgba(245, 101, 101, 0.08);
 }
 .modern-btn.reject:hover {
   background: #c53030;
@@ -511,4 +521,3 @@
     gap: 0.7rem;
   }
 }
-  

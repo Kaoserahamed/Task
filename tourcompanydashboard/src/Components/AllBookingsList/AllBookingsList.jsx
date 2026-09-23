@@ -23,21 +23,15 @@ const AllBookingsList = () => {
       const toursStats = await Promise.all(
         tours.map(async (tour) => {
           // Fetch bookings for this tour
-          const res = await fetch(
-            `${API_BASE_URL}/api/bookings/tour/${tour._id}`,
-            {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            }
-          );
+          const res = await fetch(`${API_BASE_URL}/api/bookings/tour/${tour._id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           const data = await res.json();
           const bookings = data.success ? data.bookings : [];
           const bookingCount = bookings.length;
-          const totalRevenue = bookings.reduce(
-            (sum, b) => sum + (b.totalAmount || 0),
-            0
-          );
+          const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
           return { ...tour, bookingCount, totalRevenue, bookings };
         })
       );
@@ -84,15 +78,15 @@ const AllBookingsList = () => {
         socket.off('seatsUpdated');
       }
     };
-  }, [socket, fetchToursWithBookings,fetchTourStats]);
+  }, [socket, fetchToursWithBookings, fetchTourStats]);
 
   const fetchAllBookings = async () => {
     try {
       const token = localStorage.getItem('company-token');
       const response = await fetch(`${API_BASE_URL}/api/bookings/admin/all`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await response.json();
       if (data.success) {
@@ -118,7 +112,7 @@ const AllBookingsList = () => {
   useEffect(() => {
     if (view === 'tours' && tours && tours.length > 0) {
       // Compute stats from tours (which now include bookings)
-      const toursStats = tours.map(tour => {
+      const toursStats = tours.map((tour) => {
         const bookingCount = Array.isArray(tour.bookings) ? tour.bookings.length : 0;
         const totalRevenue = Array.isArray(tour.bookings)
           ? tour.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
@@ -141,16 +135,10 @@ const AllBookingsList = () => {
       <div className="header">
         <h1>Bookings Management</h1>
         <div className="view-toggle">
-          <button
-            className={view === 'tours' ? 'active' : ''}
-            onClick={() => setView('tours')}
-          >
+          <button className={view === 'tours' ? 'active' : ''} onClick={() => setView('tours')}>
             By Tours
           </button>
-          <button
-            className={view === 'all' ? 'active' : ''}
-            onClick={() => setView('all')}
-          >
+          <button className={view === 'all' ? 'active' : ''} onClick={() => setView('all')}>
             All Bookings
           </button>
         </div>
@@ -165,11 +153,15 @@ const AllBookingsList = () => {
             </div>
             <div className="summary-card">
               <h3>Total Bookings</h3>
-              <p className="number">{toursWithStats.reduce((sum, tour) => sum + tour.bookingCount, 0)}</p>
+              <p className="number">
+                {toursWithStats.reduce((sum, tour) => sum + tour.bookingCount, 0)}
+              </p>
             </div>
             <div className="summary-card">
               <h3>Total Revenue</h3>
-              <p className="number">${toursWithStats.reduce((sum, tour) => sum + tour.totalRevenue, 0)}</p>
+              <p className="number">
+                ${toursWithStats.reduce((sum, tour) => sum + tour.totalRevenue, 0)}
+              </p>
             </div>
           </div>
 
@@ -178,10 +170,7 @@ const AllBookingsList = () => {
               <div key={tour._id} className="tour-card">
                 <div className="tour-image">
                   {tour.images && tour.images.length > 0 ? (
-                    <img
-                      src={`${API_BASE_URL}/${tour.images[0]}`}
-                      alt={tour.title || tour.name}
-                    />
+                    <img src={`${API_BASE_URL}/${tour.images[0]}`} alt={tour.title || tour.name} />
                   ) : (
                     <div className="no-image">No Image</div>
                   )}
@@ -190,18 +179,11 @@ const AllBookingsList = () => {
                   <h3>{tour.title || tour.name}</h3>
                   <p className="location">{tour.location}</p>
                   <div className="stats">
-                    <span className="bookings">
-                      📋 {tour.bookingCount} bookings
-                    </span>
-                    <span className="revenue">
-                      💰 ${tour.totalRevenue}
-                    </span>
+                    <span className="bookings">📋 {tour.bookingCount} bookings</span>
+                    <span className="revenue">💰 ${tour.totalRevenue}</span>
                   </div>
                   <div className="actions">
-                    <Link
-                      to={`/bookings/${tour._id}`}
-                      className="btn btn-primary"
-                    >
+                    <Link to={`/bookings/${tour._id}`} className="btn btn-primary">
                       View Bookings
                     </Link>
                   </div>
@@ -247,10 +229,7 @@ const AllBookingsList = () => {
                     </td>
                     <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
                     <td>
-                      <Link
-                        to={`/bookings/${booking.tour?._id}`}
-                        className="btn btn-small"
-                      >
+                      <Link to={`/bookings/${booking.tour?._id}`} className="btn btn-small">
                         View Tour
                       </Link>
                     </td>

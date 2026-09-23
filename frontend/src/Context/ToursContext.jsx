@@ -54,13 +54,13 @@ export const ToursProvider = ({ children }) => {
   }, [fetchTours]);
 
   return (
-    <ToursContext.Provider 
-      value={{ 
-        tours, 
-        loading, 
-        error, 
-        fetchTours, 
-        fetchTourById 
+    <ToursContext.Provider
+      value={{
+        tours,
+        loading,
+        error,
+        fetchTours,
+        fetchTourById,
       }}
     >
       {children}

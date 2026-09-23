@@ -61,7 +61,7 @@ const License = () => {
         const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
         const data = await res.json();
         // Find this company by id
-        const myCompany = (data.companies || []).find(c => c._id === company?.company?._id);
+        const myCompany = (data.companies || []).find((c) => c._id === company?.company?._id);
         if (myCompany) {
           setForm({
             ...myCompany,
@@ -83,7 +83,7 @@ const License = () => {
       try {
         const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
         const data = await res.json();
-        const myCompany = (data.companies || []).find(c => c._id === company?.company?._id);
+        const myCompany = (data.companies || []).find((c) => c._id === company?.company?._id);
         if (myCompany) {
           if (myCompany.verificationStatus === 'pending') setStatus('Pending');
           else if (myCompany.verificationStatus === 'approved') setStatus('Approved');
@@ -112,7 +112,7 @@ const License = () => {
         else setStatus('Not Verified');
         setForm((prev) => ({
           ...prev,
-          verificationStatus: data.verificationStatus
+          verificationStatus: data.verificationStatus,
         }));
       }
     };
@@ -126,7 +126,8 @@ const License = () => {
   const isPending = status === 'Pending';
   const isApproved = status === 'Approved';
   const isRejected = status === 'Rejected';
-  const isNotVerified = !status || (status !== 'Pending' && status !== 'Approved' && status !== 'Rejected');
+  const isNotVerified =
+    !status || (status !== 'Pending' && status !== 'Approved' && status !== 'Rejected');
 
   if (!company) return <div className="license-container">No company data found.</div>;
 
@@ -169,9 +170,9 @@ const License = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ password }),
       });
       const data = await res.json();
       if (!data.success) {
@@ -199,7 +200,7 @@ const License = () => {
       setStatus('Pending'); // Instantly update status to Pending
       socket.emit('license_request', {
         action: 'license_request',
-        company: { ...company.company, ...form, verificationStatus: 'pending' }
+        company: { ...company.company, ...form, verificationStatus: 'pending' },
       });
       setRequestSuccess('License request sent!');
     } catch (err) {
@@ -220,7 +221,18 @@ const License = () => {
     doc.text('Company License & Profile', 14, y);
     y += 10;
     doc.setFontSize(12);
-    doc.text('Status: ' + (isApproved ? 'Verified' : isPending ? 'Pending' : isRejected ? 'Rejected' : 'Not Verified'), 14, y);
+    doc.text(
+      'Status: ' +
+        (isApproved
+          ? 'Verified'
+          : isPending
+            ? 'Pending'
+            : isRejected
+              ? 'Rejected'
+              : 'Not Verified'),
+      14,
+      y
+    );
     y += 10;
 
     // Only include fields shown in the form
@@ -246,17 +258,23 @@ const License = () => {
     addField('Registration #', form.registrationNumber);
     addField('Tax ID', form.taxId);
     addField('License #', form.licenseNumber);
-    addField('License Expiry', form.licenseExpiry ? (new Date(form.licenseExpiry).toLocaleDateString()) : '-');
+    addField(
+      'License Expiry',
+      form.licenseExpiry ? new Date(form.licenseExpiry).toLocaleDateString() : '-'
+    );
 
     y += 3;
     doc.setFontSize(14);
     doc.text('Documents', 14, y);
     y += 8;
-    addField('Documents', form.documents && form.documents.length > 0
-      ? (Array.isArray(form.documents)
-          ? form.documents.map(d => d.name || d).join(', ')
-          : '-')
-      : '-');
+    addField(
+      'Documents',
+      form.documents && form.documents.length > 0
+        ? Array.isArray(form.documents)
+          ? form.documents.map((d) => d.name || d).join(', ')
+          : '-'
+        : '-'
+    );
 
     y += 3;
     doc.setFontSize(14);
@@ -267,7 +285,7 @@ const License = () => {
     addField('Owner Phone', form.ownerPhone);
     addField('Owner Address', form.ownerAddress);
     addField('Owner National ID', form.ownerNationalId);
-    addField('Owner DOB', form.ownerDob ? (new Date(form.ownerDob).toLocaleDateString()) : '-');
+    addField('Owner DOB', form.ownerDob ? new Date(form.ownerDob).toLocaleDateString() : '-');
     addField('Owner Nationality', form.ownerNationality);
 
     doc.save('company_license_profile.pdf');
@@ -278,51 +296,69 @@ const License = () => {
       <h2>Company License & Profile</h2>
       <div className="license-status">
         <span>Status: </span>
-        <span className={
-          status === 'Approved' ? 'verified' :
-          status === 'Pending' ? 'pending' :
-          status === 'Rejected' ? 'not-verified' : 'not-verified'
-        }>
+        <span
+          className={
+            status === 'Approved'
+              ? 'verified'
+              : status === 'Pending'
+                ? 'pending'
+                : status === 'Rejected'
+                  ? 'not-verified'
+                  : 'not-verified'
+          }
+        >
           {status}
         </span>
       </div>
-      <form className="license-form" onSubmit={e => e.preventDefault()}>
+      <form className="license-form" onSubmit={(e) => e.preventDefault()}>
         <div className="section-title">Basic Information</div>
         <div className="form-row">
           <label>Name:</label>
           {editMode ? (
             <input name="name" value={form.name || ''} onChange={handleChange} />
-          ) : show(company.company.name)}
+          ) : (
+            show(company.company.name)
+          )}
         </div>
         <div className="form-row">
           <label>Email:</label>
           {editMode ? (
             <input name="email" value={form.email || ''} onChange={handleChange} />
-          ) : show(company.company.email)}
+          ) : (
+            show(company.company.email)
+          )}
         </div>
         <div className="form-row">
           <label>Phone:</label>
           {editMode ? (
             <input name="phone" value={form.phone || ''} onChange={handleChange} />
-          ) : show(company.company.phone)}
+          ) : (
+            show(company.company.phone)
+          )}
         </div>
         <div className="form-row">
           <label>Address:</label>
           {editMode ? (
             <input name="address" value={form.address || ''} onChange={handleChange} />
-          ) : show(company.company.address)}
+          ) : (
+            show(company.company.address)
+          )}
         </div>
         <div className="form-row">
           <label>Website:</label>
           {editMode ? (
             <input name="website" value={form.website || ''} onChange={handleChange} />
-          ) : show(company.company.website)}
+          ) : (
+            show(company.company.website)
+          )}
         </div>
         <div className="form-row">
           <label>Description:</label>
           {editMode ? (
             <textarea name="description" value={form.description || ''} onChange={handleChange} />
-          ) : show(company.company.description)}
+          ) : (
+            show(company.company.description)
+          )}
         </div>
         <div className="form-row">
           <label>Logo:</label>
@@ -343,7 +379,13 @@ const License = () => {
         </div>
         <div className="form-row">
           <label>License Expiry:</label>
-          <span>{show(company.company.licenseExpiry ? (new Date(company.company.licenseExpiry).toLocaleDateString()) : '')}</span>
+          <span>
+            {show(
+              company.company.licenseExpiry
+                ? new Date(company.company.licenseExpiry).toLocaleDateString()
+                : ''
+            )}
+          </span>
         </div>
         <div className="section-title">Documents</div>
         <div className="form-row">
@@ -354,21 +396,23 @@ const License = () => {
               type="file"
               accept="application/pdf"
               multiple
-              onChange={e => {
+              onChange={(e) => {
                 const files = Array.from(e.target.files);
                 // Only accept PDFs
-                const pdfFiles = files.filter(file => file.type === "application/pdf");
-                setForm(prev => ({
+                const pdfFiles = files.filter((file) => file.type === 'application/pdf');
+                setForm((prev) => ({
                   ...prev,
-                  documents: pdfFiles
+                  documents: pdfFiles,
                 }));
               }}
             />
           ) : (
             <span>
-              {company.company.documents && company.company.documents.length > 0
-                ? company.company.documents.join(', ')
-                : <span className="empty-value">-</span>}
+              {company.company.documents && company.company.documents.length > 0 ? (
+                company.company.documents.join(', ')
+              ) : (
+                <span className="empty-value">-</span>
+              )}
             </span>
           )}
         </div>
@@ -377,52 +421,93 @@ const License = () => {
           <label>Owner Name:</label>
           {editMode ? (
             <input name="ownerName" value={form.ownerName || ''} onChange={handleChange} />
-          ) : show(company.company.ownerName)}
+          ) : (
+            show(company.company.ownerName)
+          )}
         </div>
         <div className="form-row">
           <label>Owner Email:</label>
           {editMode ? (
             <input name="ownerEmail" value={form.ownerEmail || ''} onChange={handleChange} />
-          ) : show(company.company.ownerEmail)}
+          ) : (
+            show(company.company.ownerEmail)
+          )}
         </div>
         <div className="form-row">
           <label>Owner Phone:</label>
           {editMode ? (
             <input name="ownerPhone" value={form.ownerPhone || ''} onChange={handleChange} />
-          ) : show(company.company.ownerPhone)}
+          ) : (
+            show(company.company.ownerPhone)
+          )}
         </div>
         <div className="form-row">
           <label>Owner Address:</label>
           {editMode ? (
             <input name="ownerAddress" value={form.ownerAddress || ''} onChange={handleChange} />
-          ) : show(company.company.ownerAddress)}
+          ) : (
+            show(company.company.ownerAddress)
+          )}
         </div>
         <div className="form-row">
           <label>Owner National ID:</label>
           {editMode ? (
-            <input name="ownerNationalId" value={form.ownerNationalId || ''} onChange={handleChange} />
-          ) : show(company.company.ownerNationalId)}
+            <input
+              name="ownerNationalId"
+              value={form.ownerNationalId || ''}
+              onChange={handleChange}
+            />
+          ) : (
+            show(company.company.ownerNationalId)
+          )}
         </div>
         <div className="form-row">
           <label>Owner DOB:</label>
           {editMode ? (
-            <input name="ownerDob" value={form.ownerDob || ''} onChange={handleChange} type="date" />
-          ) : show(company.company.ownerDob ? (new Date(company.company.ownerDob).toLocaleDateString()) : '')}
+            <input
+              name="ownerDob"
+              value={form.ownerDob || ''}
+              onChange={handleChange}
+              type="date"
+            />
+          ) : (
+            show(
+              company.company.ownerDob
+                ? new Date(company.company.ownerDob).toLocaleDateString()
+                : ''
+            )
+          )}
         </div>
         <div className="form-row">
           <label>Owner Nationality:</label>
           {editMode ? (
-            <input name="ownerNationality" value={form.ownerNationality || ''} onChange={handleChange} />
-          ) : show(company.company.ownerNationality)}
+            <input
+              name="ownerNationality"
+              value={form.ownerNationality || ''}
+              onChange={handleChange}
+            />
+          ) : (
+            show(company.company.ownerNationality)
+          )}
         </div>
         <div className="form-row">
           <label>Owner Photo:</label>
           {editMode ? (
             <span className="logo-placeholder">[Photo upload not implemented]</span>
+          ) : company.company.ownerPhoto ? (
+            <img
+              src={company.company.ownerPhoto}
+              alt="Owner"
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '1px solid #ccc',
+              }}
+            />
           ) : (
-            company.company.ownerPhoto ? (
-              <img src={company.company.ownerPhoto} alt="Owner" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', border: '1px solid #ccc' }} />
-            ) : <span className="empty-value">-</span>
+            <span className="empty-value">-</span>
           )}
         </div>
         {editMode && (
@@ -432,7 +517,7 @@ const License = () => {
               <input
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
               />
@@ -443,14 +528,24 @@ const License = () => {
 
         {editMode ? (
           <div className="form-actions">
-            <button type="button" onClick={handleSave} disabled={loading}>Save</button>
-            <button type="button" onClick={handleCancel} disabled={loading}>Cancel</button>
+            <button type="button" onClick={handleSave} disabled={loading}>
+              Save
+            </button>
+            <button type="button" onClick={handleCancel} disabled={loading}>
+              Cancel
+            </button>
             {error && <span className="error-msg">{error}</span>}
             {success && <span className="success-msg">{success}</span>}
           </div>
         ) : (
           <div className="form-actions">
-            <button type="button" onClick={handleEdit} disabled={status === 'Pending' || status === 'Approved'}>Edit Info</button>
+            <button
+              type="button"
+              onClick={handleEdit}
+              disabled={status === 'Pending' || status === 'Approved'}
+            >
+              Edit Info
+            </button>
           </div>
         )}
       </form>
@@ -460,7 +555,11 @@ const License = () => {
           onClick={handleRequestLicense}
           disabled={status === 'Pending' || status === 'Approved' || requestLoading || editMode}
         >
-          {status === 'Approved' ? 'Already Verified' : status === 'Pending' ? 'Request Pending' : 'Request Verification'}
+          {status === 'Approved'
+            ? 'Already Verified'
+            : status === 'Pending'
+              ? 'Request Pending'
+              : 'Request Verification'}
         </button>
         <button
           className="download-pdf-btn"
@@ -478,4 +577,3 @@ const License = () => {
 };
 
 export default License;
-

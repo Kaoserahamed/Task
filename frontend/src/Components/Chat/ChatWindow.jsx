@@ -1,10 +1,10 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './ChatWindow.css';
 import avatar from '../Assets/chat_avatar.png';
 import { useAuth } from '../../Context/AuthContext';
 import API_BASE_URL from '../../config/api';
 
-const ChatWindow = ({ chatType,selectedChat, userId, socket }) => {
+const ChatWindow = ({ chatType, selectedChat, userId, socket }) => {
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,9 +16,9 @@ const ChatWindow = ({ chatType,selectedChat, userId, socket }) => {
   const chatHeaderRef = useRef(null);
   const messageInputRef = useRef(null);
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-console.log(selectedChat);
+  console.log(selectedChat);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -32,7 +32,8 @@ console.log(selectedChat);
 
     const handleScroll = () => {
       // Show button if scrolled up more than 100px from bottom
-      const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
       setShowScrollButton(!isAtBottom);
     };
 
@@ -49,11 +50,14 @@ console.log(selectedChat);
       socket.on('posts', (data) => {
         if (data.action === 'create' && data.updatedChat) {
           // Check if the updated chat is for the current chat window
-          if (chatType === 'aduse' && data.updatedChat.chatType === 'aduse' && 
-            data.updatedChat.participants === userId) {
-      console.log('Updating admin-company chat messages:', data.updatedChat.messages);
-      setMessages(data.updatedChat.messages || []);
-    }
+          if (
+            chatType === 'aduse' &&
+            data.updatedChat.chatType === 'aduse' &&
+            data.updatedChat.participants === userId
+          ) {
+            console.log('Updating admin-company chat messages:', data.updatedChat.messages);
+            setMessages(data.updatedChat.messages || []);
+          }
         }
       });
     }
@@ -87,7 +91,7 @@ console.log(selectedChat);
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authtoken}`
+          Authorization: `Bearer ${authtoken}`,
         },
         body: JSON.stringify({
           chatId: selectedChat._id,
@@ -97,8 +101,8 @@ console.log(selectedChat);
           companyId: selectedChat.companyId || null,
           companyName: selectedChat.companyName || null,
           userName: selectedChat.userName,
-          senderId: userId
-        })
+          senderId: userId,
+        }),
       });
 
       if (!response.ok) {
@@ -129,18 +133,16 @@ console.log(selectedChat);
         </div>
       </div>
 
-      <div className="messages-container"ref={messagesContainerRef}  >
+      <div className="messages-container" ref={messagesContainerRef}>
         {isLoading ? (
           <div className="loading">Loading messages...</div>
         ) : messages.length > 0 ? (
           messages.map((message) => (
-            <div 
+            <div
               key={message._id || message.timestamp}
               className={`message ${message.senderId === userId ? 'sent' : 'received'}`}
             >
-              <div className="message-content">
-                {message.content}
-              </div>
+              <div className="message-content">{message.content}</div>
               <span className="message-time">
                 {new Date(message.timestamp || message.sentAt).toLocaleTimeString()}
               </span>
@@ -152,14 +154,11 @@ console.log(selectedChat);
         <div ref={messagesEndRef} />
       </div>
       {showScrollButton && messages?.length > 0 && (
-                <button 
-                  className="scroll-to-bottom-btn"
-                  onClick={scrollToBottom}
-                >
-                  <i className="fas fa-arrow-down"></i>
-                </button>
-       )}
-      <form className="message-input" onSubmit={handleSubmit}  ref={messageInputRef}>
+        <button className="scroll-to-bottom-btn" onClick={scrollToBottom}>
+          <i className="fas fa-arrow-down"></i>
+        </button>
+      )}
+      <form className="message-input" onSubmit={handleSubmit} ref={messageInputRef}>
         <input
           type="text"
           placeholder="Type a message..."
@@ -174,4 +173,4 @@ console.log(selectedChat);
   );
 };
 
-export default ChatWindow; 
+export default ChatWindow;

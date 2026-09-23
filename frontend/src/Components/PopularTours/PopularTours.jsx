@@ -19,7 +19,7 @@ const PopularTours = () => {
         const ratingMap = {};
         const countMap = {};
 
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           const tourId = review.tourId;
           if (!ratingMap[tourId]) {
             ratingMap[tourId] = 0;
@@ -36,20 +36,12 @@ const PopularTours = () => {
 
         setAverageRatings(averages);
 
-        const scored = [...tours].map(tour => {
-          const {
-            bookings = 0,
-            views = 0,
-            wishlistCount = 0,
-            rating = {}
-          } = tour.popularity || {};
+        const scored = [...tours].map((tour) => {
+          const { bookings = 0, views = 0, wishlistCount = 0, rating = {} } = tour.popularity || {};
 
           const averageRating = rating.average ?? averages[tour._id] ?? 0;
           const popularityScore =
-            (bookings * 0.5) +
-            (averageRating * 10 * 0.2) +
-            (views * 0.2) +
-            (wishlistCount * 0.1);
+            bookings * 0.5 + averageRating * 10 * 0.2 + views * 0.2 + wishlistCount * 0.1;
 
           return { ...tour, popularityScore };
         });
@@ -57,7 +49,7 @@ const PopularTours = () => {
         const sorted = scored.sort((a, b) => b.popularityScore - a.popularityScore);
         setSortedTours(sorted);
       } catch (err) {
-        console.error("Error computing popularity scores:", err);
+        console.error('Error computing popularity scores:', err);
         setSortedTours(tours);
       }
     };
@@ -120,16 +112,17 @@ const PopularTours = () => {
       </div>
       <div className="popular-tours-scroll-container">
         <div className="popular-tours-row">
-          {toursToDisplay.slice(0, 4).map(tour => {
+          {toursToDisplay.slice(0, 4).map((tour) => {
             if (!tour || !tour._id) return null;
 
             const averageRating = averageRatings[tour._id];
             const tourName = tour.name || 'Untitled Tour';
             const tourPrice = tour.price || 'N/A';
             const tourCategory = tour.packageCategories?.join(', ') || 'General';
-            const tourImage = tour.images && tour.images.length > 0
-              ? `${API_BASE_URL}/${tour.images[0]}`
-              : 'https://picsum.photos/300/200';
+            const tourImage =
+              tour.images && tour.images.length > 0
+                ? `${API_BASE_URL}/${tour.images[0]}`
+                : 'https://picsum.photos/300/200';
             const isCompleted = isTourCompleted(tour.startDate);
 
             return (

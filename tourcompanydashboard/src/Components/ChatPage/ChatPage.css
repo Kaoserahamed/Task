@@ -73,7 +73,7 @@
   .chat-container {
     grid-template-columns: 1fr;
   }
-  
+
   .chat-list-sidebar {
     width: 100%;
     border-right: none;
@@ -84,4 +84,4 @@
     grid-template-columns: 1fr;
     padding: 10px;
   }
-} 
+}

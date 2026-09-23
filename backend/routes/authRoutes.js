@@ -6,8 +6,7 @@ const sibApiV3Sdk = require('sib-api-v3-sdk');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authMiddleware = require('../middleware/authMiddleware');
-const upload = require('../middleware/upload');// Assuming you have a multer setup in index.js
-const { buffer } = require('stream/consumers');
+const upload = require('../middleware/upload'); // Assuming you have a multer setup in index.js
 
 // Sendinblue API config (Best Practice)
 const defaultClient = sibApiV3Sdk.ApiClient.instance;
@@ -18,7 +17,7 @@ const transEmail = new sibApiV3Sdk.TransactionalEmailsApi();
 // Register User
 const sender = {
   name: 'Siyam',
-  email: 'ahamedsiyam43@gmail.com' // This must be a verified sender in Sendinblue
+  email: 'ahamedsiyam43@gmail.com', // This must be a verified sender in Sendinblue
 };
 
 router.post('/register', async (req, res) => {
@@ -39,25 +38,21 @@ router.post('/register', async (req, res) => {
     user = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     await user.save();
 
     // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({
       token,
       user: {
         _id: user._id,
         name: user.name,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -83,19 +78,15 @@ router.post('/login', async (req, res) => {
     }
 
     // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
       token,
       user: {
         _id: user._id,
         name: user.name,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -105,7 +96,7 @@ router.post('/login', async (req, res) => {
 router.get('/search', async (req, res) => {
   try {
     const { query } = req.query;
-    
+
     if (!query) {
       return res.status(400).json({ message: 'Search query is required' });
     }
@@ -115,22 +106,20 @@ router.get('/search', async (req, res) => {
 
     // Search in company name and description
     const users = await User.find({
-      $or: [
-        { name: searchPattern } 
-      ],
-      
-    }).select('_id name description logo email phone website') // Select only necessary fields
+      $or: [{ name: searchPattern }],
+    })
+      .select('_id name description logo email phone website') // Select only necessary fields
       .limit(10); // Limit results to 10 companies
 
     res.json({
       success: true,
-      users: users
+      users,
     });
   } catch (error) {
     console.error('Search error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Error searching companies' 
+      message: 'Error searching companies',
     });
   }
 });
@@ -140,7 +129,7 @@ router.put('/update', authMiddleware, async (req, res) => {
     const userId = req.user.userId; // From auth middleware
 
     // Find user and update
-    let user = await User.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -157,8 +146,8 @@ router.put('/update', authMiddleware, async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone
-      }
+        phone: user.phone,
+      },
     });
   } catch (error) {
     console.error('Update error:', error);
@@ -172,17 +161,17 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
     console.log('Body:', req.body);
 
     if (!req.file) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'No file uploaded.' 
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded.',
       });
     }
 
     const { email } = req.body;
     if (!email) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Email is required.' 
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required.',
       });
     }
 
@@ -193,15 +182,15 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
     console.log('Avatar path:', avatarPath);
 
     const user = await User.findOneAndUpdate(
-      { email: email },
+      { email },
       { avatar: avatarPath },
       { new: true }
     ).select('-password');
 
     if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found.' 
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
       });
     }
 
@@ -215,15 +204,15 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        phone: user.phone
-      }
+        phone: user.phone,
+      },
     });
   } catch (error) {
     console.error('Error uploading avatar:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Avatar upload failed.',
-      error: error.message 
+      error: error.message,
     });
   }
 });
@@ -231,11 +220,11 @@ router.post('/avatar', upload.single('avatar'), async (req, res) => {
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password');
-    
+
     if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found' 
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
       });
     }
 
@@ -246,21 +235,21 @@ router.get('/me', authMiddleware, async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        phone: user.phone
-      }
+        phone: user.phone,
+      },
     });
   } catch (error) {
     console.error('Error fetching user data:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error' 
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
     });
   }
 });
 router.post('/reset', async (req, res) => {
   try {
     const { email, resetUrl } = req.body;
-    
+
     // Generate reset token
     const buffer = await crypto.randomBytes(32);
     const token = buffer.toString('hex');
@@ -268,9 +257,9 @@ router.post('/reset', async (req, res) => {
     // Find user and update reset token
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'No account with that email found' 
+      return res.status(404).json({
+        success: false,
+        message: 'No account with that email found',
       });
     }
 
@@ -278,9 +267,9 @@ router.post('/reset', async (req, res) => {
     user.resetToken = token;
     user.resetTokenExpiration = Date.now() + 3600000; // 1 hour
     await user.save();
-   console.log(user);
+    console.log(user);
     // Send reset email
-    const receiver = [{ email: email }];
+    const receiver = [{ email }];
     await transEmail.sendTransacEmail({
       sender,
       to: receiver,
@@ -320,48 +309,42 @@ router.post('/reset', async (req, res) => {
             <p>© 2024 Task. All rights reserved.</p>
           </div>
         </div>
-      `
+      `,
     });
 
-    res.status(200).json({ 
-      success: true, 
-      message: 'Password reset email sent successfully' 
+    res.status(200).json({
+      success: true,
+      message: 'Password reset email sent successfully',
     });
-
   } catch (error) {
     console.error('Reset password error:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Error sending reset password email',
-      error: error.message 
+      error: error.message,
     });
   }
 });
-router.post('/reset-password',async(req,res)=>{
-const newPassword=req.body.password;
-const passwordToken=req.body.token;
-console.log(newPassword+" "+passwordToken);
-let resetUser;
-try{
-const user= await User.findOne({resetToken:passwordToken,
-}
-  )
-  console.log(user);
-  resetUser=user;
-  const hashedPassword=await bcrypt.hash(newPassword,12);
-   resetUser.password=hashedPassword,
-   resetUser.resetToken=undefined;
-   resetUser.resetTokenExpiration=undefined;
-   await resetUser.save();
-   res.status(200).json({succes:true});
-}
-catch(error)
-{
-  res.status(500).json({ 
-    success: false, 
-    message: 'password reset fail',
-    error: error.message 
-  });
-}
-})
+router.post('/reset-password', async (req, res) => {
+  const newPassword = req.body.password;
+  const passwordToken = req.body.token;
+  console.log(newPassword + ' ' + passwordToken);
+  let resetUser;
+  try {
+    const user = await User.findOne({ resetToken: passwordToken });
+    console.log(user);
+    resetUser = user;
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    ((resetUser.password = hashedPassword), (resetUser.resetToken = undefined));
+    resetUser.resetTokenExpiration = undefined;
+    await resetUser.save();
+    res.status(200).json({ succes: true });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'password reset fail',
+      error: error.message,
+    });
+  }
+});
 module.exports = router;

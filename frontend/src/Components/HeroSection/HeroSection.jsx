@@ -18,7 +18,7 @@ const HeroSection = ({ onSearch }) => {
     const observer = new MutationObserver(detectTheme);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-theme']
+      attributeFilter: ['data-theme'],
     });
 
     // Trigger entrance animation
@@ -45,7 +45,7 @@ const HeroSection = ({ onSearch }) => {
               <div key={i} className={`particle particle-${i + 1}`}></div>
             ))}
           </div>
-          
+
           {/* Dynamic shapes */}
           <div className="floating-shapes">
             <div className="shape shape-1"></div>
@@ -56,26 +56,33 @@ const HeroSection = ({ onSearch }) => {
         </div>
         <div className={`hero-overlay theme-${currentTheme}`}></div>
       </div>
-      
+
       <div className="hero-content">
         <div className="hero-badge">
           <span>✨ New Adventures Await</span>
         </div>
-        
+
         <h1 className={`hero-title theme-${currentTheme}`}>
           Discover Your Next
           <span className="gradient-text"> Adventure</span>
         </h1>
-        
+
         <p className={`hero-subtitle theme-${currentTheme}`}>
           Explore the world's best destinations and create unforgettable memories
         </p>
-        
+
         {/* Enhanced Search Box */}
         <div className="hero-search-container">
           <div className={`hero-search-box theme-${currentTheme}`}>
             <div className="search-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="m21 21-4.35-4.35"></path>
               </svg>
@@ -88,7 +95,14 @@ const HeroSection = ({ onSearch }) => {
             />
             <button className="search-btn" onClick={handleSearch}>
               <span>Search</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12,5 19,12 12,19"></polyline>
               </svg>
@@ -112,7 +126,7 @@ const HeroSection = ({ onSearch }) => {
           </div>
         </div>
       </div>
-      
+
       <style jsx>{`
         .hero-section {
           position: relative;
@@ -145,11 +159,12 @@ const HeroSection = ({ onSearch }) => {
         .hero-image.theme-light {
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, 
-            #667eea 0%, 
-            #764ba2 25%, 
-            #f093fb 50%, 
-            #f5576c 75%, 
+          background: linear-gradient(
+            135deg,
+            #667eea 0%,
+            #764ba2 25%,
+            #f093fb 50%,
+            #f5576c 75%,
             #4facfe 100%
           );
           background-size: 400% 400%;
@@ -161,11 +176,12 @@ const HeroSection = ({ onSearch }) => {
         .hero-image.theme-dark {
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, 
-            #2c3e50 0%, 
-            #3498db 25%, 
-            #9b59b6 50%, 
-            #e74c3c 75%, 
+          background: linear-gradient(
+            135deg,
+            #2c3e50 0%,
+            #3498db 25%,
+            #9b59b6 50%,
+            #e74c3c 75%,
             #1abc9c 100%
           );
           background-size: 400% 400%;
@@ -202,26 +218,86 @@ const HeroSection = ({ onSearch }) => {
           animation: particleFloat 8s linear infinite;
         }
 
-        .particle-1 { left: 10%; animation-delay: 0s; }
-        .particle-2 { left: 20%; animation-delay: 1s; }
-        .particle-3 { left: 30%; animation-delay: 2s; }
-        .particle-4 { left: 40%; animation-delay: 3s; }
-        .particle-5 { left: 50%; animation-delay: 4s; }
-        .particle-6 { left: 60%; animation-delay: 0.5s; }
-        .particle-7 { left: 70%; animation-delay: 1.5s; }
-        .particle-8 { left: 80%; animation-delay: 2.5s; }
-        .particle-9 { left: 90%; animation-delay: 3.5s; }
-        .particle-10 { left: 15%; animation-delay: 5s; }
-        .particle-11 { left: 25%; animation-delay: 6s; }
-        .particle-12 { left: 35%; animation-delay: 7s; }
-        .particle-13 { left: 45%; animation-delay: 0.8s; }
-        .particle-14 { left: 55%; animation-delay: 1.8s; }
-        .particle-15 { left: 65%; animation-delay: 2.8s; }
-        .particle-16 { left: 75%; animation-delay: 3.8s; }
-        .particle-17 { left: 85%; animation-delay: 4.8s; }
-        .particle-18 { left: 95%; animation-delay: 5.8s; }
-        .particle-19 { left: 5%; animation-delay: 6.8s; }
-        .particle-20 { left: 95%; animation-delay: 7.8s; }
+        .particle-1 {
+          left: 10%;
+          animation-delay: 0s;
+        }
+        .particle-2 {
+          left: 20%;
+          animation-delay: 1s;
+        }
+        .particle-3 {
+          left: 30%;
+          animation-delay: 2s;
+        }
+        .particle-4 {
+          left: 40%;
+          animation-delay: 3s;
+        }
+        .particle-5 {
+          left: 50%;
+          animation-delay: 4s;
+        }
+        .particle-6 {
+          left: 60%;
+          animation-delay: 0.5s;
+        }
+        .particle-7 {
+          left: 70%;
+          animation-delay: 1.5s;
+        }
+        .particle-8 {
+          left: 80%;
+          animation-delay: 2.5s;
+        }
+        .particle-9 {
+          left: 90%;
+          animation-delay: 3.5s;
+        }
+        .particle-10 {
+          left: 15%;
+          animation-delay: 5s;
+        }
+        .particle-11 {
+          left: 25%;
+          animation-delay: 6s;
+        }
+        .particle-12 {
+          left: 35%;
+          animation-delay: 7s;
+        }
+        .particle-13 {
+          left: 45%;
+          animation-delay: 0.8s;
+        }
+        .particle-14 {
+          left: 55%;
+          animation-delay: 1.8s;
+        }
+        .particle-15 {
+          left: 65%;
+          animation-delay: 2.8s;
+        }
+        .particle-16 {
+          left: 75%;
+          animation-delay: 3.8s;
+        }
+        .particle-17 {
+          left: 85%;
+          animation-delay: 4.8s;
+        }
+        .particle-18 {
+          left: 95%;
+          animation-delay: 5.8s;
+        }
+        .particle-19 {
+          left: 5%;
+          animation-delay: 6.8s;
+        }
+        .particle-20 {
+          left: 95%;
+          animation-delay: 7.8s;
+        }
 
         /* Floating Shapes */
         .floating-shapes {
@@ -479,9 +555,15 @@ const HeroSection = ({ onSearch }) => {
 
         /* Animations */
         @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
 
         @keyframes particleFloat {
@@ -502,9 +584,16 @@ const HeroSection = ({ onSearch }) => {
         }
 
         @keyframes shapeFloat {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-20px) rotate(120deg); }
-          66% { transform: translateY(10px) rotate(240deg); }
+          0%,
+          100% {
+            transform: translateY(0px) rotate(0deg);
+          }
+          33% {
+            transform: translateY(-20px) rotate(120deg);
+          }
+          66% {
+            transform: translateY(10px) rotate(240deg);
+          }
         }
 
         @keyframes contentFadeIn {
@@ -519,14 +608,25 @@ const HeroSection = ({ onSearch }) => {
         }
 
         @keyframes badgePulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
+          0%,
+          100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.05);
+          }
         }
 
         @keyframes textGradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
 
         /* Responsive Design */
@@ -534,15 +634,15 @@ const HeroSection = ({ onSearch }) => {
           .hero-title {
             font-size: 3rem;
           }
-          
+
           .hero-subtitle {
             font-size: 1.2rem;
           }
-          
+
           .hero-search-box {
             margin: 0 20px;
           }
-          
+
           .search-btn {
             padding: 14px 24px;
             font-size: 1rem;
@@ -561,20 +661,20 @@ const HeroSection = ({ onSearch }) => {
           .hero-title {
             font-size: 2.2rem;
           }
-          
+
           .hero-search-box {
             flex-direction: column;
             padding: 20px;
             border-radius: 25px;
             gap: 15px;
           }
-          
+
           .hero-search-box input {
             width: 100%;
             text-align: center;
             padding: 12px;
           }
-          
+
           .search-btn {
             width: 100%;
             justify-content: center;

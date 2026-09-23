@@ -19,32 +19,35 @@ export const ChatProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
-  const fetchChats = useCallback(async (chatType = 'comuse') => {
-    if (!user?.user?._id) return;
-    
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${API_BASE_URL}/api/chat/get-user-chat/${user.user._id}?query=${chatType}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+  const fetchChats = useCallback(
+    async (chatType = 'comuse') => {
+      if (!user?.user?._id) return;
+
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const response = await fetch(
+          `${API_BASE_URL}/api/chat/get-user-chat/${user.user._id}?query=${chatType}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           }
-        }
-      );
-      
-      if (!response.ok) throw new Error('Failed to fetch chats');
-      const data = await response.json();
-      setChats(data || []);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching chats:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+        );
+
+        if (!response.ok) throw new Error('Failed to fetch chats');
+        const data = await response.json();
+        setChats(data || []);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching chats:', err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
 
   const sendMessage = useCallback(async (messageData) => {
     try {
@@ -53,11 +56,11 @@ export const ChatProvider = ({ children }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(messageData)
+        body: JSON.stringify(messageData),
       });
-      
+
       if (!response.ok) throw new Error('Failed to send message');
       return await response.json();
     } catch (err) {
@@ -79,12 +82,8 @@ export const ChatProvider = ({ children }) => {
     setSelectedChat,
     fetchChats,
     sendMessage,
-    clearError
+    clearError,
   };
 
-  return (
-    <ChatContext.Provider value={value}>
-      {children}
-    </ChatContext.Provider>
-  );
+  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 };

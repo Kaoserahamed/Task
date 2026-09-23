@@ -15,7 +15,7 @@ const UpcomingTours = () => {
     oneDayFromNow.setHours(0, 0, 0, 0); // Start of day
 
     // Step 1: Filter tours that start after one day from now
-    const upcomingTours = tours.filter(tour => {
+    const upcomingTours = tours.filter((tour) => {
       const startDate = new Date(tour.startDate);
       return startDate >= oneDayFromNow;
     });
@@ -43,7 +43,7 @@ const UpcomingTours = () => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -59,7 +59,7 @@ const UpcomingTours = () => {
   // Helper function to format duration
   const formatDuration = (duration) => {
     if (!duration) return 'Duration TBD';
-    
+
     // If duration is an object with days/nights
     if (typeof duration === 'object') {
       if (duration.days && duration.nights) {
@@ -70,7 +70,7 @@ const UpcomingTours = () => {
         return `${duration.nights} nights`;
       }
     }
-    
+
     // If duration is a string or number
     return `${duration} days`;
   };
@@ -88,7 +88,10 @@ const UpcomingTours = () => {
           <div className="upcoming-no-tours-content">
             <i className="fas fa-calendar-alt"></i>
             <h3>No Upcoming Tours Found</h3>
-            <p>There are currently no tours scheduled to start after tomorrow. Check back soon for new adventures!</p>
+            <p>
+              There are currently no tours scheduled to start after tomorrow. Check back soon for
+              new adventures!
+            </p>
           </div>
         </div>
       ) : (
@@ -100,9 +103,10 @@ const UpcomingTours = () => {
               const tourName = tour.name || 'Untitled Tour';
               const tourPrice = tour.price || 'N/A';
               const tourLocation = tour.weather || 'Location TBD';
-              const tourImage = tour.images && tour.images.length > 0
-                ? `${API_BASE_URL}/${tour.images[0]}`
-                : 'https://picsum.photos/300/200';
+              const tourImage =
+                tour.images && tour.images.length > 0
+                  ? `${API_BASE_URL}/${tour.images[0]}`
+                  : 'https://picsum.photos/300/200';
               const daysUntilStart = getDaysUntilStart(tour.startDate);
               const startDate = formatDate(tour.startDate);
               const duration = formatDuration(tour.duration);
@@ -117,9 +121,7 @@ const UpcomingTours = () => {
                         e.target.src = 'https://picsum.photos/300/200';
                       }}
                     />
-                    <span className="upcoming-tour-tag">
-                      {daysUntilStart} days left
-                    </span>
+                    <span className="upcoming-tour-tag">{daysUntilStart} days left</span>
                   </div>
                   <div className="upcoming-tour-info">
                     <h3>{tourName}</h3>
@@ -127,7 +129,7 @@ const UpcomingTours = () => {
                       <span>
                         Price: <strong>${tourPrice}</strong>
                       </span>
-                      
+
                       <span>
                         <i className="fas fa-calendar"></i> {startDate}
                       </span>

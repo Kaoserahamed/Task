@@ -28,7 +28,7 @@ const TourSuggestions = ({ weatherCity }) => {
         const ratingMap = {};
         const countMap = {};
 
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           const tourId = review.tourId;
           if (!ratingMap[tourId]) {
             ratingMap[tourId] = 0;
@@ -45,7 +45,7 @@ const TourSuggestions = ({ weatherCity }) => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error("Error fetching reviews:", err);
+        console.error('Error fetching reviews:', err);
       }
     };
 
@@ -58,7 +58,7 @@ const TourSuggestions = ({ weatherCity }) => {
     const oneDayFromNow = new Date();
     oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
     oneDayFromNow.setHours(0, 0, 0, 0); // Start of day
-    
+
     const tourStartDate = new Date(startDate);
     return tourStartDate >= oneDayFromNow;
   };
@@ -70,12 +70,14 @@ const TourSuggestions = ({ weatherCity }) => {
       const recentViews = JSON.parse(localStorage.getItem('recentTourViews') || '[]');
       console.log('console' + recentViews);
       let allSuggestedTours = [];
-      
+
       setLoading(true);
       setError(null);
 
       try {
-        const response = await fetch(`${API_BASE_URL}/Suggestion/${encodeURIComponent(weatherCity)}`);
+        const response = await fetch(
+          `${API_BASE_URL}/Suggestion/${encodeURIComponent(weatherCity)}`
+        );
         if (response.ok) {
           const suggestedData = await response.json();
           console.log('Suggested data:', suggestedData);
@@ -89,16 +91,18 @@ const TourSuggestions = ({ weatherCity }) => {
           const uniqueTours = Array.from(
             new Map(
               allSuggestedTours
-                .filter(tour => isTourUpcoming(tour.startDate))
-                .map(tour => [tour._id, tour])
+                .filter((tour) => isTourUpcoming(tour.startDate))
+                .map((tour) => [tour._id, tour])
             ).values()
           );
 
           // Sort by confidence (if available) and limit to 6
           const sortedTours = uniqueTours
             .sort((a, b) => {
-              const confidenceA = suggestedData.find(s => s.tours.some(t => t._id === a._id))?.confidence || 0;
-              const confidenceB = suggestedData.find(s => s.tours.some(t => t._id === b._id))?.confidence || 0;
+              const confidenceA =
+                suggestedData.find((s) => s.tours.some((t) => t._id === a._id))?.confidence || 0;
+              const confidenceB =
+                suggestedData.find((s) => s.tours.some((t) => t._id === b._id))?.confidence || 0;
               return confidenceB - confidenceA;
             })
             .slice(0, 6);
@@ -112,7 +116,7 @@ const TourSuggestions = ({ weatherCity }) => {
         setError('Failed to load suggestions');
         // Fallback to upcoming tours
         const upcomingTours = tours
-          .filter(tour => tour.status === 'approved' && isTourUpcoming(tour.startDate))
+          .filter((tour) => tour.status === 'approved' && isTourUpcoming(tour.startDate))
           .slice(0, 6);
         setSuggestions(upcomingTours);
       } finally {
@@ -132,7 +136,10 @@ const TourSuggestions = ({ weatherCity }) => {
 
       // Save to recent views
       const recentViews = JSON.parse(localStorage.getItem('recentTourViews') || '[]');
-      const updatedViews = [tourName, ...recentViews.filter(name => name !== tourName)].slice(0, 10);
+      const updatedViews = [tourName, ...recentViews.filter((name) => name !== tourName)].slice(
+        0,
+        10
+      );
       localStorage.setItem('recentTourViews', JSON.stringify(updatedViews));
 
       navigate(`/package/${tourId}`);
@@ -181,17 +188,20 @@ const TourSuggestions = ({ weatherCity }) => {
 
       <div className="tour-suggestions-container">
         <div className="tour-suggestions-grid">
-          {suggestions.map(tour => {
+          {suggestions.map((tour) => {
             if (!tour || !tour._id) return null;
 
             const averageRating = averageRatings[tour._id];
             const tourName = tour.name || 'Untitled Tour';
             const tourPrice = tour.price || 'N/A';
             const tourCategory = tour.packageCategories?.join(', ') || 'General';
-            const tourImage = tour.images && tour.images.length > 0
-              ? `${API_BASE_URL}/${tour.images[0]}`
-              : 'https://picsum.photos/300/200';
-            const duration = tour.duration ? `${tour.duration.days} days / ${tour.duration.nights} nights` : 'Duration not specified';
+            const tourImage =
+              tour.images && tour.images.length > 0
+                ? `${API_BASE_URL}/${tour.images[0]}`
+                : 'https://picsum.photos/300/200';
+            const duration = tour.duration
+              ? `${tour.duration.days} days / ${tour.duration.nights} nights`
+              : 'Duration not specified';
             const daysUntilStart = getDaysUntilStart(tour.startDate);
 
             return (
@@ -205,25 +215,19 @@ const TourSuggestions = ({ weatherCity }) => {
                     }}
                   />
                   {/* Add days until start tag like UpcomingTours */}
-                  <span className="suggestion-upcoming-tag">
-                    {daysUntilStart} days left
-                  </span>
-                  <div className="suggestion-card-overlay">
-                    
-                  </div>
+                  <span className="suggestion-upcoming-tag">{daysUntilStart} days left</span>
+                  <div className="suggestion-card-overlay"></div>
                 </div>
-                
+
                 <div className="suggestion-card-content">
                   <div className="suggestion-card-header">
                     <h3>{tourName}</h3>
                     <div className="suggestion-rating">
                       <i className="fas fa-star"></i>
-                      <span>
-                        {averageRating ? `${averageRating.toFixed(1)}` : 'New'}
-                      </span>
+                      <span>{averageRating ? `${averageRating.toFixed(1)}` : 'New'}</span>
                     </div>
                   </div>
-                  
+
                   <div className="suggestion-card-details">
                     <div className="suggestion-detail-item">
                       <i className="fas fa-tag"></i>
@@ -236,14 +240,13 @@ const TourSuggestions = ({ weatherCity }) => {
                     <div className="suggestion-detail-item">
                       <i className="fas fa-map-marker-alt"></i>
                       <span>
-                        {tour.destinations?.length > 0 
+                        {tour.destinations?.length > 0
                           ? `${tour.destinations[0].name}${tour.destinations.length > 1 ? ` +${tour.destinations.length - 1} more` : ''}`
-                          : 'Multiple Destinations'
-                        }
+                          : 'Multiple Destinations'}
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="suggestion-card-footer">
                     <div className="suggestion-price">
                       <span className="price-label">From</span>

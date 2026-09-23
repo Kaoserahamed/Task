@@ -71,7 +71,9 @@
   color: #495057;
   cursor: pointer;
   font-weight: 500;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .filter-btn.active {
@@ -109,7 +111,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .chat-content {
@@ -249,7 +251,6 @@
   border-radius: 50%;
   border: 2px solid #fff;
   box-shadow: 0 0 0 2px #e3e6ea;
-
 }
 .chat-actions {
   display: flex;
@@ -314,7 +315,7 @@
   position: relative;
   word-break: break-word;
   font-size: 15px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .message.sent {
@@ -331,7 +332,7 @@
   font-size: 15px;
   background: #2563eb;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.07);
   border-bottom-right-radius: 6px;
   margin-bottom: 2px;
   transition: background 0.2s;
@@ -342,7 +343,7 @@
   color: #222;
   border: 1px solid #e3e6ea;
   border-bottom-left-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .message.sent .message-content {
@@ -387,12 +388,12 @@
   margin: 0 10px;
   font-size: 15px;
   outline: none;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   transition: box-shadow 0.2s;
 }
 
 .message-input input[type='text']:focus {
-  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
 }
 
 .send-btn {
@@ -408,7 +409,7 @@
   font-size: 20px;
   cursor: pointer;
   transition: background 0.2s;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
 }
 
 .send-btn:hover {
@@ -491,4 +492,4 @@
     width: 100%;
     max-width: 100%;
   }
-} 
+}

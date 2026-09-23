@@ -11,4 +11,3 @@ test('renders admin login page', () => {
   expect(screen.getByText(/Admin Login/i)).toBeInTheDocument();
   expect(screen.getByText(/Try Demo Admin Account/i)).toBeInTheDocument();
 });
-

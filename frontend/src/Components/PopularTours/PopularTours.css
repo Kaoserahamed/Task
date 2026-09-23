@@ -93,7 +93,7 @@
   background: var(--upcoming-card-bg, white);
   border: 1px solid var(--upcoming-border-color, #ddd);
   border-radius: 15px;
-  box-shadow: 0 4px 15px var(--upcoming-shadow-color, rgba(0,0,0,0.1));
+  box-shadow: 0 4px 15px var(--upcoming-shadow-color, rgba(0, 0, 0, 0.1));
   transition: all 0.3s ease;
   overflow: hidden;
   flex-shrink: 0;
@@ -238,8 +238,12 @@
 }
 
 @keyframes popularToursSpinAnimation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Error */

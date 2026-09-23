@@ -16,12 +16,12 @@ const LoginSignup = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
   // Function to fill demo credentials (just fills the form, doesn't submit)
@@ -32,7 +32,7 @@ const LoginSignup = () => {
       email: DEMO_COMPANY_EMAIL,
       password: DEMO_COMPANY_PASSWORD,
       name: formData.name,
-      confirmPassword: formData.confirmPassword
+      confirmPassword: formData.confirmPassword,
     });
   };
 
@@ -40,7 +40,7 @@ const LoginSignup = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    
+
     try {
       const endpoint = isLogin ? '/company/auth/login' : '/company/auth/register';
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -51,26 +51,25 @@ const LoginSignup = () => {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
         }),
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Authentication failed');
       }
 
       // Pass the complete data object to login
       await login(data);
-      
+
       // Redirect to intended page or home
       if (location.state?.from) {
         navigate(location.state.from);
       } else {
         navigate('/');
       }
-
     } catch (error) {
       console.error('Authentication error:', error);
       setError(error.message || 'An error occurred. Please try again.');
@@ -87,45 +86,44 @@ const LoginSignup = () => {
           <p>{isLogin ? 'Login to access your account' : 'Sign up to get started'}</p>
         </div>
 
-        {location.state?.message && (
-          <div className="login-message">
-            {location.state.message}
-          </div>
-        )}
+        {location.state?.message && <div className="login-message">{location.state.message}</div>}
 
         {error && (
-          <div className="error-message" style={{
-            backgroundColor: '#fee2e2',
-            border: '1px solid #fca5a5',
-            color: '#991b1b',
-            padding: '12px',
-            borderRadius: '6px',
-            marginBottom: '16px',
-            fontSize: '14px'
-          }}>
+          <div
+            className="error-message"
+            style={{
+              backgroundColor: '#fee2e2',
+              border: '1px solid #fca5a5',
+              color: '#991b1b',
+              padding: '12px',
+              borderRadius: '6px',
+              marginBottom: '16px',
+              fontSize: '14px',
+            }}
+          >
             {error}
           </div>
         )}
 
         <AuthTabs isLogin={isLogin} setIsLogin={setIsLogin} />
-        
+
         {isLogin && (
           <div className="demo-credentials">
             <p className="demo-label">🎯 Try Demo Company Account:</p>
-            <button 
-              type="button" 
-              className="demo-btn"
-              onClick={fillDemoCredentials}
-            >
+            <button type="button" className="demo-btn" onClick={fillDemoCredentials}>
               Fill Demo Credentials
             </button>
             <p className="demo-info">
-              Email: <strong>{DEMO_COMPANY_EMAIL || 'set REACT_APP_DEMO_COMPANY_EMAIL'}</strong> | Password: <strong>{DEMO_COMPANY_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_COMPANY_PASSWORD'}</strong>
+              Email: <strong>{DEMO_COMPANY_EMAIL || 'set REACT_APP_DEMO_COMPANY_EMAIL'}</strong> |
+              Password:{' '}
+              <strong>
+                {DEMO_COMPANY_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_COMPANY_PASSWORD'}
+              </strong>
             </p>
           </div>
         )}
-        
-        <AuthForm 
+
+        <AuthForm
           isLogin={isLogin}
           formData={formData}
           setFormData={setFormData}
@@ -137,4 +135,4 @@ const LoginSignup = () => {
   );
 };
 
-export default LoginSignup; 
+export default LoginSignup;

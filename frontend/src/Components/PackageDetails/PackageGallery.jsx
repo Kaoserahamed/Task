@@ -12,12 +12,12 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
   // Helper function to get the correct image URL
   const getImageUrl = (img) => {
     if (!img) return picture;
-    
+
     // If image is already a full URL (starts with http:// or https://), use it directly
     if (img.startsWith('http://') || img.startsWith('https://')) {
       return img;
     }
-    
+
     // If it's a relative path (local storage), prepend API_BASE_URL
     return `${API_BASE_URL}/${img}`;
   };
@@ -26,11 +26,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
   if (!images || images.length === 0) {
     return (
       <div className="image-gallery">
-        <img
-          src={picture}
-          alt="Default Tour"
-          className="main-image"
-        />
+        <img src={picture} alt="Default Tour" className="main-image" />
       </div>
     );
   }
@@ -47,13 +43,13 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
         {/* Optional: Add navigation arrows */}
         {images.length > 1 && (
           <>
-            <button 
+            <button
               className="nav-button prev"
               onClick={() => setActiveImage((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
             >
               <i className="fas fa-chevron-left"></i>
             </button>
-            <button 
+            <button
               className="nav-button next"
               onClick={() => setActiveImage((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
             >
@@ -62,7 +58,7 @@ const PackageGallery = ({ images, activeImage, setActiveImage }) => {
           </>
         )}
       </div>
-      
+
       {images.length > 1 && (
         <div className="image-thumbnails">
           {images.map((img, index) => (

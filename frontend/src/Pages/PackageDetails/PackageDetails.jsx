@@ -6,15 +6,14 @@ import PackageInfo from '../../Components/PackageDetails/PackageInfo';
 import BookingCard from '../../Components/PackageDetails/BookingCard';
 import { useAuth } from '../../Context/AuthContext';
 import './PackageDetails.css';
-import socket from '../../socket'
+import socket from '../../socket';
 import TourSuggestions from '../../Components/TourSuggestions/TourSuggestions';
 import axios from 'axios';
 import API_BASE_URL from '../../config/api';
 
-
 const PackageDetails = () => {
   const { id } = useParams();
-  
+
   const { tours, loading, error, fetchTourById } = useContext(ToursContext);
   const [isloading, setIsloading] = useState(false);
   const [chats, setChats] = useState([]);
@@ -26,67 +25,66 @@ const PackageDetails = () => {
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [errorReviews, setErrorReviews] = useState(null);
   const [avSeats, setAvSeats] = useState(null);
- const {user}=useAuth();
- const [weatherCity, setWeatherCity] = useState('');
- useEffect(()=>{
-   if(user){
-    console.log(user);
-
-   }
-
- },
-[user]);
-let use,userId;
-//const city=tour.weather.city
-console.log(tour);
-if(user)
-{ use=user.user;
-console.log(use);
- userId=use._id;
-}
-console.log(tour)
-const chatType='comuse';
-
-const fetchChats = async () => {
-  setIsloading(true);
-  try {
-    const authtoken = localStorage.getItem('token');
-    if (!authtoken) {
-      throw new Error('No token found');
+  const { user } = useAuth();
+  const [weatherCity, setWeatherCity] = useState('');
+  useEffect(() => {
+    if (user) {
+      console.log(user);
     }
-    
-    const response = await fetch(`${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authtoken}`
+  }, [user]);
+  let use, userId;
+  //const city=tour.weather.city
+  console.log(tour);
+  if (user) {
+    use = user.user;
+    console.log(use);
+    userId = use._id;
+  }
+  console.log(tour);
+  const chatType = 'comuse';
+
+  const fetchChats = async () => {
+    setIsloading(true);
+    try {
+      const authtoken = localStorage.getItem('token');
+      if (!authtoken) {
+        throw new Error('No token found');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch chats');
+      const response = await fetch(
+        `${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authtoken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch chats');
+      }
+
+      const responseData = await response.json();
+      setChats(responseData || []);
+    } catch (error) {
+      console.error('Error fetching chats:', error);
+      setChats([]);
+    } finally {
+      setIsloading(false);
     }
-
-    const responseData = await response.json();
-    setChats(responseData || []);
-  } catch (error) {
-    console.error('Error fetching chats:', error);
-    setChats([]);
-  } finally {
-    setIsloading(false);
-  }
-};
-useEffect(()=>{
-  if(userId)
-  fetchChats();
-},[userId,chatType]);
-useEffect(() => {
-  if (userId) {
-    console.log('its happening');
-    console.log(userId);
-    fetchChats();
-  }
-}, [userId, chatType]);
+  };
+  useEffect(() => {
+    if (userId) fetchChats();
+  }, [userId, chatType]);
+  useEffect(() => {
+    if (userId) {
+      console.log('its happening');
+      console.log(userId);
+      fetchChats();
+    }
+  }, [userId, chatType]);
   const fetchReviews = async (tourId) => {
     try {
       setLoadingReviews(true);
@@ -113,10 +111,10 @@ useEffect(() => {
       setLocalLoading(true);
       const data = await fetchTourById(id);
       setTour(data);
-      
+
       setLocalError(null);
       setActiveImage(0);
-      
+
       // Fetch reviews if tour is completed
       if (isTourCompleted(data.startDate)) {
         await fetchReviews(data._id);
@@ -131,14 +129,12 @@ useEffect(() => {
   useEffect(() => {
     if (id) {
       getTour();
-      
     }
   }, [id]);
 
   useEffect(() => {
     if (tour && tour.weather) {
       setWeatherCity(tour.weather.city);
-      
     }
   }, [tour]);
   console.log(weatherCity);
@@ -184,7 +180,7 @@ useEffect(() => {
 
     return stars;
   };
-console.log(tour);
+  console.log(tour);
   const ReviewsSection = () => (
     <div className="reviews-section">
       <h3>Customer Reviews</h3>
@@ -220,7 +216,6 @@ console.log(tour);
                     </div>
                   </div>
                 </div>
-                
               </div>
               {review.comment && (
                 <div className="review-comment">
@@ -233,7 +228,7 @@ console.log(tour);
       )}
     </div>
   );
-  
+
   return (
     <div className="package-details-page">
       <div className="package-details-container">
@@ -248,12 +243,12 @@ console.log(tour);
 
         {/* Main Content Section */}
         <div className="main-content-section">
-          <PackageInfo 
-            tour={tour} 
-            companyId={tour.companyId} 
-            user={use} 
-            chatType={chatType} 
-            companyName={tour.companyName} 
+          <PackageInfo
+            tour={tour}
+            companyId={tour.companyId}
+            user={use}
+            chatType={chatType}
+            companyName={tour.companyName}
             chats={chats}
             weatherCity={weatherCity}
           />
@@ -278,7 +273,7 @@ console.log(tour);
           </div>
         )}
       </div>
-      
+
       {/* Related Tours Section - Outside the grid container */}
       <section className="tour-suggestions-section">
         <TourSuggestions weatherCity={weatherCity} />

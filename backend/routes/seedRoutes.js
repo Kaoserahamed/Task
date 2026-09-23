@@ -10,18 +10,18 @@ router.get('/seed-tours', async (req, res) => {
   try {
     // Find or create demo company
     let demoCompany = await Company.findOne({ email: DEMO_COMPANY_EMAIL });
-    
+
     if (!demoCompany) {
       const demoCompanyPassword = process.env.DEMO_COMPANY_PASSWORD;
       if (!demoCompanyPassword) {
         return res.status(500).json({
           success: false,
-          message: 'Missing DEMO_COMPANY_PASSWORD env var — see backend/.env.example.'
+          message: 'Missing DEMO_COMPANY_PASSWORD env var — see backend/.env.example.',
         });
       }
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(demoCompanyPassword, salt);
-      
+
       demoCompany = await Company.create({
         name: 'Demo Travel Company',
         email: DEMO_COMPANY_EMAIL,
@@ -31,7 +31,7 @@ router.get('/seed-tours', async (req, res) => {
         website: 'https://demotravels.com',
         address: '123 Demo Street, Dhaka, Bangladesh',
         isVerified: true,
-        verificationStatus: 'approved'
+        verificationStatus: 'approved',
       });
     }
 
@@ -40,7 +40,7 @@ router.get('/seed-tours', async (req, res) => {
 
     const sampleTours = [
       {
-        name: 'Amazing Cox\'s Bazar Beach Tour',
+        name: "Amazing Cox's Bazar Beach Tour",
         packageCategories: ['Beach', 'Relaxation'],
         tourType: { single: true, group: true },
         duration: { days: 3, nights: 2 },
@@ -53,11 +53,30 @@ router.get('/seed-tours', async (req, res) => {
         maxGroupSize: 40,
         availableSeats: 40,
         destinations: [
-          { name: 'Cox\'s Bazar Beach', description: 'World\'s longest natural sea beach', stayDuration: '2 nights' },
-          { name: 'Inani Beach', description: 'Pristine beach with coral stones', stayDuration: '4 hours' },
-          { name: 'Himchari National Park', description: 'Scenic waterfalls and hills', stayDuration: '3 hours' }
+          {
+            name: "Cox's Bazar Beach",
+            description: "World's longest natural sea beach",
+            stayDuration: '2 nights',
+          },
+          {
+            name: 'Inani Beach',
+            description: 'Pristine beach with coral stones',
+            stayDuration: '4 hours',
+          },
+          {
+            name: 'Himchari National Park',
+            description: 'Scenic waterfalls and hills',
+            stayDuration: '3 hours',
+          },
         ],
-        includes: ['Hotel accommodation', 'All meals', 'AC transportation', 'Tour guide', 'Entry fees', 'Insurance'],
+        includes: [
+          'Hotel accommodation',
+          'All meals',
+          'AC transportation',
+          'Tour guide',
+          'Entry fees',
+          'Insurance',
+        ],
         excludes: ['Personal expenses', 'Water sports', 'Snacks', 'Tips'],
         specialNote: 'Bring walking shoes, sunscreen, and swimwear.',
         cancellationPolicy: 'Free cancellation 7 days before. 50% refund 3-7 days.',
@@ -65,7 +84,7 @@ router.get('/seed-tours', async (req, res) => {
         companyId: demoCompany._id,
         companyName: demoCompany.name,
         images: ['uploads/default-beach.jpg', 'uploads/default-nature.jpg'],
-        weather: { city: 'Cox\'s Bazar', condition: 'Sunny', temp: 28 }
+        weather: { city: "Cox's Bazar", condition: 'Sunny', temp: 28 },
       },
       {
         name: 'Sundarbans Mangrove Adventure',
@@ -81,10 +100,24 @@ router.get('/seed-tours', async (req, res) => {
         maxGroupSize: 20,
         availableSeats: 20,
         destinations: [
-          { name: 'Sundarbans National Park', description: 'UNESCO World Heritage Site', stayDuration: '3 nights' },
-          { name: 'Kotka Beach', description: 'Secluded beach in mangrove forest', stayDuration: '4 hours' }
+          {
+            name: 'Sundarbans National Park',
+            description: 'UNESCO World Heritage Site',
+            stayDuration: '3 nights',
+          },
+          {
+            name: 'Kotka Beach',
+            description: 'Secluded beach in mangrove forest',
+            stayDuration: '4 hours',
+          },
         ],
-        includes: ['Boat accommodation', 'All meals', 'Forest permits', 'Guide', 'Safety equipment'],
+        includes: [
+          'Boat accommodation',
+          'All meals',
+          'Forest permits',
+          'Guide',
+          'Safety equipment',
+        ],
         excludes: ['Personal expenses', 'Camera fees', 'Alcohol', 'Travel to terminal'],
         specialNote: 'Adventure tour with basic amenities. Bring mosquito repellent.',
         cancellationPolicy: 'Non-refundable within 15 days due to permits.',
@@ -92,7 +125,7 @@ router.get('/seed-tours', async (req, res) => {
         companyId: demoCompany._id,
         companyName: demoCompany.name,
         images: ['uploads/default-wildlife.jpg'],
-        weather: { city: 'Khulna', condition: 'Partly Cloudy', temp: 26 }
+        weather: { city: 'Khulna', condition: 'Partly Cloudy', temp: 26 },
       },
       {
         name: 'Sajek Valley Hill Trek',
@@ -108,10 +141,20 @@ router.get('/seed-tours', async (req, res) => {
         maxGroupSize: 15,
         availableSeats: 15,
         destinations: [
-          { name: 'Sajek Valley', description: 'Highest peak with cloud views', stayDuration: '1 night' },
-          { name: 'Konglak Hill', description: 'Panoramic viewpoint', stayDuration: '2 hours' }
+          {
+            name: 'Sajek Valley',
+            description: 'Highest peak with cloud views',
+            stayDuration: '1 night',
+          },
+          { name: 'Konglak Hill', description: 'Panoramic viewpoint', stayDuration: '2 hours' },
         ],
-        includes: ['Cottage accommodation', 'All meals', 'Jeep transport', 'Local guide', 'Bonfire'],
+        includes: [
+          'Cottage accommodation',
+          'All meals',
+          'Jeep transport',
+          'Local guide',
+          'Bonfire',
+        ],
         excludes: ['Dhaka transport', 'Personal expenses', 'Photography permits'],
         specialNote: 'Challenging roads. Not for motion sickness patients.',
         cancellationPolicy: 'Full refund 5+ days before.',
@@ -119,7 +162,7 @@ router.get('/seed-tours', async (req, res) => {
         companyId: demoCompany._id,
         companyName: demoCompany.name,
         images: ['uploads/default-mountain.jpg'],
-        weather: { city: 'Rangamati', condition: 'Misty', temp: 22 }
+        weather: { city: 'Rangamati', condition: 'Misty', temp: 22 },
       },
       {
         name: 'Historical Dhaka City Tour',
@@ -131,9 +174,17 @@ router.get('/seed-tours', async (req, res) => {
         tourGuide: true,
         price: 2500,
         destinations: [
-          { name: 'Lalbagh Fort', description: 'Mughal fort from 17th century', stayDuration: '1.5 hours' },
+          {
+            name: 'Lalbagh Fort',
+            description: 'Mughal fort from 17th century',
+            stayDuration: '1.5 hours',
+          },
           { name: 'Ahsan Manzil', description: 'Pink Palace', stayDuration: '1 hour' },
-          { name: 'Star Mosque', description: 'Star-studded mosaic mosque', stayDuration: '30 minutes' }
+          {
+            name: 'Star Mosque',
+            description: 'Star-studded mosaic mosque',
+            stayDuration: '30 minutes',
+          },
         ],
         includes: ['AC car', 'Guide', 'Lunch', 'Entry fees', 'Water'],
         excludes: ['Breakfast/dinner', 'Shopping', 'Boat ride'],
@@ -143,7 +194,7 @@ router.get('/seed-tours', async (req, res) => {
         companyId: demoCompany._id,
         companyName: demoCompany.name,
         images: ['uploads/default-historical.jpg'],
-        weather: { city: 'Dhaka', condition: 'Warm', temp: 32 }
+        weather: { city: 'Dhaka', condition: 'Warm', temp: 32 },
       },
       {
         name: 'Sylhet Tea Garden & Waterfall Tour',
@@ -160,10 +211,25 @@ router.get('/seed-tours', async (req, res) => {
         availableSeats: 25,
         destinations: [
           { name: 'Jaflong', description: 'Crystal clear Piyain River', stayDuration: '4 hours' },
-          { name: 'Ratargul Swamp Forest', description: 'Amazon of Bangladesh', stayDuration: '3 hours' },
-          { name: 'Madhabkunda Waterfall', description: 'Largest waterfall', stayDuration: '3 hours' }
+          {
+            name: 'Ratargul Swamp Forest',
+            description: 'Amazon of Bangladesh',
+            stayDuration: '3 hours',
+          },
+          {
+            name: 'Madhabkunda Waterfall',
+            description: 'Largest waterfall',
+            stayDuration: '3 hours',
+          },
         ],
-        includes: ['Hotel accommodation', 'All meals', 'AC transport', 'Guide', 'Boat rides', 'Entry fees'],
+        includes: [
+          'Hotel accommodation',
+          'All meals',
+          'AC transport',
+          'Guide',
+          'Boat rides',
+          'Entry fees',
+        ],
         excludes: ['Personal expenses', 'Additional boat rides', 'Shopping'],
         specialNote: 'Best season: October to March.',
         cancellationPolicy: 'Full refund 10+ days before.',
@@ -171,8 +237,8 @@ router.get('/seed-tours', async (req, res) => {
         companyId: demoCompany._id,
         companyName: demoCompany.name,
         images: ['uploads/default-nature.jpg'],
-        weather: { city: 'Sylhet', condition: 'Pleasant', temp: 24 }
-      }
+        weather: { city: 'Sylhet', condition: 'Pleasant', temp: 24 },
+      },
     ];
 
     const createdTours = await Tour.insertMany(sampleTours);
@@ -182,22 +248,21 @@ router.get('/seed-tours', async (req, res) => {
       message: `Successfully created ${createdTours.length} demo tour packages`,
       company: {
         name: demoCompany.name,
-        email: demoCompany.email
+        email: demoCompany.email,
       },
-      tours: createdTours.map(tour => ({
+      tours: createdTours.map((tour) => ({
         id: tour._id,
         name: tour.name,
         price: tour.price,
-        status: tour.status
-      }))
+        status: tour.status,
+      })),
     });
-
   } catch (error) {
     console.error('Seed error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to seed tour packages',
-      error: error.message
+      error: error.message,
     });
   }
 });

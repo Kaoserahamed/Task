@@ -5,28 +5,30 @@ const reviewSchema = new mongoose.Schema({
   tourId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tour',
-    required: true
+    required: true,
   },
   userName: {
     type: String,
-    required: true
+    required: true,
   },
   rating: {
     type: Number,
     required: true,
     min: 1,
-    max: 5
+    max: 5,
   },
   comment: {
-    type: String
+    type: String,
   },
-  photos: [{
-    type: String
-  }],
+  photos: [
+    {
+      type: String,
+    },
+  ],
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model('Review', reviewSchema);

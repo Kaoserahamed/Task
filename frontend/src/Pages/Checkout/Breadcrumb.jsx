@@ -5,7 +5,9 @@ const Breadcrumb = ({ step }) => {
     <div className="breadcrumb">
       <span className="breadcrumb-active">Package Selection</span>
       <span className="breadcrumb-separator">→</span>
-      <span className={step >= 1 ? 'breadcrumb-active' : 'breadcrumb-inactive'}>Contact Information</span>
+      <span className={step >= 1 ? 'breadcrumb-active' : 'breadcrumb-inactive'}>
+        Contact Information
+      </span>
       <span className="breadcrumb-separator">→</span>
       <span className={step >= 2 ? 'breadcrumb-active' : 'breadcrumb-inactive'}>Payment</span>
       <span className="breadcrumb-separator">→</span>

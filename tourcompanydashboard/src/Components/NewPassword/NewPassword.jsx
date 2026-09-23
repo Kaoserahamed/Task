@@ -6,15 +6,14 @@ import API_BASE_URL from '../../config/api';
 const NewPassword = () => {
   const [formData, setFormData] = useState({
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { token } = useParams();
 
-    // Verify token when component mounts
-   
+  // Verify token when component mounts
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +39,7 @@ const NewPassword = () => {
         },
         body: JSON.stringify({
           token,
-          password: formData.password
+          password: formData.password,
         }),
       });
 
@@ -54,21 +53,17 @@ const NewPassword = () => {
       setTimeout(() => {
         navigate('/');
       }, 2000);
-      
     } catch (error) {
       setError(error.message);
     }
   };
- console.log(message);
+  console.log(message);
 
-  
   return (
     <div className="new-password-page">
       <div className="new-password-container">
         <h2>Set New Password</h2>
-        <p className="new-password-instructions">
-          Please enter your new password below.
-        </p>
+        <p className="new-password-instructions">Please enter your new password below.</p>
         {message && <div className="success-message">{message}</div>}
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -78,7 +73,7 @@ const NewPassword = () => {
               type="password"
               placeholder="Enter new password"
               value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
               minLength="6"
             />
@@ -89,7 +84,7 @@ const NewPassword = () => {
               type="password"
               placeholder="Confirm new password"
               value={formData.confirmPassword}
-              onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               required
               minLength="6"
             />
@@ -103,4 +98,4 @@ const NewPassword = () => {
   );
 };
 
-export default NewPassword; 
+export default NewPassword;

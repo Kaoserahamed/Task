@@ -11,9 +11,9 @@ import {
   FaCog,
   FaBell,
   FaSignOutAlt,
-  FaCheckCircle
+  FaCheckCircle,
 } from 'react-icons/fa';
-import socket from '../../socket'
+import socket from '../../socket';
 import { useAuth } from '../../Context/AuthContext';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
@@ -45,12 +45,12 @@ const Navbar = () => {
       console.log(data);
       if (data.success) {
         setCompanyDetails(data.company);
-        console.log("Fetched company details from API:", data.company);
+        console.log('Fetched company details from API:', data.company);
       } else {
-        console.error("Failed to fetch company details:", data.message);
+        console.error('Failed to fetch company details:', data.message);
       }
     } catch (error) {
-      console.error("Error fetching company details:", error);
+      console.error('Error fetching company details:', error);
     }
   }, []); // Empty dependency array means this function is created once
 
@@ -59,7 +59,7 @@ const Navbar = () => {
     if (company && company.company && company.company._id) {
       fetchCompanyDetails(company.company._id);
     } else {
-      console.log("Company object or ID not available from auth context.", company);
+      console.log('Company object or ID not available from auth context.', company);
     }
   }, [company, fetchCompanyDetails]);
 
@@ -70,11 +70,12 @@ const Navbar = () => {
         console.log('Verification update received:', data);
         if (data.action === 'done' && data.company) {
           // Re-fetch company details to get the most accurate state
-          const currentCompanyId = companyDetails?._id || (company && company.company && company.company._id);
+          const currentCompanyId =
+            companyDetails?._id || (company && company.company && company.company._id);
           if (currentCompanyId) {
             fetchCompanyDetails(currentCompanyId);
           } else {
-            console.warn("Could not determine company ID to re-fetch details after socket update.");
+            console.warn('Could not determine company ID to re-fetch details after socket update.');
           }
         }
       });
@@ -89,13 +90,13 @@ const Navbar = () => {
   const notifications = [
     { id: 1, text: 'New booking request', time: '5 min ago' },
     { id: 2, text: 'Tour package approved', time: '1 hour ago' },
-    { id: 3, text: 'New customer review', time: '2 hours ago' }
+    { id: 3, text: 'New customer review', time: '2 hours ago' },
   ];
 
   const handleLogout = () => {
     logout();
     navigate('/');
-  }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -184,4 +185,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

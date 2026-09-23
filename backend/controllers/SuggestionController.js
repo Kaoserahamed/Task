@@ -10,7 +10,7 @@ const isTourUpcoming = (startDate) => {
   const oneDayFromNow = new Date();
   oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
   oneDayFromNow.setHours(0, 0, 0, 0); // Start of day
-  
+
   const tourStartDate = new Date(startDate);
   return tourStartDate >= oneDayFromNow;
 };
@@ -32,19 +32,20 @@ exports.getSuggestions = async (req, res) => {
           // Check if the tourName is in antecedents
           if (row.antecedents === tourName) {
             // Find tours where weather.city matches the consequent and is upcoming
-            const matchingTours = allTours.filter(tour => 
-              tour.weather && 
-              tour.weather.city && 
-              tour.weather.city.toLowerCase() === row.consequents.toLowerCase() &&
-              tour.status === 'approved' &&
-              isTourUpcoming(tour.startDate)
+            const matchingTours = allTours.filter(
+              (tour) =>
+                tour.weather &&
+                tour.weather.city &&
+                tour.weather.city.toLowerCase() === row.consequents.toLowerCase() &&
+                tour.status === 'approved' &&
+                isTourUpcoming(tour.startDate)
             );
 
             if (matchingTours.length > 0) {
               suggestions.push({
                 destination: row.consequents,
                 confidence: parseFloat(row.confidence),
-                tours: matchingTours
+                tours: matchingTours,
               });
             }
           }
@@ -56,14 +57,14 @@ exports.getSuggestions = async (req, res) => {
         try {
           // Sort suggestions by confidence in descending order
           suggestions.sort((a, b) => b.confidence - a.confidence);
-          
+
           // Extract just the destinations and their tours in order
-          const sortedSuggestions = suggestions.map(s => ({
+          const sortedSuggestions = suggestions.map((s) => ({
             destination: s.destination,
             confidence: s.confidence,
-            tours: s.tours
+            tours: s.tours,
           }));
-          
+
           console.log('Found', sortedSuggestions.length, 'suggestions with upcoming tours');
           res.json(sortedSuggestions);
         } catch (err) {

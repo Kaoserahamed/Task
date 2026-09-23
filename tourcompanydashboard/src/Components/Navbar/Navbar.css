@@ -11,7 +11,7 @@ body {
   justify-content: space-between;
   padding: 1rem 2rem;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -66,7 +66,8 @@ body {
   gap: 1.5rem;
 }
 
-.notification-bell, .profile-menu {
+.notification-bell,
+.profile-menu {
   position: relative;
   cursor: pointer;
   font-size: 1.2rem;
@@ -76,7 +77,8 @@ body {
   transition: all 0.3s ease;
 }
 
-.notification-bell:hover, .profile-menu:hover {
+.notification-bell:hover,
+.profile-menu:hover {
   color: #3498db;
   background: #f7fbfe;
 }
@@ -94,12 +96,13 @@ body {
   text-align: center;
 }
 
-.notifications-dropdown, .profile-dropdown {
+.notifications-dropdown,
+.profile-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
   background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   min-width: 250px;
   margin-top: 0.5rem;
@@ -168,4 +171,3 @@ body {
     padding: 0.5rem;
   }
 }
-  

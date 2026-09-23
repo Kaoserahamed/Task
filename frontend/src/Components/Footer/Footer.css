@@ -7,7 +7,9 @@
   margin-top: auto;
   position: relative;
   overflow: hidden;
-  transition: background-color var(--transition-base), color var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
 }
 
 .footer::before {
@@ -17,7 +19,13 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--warning-color), var(--success-color));
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--secondary-color),
+    var(--warning-color),
+    var(--success-color)
+  );
 }
 
 .footer-content {
@@ -181,7 +189,12 @@
 }
 
 .social-links a:nth-child(3):hover {
-  background: linear-gradient(45deg, var(--warning-color), var(--error-color), var(--primary-color));
+  background: linear-gradient(
+    45deg,
+    var(--warning-color),
+    var(--error-color),
+    var(--primary-color)
+  );
   box-shadow: 0 8px 25px var(--border-hover);
 }
 
@@ -191,7 +204,9 @@
   padding: var(--spacing-lg) 0;
   text-align: center;
   border-top: 1px solid var(--overlay-light);
-  transition: background-color var(--transition-base), border-color var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
 }
 
 .footer-bottom p {
@@ -214,36 +229,36 @@
   .footer {
     padding: var(--spacing-xl) 0 var(--spacing-md);
   }
-  
+
   .footer-content {
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
     padding: 0 var(--spacing-md);
   }
-  
+
   .footer-section {
     align-items: center;
     text-align: center;
   }
-  
+
   .footer-section h3 {
     align-self: center;
   }
-  
+
   .footer-section h3::after {
     left: 50%;
     transform: translateX(-50%);
   }
-  
+
   .footer-section ul {
     align-items: center;
   }
-  
+
   .social-links {
     justify-content: center;
     align-self: center;
   }
-  
+
   .contact-info li {
     justify-content: center;
   }
@@ -253,11 +268,11 @@
   .footer-content {
     padding: 0 var(--spacing-md);
   }
-  
+
   .footer-section h3 {
     font-size: var(--font-size-lg);
   }
-  
+
   .social-links a {
     width: 40px;
     height: 40px;

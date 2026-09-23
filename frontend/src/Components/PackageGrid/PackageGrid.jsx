@@ -37,7 +37,7 @@ const PackageGrid = ({ packages }) => {
         const ratingMap = {};
         const countMap = {};
 
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           const tourId = review.tourId;
           if (!ratingMap[tourId]) {
             ratingMap[tourId] = 0;
@@ -54,7 +54,7 @@ const PackageGrid = ({ packages }) => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error("Error fetching average ratings:", err);
+        console.error('Error fetching average ratings:', err);
       }
     };
 
@@ -76,21 +76,14 @@ const PackageGrid = ({ packages }) => {
 
   return (
     <div className="package-grid">
-      {packages.map(tour => {
+      {packages.map((tour) => {
         const averageRating = averageRatings[tour._id] || tour.popularity?.rating?.average;
         const isCompleted = isTourCompleted(tour.startDate);
-        
+
         return (
           <div key={tour._id} className="package-card">
             <div className="package-image">
-              <img
-                src={getImageUrl(tour.images[0])}
-                alt={tour.name}
-                onError={handleImageError}
-              />
-                  e.target.src = 'https://picsum.photos/300/200';
-                }}
-              />
+              <img src={getImageUrl(tour.images[0])} alt={tour.name} onError={handleImageError} />
               {isCompleted && <span className="package-completed-tag">Completed</span>}
             </div>
             <div className="package-info">
@@ -110,9 +103,9 @@ const PackageGrid = ({ packages }) => {
                 </span>
               </div>
               <div className="package-actions">
-                <Link 
-                  to="#" 
-                  onClick={() => handleExploreNow(tour._id)} 
+                <Link
+                  to="#"
+                  onClick={() => handleExploreNow(tour._id)}
                   className="package-view-btn"
                 >
                   Explore Now

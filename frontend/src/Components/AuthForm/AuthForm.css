@@ -32,4 +32,4 @@
 .submit-btn:hover {
   background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
   transform: translateY(-1px);
-} 
+}

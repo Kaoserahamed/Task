@@ -29,10 +29,10 @@ const ReviewPage = () => {
     if (tours && tours.length > 0) {
       // For demo, assume these are the user's completed tours
       // In a real app, you would filter based on user booking history
-      const completedTours = tours.filter(tour =>
-        // Simple filtering logic for demo - in reality this would be based on user's actual bookings
-        new Date(tour.startDate) < new Date() &&
-        new Date(tour.endDate) < new Date()
+      const completedTours = tours.filter(
+        (tour) =>
+          // Simple filtering logic for demo - in reality this would be based on user's actual bookings
+          new Date(tour.startDate) < new Date() && new Date(tour.endDate) < new Date()
       );
 
       setUserTours(completedTours);
@@ -88,7 +88,7 @@ const ReviewPage = () => {
     const newErrors = { ...errors };
 
     // Validate file types and sizes
-    const validFiles = selectedFiles.filter(file => {
+    const validFiles = selectedFiles.filter((file) => {
       const isValidType = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type);
       const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB
 
@@ -113,10 +113,10 @@ const ReviewPage = () => {
     }
 
     if (validFiles.length > 0) {
-      const newPhotos = validFiles.map(file => ({
+      const newPhotos = validFiles.map((file) => ({
         file,
         preview: URL.createObjectURL(file),
-        name: file.name
+        name: file.name,
       }));
 
       setPhotos([...photos, ...newPhotos]);
@@ -184,20 +184,20 @@ const ReviewPage = () => {
       formData.append('comment', reviewText);
 
       // Append each photo file
-      photos.forEach(photo => {
+      photos.forEach((photo) => {
         formData.append('photos', photo.file);
       });
 
       // Submit review to API - use the correct path
       const response = await axios.post(`${API_BASE_URL}/reviews`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       // Add the new review to the local state for immediate display
       const newReview = response.data;
-      setReviews(prevReviews => [newReview, ...prevReviews]);
+      setReviews((prevReviews) => [newReview, ...prevReviews]);
 
       // Show success message
       setSuccess(true);
@@ -207,16 +207,15 @@ const ReviewPage = () => {
         resetForm();
         setSuccess(false);
       }, 3000);
-
     } catch (error) {
       console.error('Error submitting review:', error);
 
       // Provide a more descriptive error message
-      const errorMessage = error.response?.data?.message ||
-        `Failed to submit review: ${error.message}`;
+      const errorMessage =
+        error.response?.data?.message || `Failed to submit review: ${error.message}`;
 
       setErrors({
-        submit: errorMessage
+        submit: errorMessage,
       });
 
       // For development purposes, if API fails, create a mock review
@@ -228,10 +227,10 @@ const ReviewPage = () => {
           rating: rating,
           comment: reviewText,
           date: new Date().toISOString(),
-          photos: photos.map(photo => photo.preview)
+          photos: photos.map((photo) => photo.preview),
         };
 
-        setReviews(prevReviews => [mockReview, ...prevReviews]);
+        setReviews((prevReviews) => [mockReview, ...prevReviews]);
         setSuccess(true);
 
         setTimeout(() => {
@@ -254,13 +253,12 @@ const ReviewPage = () => {
   };
 
   const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('en-US', options);
-};
-
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
 
   const getTourById = (id) => {
-    return tours.find(tour => tour._id === id) || {};
+    return tours.find((tour) => tour._id === id) || {};
   };
 
   const characterCount = reviewText.length;
@@ -297,7 +295,7 @@ const ReviewPage = () => {
               >
                 <option value="">-- Select a tour --</option>
                 {userTours
-                  .filter(tour => {
+                  .filter((tour) => {
                     if (!tour.endDate) return false;
                     const endDate = new Date(tour.endDate);
                     const today = new Date();
@@ -305,7 +303,7 @@ const ReviewPage = () => {
                     today.setHours(0, 0, 0, 0);
                     return endDate < today; // Only completed tours
                   })
-                  .map(tour => (
+                  .map((tour) => (
                     <option key={tour._id} value={tour._id}>
                       {tour.name} ({formatDate(tour.startDate)} to {formatDate(tour.endDate)})
                     </option>
@@ -357,7 +355,9 @@ const ReviewPage = () => {
                 rows={5}
                 className={isOverLimit ? 'error' : ''}
               ></textarea>
-              <div className={`character-count ${isApproachingLimit ? 'approaching-limit' : ''} ${isOverLimit ? 'over-limit' : ''}`}>
+              <div
+                className={`character-count ${isApproachingLimit ? 'approaching-limit' : ''} ${isOverLimit ? 'over-limit' : ''}`}
+              >
                 {characterCount}/{characterLimit} characters
               </div>
               {errors.reviewText && <div className="error-message">{errors.reviewText}</div>}
@@ -379,9 +379,7 @@ const ReviewPage = () => {
                   <Upload size={20} />
                   <span>Upload Photos</span>
                 </label>
-                <div className="upload-help">
-                  Up to 5 images (.jpg, .jpeg, .png, max 5MB each)
-                </div>
+                <div className="upload-help">Up to 5 images (.jpg, .jpeg, .png, max 5MB each)</div>
               </div>
               {errors.photos && <div className="error-message">{errors.photos}</div>}
 
@@ -433,7 +431,7 @@ const ReviewPage = () => {
             {loadingReviews ? (
               <div className="loading-reviews">Loading reviews...</div>
             ) : reviews.length > 0 ? (
-              reviews.map(review => (
+              reviews.map((review) => (
                 <div key={review._id} className="review-card">
                   <div className="review-header">
                     <div className="reviewer-info">
@@ -452,10 +450,7 @@ const ReviewPage = () => {
                     </div>
                   </div>
 
-                  {review.comment && (
-                    <div className="review-comment">{review.comment}</div>
-                  )}
-
+                  {review.comment && <div className="review-comment">{review.comment}</div>}
 
                   {review.photos && review.photos.length > 0 && (
                     <div className="review-photos">
@@ -479,8 +474,8 @@ const ReviewPage = () => {
                 <AlertCircle size={20} />
                 <span>
                   {selectedTour
-                    ? "No reviews available for this tour yet. Be the first to share your experience!"
-                    : "No reviews available yet. Share your experience after completing a tour!"}
+                    ? 'No reviews available for this tour yet. Be the first to share your experience!'
+                    : 'No reviews available yet. Share your experience after completing a tour!'}
                 </span>
               </div>
             )}

@@ -3,7 +3,7 @@
   margin: 40px auto;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   padding: 36px 32px;
   font-family: 'Segoe UI', Arial, sans-serif;
   position: relative;
@@ -135,17 +135,17 @@
   font-size: 1rem;
 }
 .download-pdf-btn {
-    margin-left: 10px;
-    padding: 12px 36px;
-    background: #5973f2;
-    color: #fff;
-    border: none;
-    border-radius: 7px;
-    font-size: 1.15rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+  margin-left: 10px;
+  padding: 12px 36px;
+  background: #5973f2;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 .download-pdf-btn:hover {
   background: #1251a3;
 }

@@ -59,7 +59,7 @@
   cursor: pointer;
 }
 
-.type-filters input[type="checkbox"] {
+.type-filters input[type='checkbox'] {
   width: 16px;
   height: 16px;
   cursor: pointer;
@@ -73,4 +73,4 @@
   .type-filters {
     grid-template-columns: 1fr;
   }
-} 
+}

@@ -30,7 +30,10 @@ export const getImageUrl = (imagePath) => {
  * @param {string} fallback - Optional fallback image URL
  * @returns {string} - Image URL
  */
-export const getTourImage = (tour, fallback = 'https://via.placeholder.com/300x200?text=No+Image') => {
+export const getTourImage = (
+  tour,
+  fallback = 'https://via.placeholder.com/300x200?text=No+Image'
+) => {
   if (!tour || !tour.images || tour.images.length === 0) {
     return fallback;
   }
@@ -43,6 +46,9 @@ export const getTourImage = (tour, fallback = 'https://via.placeholder.com/300x2
  * @param {Event} e - Error event
  * @param {string} fallback - Fallback image URL
  */
-export const handleImageError = (e, fallback = 'https://via.placeholder.com/300x200?text=No+Image') => {
+export const handleImageError = (
+  e,
+  fallback = 'https://via.placeholder.com/300x200?text=No+Image'
+) => {
   e.target.src = fallback;
 };

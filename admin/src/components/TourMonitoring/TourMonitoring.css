@@ -1,39 +1,39 @@
 .tour-approval {
-    padding: 20px;
-  }
-  
-  .tour-card {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
-    transition: var(--transition);
-  }
-  
-  button {
-    margin-right: 12px;
-    padding: 10px 20px;
-    background-color: var(--success-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-  }
-  
-  button:hover {
-    background-color: #218838;
-  }
-  
-  /* button:last-child {
+  padding: 20px;
+}
+
+.tour-card {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+}
+
+button {
+  margin-right: 12px;
+  padding: 10px 20px;
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+/* button:last-child {
     background-color: var(--danger-color);
   } */
-  
-  /* button:last-child:hover {
+
+/* button:last-child:hover {
     background-color: #218838;
   } */
-  
+
 .tour-monitoring {
   padding: 25px;
   overflow-y: auto;
@@ -75,14 +75,16 @@
   font-size: 1rem;
   background: var(--admin-bg-primary, #fff);
   color: var(--admin-text-primary, #333);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .search-container input:focus {
   outline: none;
   border-color: var(--admin-accent-primary, #3498db);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.10);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .search-icon {
@@ -240,10 +242,13 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    box-shadow 0.18s;
   background: var(--admin-bg-secondary, #f8f9fa);
   color: var(--admin-text-primary, #333);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   min-width: 140px;
   text-align: center;
 }
@@ -257,7 +262,8 @@
   color: #fff;
 }
 
-.approve-btn:hover, .approve-btn:focus {
+.approve-btn:hover,
+.approve-btn:focus {
   background: var(--admin-accent-secondary, #2980b9);
 }
 
@@ -266,7 +272,8 @@
   color: #fff;
 }
 
-.reject-btn:hover, .reject-btn:focus {
+.reject-btn:hover,
+.reject-btn:focus {
   background: #c0392b;
 }
 
@@ -276,7 +283,8 @@
   border: 1.5px solid var(--admin-accent-primary, #3498db);
 }
 
-.draft-btn:hover, .draft-btn:focus {
+.draft-btn:hover,
+.draft-btn:focus {
   background: var(--admin-accent-primary, #3498db);
   color: #020202;
 }
@@ -286,7 +294,8 @@
   color: #fff;
 }
 
-.pending-btn:hover, .pending-btn:focus {
+.pending-btn:hover,
+.pending-btn:focus {
   background: #ca7a14;
 }
 
@@ -296,7 +305,8 @@
   border: 1.5px solid var(--admin-bg-secondary, #f8f9fa);
 }
 
-.view-btn:hover, .view-btn:focus {
+.view-btn:hover,
+.view-btn:focus {
   background: var(--admin-accent-primary, #3498db);
   color: #0f0f0f;
 }
@@ -326,20 +336,20 @@
     align-items: flex-start;
     gap: 15px;
   }
-  
+
   .search-container {
     width: 100%;
   }
-  
+
   .monitoring-tabs {
     overflow-x: auto;
     padding-bottom: 10px;
   }
-  
+
   .tour-details {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .tour-actions {
     flex-wrap: wrap;
   }
@@ -376,7 +386,7 @@
 .admin-inline-modal {
   background: var(--admin-bg-primary, #fff);
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
   padding: 2rem 2rem 1.5rem 2rem;
   max-width: 1100px;
   width: 100%;
@@ -433,7 +443,8 @@
     flex-direction: column;
     gap: 1.5rem;
   }
-  .admin-modal-gallery, .admin-modal-details {
+  .admin-modal-gallery,
+  .admin-modal-details {
     max-width: 100%;
     min-width: 0;
     padding: 0;
@@ -506,4 +517,3 @@
 .tour-review span {
   color: #495057;
 }
-  

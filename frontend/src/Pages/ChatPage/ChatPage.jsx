@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 import './ChatPage.css';
 import API_BASE_URL from '../../config/api';
 
-const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; 
+const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1';
 
 const ChatPage = () => {
   const location = useLocation();
@@ -21,7 +21,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (user) {
-      console.log("Current logged in user:", user);
+      console.log('Current logged in user:', user);
     }
   }, [user]);
 
@@ -35,14 +35,17 @@ const ChatPage = () => {
         if (!authtoken) {
           throw new Error('No token found');
         }
-        
-        const response = await fetch(`${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authtoken}`
-          },
-        });
+
+        const response = await fetch(
+          `${API_BASE_URL}/api/chat/get-user-chat/${userId}?query=${chatType}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authtoken}`,
+            },
+          }
+        );
         const responseData = await response.json();
         if (!response.ok) {
           throw new Error('Failed to fetch chats');
@@ -52,7 +55,7 @@ const ChatPage = () => {
         console.error('Error fetching chats:', error);
         setChats([]);
       }
-    }
+    };
 
     if (userId) {
       fetchChats();
@@ -69,18 +72,18 @@ const ChatPage = () => {
       messages: [],
       userId: userId,
       userName: username,
-      adminId: DEFAULT_ADMIN_ID, 
+      adminId: DEFAULT_ADMIN_ID,
       chatType: 'aduse',
       name: 'Admin Support',
       avatar: '/admin-avatar.png',
-      online: true
+      online: true,
     };
   }
 
   return (
     <div className="chat-page">
       <div className="chat-type-selector">
-        <button 
+        <button
           className={`type-btn ${chatType === 'comuse' ? 'active' : ''}`}
           onClick={() => {
             setChatType('comuse');
@@ -89,7 +92,7 @@ const ChatPage = () => {
         >
           Tour Companies
         </button>
-        <button 
+        <button
           className={`type-btn ${chatType === 'aduse' ? 'active' : ''}`}
           onClick={() => {
             setChatType('aduse');
@@ -104,7 +107,7 @@ const ChatPage = () => {
         {chatType === 'comuse' ? (
           <>
             <div className={selectedChat || directChat ? 'chat-list-sidebar' : 'chat-list-full'}>
-              <ChatList 
+              <ChatList
                 chatType={chatType}
                 selectedChat={selectedChat || location.state?.selectedChat}
                 setSelectedChat={setSelectedChat}
@@ -113,8 +116,8 @@ const ChatPage = () => {
                 socket={socket}
               />
             </div>
-            { (selectedChat&&
-              <ChatWindow 
+            {selectedChat && (
+              <ChatWindow
                 chatType={chatType}
                 selectedChat={selectedChat || location.state?.selectedChat}
                 userId={userId}
@@ -124,7 +127,7 @@ const ChatPage = () => {
           </>
         ) : (
           <div className="admin-chat-container">
-            <ChatWindow 
+            <ChatWindow
               chatType={chatType}
               selectedChat={adminChat}
               userId={userId}

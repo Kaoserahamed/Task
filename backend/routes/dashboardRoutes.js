@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
 const Booking = require('../models/Booking');
-const Tour = require('../models/tours'); 
+const Tour = require('../models/tours');
 
-// GET /api/dashboard/stats 
+// GET /api/dashboard/stats
 router.get('/dashboard/stats', async (req, res) => {
   try {
-    console.log("I am currently inside dashboard stat backend")
+    console.log('I am currently inside dashboard stat backend');
     const today = new Date();
     const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const last30Days = new Date(today);
@@ -18,13 +17,13 @@ router.get('/dashboard/stats', async (req, res) => {
     // 1. Active Packages (tours with startDate >= today and status 'approved')
     const activePackages = await Tour.countDocuments({
       startDate: { $gte: startOfToday },
-      status: 'approved'
+      status: 'approved',
     });
 
     // 2. Completed Tours (tours with endDate < today and status 'approved')
     const completedTours = await Tour.countDocuments({
       endDate: { $lt: startOfToday },
-      status: 'approved'
+      status: 'approved',
     });
 
     // 3. Monthly Revenue (sum of totalAmount for bookings in last 30 days, grouped by month)
@@ -33,15 +32,15 @@ router.get('/dashboard/stats', async (req, res) => {
       {
         $group: {
           _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } },
-          total: { $sum: '$totalAmount' }
-        }
+          total: { $sum: '$totalAmount' },
+        },
       },
-      { $sort: { '_id.year': 1, '_id.month': 1 } }
+      { $sort: { '_id.year': 1, '_id.month': 1 } },
     ]);
     // Format for chart.js
     const monthlyRevenue = {
-      labels: monthlyRevenueAgg.map(item => `${item._id.month}/${item._id.year}`),
-      data: monthlyRevenueAgg.map(item => item.total)
+      labels: monthlyRevenueAgg.map((item) => `${item._id.month}/${item._id.year}`),
+      data: monthlyRevenueAgg.map((item) => item.total),
     };
 
     // 4. New Bookings (count of bookings in last 7 days)
@@ -58,9 +57,9 @@ router.get('/dashboard/stats', async (req, res) => {
         $group: {
           _id: null,
           avgRating: { $avg: '$popularity.rating.average' },
-          count: { $sum: 1 }
-        }
-      }
+          count: { $sum: 1 },
+        },
+      },
     ]);
     const customerRating = ratingsAgg[0]?.avgRating || 0;
 
@@ -72,7 +71,10 @@ router.get('/dashboard/stats', async (req, res) => {
 
     // 8. Recent Feedback (top 3 tours with most recent ratings, if available)
     // If you have a Review model, you can aggregate from there. For now, use tour ratings.
-    const recentFeedback = await Tour.find({ status: 'approved', 'popularity.rating.count': { $gt: 0 } })
+    const recentFeedback = await Tour.find({
+      status: 'approved',
+      'popularity.rating.count': { $gt: 0 },
+    })
       .sort({ 'popularity.rating.count': -1 })
       .limit(3)
       .select('name popularity.rating.average popularity.rating.count');
@@ -87,13 +89,15 @@ router.get('/dashboard/stats', async (req, res) => {
         totalCustomers,
         customerRating: customerRating.toFixed(2),
         popularPackages,
-        recentFeedback
-      }
+        recentFeedback,
+      },
     });
   } catch (error) {
     console.error('Dashboard stats error:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch dashboard stats', error: error.message });
+    res
+      .status(500)
+      .json({ success: false, message: 'Failed to fetch dashboard stats', error: error.message });
   }
 });
 
-module.exports = router; 
+module.exports = router;

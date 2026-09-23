@@ -1,33 +1,33 @@
-import React from "react";
-import { useEffect,useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./PackageInfo.css";
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './PackageInfo.css';
 
-const PackageInfo = ({ tour,user,chats}) => {
+const PackageInfo = ({ tour, user, chats }) => {
   const navigate = useNavigate();
   console.log(user);
-  let userId,username,avatar
-  if(user)
-  { userId=user._id;
-     username = user.name;
-     avatar = user.avatar;
+  let userId, username, avatar;
+  if (user) {
+    userId = user._id;
+    username = user.name;
+    avatar = user.avatar;
   }
   const companyName = tour.companyName;
 
-  const companyId=tour.companyId;
- console.log(username);
-  
+  const companyId = tour.companyId;
+  console.log(username);
+
   const handleChatClick = () => {
-    const selectedData = chats.find(chat => chat.companyName === companyName);
+    const selectedData = chats.find((chat) => chat.companyName === companyName);
     console.log(selectedData);
-    let tempchat=selectedData;
-    
+    let tempchat = selectedData;
+
     if (!tempchat) {
       tempchat = {
         _id: `temp_${companyId}`,
         companyName: companyName,
         userName: username,
-        logo:  avatar,
+        logo: avatar,
         messages: [],
         lastMessage: '',
         lastMessageTime: new Date(),
@@ -35,16 +35,16 @@ const PackageInfo = ({ tour,user,chats}) => {
         unreadCount: 0,
         online: false,
         companyId: companyId,
-        isTemporary: true
+        isTemporary: true,
       };
     }
     console.log(tempchat);
-    navigate('/chat', { 
-      state: { 
+    navigate('/chat', {
+      state: {
         Chat: tempchat,
         directChat: true,
-        chatType: 'comuse'
-      } 
+        chatType: 'comuse',
+      },
     });
   };
 
@@ -54,17 +54,19 @@ const PackageInfo = ({ tour,user,chats}) => {
 
       <div className="package-content">
         {/* Left Column */}
-          <h1>{tour.name}</h1>
-          <p className="package-categories">{tour.packageCategories.join(", ")}</p>
+        <h1>{tour.name}</h1>
+        <p className="package-categories">{tour.packageCategories.join(', ')}</p>
         <div className="content-column">
           <div className="info-section">
             <h2>Tour Overview</h2>
             <div className="overview-details">
               <div className="detail-item">
                 <span className="label">Duration</span>
-                <p>{tour.duration.days} days, {tour.duration.nights} nights</p>
+                <p>
+                  {tour.duration.days} days, {tour.duration.nights} nights
+                </p>
               </div>
-              
+
               <div className="detail-item">
                 <span className="label">Price</span>
                 <p>${tour.price} per person</p>
@@ -72,9 +74,9 @@ const PackageInfo = ({ tour,user,chats}) => {
             </div>
           </div>
 
-          <div className="info-section" >
+          <div className="info-section">
             <h2>Special Notes</h2>
-            <p className="special-note">{tour.specialNote || "No special notes available."}</p>
+            <p className="special-note">{tour.specialNote || 'No special notes available.'}</p>
           </div>
 
           <div className="info-section">
@@ -109,10 +111,12 @@ const PackageInfo = ({ tour,user,chats}) => {
                 <i className="fas fa-building"></i>
               </div>
               <div>
-                <h3>{tour.companyName || "Tour Company"}</h3>
-                {user&&<button onClick={handleChatClick}>
-                  <i className="fas fa-comments"></i> Chat with Company
-                </button>}
+                <h3>{tour.companyName || 'Tour Company'}</h3>
+                {user && (
+                  <button onClick={handleChatClick}>
+                    <i className="fas fa-comments"></i> Chat with Company
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -34,7 +34,7 @@ const Checkout = () => {
   });
 
   // Find the actual tour from context
-  const selectedTour = tours.find(tour => tour._id === tourId);
+  const selectedTour = tours.find((tour) => tour._id === tourId);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +50,9 @@ const Checkout = () => {
       const requestedTravelers = parseInt(formData.travelers);
 
       if (requestedTravelers > availableSeats) {
-        alert(`Sorry, only ${availableSeats} seat${availableSeats !== 1 ? 's' : ''} available for this tour.`);
+        alert(
+          `Sorry, only ${availableSeats} seat${availableSeats !== 1 ? 's' : ''} available for this tour.`
+        );
         return;
       }
     }
@@ -70,7 +72,9 @@ const Checkout = () => {
       if (selectedTour?.tourType?.group) {
         const availableSeats = selectedTour?.availableSeats || 0;
         if (requestedTravelers > availableSeats) {
-          alert(`Sorry, only ${availableSeats} seat${availableSeats !== 1 ? 's' : ''} available for this tour.`);
+          alert(
+            `Sorry, only ${availableSeats} seat${availableSeats !== 1 ? 's' : ''} available for this tour.`
+          );
           return;
         }
       }
@@ -82,7 +86,7 @@ const Checkout = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           tourId: tourId,
@@ -100,8 +104,8 @@ const Checkout = () => {
           cardHolder: formData.cardHolder,
           cardNumber: formData.cardNumber,
           totalAmount: totalAmount,
-          userId:user?.user?._id,
-        })
+          userId: user?.user?._id,
+        }),
       });
 
       const bookingData = await bookingResponse.json();
@@ -117,8 +121,8 @@ const Checkout = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          seatsToBook: requestedTravelers
-        })
+          seatsToBook: requestedTravelers,
+        }),
       });
 
       if (updateResponse.ok) {
@@ -131,19 +135,20 @@ const Checkout = () => {
           socket.emit('seatsUpdated', {
             tourId: tourId,
             availableSeats: updatedTour.tour.availableSeats,
-            travelers: requestedTravelers
+            travelers: requestedTravelers,
           });
         }
       }
 
-      alert(`Payment processed successfully! Your booking reference is: ${bookingData.booking.bookingReference}`);
+      alert(
+        `Payment processed successfully! Your booking reference is: ${bookingData.booking.bookingReference}`
+      );
 
       // Optional: Redirect to booking confirmation page
       // window.location.href = `/booking-confirmation/${bookingData.booking.bookingReference}`;
-
     } catch (err) {
-      console.error("Error confirming booking:", err);
-      alert("Failed to confirm booking. Please try again.");
+      console.error('Error confirming booking:', err);
+      alert('Failed to confirm booking. Please try again.');
     }
   };
 
@@ -197,11 +202,7 @@ const Checkout = () => {
           </div>
 
           <div className="sidebar-column">
-            <OrderSummary
-              selectedTour={selectedTour}
-              formData={formData}
-              step={step}
-            />
+            <OrderSummary selectedTour={selectedTour} formData={formData} step={step} />
           </div>
         </div>
       </div>

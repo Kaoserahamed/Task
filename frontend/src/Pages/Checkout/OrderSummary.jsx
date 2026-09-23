@@ -15,7 +15,7 @@ const OrderSummary = ({ selectedTour, formData, step }) => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -34,12 +34,12 @@ const OrderSummary = ({ selectedTour, formData, step }) => {
   // Helper function to format included meals
   const getIncludedMeals = (meals) => {
     if (!meals) return 'Not specified';
-    
+
     const includedMeals = [];
     if (meals.breakfast) includedMeals.push('Breakfast');
     if (meals.lunch) includedMeals.push('Lunch');
     if (meals.dinner) includedMeals.push('Dinner');
-    
+
     return includedMeals.length > 0 ? includedMeals.join(', ') : 'Not included';
   };
 
@@ -47,32 +47,34 @@ const OrderSummary = ({ selectedTour, formData, step }) => {
   const travelers = formData.travelers || 1;
   const basePrice = selectedTour?.price || 0;
   const subtotal = basePrice * travelers;
-  const taxRate = 0.10; // 10% tax
+  const taxRate = 0.1; // 10% tax
   const taxes = subtotal * taxRate;
   const total = subtotal + taxes;
 
   return (
     <div className="card sidebar-sticky">
       <h2 className="card-title">Order Summary</h2>
-      
+
       <div className="border-bottom">
         <h3 className="summary-package-title">{selectedTour?.name}</h3>
-        
+
         <div className="summary-row">
           <span className="summary-label">Duration:</span>
-          <span>{formatDuration(selectedTour?.duration?.days, selectedTour?.duration?.nights)}</span>
+          <span>
+            {formatDuration(selectedTour?.duration?.days, selectedTour?.duration?.nights)}
+          </span>
         </div>
-        
+
         <div className="summary-row">
           <span className="summary-label">Tour Type:</span>
           <span>{getTourTypeDisplay(selectedTour?.tourType)}</span>
         </div>
-        
+
         <div className="summary-row">
           <span className="summary-label">Start Date:</span>
           <span>{formatDate(selectedTour?.startDate)}</span>
         </div>
-        
+
         <div className="summary-row">
           <span className="summary-label">Travelers:</span>
           <span>{travelers}</span>
@@ -81,7 +83,9 @@ const OrderSummary = ({ selectedTour, formData, step }) => {
         {selectedTour?.tourType?.group && selectedTour?.maxGroupSize && (
           <div className="summary-row">
             <span className="summary-label">Available Seats:</span>
-            <span>{selectedTour?.availableSeats || 0} / {selectedTour?.maxGroupSize}</span>
+            <span>
+              {selectedTour?.availableSeats || 0} / {selectedTour?.maxGroupSize}
+            </span>
           </div>
         )}
 
@@ -122,14 +126,14 @@ const OrderSummary = ({ selectedTour, formData, step }) => {
           <span className="summary-subtotal">Price per person</span>
           <span>USD {basePrice.toFixed(2)}</span>
         </div>
-        
+
         {travelers > 1 && (
           <div className="summary-row">
             <span>× {travelers} travelers</span>
             <span>USD {subtotal.toFixed(2)}</span>
           </div>
         )}
-        
+
         <div className="summary-row">
           <span>Taxes & Fees (10%)</span>
           <span>USD {taxes.toFixed(2)}</span>
@@ -146,7 +150,7 @@ const OrderSummary = ({ selectedTour, formData, step }) => {
           <Check size={16} className="feature-icon" />
           {selectedTour?.cancellationPolicy || 'Free cancellation up to 7 days before the tour'}
         </p>
-        
+
         <p className="feature-item">
           <Check size={16} className="feature-icon" />
           24/7 customer support

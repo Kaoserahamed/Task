@@ -12,7 +12,7 @@ const AuthForm = ({ isLogin, formData, setFormData, handleSubmit }) => {
             type="text"
             placeholder="Enter your name"
             value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
         </div>
       )}
@@ -23,7 +23,7 @@ const AuthForm = ({ isLogin, formData, setFormData, handleSubmit }) => {
           type="email"
           placeholder="Enter your email"
           value={formData.email}
-          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
       </div>
 
@@ -33,7 +33,7 @@ const AuthForm = ({ isLogin, formData, setFormData, handleSubmit }) => {
           type="password"
           placeholder="Enter your password"
           value={formData.password}
-          onChange={(e) => setFormData({...formData, password: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
       </div>
 
@@ -44,7 +44,7 @@ const AuthForm = ({ isLogin, formData, setFormData, handleSubmit }) => {
             type="password"
             placeholder="Confirm your password"
             value={formData.confirmPassword}
-            onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
           />
         </div>
       )}
@@ -62,4 +62,4 @@ const AuthForm = ({ isLogin, formData, setFormData, handleSubmit }) => {
   );
 };
 
-export default AuthForm; 
+export default AuthForm;

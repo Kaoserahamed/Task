@@ -8,7 +8,7 @@ import {
   FaCalendar,
   FaCheckCircle,
   FaInfoCircle,
-  FaTimes
+  FaTimes,
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './Companies.css';
@@ -32,11 +32,11 @@ const Companies = () => {
       const token = localStorage.getItem('admin-token');
       const response = await fetch(`${API_BASE_URL}/api/companies`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await response.json();
-      
+
       if (data.success) {
         setCompanies(data.companies);
       } else {
@@ -90,21 +90,28 @@ const Companies = () => {
         {companies.map((company) => (
           <div key={company._id} className="company-card">
             <h2>{company.name}</h2>
-            <span className={`company-status status-${company.verificationStatus?.toLowerCase() || 'pending'}`}>
+            <span
+              className={`company-status status-${company.verificationStatus?.toLowerCase() || 'pending'}`}
+            >
               {company.verificationStatus || 'Pending'}
             </span>
-            
+
             <div className="company-info">
-              <p><FaIdCard /> License: {company.licenseNumber}</p>
-              <p><FaEnvelope /> {company.email}</p>
-              <p><FaPhone /> {company.phone}</p>
-              <p><FaMapMarkerAlt /> {company.address}</p>
+              <p>
+                <FaIdCard /> License: {company.licenseNumber}
+              </p>
+              <p>
+                <FaEnvelope /> {company.email}
+              </p>
+              <p>
+                <FaPhone /> {company.phone}
+              </p>
+              <p>
+                <FaMapMarkerAlt /> {company.address}
+              </p>
             </div>
 
-            <button 
-              className="details-button"
-              onClick={() => handleShowDetails(company)}
-            >
+            <button className="details-button" onClick={() => handleShowDetails(company)}>
               <FaInfoCircle /> View Details
             </button>
           </div>
@@ -114,7 +121,7 @@ const Companies = () => {
       {/* Company Details Modal */}
       <div className={`company-modal ${showModal ? 'show' : ''}`} onClick={handleCloseModal}>
         {selectedCompany && (
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-button" onClick={handleCloseModal}>
               <FaTimes />
             </button>
@@ -231,7 +238,9 @@ const Companies = () => {
                 <div className="detail-item">
                   <FaCheckCircle />
                   <span className="detail-label">Verification Status:</span>
-                  <span className={`status-${selectedCompany.verificationStatus?.toLowerCase() || 'pending'}`}>
+                  <span
+                    className={`status-${selectedCompany.verificationStatus?.toLowerCase() || 'pending'}`}
+                  >
                     {selectedCompany.verificationStatus || 'Pending'}
                   </span>
                 </div>
@@ -242,20 +251,21 @@ const Companies = () => {
                 </div>
               </div>
 
-              {selectedCompany.verificationDocuments && selectedCompany.verificationDocuments.length > 0 && (
-                <div className="detail-section">
-                  <h3>Verification Documents</h3>
-                  <div className="documents-grid">
-                    {selectedCompany.verificationDocuments.map((doc, index) => (
-                      <div key={index} className="document-item">
-                        <a href={doc} target="_blank" rel="noopener noreferrer">
-                          Document {index + 1}
-                        </a>
-                      </div>
-                    ))}
+              {selectedCompany.verificationDocuments &&
+                selectedCompany.verificationDocuments.length > 0 && (
+                  <div className="detail-section">
+                    <h3>Verification Documents</h3>
+                    <div className="documents-grid">
+                      {selectedCompany.verificationDocuments.map((doc, index) => (
+                        <div key={index} className="document-item">
+                          <a href={doc} target="_blank" rel="noopener noreferrer">
+                            Document {index + 1}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
         )}

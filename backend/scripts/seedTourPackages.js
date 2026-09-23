@@ -12,26 +12,26 @@ const Company = require('../models/company');
 
 const sampleTours = [
   {
-    name: 'Amazing Cox\'s Bazar Beach Tour',
+    name: "Amazing Cox's Bazar Beach Tour",
     packageCategories: ['Beach', 'Relaxation'],
     tourType: {
       single: true,
-      group: true
+      group: true,
     },
     duration: {
       days: 3,
-      nights: 2
+      nights: 2,
     },
     startDate: new Date('2026-10-01'),
     endDate: new Date('2026-10-03'),
     meals: {
       breakfast: true,
       lunch: true,
-      dinner: true
+      dinner: true,
     },
     transportation: {
       type: 'AC Bus',
-      details: 'Comfortable AC bus with reclining seats'
+      details: 'Comfortable AC bus with reclining seats',
     },
     tourGuide: true,
     price: 8500,
@@ -39,20 +39,20 @@ const sampleTours = [
     availableSeats: 40,
     destinations: [
       {
-        name: 'Cox\'s Bazar Beach',
-        description: 'World\'s longest natural sea beach with stunning sunset views',
-        stayDuration: '2 nights'
+        name: "Cox's Bazar Beach",
+        description: "World's longest natural sea beach with stunning sunset views",
+        stayDuration: '2 nights',
       },
       {
         name: 'Inani Beach',
         description: 'Pristine beach with crystal clear water and coral stones',
-        stayDuration: '4 hours'
+        stayDuration: '4 hours',
       },
       {
         name: 'Himchari National Park',
         description: 'Scenic waterfalls and lush green hills',
-        stayDuration: '3 hours'
-      }
+        stayDuration: '3 hours',
+      },
     ],
     includes: [
       'Hotel accommodation (2 nights)',
@@ -60,44 +60,46 @@ const sampleTours = [
       'AC transportation',
       'Professional tour guide',
       'Entry fees to all attractions',
-      'Travel insurance'
+      'Travel insurance',
     ],
     excludes: [
       'Personal expenses',
       'Water sports activities',
       'Additional snacks and beverages',
-      'Tips and gratuities'
+      'Tips and gratuities',
     ],
-    specialNote: 'Bring comfortable walking shoes, sunscreen, and swimwear. Swimming is allowed under supervision.',
-    cancellationPolicy: 'Free cancellation up to 7 days before departure. 50% refund for 3-7 days, no refund within 3 days.',
+    specialNote:
+      'Bring comfortable walking shoes, sunscreen, and swimwear. Swimming is allowed under supervision.',
+    cancellationPolicy:
+      'Free cancellation up to 7 days before departure. 50% refund for 3-7 days, no refund within 3 days.',
     status: 'approved',
     weather: {
-      city: 'Cox\'s Bazar',
+      city: "Cox's Bazar",
       condition: 'Sunny',
-      temp: 28
-    }
+      temp: 28,
+    },
   },
   {
     name: 'Sundarbans Mangrove Forest Adventure',
     packageCategories: ['Adventure', 'Wildlife', 'Nature'],
     tourType: {
       single: false,
-      group: true
+      group: true,
     },
     duration: {
       days: 4,
-      nights: 3
+      nights: 3,
     },
     startDate: new Date('2026-11-15'),
     endDate: new Date('2026-11-18'),
     meals: {
       breakfast: true,
       lunch: true,
-      dinner: true
+      dinner: true,
     },
     transportation: {
       type: 'Boat',
-      details: 'Traditional wooden boat with sleeping arrangements'
+      details: 'Traditional wooden boat with sleeping arrangements',
     },
     tourGuide: true,
     price: 12000,
@@ -107,18 +109,18 @@ const sampleTours = [
       {
         name: 'Sundarbans National Park',
         description: 'UNESCO World Heritage Site, home to Royal Bengal Tigers',
-        stayDuration: '3 nights'
+        stayDuration: '3 nights',
       },
       {
         name: 'Kotka Beach',
         description: 'Secluded beach surrounded by mangrove forest',
-        stayDuration: '4 hours'
+        stayDuration: '4 hours',
       },
       {
         name: 'Jamtola Beach',
         description: 'Beautiful beach with diverse wildlife viewing opportunities',
-        stayDuration: '3 hours'
-      }
+        stayDuration: '3 hours',
+      },
     ],
     includes: [
       'Boat accommodation (3 nights)',
@@ -126,44 +128,45 @@ const sampleTours = [
       'Forest entry permits',
       'Experienced forest guide',
       'Life jackets and safety equipment',
-      'Binoculars for wildlife viewing'
+      'Binoculars for wildlife viewing',
     ],
     excludes: [
       'Personal expenses',
       'Camera fees at forest',
       'Alcoholic beverages',
-      'Travel to launch terminal'
+      'Travel to launch terminal',
     ],
-    specialNote: 'This is an adventure tour with basic amenities. Bring mosquito repellent, flashlight, and warm clothes for nights.',
+    specialNote:
+      'This is an adventure tour with basic amenities. Bring mosquito repellent, flashlight, and warm clothes for nights.',
     cancellationPolicy: 'Non-refundable within 15 days of departure due to permit arrangements.',
     status: 'approved',
     weather: {
       city: 'Khulna',
       condition: 'Partly Cloudy',
-      temp: 26
-    }
+      temp: 26,
+    },
   },
   {
     name: 'Sajek Valley Hill Trek',
     packageCategories: ['Mountain', 'Adventure', 'Trekking'],
     tourType: {
       single: true,
-      group: true
+      group: true,
     },
     duration: {
       days: 2,
-      nights: 1
+      nights: 1,
     },
     startDate: new Date('2026-09-20'),
     endDate: new Date('2026-09-21'),
     meals: {
       breakfast: true,
       lunch: true,
-      dinner: true
+      dinner: true,
     },
     transportation: {
       type: 'Jeep',
-      details: 'Local 4WD jeep for hilly terrain'
+      details: 'Local 4WD jeep for hilly terrain',
     },
     tourGuide: true,
     price: 6500,
@@ -173,18 +176,18 @@ const sampleTours = [
       {
         name: 'Sajek Valley',
         description: 'Highest peak in Rangamati with breathtaking cloud views',
-        stayDuration: '1 night'
+        stayDuration: '1 night',
       },
       {
         name: 'Konglak Hill',
         description: 'Panoramic viewpoint for sunrise and sunset',
-        stayDuration: '2 hours'
+        stayDuration: '2 hours',
       },
       {
         name: 'Ruilui Para',
         description: 'Traditional tribal village with cultural experience',
-        stayDuration: '2 hours'
-      }
+        stayDuration: '2 hours',
+      },
     ],
     includes: [
       'Cottage accommodation',
@@ -192,42 +195,44 @@ const sampleTours = [
       'Jeep transportation',
       'Local guide',
       'Bonfire evening',
-      'Tribal cultural program'
+      'Tribal cultural program',
     ],
     excludes: [
       'Dhaka to Khagrachari transport',
       'Personal expenses',
       'Photography at tribal areas (requires permission)',
-      'Adventure activities like zip-lining'
+      'Adventure activities like zip-lining',
     ],
-    specialNote: 'Roads are challenging. Not recommended for those with motion sickness or heart conditions. Mobile network is limited.',
-    cancellationPolicy: 'Full refund if cancelled 5+ days before. 50% refund for 2-5 days. No refund within 48 hours.',
+    specialNote:
+      'Roads are challenging. Not recommended for those with motion sickness or heart conditions. Mobile network is limited.',
+    cancellationPolicy:
+      'Full refund if cancelled 5+ days before. 50% refund for 2-5 days. No refund within 48 hours.',
     status: 'approved',
     weather: {
       city: 'Rangamati',
       condition: 'Misty',
-      temp: 22
-    }
+      temp: 22,
+    },
   },
   {
     name: 'Historical Dhaka City Tour',
     packageCategories: ['Historical', 'Cultural', 'City'],
     tourType: {
       single: true,
-      group: true
+      group: true,
     },
     duration: {
       days: 1,
-      nights: 0
+      nights: 0,
     },
     meals: {
       breakfast: false,
       lunch: true,
-      dinner: false
+      dinner: false,
     },
     transportation: {
       type: 'AC Car',
-      details: 'Private AC car with professional driver'
+      details: 'Private AC car with professional driver',
     },
     tourGuide: true,
     price: 2500,
@@ -235,72 +240,74 @@ const sampleTours = [
       {
         name: 'Lalbagh Fort',
         description: 'Mughal fort from 17th century with stunning architecture',
-        stayDuration: '1.5 hours'
+        stayDuration: '1.5 hours',
       },
       {
         name: 'Ahsan Manzil',
         description: 'Pink Palace - Historic nawab residence',
-        stayDuration: '1 hour'
+        stayDuration: '1 hour',
       },
       {
         name: 'Sadarghat River Terminal',
         description: 'Bustling river port with colorful boats',
-        stayDuration: '45 minutes'
+        stayDuration: '45 minutes',
       },
       {
         name: 'Star Mosque',
         description: 'Beautiful mosque with star-studded mosaic decorations',
-        stayDuration: '30 minutes'
+        stayDuration: '30 minutes',
       },
       {
         name: 'Dhakeshwari Temple',
         description: 'National Hindu temple with rich history',
-        stayDuration: '45 minutes'
-      }
+        stayDuration: '45 minutes',
+      },
     ],
     includes: [
       'AC car transportation',
       'Professional guide',
       'Lunch at traditional restaurant',
       'Entry fees to all monuments',
-      'Bottled water'
+      'Bottled water',
     ],
     excludes: [
       'Breakfast and dinner',
       'Shopping expenses',
       'Boat ride at Sadarghat',
-      'Photography fees at some locations'
+      'Photography fees at some locations',
     ],
-    specialNote: 'Comfortable walking shoes recommended. Modest dress required for religious sites.',
-    cancellationPolicy: 'Free cancellation up to 24 hours before tour. No refund for same-day cancellation.',
+    specialNote:
+      'Comfortable walking shoes recommended. Modest dress required for religious sites.',
+    cancellationPolicy:
+      'Free cancellation up to 24 hours before tour. No refund for same-day cancellation.',
     status: 'approved',
     weather: {
       city: 'Dhaka',
       condition: 'Warm',
-      temp: 32
-    }
+      temp: 32,
+    },
   },
   {
     name: 'Sylhet Tea Garden & Waterfall Tour',
     packageCategories: ['Nature', 'Relaxation', 'Photography'],
     tourType: {
       single: true,
-      group: true
+      group: true,
     },
     duration: {
       days: 3,
-      nights: 2
+      nights: 2,
     },
     startDate: new Date('2026-12-10'),
     endDate: new Date('2026-12-12'),
     meals: {
       breakfast: true,
       lunch: true,
-      dinner: true
+      dinner: true,
     },
     transportation: {
       type: 'AC Minibus',
-      details: 'Comfortable AC minibus for group travel'
+      details: 'Comfortable AC minibus for group travel',
     },
     tourGuide: true,
     price: 9500,
@@ -310,28 +317,28 @@ const sampleTours = [
       {
         name: 'Jaflong',
         description: 'Crystal clear Piyain River with stone collection sites',
-        stayDuration: '4 hours'
+        stayDuration: '4 hours',
       },
       {
         name: 'Ratargul Swamp Forest',
         description: 'Freshwater swamp forest - Amazon of Bangladesh',
-        stayDuration: '3 hours'
+        stayDuration: '3 hours',
       },
       {
         name: 'Madhabkunda Waterfall',
         description: 'Largest waterfall in Bangladesh',
-        stayDuration: '3 hours'
+        stayDuration: '3 hours',
       },
       {
         name: 'Tea Gardens',
         description: 'Endless green tea plantations with photo opportunities',
-        stayDuration: '2 hours'
+        stayDuration: '2 hours',
       },
       {
         name: 'Lalakhal',
         description: 'Blue-green river surrounded by hills',
-        stayDuration: '3 hours'
-      }
+        stayDuration: '3 hours',
+      },
     ],
     includes: [
       'Hotel accommodation (2 nights)',
@@ -339,23 +346,25 @@ const sampleTours = [
       'AC transportation',
       'Professional guide',
       'Boat rides at Ratargul and Lalakhal',
-      'Entry fees'
+      'Entry fees',
     ],
     excludes: [
       'Personal expenses',
       'Additional boat rides',
       'Shopping at local markets',
-      'Tips for boat operators'
+      'Tips for boat operators',
     ],
-    specialNote: 'Best season: October to March. Bring rain gear if traveling during monsoon. Swimming is not allowed at waterfall.',
-    cancellationPolicy: 'Full refund 10+ days before. 60% refund 5-10 days. 30% refund 2-5 days. No refund within 48 hours.',
+    specialNote:
+      'Best season: October to March. Bring rain gear if traveling during monsoon. Swimming is not allowed at waterfall.',
+    cancellationPolicy:
+      'Full refund 10+ days before. 60% refund 5-10 days. 30% refund 2-5 days. No refund within 48 hours.',
     status: 'approved',
     weather: {
       city: 'Sylhet',
       condition: 'Pleasant',
-      temp: 24
-    }
-  }
+      temp: 24,
+    },
+  },
 ];
 
 async function seedTourPackages() {
@@ -371,7 +380,7 @@ async function seedTourPackages() {
     // Find or create a demo company
     console.log('🏢 Finding/Creating demo company...');
     let demoCompany = await Company.findOne({ email: DEMO_COMPANY_EMAIL });
-    
+
     if (!demoCompany) {
       const demoCompanyPassword = process.env.DEMO_COMPANY_PASSWORD;
       if (!demoCompanyPassword) {
@@ -381,7 +390,7 @@ async function seedTourPackages() {
       const bcrypt = require('bcryptjs');
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(demoCompanyPassword, salt);
-      
+
       demoCompany = await Company.create({
         name: 'Demo Travel Company',
         email: DEMO_COMPANY_EMAIL,
@@ -391,7 +400,7 @@ async function seedTourPackages() {
         website: 'https://demotravels.com',
         address: '123 Demo Street, Dhaka, Bangladesh',
         isVerified: true,
-        verificationStatus: 'approved'
+        verificationStatus: 'approved',
       });
       console.log('✅ Demo company created');
     } else {
@@ -405,15 +414,15 @@ async function seedTourPackages() {
     console.log('🗑️  Cleared existing demo tours\n');
 
     // Add company info to all tours
-    const toursWithCompany = sampleTours.map(tour => ({
+    const toursWithCompany = sampleTours.map((tour) => ({
       ...tour,
       companyId: demoCompany._id,
       companyName: demoCompany.name,
       images: [
         'https://images.unsplash.com/photo-1506905925346-21bda4d32df4',
         'https://images.unsplash.com/photo-1488646953014-85cb44e25828',
-        'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1'
-      ]
+        'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1',
+      ],
     }));
 
     // Insert tours
@@ -424,7 +433,7 @@ async function seedTourPackages() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('🎉 Sample tour packages seeded successfully!');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-    
+
     console.log('📋 Created Tours:');
     createdTours.forEach((tour, index) => {
       console.log(`${index + 1}. ${tour.name}`);

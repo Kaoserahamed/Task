@@ -19,7 +19,7 @@ const PopularTours = () => {
         const ratingMap = {};
         const countMap = {};
 
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           const tourId = review.tourId;
           if (!ratingMap[tourId]) {
             ratingMap[tourId] = 0;
@@ -36,7 +36,7 @@ const PopularTours = () => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error("Error fetching average ratings:", err);
+        console.error('Error fetching average ratings:', err);
       }
     };
 
@@ -56,22 +56,14 @@ const PopularTours = () => {
   // 🔢 Calculate popularity score, filter, and sort
   const sortedAndFilteredTours = useMemo(() => {
     // Step 1: Compute popularity score
-    const scoredTours = tours.map(tour => {
-      const {
-        bookings = 0,
-        views = 0,
-        wishlistCount = 0,
-        rating = {}
-      } = tour.popularity || {};
+    const scoredTours = tours.map((tour) => {
+      const { bookings = 0, views = 0, wishlistCount = 0, rating = {} } = tour.popularity || {};
 
       // Use fetched average rating or fallback to tour's rating
       const averageRating = averageRatings[tour._id] || rating.average || 0;
 
       const popularityScore =
-        (bookings * 0.5) +
-        (averageRating * 10 * 0.2) +
-        (views * 0.2) +
-        (wishlistCount * 0.1);
+        bookings * 0.5 + averageRating * 10 * 0.2 + views * 0.2 + wishlistCount * 0.1;
 
       // Add completed status to tour object
       const isCompleted = isTourCompleted(tour.startDate);
@@ -80,13 +72,13 @@ const PopularTours = () => {
     });
 
     // Step 2: Filter by search query
-    const searchedTours = scoredTours.filter(tour => {
+    const searchedTours = scoredTours.filter((tour) => {
       if (!searchQuery.trim()) return true; // Show all if no search query
-      
+
       const searchTerm = searchQuery.toLowerCase().trim();
       const name = (tour.name || '').toString().toLowerCase();
       const location = (tour.location || '').toString().toLowerCase();
-      
+
       // Handle packageCategories which might be an array or string
       let category = '';
       if (tour.packageCategories) {
@@ -96,10 +88,10 @@ const PopularTours = () => {
           category = tour.packageCategories.toString().toLowerCase();
         }
       }
-      
-      return name.includes(searchTerm) || 
-             location.includes(searchTerm) || 
-             category.includes(searchTerm);
+
+      return (
+        name.includes(searchTerm) || location.includes(searchTerm) || category.includes(searchTerm)
+      );
     });
 
     // Step 3: Sort by popularity score descending
@@ -127,7 +119,7 @@ const PopularTours = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-            <button 
+            <button
               className="clear-search-btn"
               onClick={() => setSearchQuery('')}
               title="Clear search"
@@ -139,12 +131,10 @@ const PopularTours = () => {
       </div>
 
       {/* Results Summary */}
-      <div className="popular-results-summary">
-        
-      </div>
+      <div className="popular-results-summary"></div>
 
       {/* Packages Grid */}
-      <div className='popular-packages-grid'>
+      <div className="popular-packages-grid">
         {loading ? (
           <div className="popular-loading-spinner">Loading packages...</div>
         ) : sortedAndFilteredTours.length === 0 && searchQuery ? (

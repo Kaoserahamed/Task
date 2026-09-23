@@ -43,11 +43,21 @@
   font-size: 1.5rem;
 }
 
-.stat-icon.money { background: #2ecc71; }
-.stat-icon.bookings { background: #f1c40f; }
-.stat-icon.rating { background: #e74c3c; }
-.stat-icon.customers { background: #9b59b6; }
-.stat-icon.completed { background: #1abc9c; }
+.stat-icon.money {
+  background: #2ecc71;
+}
+.stat-icon.bookings {
+  background: #f1c40f;
+}
+.stat-icon.rating {
+  background: #e74c3c;
+}
+.stat-icon.customers {
+  background: #9b59b6;
+}
+.stat-icon.completed {
+  background: #1abc9c;
+}
 
 .stat-details h3 {
   color: #7f8c8d;

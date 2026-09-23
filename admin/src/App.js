@@ -23,19 +23,72 @@ function App() {
       <Router>
         <div className="app">
           <Navbar />
-          
+
           <div className="main-content">
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<ProtectedRoute>  <Dashboard />  </ProtectedRoute>} />
-              <Route path="/tour-monitoring" element={<ProtectedRoute>  <TourMonitoring /> </ProtectedRoute> } />
-              <Route path="/admin-support" element={<ProtectedRoute>  <AdminSupport /> </ProtectedRoute> } />
-              <Route path="/settings" element={<ProtectedRoute>  <Settings /> </ProtectedRoute> } />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    {' '}
+                    <Dashboard />{' '}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tour-monitoring"
+                element={
+                  <ProtectedRoute>
+                    {' '}
+                    <TourMonitoring />{' '}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin-support"
+                element={
+                  <ProtectedRoute>
+                    {' '}
+                    <AdminSupport />{' '}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    {' '}
+                    <Settings />{' '}
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/destination-search" element={<DestinationSearch />} />
               <Route path="/reports" element={<Reports />} />
-              <Route path="/admin/registration-request/:id" element={<ProtectedRoute><RegistrationRequest /></ProtectedRoute>} />
-              <Route path='/admin/package-details/:id' element={<ProtectedRoute><PackageDetailsAndApprove /></ProtectedRoute>} />
-              <Route path='/admin/companies' element={<ProtectedRoute><Companies /></ProtectedRoute>} />
+              <Route
+                path="/admin/registration-request/:id"
+                element={
+                  <ProtectedRoute>
+                    <RegistrationRequest />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/package-details/:id"
+                element={
+                  <ProtectedRoute>
+                    <PackageDetailsAndApprove />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/companies"
+                element={
+                  <ProtectedRoute>
+                    <Companies />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>

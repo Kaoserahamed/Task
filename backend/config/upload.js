@@ -20,13 +20,13 @@ if (config.isVercel || config.nodeEnv === 'production') {
     },
     filename: function (req, file, cb) {
       cb(null, Date.now() + '-' + file.originalname);
-    }
+    },
   });
 
-  upload = multer({ 
-    storage: storage,
+  upload = multer({
+    storage,
     limits: {
-      fileSize: 5 * 1024 * 1024 // 5MB limit
+      fileSize: 5 * 1024 * 1024, // 5MB limit
     },
     fileFilter: (req, file, cb) => {
       const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -38,7 +38,7 @@ if (config.isVercel || config.nodeEnv === 'production') {
       } else {
         cb(new Error('Only image files are allowed!'));
       }
-    }
+    },
   });
 }
 

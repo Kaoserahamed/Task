@@ -1,6 +1,6 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import "./PackageInfo.css";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './PackageInfo.css';
 
 const PackageInfo = ({ tour, companyId, companyName }) => {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ const PackageInfo = ({ tour, companyId, companyName }) => {
     <div className="admin-package-info">
       {/* Company Name (if provided) */}
       {companyName && (
-        <div className="admin-company-name" style={{marginBottom: '1rem'}}>
+        <div className="admin-company-name" style={{ marginBottom: '1rem' }}>
           <i className="fas fa-building"></i> {companyName}
         </div>
       )}
@@ -18,13 +18,15 @@ const PackageInfo = ({ tour, companyId, companyName }) => {
         {/* Left Column */}
         <div>
           <h1>{tour.name}</h1>
-          <p className="admin-package-categories">{tour.packageCategories.join(", ")}</p>
+          <p className="admin-package-categories">{tour.packageCategories.join(', ')}</p>
           <div className="admin-info-section">
             <h2>Tour Overview</h2>
             <div className="admin-overview-details">
               <div className="admin-detail-item">
                 <span className="admin-label">Duration</span>
-                <p>{tour.duration.days} days, {tour.duration.nights} nights</p>
+                <p>
+                  {tour.duration.days} days, {tour.duration.nights} nights
+                </p>
               </div>
               <div className="admin-detail-item">
                 <span className="admin-label">Group Size</span>
@@ -37,9 +39,11 @@ const PackageInfo = ({ tour, companyId, companyName }) => {
             </div>
           </div>
 
-          <div className="admin-info-section" >
+          <div className="admin-info-section">
             <h2>Special Notes</h2>
-            <p className="admin-special-note">{tour.specialNote || "No special notes available."}</p>
+            <p className="admin-special-note">
+              {tour.specialNote || 'No special notes available.'}
+            </p>
           </div>
 
           <div className="admin-info-section">

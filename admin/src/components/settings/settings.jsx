@@ -20,8 +20,8 @@ const Settings = () => {
     notificationSettings: {
       emailNotifications: true,
       chatNotifications: true,
-      systemNotifications: true
-    }
+      systemNotifications: true,
+    },
   });
   const [profilePassword, setProfilePassword] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
@@ -34,18 +34,18 @@ const Settings = () => {
       setProfileLoading(true);
       try {
         const res = await fetch(`${API_BASE_URL}/api/admin/profile`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('admin-token')}` }
+          headers: { Authorization: `Bearer ${localStorage.getItem('admin-token')}` },
         });
         const data = await res.json();
         if (data.success && data.profile) {
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
             ...data.profile,
             email: user?.email || '',
-            image: data.profile.image || ''
+            image: data.profile.image || '',
           }));
         } else {
-          setFormData(prev => ({ ...prev, email: user?.email || '' }));
+          setFormData((prev) => ({ ...prev, email: user?.email || '' }));
         }
       } catch (e) {
         setMessage({ type: 'error', text: 'Failed to load profile' });
@@ -58,14 +58,14 @@ const Settings = () => {
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       // For demo: just store local URL. In production, upload to server and store path.
-      setFormData(prev => ({ ...prev, image: URL.createObjectURL(file) }));
+      setFormData((prev) => ({ ...prev, image: URL.createObjectURL(file) }));
     }
   };
 
@@ -83,7 +83,7 @@ const Settings = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+          Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
         },
         body: JSON.stringify({
           name: formData.name,
@@ -93,8 +93,8 @@ const Settings = () => {
           image: formData.image,
           tradeLicenseNo: formData.tradeLicenseNo,
           bankAccountNo: formData.bankAccountNo,
-          password: profilePassword
-        })
+          password: profilePassword,
+        }),
       });
       const data = await res.json();
       if (data.success) {
@@ -113,20 +113,20 @@ const Settings = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleNotificationChange = (e) => {
     const { name, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       notificationSettings: {
         ...prev.notificationSettings,
-        [name]: checked
-      }
+        [name]: checked,
+      },
     }));
   };
 
@@ -142,22 +142,22 @@ const Settings = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+          Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
         },
         body: JSON.stringify({
           currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword
-        })
+          newPassword: formData.newPassword,
+        }),
       });
 
       const data = await response.json();
       if (response.ok) {
         setMessage({ type: 'success', text: 'Password updated successfully' });
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           currentPassword: '',
           newPassword: '',
-          confirmPassword: ''
+          confirmPassword: '',
         }));
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to update password' });
@@ -174,9 +174,9 @@ const Settings = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+          Authorization: `Bearer ${localStorage.getItem('admin-token')}`,
         },
-        body: JSON.stringify(formData.notificationSettings)
+        body: JSON.stringify(formData.notificationSettings),
       });
 
       const data = await response.json();
@@ -193,12 +193,8 @@ const Settings = () => {
   return (
     <div className="settings-container">
       <h2>Admin Settings</h2>
-      
-      {message.text && (
-        <div className={`message ${message.type}`}>
-          {message.text}
-        </div>
-      )}
+
+      {message.text && <div className={`message ${message.type}`}>{message.text}</div>}
 
       <div className="settings-section">
         <h3>Profile</h3>
@@ -211,7 +207,13 @@ const Settings = () => {
                 src={formData.image || 'https://ui-avatars.com/api/?name=Admin'}
                 alt="Profile"
                 className="profile-image"
-                style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #eee' }}
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '2px solid #eee',
+                }}
               />
               {profileEdit && (
                 <input
@@ -236,12 +238,7 @@ const Settings = () => {
             </div>
             <div className="form-group">
               <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                disabled
-              />
+              <input type="email" name="email" value={formData.email} disabled />
             </div>
             <div className="form-group">
               <label>Phone</label>
@@ -294,12 +291,14 @@ const Settings = () => {
               />
             </div>
             <div className="form-group">
-              <label>Password <span style={{color:'#e74c3c'}}>*</span></label>
+              <label>
+                Password <span style={{ color: '#e74c3c' }}>*</span>
+              </label>
               <input
                 type="password"
                 name="profilePassword"
                 value={profilePassword}
-                onChange={e => setProfilePassword(e.target.value)}
+                onChange={(e) => setProfilePassword(e.target.value)}
                 required
                 disabled={!profileEdit}
                 autoComplete="current-password"
@@ -308,11 +307,22 @@ const Settings = () => {
             <div style={{ display: 'flex', gap: 12 }}>
               {profileEdit ? (
                 <>
-                  <button type="submit" className="btn-primary">Save</button>
-                  <button type="button" className="btn-primary" style={{ background: '#aaa' }} onClick={() => setProfileEdit(false)}>Cancel</button>
+                  <button type="submit" className="btn-primary">
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    style={{ background: '#aaa' }}
+                    onClick={() => setProfileEdit(false)}
+                  >
+                    Cancel
+                  </button>
                 </>
               ) : (
-                <button type="button" className="btn-primary" onClick={() => setProfileEdit(true)}>Edit Profile</button>
+                <button type="button" className="btn-primary" onClick={() => setProfileEdit(true)}>
+                  Edit Profile
+                </button>
               )}
             </div>
           </form>
@@ -421,4 +431,3 @@ const Settings = () => {
 };
 
 export default Settings;
-

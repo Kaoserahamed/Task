@@ -1,95 +1,86 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ChatList from './Chat/ChatList';
 import ChatWindow from './Chat/ChatWindow';
-import {useAuth} from  '../../Context/AuthContext'
+import { useAuth } from '../../Context/AuthContext';
 import socket from '../../socket';
 import './ChatPage.css';
 import API_BASE_URL from '../../config/api';
-const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; 
+const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1';
 const ChatPage = () => {
   const [chatType, setChatType] = useState('comuse'); // 'companies' or 'admin'
   const [selectedChat, setSelectedChat] = useState(null);
-  const [chats,setChats]=useState([]);
- 
-  const {company} = useAuth();
-  
-  console.log("this is",company); 
+  const [chats, setChats] = useState([]);
+
+  const { company } = useAuth();
+
+  console.log('this is', company);
   useEffect(() => {
     if (company) {
-      console.log("Current logged in user:", company);
+      console.log('Current logged in user:', company);
     }
   }, [company]);
   const companyId = company?.company?._id;
   const companyname = company?.company?.name;
   const username = company?.company?.userName;
-  console.log(companyId," + ",companyname);
-  console.log('token is ',company.token);
-  let response,responseData;
-  useEffect(()=>{
-    const fetchChats=async()=>{
-
+  console.log(companyId, ' + ', companyname);
+  console.log('token is ', company.token);
+  let response, responseData;
+  useEffect(() => {
+    const fetchChats = async () => {
       try {
-        console.log("useEffect triggered. Token:", company.token, "Company ID:", companyId);
-        const authtoken=localStorage.getItem('company-token');
-        console.log("token",authtoken);
-        if(!authtoken){
+        console.log('useEffect triggered. Token:', company.token, 'Company ID:', companyId);
+        const authtoken = localStorage.getItem('company-token');
+        console.log('token', authtoken);
+        if (!authtoken) {
           throw new Error('No token found');
         }
-        console.log(authtoken)
-         response=await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'adcom'}`
-, {
+        console.log(authtoken);
+        response = await fetch(`${API_BASE_URL}/api/chat/get-chat/${companyId}?query=${'adcom'}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authtoken}`
+            Authorization: `Bearer ${authtoken}`,
           },
-      
-        }
-         )
-        responseData=await response.json();
+        });
+        responseData = await response.json();
         console.log(responseData);
-        if(!response.ok){
+        if (!response.ok) {
           throw new Error('Failed to fetch chats');
         }
         setChats(responseData || []);
-      }
-      catch(error){
-        console.error('Error fetching chats:',error);
+      } catch (error) {
+        console.error('Error fetching chats:', error);
         setChats([]);
       }
-                         
-    }
+    };
     if (companyId) {
       fetchChats();
     }
-  },[companyId]);
-console.log("finally ok:  "+chats);
+  }, [companyId]);
+  console.log('finally ok:  ' + chats);
   // Admin chat data
   let adminChat;
-  if(chats.length>0)
-  {
-    
-    adminChat=chats[0];
-   console.log(adminChat);
+  if (chats.length > 0) {
+    adminChat = chats[0];
+    console.log(adminChat);
+  } else {
+    adminChat = {
+      _id: null,
+      messages: [],
+      companyId: companyId,
+      adminId: DEFAULT_ADMIN_ID,
+      companyName: companyname,
+      chatType: 'adcom',
+      name: 'Admin Support',
+      avatar: '/admin-avatar.png',
+      online: true,
+    };
   }
-else
-   {adminChat = {
-    _id: null,
-    messages:[],
-    companyId:companyId,
-    adminId:DEFAULT_ADMIN_ID,
-    companyName:companyname,
-    chatType:'adcom',
-    name: 'Admin Support',
-    avatar: '/admin-avatar.png',
-    online: true
-  };
-}
 
   return (
     <div className="chat-page">
       <div className="chat-type-selector">
-        <button 
+        <button
           className={`type-btn ${chatType === 'comuse' ? 'active' : ''}`}
           onClick={() => {
             setChatType('comuse');
@@ -98,7 +89,7 @@ else
         >
           Users
         </button>
-        <button 
+        <button
           className={`type-btn ${chatType === 'adcom' ? 'active' : ''}`}
           onClick={() => {
             setChatType('adcom');
@@ -113,7 +104,7 @@ else
         {chatType === 'comuse' ? (
           <>
             <div className={selectedChat ? 'chat-list-sidebar' : 'chat-list-full'}>
-              <ChatList 
+              <ChatList
                 chatType={chatType}
                 selectedChat={selectedChat}
                 setSelectedChat={setSelectedChat}
@@ -125,19 +116,18 @@ else
               />
             </div>
             {selectedChat && (
-              <ChatWindow 
+              <ChatWindow
                 chatType={chatType}
                 selectedChat={selectedChat}
                 companyname={companyname}
                 username={username}
                 companyId={companyId}
-             
               />
             )}
           </>
         ) : (
           <div className="admin-chat-container">
-            <ChatWindow 
+            <ChatWindow
               chatType={chatType}
               selectedChat={adminChat}
               companyId={companyId}
@@ -150,4 +140,4 @@ else
   );
 };
 
-export default ChatPage; 
+export default ChatPage;

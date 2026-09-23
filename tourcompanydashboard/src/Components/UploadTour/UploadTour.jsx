@@ -1,53 +1,55 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './UploadTour.css';  // Import the CSS file for styling
+import './UploadTour.css'; // Import the CSS file for styling
 import { useAuth } from '../../Context/AuthContext';
 import API_BASE_URL from '../../config/api';
 
 const UploadTour = () => {
-  const {company}=useAuth();
+  const { company } = useAuth();
   useEffect(() => {
     if (company) {
-      console.log("Current logged in company:", company);
-      console.log("Company ID:", company._id);
+      console.log('Current logged in company:', company);
+      console.log('Company ID:', company._id);
     }
   }, [company]);
-const companyId=company.company._id;
-const companyName=company.company.name;
-const navigate = useNavigate();
-console.log(companyName);
+  const companyId = company.company._id;
+  const companyName = company.company.name;
+  const navigate = useNavigate();
+  console.log(companyName);
   const [tourDetails, setTourDetails] = useState({
     name: '',
     packageCategories: [],
     customCategory: '',
     tourType: {
       single: false, // Remove this line if not needed elsewhere
-      group: true
+      group: true,
     },
     duration: {
       days: '',
-      nights: ''
+      nights: '',
     },
     startDate: '',
     endDate: '',
     meals: {
       breakfast: false,
       lunch: false,
-      dinner: false
+      dinner: false,
     },
     transportation: {
       type: '',
-      details: ''
+      details: '',
     },
     tourGuide: false,
     price: '',
     maxGroupSize: '',
     availableSeats: '',
-    destinations: [{ 
-      name: '', 
-      description: '',
-      stayDuration: '' 
-    }],
+    destinations: [
+      {
+        name: '',
+        description: '',
+        stayDuration: '',
+      },
+    ],
     images: [],
     includes: [''], // Additional included services
     excludes: [''], // What's not included
@@ -56,8 +58,8 @@ console.log(companyName);
     weather: {
       city: '',
       condition: '',
-      temp: ''
-    }
+      temp: '',
+    },
   });
 
   const packageCategories = [
@@ -67,16 +69,10 @@ console.log(companyName);
     'Family',
     'Honeymoon',
     'Educational',
-    'Seasonal'
+    'Seasonal',
   ];
 
-  const transportationTypes = [
-    'Bus',
-    'Mini Bus',
-    'Car',
-    'Premium Car',
-    'Other'
-  ];
+  const transportationTypes = ['Bus', 'Mini Bus', 'Car', 'Premium Car', 'Other'];
 
   const weatherConditions = [
     'Sunny',
@@ -88,14 +84,14 @@ console.log(companyName);
     'Foggy',
     'Hot',
     'Cold',
-    'Mild'
+    'Mild',
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTourDetails({
       ...tourDetails,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -103,13 +99,13 @@ console.log(companyName);
     const { name, value } = e.target;
     // Ensure value is a positive integer or empty string
     const parsedValue = value === '' ? '' : Math.max(0, parseInt(value) || 0);
-    
+
     setTourDetails({
       ...tourDetails,
       duration: {
         ...tourDetails.duration,
-        [name]: parsedValue
-      }
+        [name]: parsedValue,
+      },
     });
   };
 
@@ -118,8 +114,8 @@ console.log(companyName);
       ...tourDetails,
       meals: {
         ...tourDetails.meals,
-        [meal]: !tourDetails.meals[meal]
-      }
+        [meal]: !tourDetails.meals[meal],
+      },
     });
   };
 
@@ -129,8 +125,8 @@ console.log(companyName);
       ...tourDetails,
       transportation: {
         ...tourDetails.transportation,
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   };
 
@@ -140,8 +136,8 @@ console.log(companyName);
       ...tourDetails,
       weather: {
         ...tourDetails.weather,
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   };
 
@@ -150,14 +146,14 @@ console.log(companyName);
     updatedArray[index] = value;
     setTourDetails({
       ...tourDetails,
-      [field]: updatedArray
+      [field]: updatedArray,
     });
   };
 
   const addArrayField = (field) => {
     setTourDetails({
       ...tourDetails,
-      [field]: [...tourDetails[field], '']
+      [field]: [...tourDetails[field], ''],
     });
   };
 
@@ -167,14 +163,14 @@ console.log(companyName);
     newDestinations[index][field] = value;
     setTourDetails({
       ...tourDetails,
-      destinations: newDestinations
+      destinations: newDestinations,
     });
   };
 
   const addDestination = () => {
     setTourDetails({
       ...tourDetails,
-      destinations: [...tourDetails.destinations, { name: '', description: '', stayDuration: '' }]
+      destinations: [...tourDetails.destinations, { name: '', description: '', stayDuration: '' }],
     });
   };
 
@@ -182,33 +178,33 @@ console.log(companyName);
     const files = Array.from(e.target.files);
     setTourDetails({
       ...tourDetails,
-      images: [...tourDetails.images, ...files]
+      images: [...tourDetails.images, ...files],
     });
   };
 
   const handleCategoryChange = (category) => {
-    setTourDetails(prev => ({
+    setTourDetails((prev) => ({
       ...prev,
       packageCategories: prev.packageCategories.includes(category)
-        ? prev.packageCategories.filter(c => c !== category)
-        : [...prev.packageCategories, category]
+        ? prev.packageCategories.filter((c) => c !== category)
+        : [...prev.packageCategories, category],
     }));
   };
 
   const handleTourTypeChange = (type) => {
-    setTourDetails(prev => ({
+    setTourDetails((prev) => ({
       ...prev,
       tourType: {
         ...prev.tourType,
-        [type]: !prev.tourType[type]
-      }
+        [type]: !prev.tourType[type],
+      },
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-  
+
     // Add validation for tour type
     if (!tourDetails.tourType.single && !tourDetails.tourType.group) {
       alert('Please select at least one tour type (Single or Group)');
@@ -240,19 +236,19 @@ console.log(companyName);
     formData.append('specialNote', tourDetails.specialNote);
     formData.append('cancellationPolicy', tourDetails.cancellationPolicy);
     formData.append('weather', JSON.stringify(tourDetails.weather));
-    formData.append('companyId',companyId);
-    formData.append('companyName',companyName);
-    
+    formData.append('companyId', companyId);
+    formData.append('companyName', companyName);
+
     tourDetails.images.forEach((image) => {
       formData.append('images', image);
     });
-  
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/tours`, {
         method: 'POST',
         body: formData,
       });
-  
+
       const result = await response.json();
       if (response.ok) {
         alert('Tour uploaded successfully');
@@ -271,7 +267,7 @@ console.log(companyName);
     const updatedImages = tourDetails.images.filter((_, i) => i !== index);
     setTourDetails({
       ...tourDetails,
-      images: updatedImages
+      images: updatedImages,
     });
   };
 
@@ -405,7 +401,9 @@ console.log(companyName);
             >
               <option value="">Select Weather Condition</option>
               {weatherConditions.map((condition) => (
-                <option key={condition} value={condition}>{condition}</option>
+                <option key={condition} value={condition}>
+                  {condition}
+                </option>
               ))}
             </select>
             <input
@@ -447,7 +445,9 @@ console.log(companyName);
             >
               <option value="">Select Transportation Type</option>
               {transportationTypes.map((type) => (
-                <option key={type} value={type}>{type}</option>
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
             <input
@@ -464,10 +464,12 @@ console.log(companyName);
               <input
                 type="checkbox"
                 checked={tourDetails.tourGuide}
-                onChange={(e) => setTourDetails({
-                  ...tourDetails,
-                  tourGuide: e.target.checked
-                })}
+                onChange={(e) =>
+                  setTourDetails({
+                    ...tourDetails,
+                    tourGuide: e.target.checked,
+                  })
+                }
               />
               Tour Guide Available
             </label>
@@ -500,7 +502,9 @@ console.log(companyName);
               />
             </div>
           ))}
-          <button type="button" onClick={addDestination}>Add Destination</button>
+          <button type="button" onClick={addDestination}>
+            Add Destination
+          </button>
         </div>
 
         <div className="form-section">
@@ -562,14 +566,9 @@ console.log(companyName);
         <div className="form-section">
           <h2>Images</h2>
           <div className="file-upload">
-            <input
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              accept="image/*"
-            />
+            <input type="file" multiple onChange={handleFileChange} accept="image/*" />
             <div className="image-preview">
-                            {tourDetails.images.map((image, index) => (
+              {tourDetails.images.map((image, index) => (
                 <div key={index} className="image-preview-item">
                   <img
                     src={URL.createObjectURL(image)}
@@ -589,7 +588,9 @@ console.log(companyName);
           </div>
         </div>
 
-        <button type="submit" className="submit-button">Create Package</button>
+        <button type="submit" className="submit-button">
+          Create Package
+        </button>
       </form>
     </div>
   );

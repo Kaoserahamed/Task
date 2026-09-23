@@ -41,22 +41,31 @@ const HotelRestaurants = () => {
       </div>
       <div className="card-info">
         <h3>{place.name || 'Unnamed Place'}</h3>
-        <p><i className="fas fa-map-marker-alt"></i> {place.exactLocation || place.location || 'Unknown'}</p>
-        <p><i className="fas fa-phone-alt"></i> {place.contact || 'N/A'}</p>
-        <p><i className="fas fa-star"></i> {place.rating || 'N/A'}</p>
+        <p>
+          <i className="fas fa-map-marker-alt"></i>{' '}
+          {place.exactLocation || place.location || 'Unknown'}
+        </p>
+        <p>
+          <i className="fas fa-phone-alt"></i> {place.contact || 'N/A'}
+        </p>
+        <p>
+          <i className="fas fa-star"></i> {place.rating || 'N/A'}
+        </p>
         <p className="card-description">{place.description || 'No description available.'}</p>
       </div>
     </div>
   );
 
-  const filteredHotels = hotels.filter(h =>
-    h.name?.toLowerCase().includes(hotelQuery.toLowerCase()) ||
-    h.location?.toLowerCase().includes(hotelQuery.toLowerCase())
+  const filteredHotels = hotels.filter(
+    (h) =>
+      h.name?.toLowerCase().includes(hotelQuery.toLowerCase()) ||
+      h.location?.toLowerCase().includes(hotelQuery.toLowerCase())
   );
 
-  const filteredRestaurants = restaurants.filter(r =>
-    r.name?.toLowerCase().includes(restaurantQuery.toLowerCase()) ||
-    r.location?.toLowerCase().includes(restaurantQuery.toLowerCase())
+  const filteredRestaurants = restaurants.filter(
+    (r) =>
+      r.name?.toLowerCase().includes(restaurantQuery.toLowerCase()) ||
+      r.location?.toLowerCase().includes(restaurantQuery.toLowerCase())
   );
 
   return (
@@ -70,11 +79,15 @@ const HotelRestaurants = () => {
           value={hotelQuery}
           onChange={(e) => setHotelQuery(e.target.value)}
         />
-        {loading ? <p className="loading">Loading hotels...</p> : (
+        {loading ? (
+          <p className="loading">Loading hotels...</p>
+        ) : (
           <div className="cards-container">
-            {filteredHotels.length > 0
-              ? filteredHotels.map(hotel => renderCard(hotel, 'hotel'))
-              : <p className="empty">No hotels found.</p>}
+            {filteredHotels.length > 0 ? (
+              filteredHotels.map((hotel) => renderCard(hotel, 'hotel'))
+            ) : (
+              <p className="empty">No hotels found.</p>
+            )}
           </div>
         )}
       </section>
@@ -88,11 +101,15 @@ const HotelRestaurants = () => {
           value={restaurantQuery}
           onChange={(e) => setRestaurantQuery(e.target.value)}
         />
-        {loading ? <p className="loading">Loading restaurants...</p> : (
+        {loading ? (
+          <p className="loading">Loading restaurants...</p>
+        ) : (
           <div className="cards-container">
-            {filteredRestaurants.length > 0
-              ? filteredRestaurants.map(restaurant => renderCard(restaurant, 'restaurant'))
-              : <p className="empty">No restaurants found.</p>}
+            {filteredRestaurants.length > 0 ? (
+              filteredRestaurants.map((restaurant) => renderCard(restaurant, 'restaurant'))
+            ) : (
+              <p className="empty">No restaurants found.</p>
+            )}
           </div>
         )}
       </section>
@@ -101,4 +118,3 @@ const HotelRestaurants = () => {
 };
 
 export default HotelRestaurants;
-

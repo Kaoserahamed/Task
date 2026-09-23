@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import API_BASE_URL from '../config/api';
- 
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -29,15 +29,15 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       // Get the current token
       const token = localStorage.getItem('company-token');
-      
+
       // Make API call to update user data
       const response = await fetch(`${API_BASE_URL}/company/auth/update-info`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedData)
+        body: JSON.stringify(updatedData),
       });
 
       if (!response.ok) {
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
-    updateCompany
+    updateCompany,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

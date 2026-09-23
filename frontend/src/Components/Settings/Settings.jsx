@@ -10,17 +10,17 @@ const Settings = () => {
     phone: '',
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [message, setMessage] = useState({ type: '', text: '' });
 
   // Initialize form data with user data
   useEffect(() => {
     if (user) {
-      setFormData(prevState => ({
+      setFormData((prevState) => ({
         ...prevState,
         name: user.name || '',
-        phone: user.phone || ''
+        phone: user.phone || '',
       }));
     }
   }, [user]);
@@ -32,7 +32,7 @@ const Settings = () => {
     try {
       const updatedData = {
         name: formData.name,
-        phone: formData.phone
+        phone: formData.phone,
       };
 
       await updateUser(updatedData);
@@ -41,8 +41,6 @@ const Settings = () => {
       setMessage({ type: 'error', text: 'Failed to update personal information.' });
     }
   };
-
-  
 
   return (
     <div className="settings">
@@ -54,16 +52,16 @@ const Settings = () => {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
-          
+
           <div className="form-group">
             <label>Phone Number</label>
             <input
               type="tel"
               value={formData.phone}
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             />
           </div>
           <button type="submit" className="save-btn" disabled={loading}>
@@ -72,7 +70,6 @@ const Settings = () => {
         </form>
       </div>
 
-      
       <div className="settings-section">
         <h3>Preferences</h3>
         <div className="preferences">

@@ -1,6 +1,6 @@
 .chat-window {
   min-height: 80px;
-  min-width:800px;
+  min-width: 800px;
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -182,4 +182,4 @@
   .messages-container {
     padding: 15px;
   }
-} 
+}

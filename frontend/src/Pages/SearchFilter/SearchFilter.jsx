@@ -41,7 +41,7 @@ const SearchFilter = () => {
     { id: 'Seasonal', name: 'Seasonal', icon: 'calendar', color: '#f59e0b' },
     { id: 'Religious', name: 'Religious', icon: 'place-of-worship', color: '#6366f1' },
     { id: 'Beach', name: 'Beach', icon: 'umbrella-beach', color: '#06b6d4' },
-    { id: 'Historical', name: 'Historical', icon: 'monument', color: '#84cc16' }
+    { id: 'Historical', name: 'Historical', icon: 'monument', color: '#84cc16' },
   ];
 
   // Duration options
@@ -49,14 +49,14 @@ const SearchFilter = () => {
     { id: '1-2', label: '1-2 Days' },
     { id: '3-5', label: '3-5 Days' },
     { id: '6-10', label: '6-10 Days' },
-    { id: '10+', label: '10+ Days' }
+    { id: '10+', label: '10+ Days' },
   ];
 
   // Status options
   const statusOptions = [
     { id: 'upcoming', label: 'Upcoming' },
     { id: 'ongoing', label: 'Ongoing' },
-    { id: 'completed', label: 'Completed' }
+    { id: 'completed', label: 'Completed' },
   ];
   // Add this useEffect after your existing useEffects
   useEffect(() => {
@@ -68,7 +68,7 @@ const SearchFilter = () => {
         const ratingMap = {};
         const countMap = {};
 
-        reviews.forEach(review => {
+        reviews.forEach((review) => {
           const tourId = review.tourId;
           if (!ratingMap[tourId]) {
             ratingMap[tourId] = 0;
@@ -141,10 +141,8 @@ const SearchFilter = () => {
 
   // Handle tour type checkbox
   const handleTourTypeChange = (type) => {
-    setSelectedTourTypes(prev => {
-      const updated = prev.includes(type)
-        ? prev.filter(t => t !== type)
-        : [...prev, type];
+    setSelectedTourTypes((prev) => {
+      const updated = prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type];
 
       updateURLParams('tourType', updated, true);
       return updated;
@@ -153,9 +151,9 @@ const SearchFilter = () => {
 
   // Handle duration checkbox
   const handleDurationChange = (duration) => {
-    setSelectedDurations(prev => {
+    setSelectedDurations((prev) => {
       const updated = prev.includes(duration)
-        ? prev.filter(d => d !== duration)
+        ? prev.filter((d) => d !== duration)
         : [...prev, duration];
 
       updateURLParams('duration', updated, true);
@@ -165,10 +163,8 @@ const SearchFilter = () => {
 
   // Handle status checkbox
   const handleStatusChange = (status) => {
-    setSelectedStatuses(prev => {
-      const updated = prev.includes(status)
-        ? prev.filter(s => s !== status)
-        : [...prev, status];
+    setSelectedStatuses((prev) => {
+      const updated = prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status];
 
       updateURLParams('status', updated, true);
       return updated;
@@ -191,7 +187,7 @@ const SearchFilter = () => {
       newParams.delete(param);
       // Add each value as a separate param entry
       if (Array.isArray(value)) {
-        value.forEach(v => {
+        value.forEach((v) => {
           if (v) newParams.append(param, v);
         });
       }
@@ -223,7 +219,7 @@ const SearchFilter = () => {
 
     const totalDays = tour.duration?.days || 0;
 
-    return durations.some(d => {
+    return durations.some((d) => {
       if (d === '1-2') return totalDays >= 1 && totalDays <= 2;
       if (d === '3-5') return totalDays >= 3 && totalDays <= 5;
       if (d === '6-10') return totalDays >= 6 && totalDays <= 10;
@@ -246,15 +242,18 @@ const SearchFilter = () => {
     if (tour.shortDescription?.toLowerCase().includes(searchTerm)) return true;
 
     // Search in destinations
-    if (tour.destinations?.some(dest =>
-      dest.name?.toLowerCase().includes(searchTerm) ||
-      dest.description?.toLowerCase().includes(searchTerm)
-    )) return true;
+    if (
+      tour.destinations?.some(
+        (dest) =>
+          dest.name?.toLowerCase().includes(searchTerm) ||
+          dest.description?.toLowerCase().includes(searchTerm)
+      )
+    )
+      return true;
 
     // Search in package categories
-    if (tour.packageCategories?.some(category =>
-      category.toLowerCase().includes(searchTerm)
-    )) return true;
+    if (tour.packageCategories?.some((category) => category.toLowerCase().includes(searchTerm)))
+      return true;
 
     // Search in tour guide name
     if (tour.tourGuide?.name?.toLowerCase().includes(searchTerm)) return true;
@@ -267,9 +266,7 @@ const SearchFilter = () => {
     if (selectedTypes.length === 0) return true;
 
     // Check package categories
-    if (tour.packageCategories?.some(category =>
-      selectedTypes.includes(category)
-    )) return true;
+    if (tour.packageCategories?.some((category) => selectedTypes.includes(category))) return true;
 
     // Check tour type object properties
     if (tour.tourType) {
@@ -304,19 +301,19 @@ const SearchFilter = () => {
     let result = [...tours];
 
     // Apply search query filter
-    result = result.filter(tour => matchesSearchQuery(tour, searchQuery));
+    result = result.filter((tour) => matchesSearchQuery(tour, searchQuery));
 
     // Apply price filter
-    result = result.filter(tour => (tour.price || 0) <= priceRange);
+    result = result.filter((tour) => (tour.price || 0) <= priceRange);
 
     // Apply tour type filter
-    result = result.filter(tour => matchesTourType(tour, selectedTourTypes));
+    result = result.filter((tour) => matchesTourType(tour, selectedTourTypes));
 
     // Apply duration filter
-    result = result.filter(tour => matchesDuration(tour, selectedDurations));
+    result = result.filter((tour) => matchesDuration(tour, selectedDurations));
 
     // Apply status filter
-    result = result.filter(tour => matchesStatus(tour, selectedStatuses));
+    result = result.filter((tour) => matchesStatus(tour, selectedStatuses));
 
     // Apply sorting
     result.sort((a, b) => {
@@ -347,7 +344,17 @@ const SearchFilter = () => {
     });
 
     setFilteredTours(result);
-  }, [tours, searchQuery, priceRange, selectedTourTypes, selectedDurations, selectedStatuses, sortOption, averageRatings, reviewCounts]); // Added averageRatings and reviewCounts to dependencies
+  }, [
+    tours,
+    searchQuery,
+    priceRange,
+    selectedTourTypes,
+    selectedDurations,
+    selectedStatuses,
+    sortOption,
+    averageRatings,
+    reviewCounts,
+  ]); // Added averageRatings and reviewCounts to dependencies
 
   // Generate star rating display
   // Update this function to handle decimal ratings and show count
@@ -371,14 +378,7 @@ const SearchFilter = () => {
               strokeColor = '#FFD700';
             }
 
-            return (
-              <Star
-                key={i}
-                size={16}
-                fill={fillColor}
-                stroke={strokeColor}
-              />
-            );
+            return <Star key={i} size={16} fill={fillColor} stroke={strokeColor} />;
           })}
         </div>
         <span className="rating-text">
@@ -416,11 +416,11 @@ const SearchFilter = () => {
   // Get status badge color and text
   const getStatusBadge = (tour) => {
     const status = getTourStatus(tour);
-    const statusConfig = statusOptions.find(s => s.id === status);
+    const statusConfig = statusOptions.find((s) => s.id === status);
 
     return {
       text: statusConfig?.label || 'Unknown',
-      color: statusConfig?.color || '#6b7280'
+      color: statusConfig?.color || '#6b7280',
     };
   };
   const getReviewCount = (tourId) => {
@@ -438,7 +438,9 @@ const SearchFilter = () => {
         <aside className="tour-search-filter-sidebar">
           <div className="tour-search-filter-header">
             <h2>Filters</h2>
-            <button className="tour-search-reset-filters" onClick={resetFilters}>Reset</button>
+            <button className="tour-search-reset-filters" onClick={resetFilters}>
+              Reset
+            </button>
           </div>
 
           <div className="tour-search-filter-section">
@@ -462,18 +464,17 @@ const SearchFilter = () => {
           <div className="tour-search-filter-section">
             <h3>Tour Status</h3>
             <div className="tour-search-filter-options">
-              {statusOptions.map(option => (
-                <label
-                  key={option.id}
-                  className="tour-search-filter-option"
-
-                >
+              {statusOptions.map((option) => (
+                <label key={option.id} className="tour-search-filter-option">
                   <input
                     type="checkbox"
                     checked={selectedStatuses.includes(option.id)}
                     onChange={() => handleStatusChange(option.id)}
                   />
-                  <span className="tour-search-status-indicator" style={{ backgroundColor: option.color }}></span>
+                  <span
+                    className="tour-search-status-indicator"
+                    style={{ backgroundColor: option.color }}
+                  ></span>
                   {option.label}
                 </label>
               ))}
@@ -483,18 +484,17 @@ const SearchFilter = () => {
           <div className="tour-search-filter-section">
             <h3>Tour Type</h3>
             <div className="tour-search-filter-options">
-              {tourTypeOptions.map(option => (
-                <label
-                  key={option.id}
-                  className="tour-search-filter-option"
-
-                >
+              {tourTypeOptions.map((option) => (
+                <label key={option.id} className="tour-search-filter-option">
                   <input
                     type="checkbox"
                     checked={selectedTourTypes.includes(option.id)}
                     onChange={() => handleTourTypeChange(option.id)}
                   />
-                  <i className={`fas fa-${option.icon}`} style={{ marginRight: '8px', color: option.color }}></i>
+                  <i
+                    className={`fas fa-${option.icon}`}
+                    style={{ marginRight: '8px', color: option.color }}
+                  ></i>
                   {option.name}
                 </label>
               ))}
@@ -504,12 +504,12 @@ const SearchFilter = () => {
           <div className="tour-search-filter-section">
             <h3>Duration</h3>
             <div className="tour-search-filter-options">
-              {durationOptions.map(option => (
+              {durationOptions.map((option) => (
                 <label
                   key={option.id}
                   className="tour-search-filter-option"
                   style={{
-                    fontWeight: selectedDurations.includes(option.id) ? '600' : '400'
+                    fontWeight: selectedDurations.includes(option.id) ? '600' : '400',
                   }}
                 >
                   <input
@@ -558,11 +558,13 @@ const SearchFilter = () => {
                 <div className="tour-search-no-results">
                   <h3>No tours match your filters</h3>
                   <p>Try adjusting your search criteria or explore our popular tours.</p>
-                  <button className="tour-search-reset-button" onClick={resetFilters}>Reset Filters</button>
+                  <button className="tour-search-reset-button" onClick={resetFilters}>
+                    Reset Filters
+                  </button>
                 </div>
               ) : (
                 <div className="tour-search-grid">
-                  {filteredTours.map(tour => {
+                  {filteredTours.map((tour) => {
                     const statusBadge = getStatusBadge(tour);
 
                     return (
@@ -574,9 +576,11 @@ const SearchFilter = () => {
                       >
                         <div className="tour-search-image-container">
                           <img
-                            src={tour.images && tour.images.length > 0
-                              ? getImageUrl(tour.images[0])
-                              : 'https://via.placeholder.com/300x200?text=No+Image'}
+                            src={
+                              tour.images && tour.images.length > 0
+                                ? getImageUrl(tour.images[0])
+                                : 'https://via.placeholder.com/300x200?text=No+Image'
+                            }
                             alt={tour.name}
                             className="tour-search-image"
                           />
@@ -591,7 +595,9 @@ const SearchFilter = () => {
 
                           {/* Tour Guide Badge */}
                           {tour.tourGuide && (
-                            <div className="tour-search-badge tour-search-guide-badge">Tour Guide</div>
+                            <div className="tour-search-badge tour-search-guide-badge">
+                              Tour Guide
+                            </div>
                           )}
 
                           {/* Available Seats Badge */}
@@ -621,20 +627,20 @@ const SearchFilter = () => {
 
                           <div className="tour-search-destinations-preview">
                             <MapPin size={14} />
-                            {tour.destinations && tour.destinations.slice(0, 2).map((dest, index) => (
-                              <span key={index}>
-                                {dest.name}{index < Math.min(1, tour.destinations.length - 1) ? ', ' : ''}
-                              </span>
-                            ))}
+                            {tour.destinations &&
+                              tour.destinations.slice(0, 2).map((dest, index) => (
+                                <span key={index}>
+                                  {dest.name}
+                                  {index < Math.min(1, tour.destinations.length - 1) ? ', ' : ''}
+                                </span>
+                              ))}
                             {tour.destinations && tour.destinations.length > 2 && (
                               <span> + {tour.destinations.length - 2} more</span>
                             )}
                           </div>
 
                           <div className="tour-search-info">
-                            <div className="tour-search-rating">
-                              {renderStars(tour._id)}
-                            </div>
+                            <div className="tour-search-rating">{renderStars(tour._id)}</div>
                             <span className="tour-search-price">{formatPrice(tour.price)}</span>
                           </div>
 
@@ -646,13 +652,15 @@ const SearchFilter = () => {
                             )}
                             {tour.meals?.dinner && (
                               <span className="tour-search-feature">
-                                <i className="fas fa-moon"></i>{tour.meals?.dinner}
+                                <i className="fas fa-moon"></i>
+                                {tour.meals?.dinner}
                               </span>
                             )}
 
                             {tour.transportation && (
                               <span className="tour-search-feature">
-                                <i className="fas fa-bus"></i> {tour.transportation?.transportType || 'Bus'}
+                                <i className="fas fa-bus"></i>{' '}
+                                {tour.transportation?.transportType || 'Bus'}
                               </span>
                             )}
                           </div>

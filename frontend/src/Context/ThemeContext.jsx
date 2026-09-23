@@ -10,11 +10,11 @@ export const ThemeProvider = ({ children }) => {
     if (savedTheme) {
       return savedTheme;
     }
-    
+
     // Check if user's system prefers dark mode
-    const prefersDark = window.matchMedia && 
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+    const prefersDark =
+      window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     return prefersDark ? 'dark' : 'light';
   };
 
@@ -29,26 +29,22 @@ export const ThemeProvider = ({ children }) => {
   // Handle system preference changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     const handleChange = () => {
       // Only change theme if user hasn't explicitly set a preference
       if (!localStorage.getItem('theme')) {
         setTheme(mediaQuery.matches ? 'dark' : 'light');
       }
     };
-    
+
     mediaQuery.addEventListener('change', handleChange);
-    
+
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 };

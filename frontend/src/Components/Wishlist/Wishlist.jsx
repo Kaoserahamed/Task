@@ -38,7 +38,7 @@ const Wishlist = () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/wishlist`, {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           params: {
             email: user.user.email, // Send email as a query parameter
@@ -73,7 +73,7 @@ const Wishlist = () => {
     try {
       await axios.delete(`${API_BASE_URL}/api/wishlist/remove/${tourId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         data: {
           email: user.user.email, // Send email in request body when removing an item
@@ -81,9 +81,7 @@ const Wishlist = () => {
       });
 
       // Remove the item from the state after successful deletion
-      setWishlistItems((prevItems) =>
-        prevItems.filter((item) => item.tourId._id !== tourId)
-      );
+      setWishlistItems((prevItems) => prevItems.filter((item) => item.tourId._id !== tourId));
     } catch (error) {
       setError('Failed to remove from wishlist.');
       console.error(error);
@@ -128,10 +126,7 @@ const Wishlist = () => {
                   <i className="fas fa-star"></i> {/* Adjust this if you have a rating */}
                 </span>
               </div>
-              <button 
-                className="view-details"
-                onClick={() => handleViewDetails(item.tourId._id)}
-              >
+              <button className="view-details" onClick={() => handleViewDetails(item.tourId._id)}>
                 View Details
               </button>
             </div>

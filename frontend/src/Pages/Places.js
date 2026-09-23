@@ -3,7 +3,9 @@ import './Places.css';
 
 const PLACES_API_KEY = process.env.PLACES_API_KEY || process.env.REACT_APP_PLACES_API_KEY || '';
 if (!PLACES_API_KEY) {
-  console.warn('Missing PLACES_API_KEY or REACT_APP_PLACES_API_KEY env var — Places will not load.');
+  console.warn(
+    'Missing PLACES_API_KEY or REACT_APP_PLACES_API_KEY env var — Places will not load.'
+  );
 }
 
 const Places = () => {
@@ -34,7 +36,9 @@ const Places = () => {
   return (
     <div className="places-container">
       <h2>🏨 Nearby Hotels</h2>
-      {loading ? <p>Loading...</p> : (
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
         <div className="place-grid">
           {hotels.map((place, index) => (
             <div className="place-card" key={index}>
@@ -47,7 +51,9 @@ const Places = () => {
       )}
 
       <h2>🍽️ Nearby Restaurants</h2>
-      {loading ? <p>Loading...</p> : (
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
         <div className="place-grid">
           {restaurants.map((place, index) => (
             <div className="place-card" key={index}>
@@ -63,4 +69,3 @@ const Places = () => {
 };
 
 export default Places;
-

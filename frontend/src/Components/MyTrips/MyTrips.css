@@ -145,7 +145,7 @@
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .trips-grid {
     grid-template-columns: 1fr;
   }

@@ -10,15 +10,15 @@ function loadRules(callback) {
   fs.createReadStream(rulesFilePath)
     .pipe(csv())
     .on('data', (row) => {
-      const antecedents = row.antecedents.split(',').map(dest => dest.trim());
-      const consequents = row.consequents.split(',').map(dest => dest.trim());
+      const antecedents = row.antecedents.split(',').map((dest) => dest.trim());
+      const consequents = row.consequents.split(',').map((dest) => dest.trim());
 
       rules.push({
         antecedents,
         consequents,
         support: parseFloat(row.support),
         confidence: parseFloat(row.confidence),
-        lift: parseFloat(row.lift)
+        lift: parseFloat(row.lift),
       });
     })
     .on('end', () => {
@@ -31,10 +31,10 @@ function recommendTours(selectedDestinations, callback) {
   loadRules((rules) => {
     const recommendations = new Set();
 
-    rules.forEach(rule => {
-      const isMatch = rule.antecedents.every(dest => selectedDestinations.includes(dest));
+    rules.forEach((rule) => {
+      const isMatch = rule.antecedents.every((dest) => selectedDestinations.includes(dest));
       if (isMatch) {
-        rule.consequents.forEach(dest => {
+        rule.consequents.forEach((dest) => {
           if (!selectedDestinations.includes(dest)) {
             recommendations.add(dest);
           }
@@ -47,5 +47,5 @@ function recommendTours(selectedDestinations, callback) {
 }
 
 module.exports = {
-  recommendTours
+  recommendTours,
 };

@@ -33,7 +33,7 @@
   background-color: var(--bg-mainee);
 }
 
-[data-theme="dark"] .breadcrumb {
+[data-theme='dark'] .breadcrumb {
   background: rgba(15, 15, 35, 0.8);
 }
 

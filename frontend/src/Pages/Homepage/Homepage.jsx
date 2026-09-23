@@ -20,29 +20,28 @@ const Homepage = () => {
     <>
       <div className="homepage">
         <HeroSection onSearch={setSearchQuery} />
-        
+
         {/* Only show TourSuggestions when user is logged in */}
         {user && (
           <section id="tour-suggestions" className="tour-suggestions">
             <TourSuggestions />
           </section>
         )}
-        
+
         {/* Add UpcomingTours section */}
         <h2>Upcoming Tours</h2>
         <section id="upcoming-section" className="upcoming-section">
           <UpcomingTours />
         </section>
-        
+
         <section id="popular-section" className="popular-section">
           <PopularTours filter={activeFilter} searchQuery={searchQuery} />
         </section>
-       
+
         <section id="categories-section" className="categories-section">
           <h2>Explore by Categories</h2>
           <Categories />
         </section>
-       
       </div>
       <Footer />
     </>

@@ -29,10 +29,10 @@ const BookingList = () => {
       const token = localStorage.getItem('company-token');
       const response = await fetch(`${API_BASE_URL}/api/tours/${tourId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setTourInfo(data.tour);
@@ -46,19 +46,19 @@ const BookingList = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const token = localStorage.getItem('company-token');
       const response = await fetch(
         `${API_BASE_URL}/api/bookings/tour/${tourId}?page=${currentPage}&limit=10`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setBookings(data.bookings);
         setTotalPages(data.totalPages);
@@ -110,7 +110,7 @@ const BookingList = () => {
           )}
         </div>
       </div>
-      
+
       {bookings.length === 0 ? (
         <div className="no-bookings">
           <h3>No bookings found for this tour</h3>
@@ -186,10 +186,7 @@ const BookingList = () => {
                     </td>
                     <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
                     <td>
-                      <button 
-                        className="btn-small"
-                        onClick={() => viewBookingDetails(booking)}
-                      >
+                      <button className="btn-small" onClick={() => viewBookingDetails(booking)}>
                         View Details
                       </button>
                     </td>
@@ -202,16 +199,18 @@ const BookingList = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="pagination">
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
                 className="btn btn-secondary"
               >
                 Previous
               </button>
-              <span>Page {currentPage} of {totalPages}</span>
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
                 className="btn btn-secondary"
               >

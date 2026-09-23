@@ -38,13 +38,12 @@ const Navbar = () => {
     const navbar = document.querySelector('.navbar');
     if (section && navbar) {
       const navbarHeight = navbar.offsetHeight;
-      const sectionTop = sectionId === 'contact-section'
-        ? section.offsetTop
-        : section.offsetTop - navbarHeight;
+      const sectionTop =
+        sectionId === 'contact-section' ? section.offsetTop : section.offsetTop - navbarHeight;
 
       window.scrollTo({
         top: sectionTop,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
     setIsMenuOpen(false);
@@ -54,52 +53,36 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          <i className="fas fa-globe-americas"></i> 
+          <i className="fas fa-globe-americas"></i>
           <span className="logo-text">Task</span>
         </Link>
 
         <div className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-          <button 
-            className="nav-item" 
-            onClick={() => handleNavigation('/')}
-            title="Home"
-          >
-            <i className="fas fa-home"></i> 
+          <button className="nav-item" onClick={() => handleNavigation('/')} title="Home">
+            <i className="fas fa-home"></i>
             <span className="nav-text">Home</span>
           </button>
-          <button 
-            className="nav-item" 
+          <button
+            className="nav-item"
             onClick={() => handleNavigation('/populartours')}
             title="Popular Tours"
           >
-            <i className="fas fa-fire"></i> 
+            <i className="fas fa-fire"></i>
             <span className="nav-text">Popular</span>
           </button>
-          <button 
-            className="nav-item" 
-            onClick={() => handleNavigation('/explore')}
-            title="Explore"
-          >
-            <i className="fas fa-compass"></i> 
+          <button className="nav-item" onClick={() => handleNavigation('/explore')} title="Explore">
+            <i className="fas fa-compass"></i>
             <span className="nav-text">Explore</span>
           </button>
-          <button 
-            className="nav-item" 
-            onClick={() => handleNavigation('/review')}
-            title="Reviews"
-          >
-            <i className="fas fa-envelope"></i> 
+          <button className="nav-item" onClick={() => handleNavigation('/review')} title="Reviews">
+            <i className="fas fa-envelope"></i>
             <span className="nav-text">Review</span>
           </button>
-          <button 
-            className="nav-item" 
-            onClick={() => handleNavigation('/weather')}
-            title="Weather"
-          >
-            <i className="fas fa-cloud-sun"></i> 
+          <button className="nav-item" onClick={() => handleNavigation('/weather')} title="Weather">
+            <i className="fas fa-cloud-sun"></i>
             <span className="nav-text">Weather</span>
           </button>
-          
+
           {/* Mobile auth items - only visible in mobile menu */}
           <div className="nav-auth-mobile">
             <button
@@ -111,9 +94,13 @@ const Navbar = () => {
               title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             >
               {theme === 'light' ? (
-                <><i className="fas fa-moon"></i> <span>Dark Mode</span></>
+                <>
+                  <i className="fas fa-moon"></i> <span>Dark Mode</span>
+                </>
               ) : (
-                <><i className="fas fa-sun"></i> <span>Light Mode</span></>
+                <>
+                  <i className="fas fa-sun"></i> <span>Light Mode</span>
+                </>
               )}
             </button>
 
@@ -143,38 +130,26 @@ const Navbar = () => {
             onClick={toggleTheme}
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
-            {theme === 'light' ? (
-              <i className="fas fa-moon"></i>
-            ) : (
-              <i className="fas fa-sun"></i>
-            )}
+            {theme === 'light' ? <i className="fas fa-moon"></i> : <i className="fas fa-sun"></i>}
           </button>
 
           {user ? (
             <>
-              <button 
-                className="profile-btn desktop" 
+              <button
+                className="profile-btn desktop"
                 onClick={() => navigate('/profile')}
                 title="Profile"
               >
                 <i className="fas fa-user"></i>
                 <span className="auth-text">{getSurname(user.user?.name) || 'Profile'}</span>
               </button>
-              <button 
-                onClick={handleLogout} 
-                className="logout-btn desktop"
-                title="Logout"
-              >
+              <button onClick={handleLogout} className="logout-btn desktop" title="Logout">
                 <i className="fas fa-sign-out-alt"></i>
                 <span className="auth-text">Logout</span>
               </button>
             </>
           ) : (
-            <button 
-              className="login-btn desktop" 
-              onClick={() => navigate('/login')}
-              title="Login"
-            >
+            <button className="login-btn desktop" onClick={() => navigate('/login')} title="Login">
               <i className="fas fa-sign-in-alt"></i>
               <span className="auth-text">Login</span>
             </button>

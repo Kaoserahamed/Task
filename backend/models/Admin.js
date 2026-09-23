@@ -2,26 +2,27 @@
 const mongoose = require('mongoose');
 
 const adminSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
 });
 
 const Admin = mongoose.model('Admin', adminSchema);
 
-const adminProfileSchema = new mongoose.Schema({
+const adminProfileSchema = new mongoose.Schema(
+  {
     adminId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Admin',
-        required: true,
-        unique: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Admin',
+      required: true,
+      unique: true,
     },
     name: { type: String, required: true },
     phone: { type: String },
@@ -29,8 +30,10 @@ const adminProfileSchema = new mongoose.Schema({
     nid: { type: String },
     image: { type: String }, // store image path or URL
     tradeLicenseNo: { type: String },
-    bankAccountNo: { type: String }
-}, { timestamps: true });
+    bankAccountNo: { type: String },
+  },
+  { timestamps: true }
+);
 
 const AdminProfile = mongoose.model('AdminProfile', adminProfileSchema);
 

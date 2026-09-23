@@ -41,11 +41,11 @@ body,
   .two-col-layout {
     flex-direction: row;
   }
-  
+
   .main-column {
     max-width: 66%;
   }
-  
+
   .sidebar-column {
     max-width: 33%;
   }
@@ -56,7 +56,7 @@ body,
   .checkout-container {
     font-size: var(--font-size-sm);
   }
-  
+
   .main-content {
     padding: var(--spacing-lg) var(--spacing-md);
   }

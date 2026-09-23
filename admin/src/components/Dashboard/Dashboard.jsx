@@ -2,7 +2,7 @@ import React from 'react';
 import './Dashboard.css';
 import { useState, useEffect } from 'react';
 import Pendingtours from './PendingTours';
-import socket from '../../socket'
+import socket from '../../socket';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -12,12 +12,11 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 } from 'chart.js';
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config/api';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-
 
 const Dashboard = () => {
   const [pendingtours, setPendingtours] = useState([]);
@@ -30,7 +29,7 @@ const Dashboard = () => {
   const [loadingCharts, setLoadingCharts] = useState(true);
   const [upcomingTrips, setUpcomingTrips] = useState(0);
   const [finishedTrips, setFinishedTrips] = useState(0);
-  const [barLabels, setBarLabels] = useState(["Jan"]);
+  const [barLabels, setBarLabels] = useState(['Jan']);
   const [pendingCompanies, setPendingCompanies] = useState([]);
   const [approvedCompanies, setApprovedCompanies] = useState([]);
   const [pendingPackages, setPendingPackages] = useState([]);
@@ -55,7 +54,7 @@ const Dashboard = () => {
       const today = new Date();
       let upcoming = 0;
       let finished = 0;
-      tours.forEach(tour => {
+      tours.forEach((tour) => {
         if (tour.status !== 'approved' || !tour.startDate || !tour.endDate) return;
         const start = new Date(tour.startDate);
         const end = new Date(tour.endDate);
@@ -77,7 +76,7 @@ const Dashboard = () => {
       const allBookings = bookingsData.bookings || [];
       // Bar chart: revenue by month (Jan-Dec)
       const monthlyRevenue = Array(12).fill(0);
-      allBookings.forEach(b => {
+      allBookings.forEach((b) => {
         if (!b.createdAt || !b.totalAmount) return;
         const d = new Date(b.createdAt);
         const monthIdx = d.getMonth(); // 0 = Jan, 11 = Dec
@@ -85,8 +84,18 @@ const Dashboard = () => {
       });
       setRevenueByMonth(monthlyRevenue);
       setBarLabels([
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ]);
       // Fetch all tours
       const toursRes = await fetch(`${API_BASE_URL}/api/tours`);
@@ -99,12 +108,16 @@ const Dashboard = () => {
       // Build maps for fast lookup
       const tourIdToCompanyId = {};
       const companyIdToName = {};
-      tours.forEach(t => { if (t._id && t.companyId) tourIdToCompanyId[t._id] = t.companyId; });
-      companies.forEach(c => { if (c._id && c.name) companyIdToName[c._id] = c.name; });
+      tours.forEach((t) => {
+        if (t._id && t.companyId) tourIdToCompanyId[t._id] = t.companyId;
+      });
+      companies.forEach((c) => {
+        if (c._id && c.name) companyIdToName[c._id] = c.name;
+      });
       setCompanyMap(companyIdToName);
       // Calculate revenue per company
       const companyRevenue = {};
-      allBookings.forEach(b => {
+      allBookings.forEach((b) => {
         if (!b.tourId || !b.totalAmount) return;
         const companyId = tourIdToCompanyId[b.tourId];
         if (!companyId) return;
@@ -117,7 +130,7 @@ const Dashboard = () => {
         .map(([companyId, revenue]) => ({
           companyId,
           name: companyIdToName[companyId] || 'Unknown',
-          revenue
+          revenue,
         }));
       setTopCompanies(sortedCompanies);
       setLoadingCharts(false);
@@ -128,30 +141,30 @@ const Dashboard = () => {
     const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
     const data = await res.json();
     // Only companies with verificationStatus 'pending'
-    setPendingCompanies((data.companies || []).filter(c => c.verificationStatus === 'pending'));
+    setPendingCompanies((data.companies || []).filter((c) => c.verificationStatus === 'pending'));
   }
   useEffect(() => {
-   
     fetchPendingCompanies();
   }, []);
-  useEffect( ()=>{
-    if(socket){
+  useEffect(() => {
+    if (socket) {
       console.log('here');
-      socket.on('verif',async(data)=>{
-        if(data.action==='pen')
-        {
-          await fetchPendingCompanies()
+      socket.on('verif', async (data) => {
+        if (data.action === 'pen') {
+          await fetchPendingCompanies();
         }
-      })
+      });
     }
-  })
+  });
 
   useEffect(() => {
     async function fetchApprovedCompanies() {
       const res = await fetch(`${API_BASE_URL}/company/auth/companies`);
       const data = await res.json();
       // Only companies with verificationStatus 'approved'
-      setApprovedCompanies((data.companies || []).filter(c => c.verificationStatus === 'approved'));
+      setApprovedCompanies(
+        (data.companies || []).filter((c) => c.verificationStatus === 'approved')
+      );
     }
     fetchApprovedCompanies();
   }, []);
@@ -160,14 +173,14 @@ const Dashboard = () => {
     async function fetchPendingPackages() {
       const toursRes = await fetch(`${API_BASE_URL}/api/tours`);
       const toursData = await toursRes.json();
-      setPendingPackages((toursData.tours || []).filter(t => t.status === 'pending'));
+      setPendingPackages((toursData.tours || []).filter((t) => t.status === 'pending'));
     }
     fetchPendingPackages();
   }, []);
   useEffect(() => {
     const handleTourApprovalRequest = (data) => {
-      setPendingPackages(prev => {
-        if (!prev.some(tour => tour._id === data.tourId)) {
+      setPendingPackages((prev) => {
+        if (!prev.some((tour) => tour._id === data.tourId)) {
           const newTour = {
             _id: data.tourId,
             name: data.tourName,
@@ -175,7 +188,7 @@ const Dashboard = () => {
             companyId: data.companyId,
             status: 'pending',
             price: data.price,
-            timestamp: data.timestamp
+            timestamp: data.timestamp,
           };
           return [...prev, newTour];
         }
@@ -191,7 +204,14 @@ const Dashboard = () => {
       <div className="dashboard-header">
         <h2>Admin Dashboard</h2>
         <div className="date-time">
-          <p>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p>
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
         </div>
       </div>
 
@@ -253,14 +273,19 @@ const Dashboard = () => {
         {/* New Companies Section - Modern Card UI */}
         <div className="dashboard-section">
           <div className="section-header">
-            <h3><i className="fas fa-building"></i> New Companies</h3>
+            <h3>
+              <i className="fas fa-building"></i> New Companies
+            </h3>
             {/* <button className="view-all-btn">View All</button> */}
           </div>
           <div className="modern-card-list">
-            {pendingCompanies.map(company => (
+            {pendingCompanies.map((company) => (
               <div key={company._id} className="modern-card company-modern-card">
                 <div className="modern-card-avatar">
-                  <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${company.name}`} alt={company.name} />
+                  <img
+                    src={`https://api.dicebear.com/7.x/identicon/svg?seed=${company.name}`}
+                    alt={company.name}
+                  />
                 </div>
                 <div className="modern-card-info">
                   <h4>{company.name}</h4>
@@ -269,20 +294,31 @@ const Dashboard = () => {
                   <p className="modern-card-address">{company.address}</p>
                 </div>
                 <div className="modern-card-actions">
-                  <button className="modern-btn view" onClick={() => navigate(`/admin/registration-request/${company._id}`)}>View Details</button>
+                  <button
+                    className="modern-btn view"
+                    onClick={() => navigate(`/admin/registration-request/${company._id}`)}
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
             ))}
-            {pendingCompanies.length === 0 && <div style={{ padding: '1rem', color: '#888' }}>No pending registration requests.</div>}
+            {pendingCompanies.length === 0 && (
+              <div style={{ padding: '1rem', color: '#888' }}>
+                No pending registration requests.
+              </div>
+            )}
           </div>
         </div>
         {/* New Packages Section - Modern Card UI */}
         <div className="dashboard-section" style={{ marginTop: 0 }}>
           <div className="section-header">
-            <h3><i className="fas fa-box"></i> New Packages Waiting For Approval</h3>
+            <h3>
+              <i className="fas fa-box"></i> New Packages Waiting For Approval
+            </h3>
           </div>
           <div className="modern-card-list">
-            {pendingPackages.map(pkg => (
+            {pendingPackages.map((pkg) => (
               <div key={pkg._id} className="modern-card package-modern-card">
                 <div className="modern-card-info">
                   <h4>{pkg.name}</h4>
@@ -302,15 +338,21 @@ const Dashboard = () => {
                 </div>
               </div>
             ))}
-            {pendingPackages.length === 0 && <div style={{ padding: '1rem', color: '#888' }}>No pending packages.</div>}
+            {pendingPackages.length === 0 && (
+              <div style={{ padding: '1rem', color: '#888' }}>No pending packages.</div>
+            )}
           </div>
         </div>
         {/* Revenue Bar Chart Section */}
         <div className="dashboard-section">
           <div className="section-header">
-            <h3><i className="fas fa-chart-bar"></i> Revenue Earned (Last 12 Months)</h3>
+            <h3>
+              <i className="fas fa-chart-bar"></i> Revenue Earned (Last 12 Months)
+            </h3>
           </div>
-          {loadingCharts ? <p>Loading chart...</p> :
+          {loadingCharts ? (
+            <p>Loading chart...</p>
+          ) : (
             <Bar
               data={{
                 labels: barLabels,
@@ -331,27 +373,39 @@ const Dashboard = () => {
                   title: { display: false },
                 },
                 scales: {
-                  y: { beginAtZero: true }
-                }
+                  y: { beginAtZero: true },
+                },
               }}
             />
-          }
+          )}
         </div>
         {/* Top Companies Pie Chart Section */}
         <div className="dashboard-section">
           <div className="section-header">
-            <h3><i className="fas fa-chart-pie"></i> Top 10 Companies by Revenue (Last Month)</h3>
+            <h3>
+              <i className="fas fa-chart-pie"></i> Top 10 Companies by Revenue (Last Month)
+            </h3>
           </div>
-          {loadingCharts ? <p>Loading chart...</p> :
+          {loadingCharts ? (
+            <p>Loading chart...</p>
+          ) : (
             <Pie
               data={{
-                labels: topCompanies.map(c => c.name),
+                labels: topCompanies.map((c) => c.name),
                 datasets: [
                   {
-                    data: topCompanies.map(c => c.revenue),
+                    data: topCompanies.map((c) => c.revenue),
                     backgroundColor: [
-                      '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                      '#FF9F40', '#C9CBCF', '#FF6384AA', '#36A2EBAA', '#FFCE56AA'
+                      '#FF6384',
+                      '#36A2EB',
+                      '#FFCE56',
+                      '#4BC0C0',
+                      '#9966FF',
+                      '#FF9F40',
+                      '#C9CBCF',
+                      '#FF6384AA',
+                      '#36A2EBAA',
+                      '#FFCE56AA',
                     ],
                   },
                 ],
@@ -364,7 +418,7 @@ const Dashboard = () => {
                 },
               }}
             />
-          }
+          )}
         </div>
       </div>
     </div>
@@ -372,4 +426,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

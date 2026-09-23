@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './AdminSupport.css';
 import avatar from '../Assets/chat_avatar.png'; // Use a default avatar if needed
 import { useAuth } from '../../context/AuthContext';
-import socket from '../../socket'
+import socket from '../../socket';
 import API_BASE_URL from '../../config/api';
 
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; // Valid 24-character hex string
@@ -67,7 +67,7 @@ const AdminSupport = () => {
           if (activeChat && activeChat._id === data.updatedChat._id) {
             setActiveChat(data.updatedChat);
           }
-          
+
           // Refresh the appropriate chat list
           if (data.updatedChat.chatType === 'aduse') {
             fetchUserChats();
@@ -87,7 +87,7 @@ const AdminSupport = () => {
 
   // Function to scroll to the bottom
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   // Auto-scroll to bottom when messages change
@@ -108,11 +108,20 @@ const AdminSupport = () => {
       messagesContainer.style.overflowY = 'auto'; // Ensure scrolling is enabled
 
       // Re-check scroll button visibility after layout change
-      const isAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop <= messagesContainer.clientHeight + 100;
+      const isAtBottom =
+        messagesContainer.scrollHeight - messagesContainer.scrollTop <=
+        messagesContainer.clientHeight + 100;
       setShowScrollButton(!isAtBottom);
     }
-
-  }, [activeChat, userChats, companyChats, messagesContainerRef.current, chatMainRef.current, chatHeaderRef.current, messageInputRef.current]); // Depend on refs to re-measure on resize/layout change
+  }, [
+    activeChat,
+    userChats,
+    companyChats,
+    messagesContainerRef.current,
+    chatMainRef.current,
+    chatHeaderRef.current,
+    messageInputRef.current,
+  ]); // Depend on refs to re-measure on resize/layout change
 
   // Show/hide scroll button based on scroll position
   useEffect(() => {
@@ -121,7 +130,8 @@ const AdminSupport = () => {
 
     const handleScroll = () => {
       // Show button if scrolled up more than 100px from bottom
-      const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
       setShowScrollButton(!isAtBottom);
     };
 
@@ -131,7 +141,6 @@ const AdminSupport = () => {
       container.removeEventListener('scroll', handleScroll);
     };
   }, [messagesContainerRef.current]); // Re-attach listener if container changes
-
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -143,7 +152,7 @@ const AdminSupport = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authtoken}`
+          Authorization: `Bearer ${authtoken}`,
         },
         body: JSON.stringify({
           chatId: activeChat._id,
@@ -154,8 +163,8 @@ const AdminSupport = () => {
           companyName: activeChat.companyName || null,
           userName: activeChat.userName || null,
           chatType: filter === 'users' ? 'aduse' : 'adcom',
-          senderId: DEFAULT_ADMIN_ID
-        })
+          senderId: DEFAULT_ADMIN_ID,
+        }),
       });
 
       if (response.ok) {
@@ -173,15 +182,11 @@ const AdminSupport = () => {
         {/* Sidebar */}
         <div className="chats-sidebar">
           <div className="search-container">
-            <input
-              type="text"
-              placeholder="Search conversations..."
-              disabled
-            />
+            <input type="text" placeholder="Search conversations..." disabled />
           </div>
 
           <div className="filter-tabs">
-            <button 
+            <button
               className={`filter-btn ${filter === 'users' ? 'active' : ''}`}
               onClick={() => {
                 setFilter('users');
@@ -190,7 +195,7 @@ const AdminSupport = () => {
             >
               Users
             </button>
-            <button 
+            <button
               className={`filter-btn ${filter === 'companies' ? 'active' : ''}`}
               onClick={() => {
                 setFilter('companies');
@@ -202,17 +207,23 @@ const AdminSupport = () => {
           </div>
 
           <div className="chat-list">
-            {(filter === 'users' ? userChats : companyChats).map(chat => (
-              <div 
+            {(filter === 'users' ? userChats : companyChats).map((chat) => (
+              <div
                 key={chat._id}
                 className={`chat-item ${activeChat?._id === chat._id ? 'active' : ''}`}
                 onClick={() => setActiveChat(chat)}
               >
-                <img src={chat.logo || avatar} alt={chat.userName || chat.companyName} className="chat-avatar" />
+                <img
+                  src={chat.logo || avatar}
+                  alt={chat.userName || chat.companyName}
+                  className="chat-avatar"
+                />
                 <div className="chat-content">
                   <div className="chat-header">
                     <h4>{chat.userName || chat.companyName}</h4>
-                    <span className="chat-time">{chat.lastMessageTime && new Date(chat.lastMessageTime).toLocaleTimeString()}</span>
+                    <span className="chat-time">
+                      {chat.lastMessageTime && new Date(chat.lastMessageTime).toLocaleTimeString()}
+                    </span>
                   </div>
                   <p className="chat-preview">{chat.lastMessage}</p>
                 </div>
@@ -222,12 +233,20 @@ const AdminSupport = () => {
         </div>
 
         {/* Main Chat Area */}
-        <div className="chat-main" ref={chatMainRef}> {/* Attach ref here */}
+        <div className="chat-main" ref={chatMainRef}>
+          {' '}
+          {/* Attach ref here */}
           {activeChat ? (
             <>
-              <div className="chat-header" ref={chatHeaderRef}> {/* Ref to measure header height */}
+              <div className="chat-header" ref={chatHeaderRef}>
+                {' '}
+                {/* Ref to measure header height */}
                 <div className="chat-user-info">
-                  <img src={activeChat.logo || avatar} alt={activeChat.userName || activeChat.companyName} className="chat-avatar" />
+                  <img
+                    src={activeChat.logo || avatar}
+                    alt={activeChat.userName || activeChat.companyName}
+                    className="chat-avatar"
+                  />
                   <div>
                     <h3>{activeChat.userName || activeChat.companyName}</h3>
                   </div>
@@ -246,19 +265,21 @@ const AdminSupport = () => {
               </div>
 
               {/* Chat Messages - Height set dynamically */}
-              <div 
-                className="chat-messages" 
-                ref={messagesContainerRef} 
+              <div
+                className="chat-messages"
+                ref={messagesContainerRef}
                 // Style will be set dynamically in useEffect
-              > 
-                {(activeChat.messages || []).map(message => (
-                  <div 
-                    key={message._id} 
+              >
+                {(activeChat.messages || []).map((message) => (
+                  <div
+                    key={message._id}
                     className={`message ${message.senderId === DEFAULT_ADMIN_ID ? 'sent' : 'received'}`}
                   >
                     <div className="message-content">
                       <p>{message.content}</p>
-                      <span className="message-time">{message.sentAt ? new Date(message.sentAt).toLocaleTimeString() : ''}</span>
+                      <span className="message-time">
+                        {message.sentAt ? new Date(message.sentAt).toLocaleTimeString() : ''}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -268,15 +289,14 @@ const AdminSupport = () => {
 
               {/* Scroll to Bottom Button - Positioned relative to .chat-main */}
               {showScrollButton && activeChat?.messages?.length > 0 && (
-                <button 
-                  className="scroll-to-bottom-btn"
-                  onClick={scrollToBottom}
-                >
+                <button className="scroll-to-bottom-btn" onClick={scrollToBottom}>
                   <i className="fas fa-arrow-down"></i>
                 </button>
               )}
 
-              <form className="message-input" onSubmit={handleSendMessage} ref={messageInputRef}> {/* Ref to measure input height */}
+              <form className="message-input" onSubmit={handleSendMessage} ref={messageInputRef}>
+                {' '}
+                {/* Ref to measure input height */}
                 {/* <button type="button" className="attachment-btn">
                   <i className="fas fa-paperclip"></i>
                 </button> */}

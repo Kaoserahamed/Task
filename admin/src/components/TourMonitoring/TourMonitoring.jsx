@@ -38,19 +38,20 @@ const TourMonitoring = () => {
   useEffect(() => {
     if (selectedTourId) {
       // Try to find in loaded tours first
-      const found = tours.find(t => t._id === selectedTourId);
+      const found = tours.find((t) => t._id === selectedTourId);
       if (found) {
         setSelectedTour(found);
         setGalleryActiveImage(0);
       } else {
         // Fetch from API if not found
         setModalLoading(true);
-        axios.get(`${API_BASE_URL}/api/tours/${selectedTourId}`)
-          .then(res => {
+        axios
+          .get(`${API_BASE_URL}/api/tours/${selectedTourId}`)
+          .then((res) => {
             setSelectedTour(res.data.tour || res.data);
             setGalleryActiveImage(0);
           })
-          .catch(err => {
+          .catch((err) => {
             setSelectedTour(null);
           })
           .finally(() => setModalLoading(false));
@@ -80,11 +81,16 @@ const TourMonitoring = () => {
 
   const handleStatusChange = async (id, newStatus, review) => {
     try {
-      await axios.patch(`${API_BASE_URL}/api/tours/${id}/status`, { status: newStatus, review: review });
+      await axios.patch(`${API_BASE_URL}/api/tours/${id}/status`, {
+        status: newStatus,
+        review: review,
+      });
       console.log(review);
-      setTours(tours.map((tour) =>
-        tour._id === id ? { ...tour, status: newStatus, review: review } : tour
-      ));
+      setTours(
+        tours.map((tour) =>
+          tour._id === id ? { ...tour, status: newStatus, review: review } : tour
+        )
+      );
       setShowReviewModal(false);
       setReviewText('');
       setTourToReject(null);
@@ -109,7 +115,7 @@ const TourMonitoring = () => {
     if (
       searchTerm &&
       !tour.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !tour.destinations.some(dest => dest.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      !tour.destinations.some((dest) => dest.name.toLowerCase().includes(searchTerm.toLowerCase()))
     ) {
       return false;
     }
@@ -118,19 +124,27 @@ const TourMonitoring = () => {
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'approved': return 'status-approved';
-      case 'pending': return 'status-pending';
-      case 'rejected': return 'status-rejected';
-      default: return '';
+      case 'approved':
+        return 'status-approved';
+      case 'pending':
+        return 'status-pending';
+      case 'rejected':
+        return 'status-rejected';
+      default:
+        return '';
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'approved': return <i className="fas fa-check-circle"></i>;
-      case 'pending': return <i className="fas fa-hourglass-half"></i>;
-      case 'rejected': return <i className="fas fa-times-circle"></i>;
-      default: return null;
+      case 'approved':
+        return <i className="fas fa-check-circle"></i>;
+      case 'pending':
+        return <i className="fas fa-hourglass-half"></i>;
+      case 'rejected':
+        return <i className="fas fa-times-circle"></i>;
+      default:
+        return null;
     }
   };
 
@@ -143,8 +157,8 @@ const TourMonitoring = () => {
   };
 
   const now = new Date();
-  const upcomingTours = tours.filter(t => t.status === 'approved' && new Date(t.startDate) > now);
-  const finishedTours = tours.filter(t => t.status === 'approved' && new Date(t.endDate) < now);
+  const upcomingTours = tours.filter((t) => t.status === 'approved' && new Date(t.startDate) > now);
+  const finishedTours = tours.filter((t) => t.status === 'approved' && new Date(t.endDate) < now);
 
   return (
     <div className="tour-monitoring">
@@ -162,7 +176,7 @@ const TourMonitoring = () => {
       </div>
 
       <div className="monitoring-tabs">
-        {['all', 'approved', 'pending', 'rejected', 'upcoming', 'finished'].map(tab => (
+        {['all', 'approved', 'pending', 'rejected', 'upcoming', 'finished'].map((tab) => (
           <button
             key={tab}
             className={activeTab === tab ? 'active' : ''}
@@ -201,14 +215,13 @@ const TourMonitoring = () => {
                       <div className="detail-item">
                         <i className="fas fa-calendar"></i>
                         <span>
-                          {new Date(tour.startDate).toLocaleDateString()} to {new Date(tour.endDate).toLocaleDateString()}
+                          {new Date(tour.startDate).toLocaleDateString()} to{' '}
+                          {new Date(tour.endDate).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="detail-item">
                         <i className="fas fa-map-marker-alt"></i>
-                        <span>
-                          {tour.destinations.map((d) => d.name).join(', ')}
-                        </span>
+                        <span>{tour.destinations.map((d) => d.name).join(', ')}</span>
                       </div>
                       <div className="detail-item">
                         <i className="fas fa-users"></i>
@@ -279,7 +292,8 @@ const TourMonitoring = () => {
 
                     {activeTab === 'finished' && (
                       <div className="tour-revenue">
-                        <i className="fas fa-dollar-sign"></i> Revenue Earned: ${tourRevenues[tour._id]?.toLocaleString() || 0}
+                        <i className="fas fa-dollar-sign"></i> Revenue Earned: $
+                        {tourRevenues[tour._id]?.toLocaleString() || 0}
                       </div>
                     )}
 
@@ -294,7 +308,12 @@ const TourMonitoring = () => {
                   {selectedTourId === tour._id && (
                     <div className="admin-inline-modal-outer">
                       <div className="admin-inline-modal">
-                        <button className="admin-modal-close" onClick={() => setSelectedTourId(null)}>&times;</button>
+                        <button
+                          className="admin-modal-close"
+                          onClick={() => setSelectedTourId(null)}
+                        >
+                          &times;
+                        </button>
                         {modalLoading || !selectedTour ? (
                           <div style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>
                         ) : (
@@ -334,11 +353,16 @@ const TourMonitoring = () => {
       {showReviewModal && (
         <div className="admin-inline-modal-outer">
           <div className="admin-inline-modal review-modal">
-            <button className="admin-modal-close" onClick={() => {
-              setShowReviewModal(false);
-              setReviewText('');
-              setTourToReject(null);
-            }}>&times;</button>
+            <button
+              className="admin-modal-close"
+              onClick={() => {
+                setShowReviewModal(false);
+                setReviewText('');
+                setTourToReject(null);
+              }}
+            >
+              &times;
+            </button>
             <h3>Reject Tour</h3>
             <div className="review-form">
               <textarea
@@ -375,4 +399,3 @@ const TourMonitoring = () => {
 };
 
 export default TourMonitoring;
-

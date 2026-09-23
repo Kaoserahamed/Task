@@ -1,10 +1,10 @@
-import React, { useState, useEffect ,useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './ChatWindow.css';
 import avatar from '../../Assets/chat_avatar.png';
 import { useAuth } from '../../../Context/AuthContext';
 import API_BASE_URL from '../../../config/api';
 
-const ChatWindow = ({ selectedChat, companyId,chatType,username ,socket}) => {
+const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => {
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +15,7 @@ const ChatWindow = ({ selectedChat, companyId,chatType,username ,socket}) => {
   const chatHeaderRef = useRef(null);
   const messageInputRef = useRef(null);
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   console.log(selectedChat);
   useEffect(() => {
@@ -27,7 +27,8 @@ const ChatWindow = ({ selectedChat, companyId,chatType,username ,socket}) => {
 
     const handleScroll = () => {
       // Show button if scrolled up more than 100px from bottom
-      const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
       setShowScrollButton(!isAtBottom);
     };
 
@@ -36,43 +37,46 @@ const ChatWindow = ({ selectedChat, companyId,chatType,username ,socket}) => {
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, [messagesContainerRef.current]); 
-console.log(selectedChat.chatType);
-useEffect(() => {
-  if (socket) {
-    console.log('Socket connected in ChatWindow');
-    socket.on('posts', (data) => {
-      console.log('Received socket event in ChatWindow:', data);
-      if (data.action === 'create' && data.updatedChat) {
-        // For company-user chat
-        if (chatType === 'comuse' && data.updatedChat.companyId === companyId) {
-          console.log('Updating company-user chat messages:', data.updatedChat.messages);
-          setMessages(data.updatedChat.messages);
-        }
-        // For admin-company chat
-        else if (chatType === 'adcom' && data.updatedChat.chatType === 'adcom' && 
-                data.updatedChat.companyId === companyId) {
-          console.log('Updating admin-company chat messages:', data.updatedChat.messages);
-          setMessages(data.updatedChat.messages);
-        }
-      }
-    });
-  }
-  console.log(messages);
-
-  // Cleanup socket listener on component unmount
-  return () => {
+  }, [messagesContainerRef.current]);
+  console.log(selectedChat.chatType);
+  useEffect(() => {
     if (socket) {
-      console.log('Cleaning up socket listener in ChatWindow');
-      socket.off('posts');
+      console.log('Socket connected in ChatWindow');
+      socket.on('posts', (data) => {
+        console.log('Received socket event in ChatWindow:', data);
+        if (data.action === 'create' && data.updatedChat) {
+          // For company-user chat
+          if (chatType === 'comuse' && data.updatedChat.companyId === companyId) {
+            console.log('Updating company-user chat messages:', data.updatedChat.messages);
+            setMessages(data.updatedChat.messages);
+          }
+          // For admin-company chat
+          else if (
+            chatType === 'adcom' &&
+            data.updatedChat.chatType === 'adcom' &&
+            data.updatedChat.companyId === companyId
+          ) {
+            console.log('Updating admin-company chat messages:', data.updatedChat.messages);
+            setMessages(data.updatedChat.messages);
+          }
+        }
+      });
     }
-  };
-}, [socket, selectedChat?._id, chatType]);
-useEffect(() => {
-  if (selectedChat?.messages) {
-    setMessages(selectedChat.messages);
-  }
-}, [selectedChat]);
+    console.log(messages);
+
+    // Cleanup socket listener on component unmount
+    return () => {
+      if (socket) {
+        console.log('Cleaning up socket listener in ChatWindow');
+        socket.off('posts');
+      }
+    };
+  }, [socket, selectedChat?._id, chatType]);
+  useEffect(() => {
+    if (selectedChat?.messages) {
+      setMessages(selectedChat.messages);
+    }
+  }, [selectedChat]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,21 +88,20 @@ useEffect(() => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authtoken}`
+          Authorization: `Bearer ${authtoken}`,
         },
         body: JSON.stringify({
           chatId: selectedChat._id,
           content: newMessage,
-          userId:selectedChat.userId,
-          adminId:selectedChat.adminId,
-         companyName:selectedChat.companyName,
-         userName:selectedChat.userName||null,
+          userId: selectedChat.userId,
+          adminId: selectedChat.adminId,
+          companyName: selectedChat.companyName,
+          userName: selectedChat.userName || null,
           chatType: chatType,
-          companyId:selectedChat.companyId||null,
+          companyId: selectedChat.companyId || null,
           senderId: companyId,
-        })
+        }),
       });
-
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -117,22 +120,17 @@ useEffect(() => {
         </div>
       </div>
 
-      <div className="messages-container"ref={messagesContainerRef}  >
+      <div className="messages-container" ref={messagesContainerRef}>
         {isLoading ? (
           <div className="loading">Loading messages...</div>
         ) : messages.length > 0 ? (
           messages.map((message) => (
-            
-            <div 
+            <div
               key={message._id}
               className={`message ${message.senderId === companyId ? 'sent' : 'received'}`}
             >
-              <div className="message-content">
-                {message.content}
-              </div>
-              <span className="message-time">
-                {new Date(message.sentAt).toLocaleTimeString()}
-              </span>
+              <div className="message-content">{message.content}</div>
+              <span className="message-time">{new Date(message.sentAt).toLocaleTimeString()}</span>
             </div>
           ))
         ) : (
@@ -155,4 +153,4 @@ useEffect(() => {
   );
 };
 
-export default ChatWindow; 
+export default ChatWindow;

@@ -1,11 +1,10 @@
 require('dotenv').config();
 
 const express = require('express');
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 const http = require('http');
 const config = require('./config/env');
 const upload = require('./config/upload');
@@ -17,11 +16,11 @@ const errorHandler = require('./middleware/errorHandler');
 const { validateTour } = require('./middleware/validate');
 const toursRoutes = require('./routes/tours');
 const tourController = require('./controllers/tour');
-const getSuggestions  = require('./controllers/SuggestionController');
+const getSuggestions = require('./controllers/SuggestionController');
 const reviewRoutes = require('./routes/reviewRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const adminAuth = require('./middleware/adminAuth');
-const weatherRoute = require('./routes/weatherRoutes'); 
+const weatherRoute = require('./routes/weatherRoutes');
 //Admin Section
 const adminAuthRoutes = require('./routes/adminauth');
 
@@ -30,42 +29,43 @@ const server = http.createServer(app);
 const PORT = config.port;
 
 // Initialize socket.io only in non-serverless environment
-let socketInit;
 if (!config.isVercel) {
-  socketInit = require('./socket').init(server);
+  require('./socket').init(server);
 }
 
 // Updated CORS configuration - Allow both Vercel and localhost
-app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, or curl)
-    if (!origin) return callback(null, true);
-    
-    // Allow all .vercel.app domains
-    if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
-      return callback(null, true);
-    }
-    
-    // Allow all localhost origins on any port
-    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      return callback(null, true);
-    }
-    
-    // Check against whitelist for other origins
-    if (config.cors.origins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-    
-    console.warn(`Blocked CORS request from origin: ${origin}`);
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Length', 'X-Requested-With'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, Postman, or curl)
+      if (!origin) return callback(null, true);
+
+      // Allow all .vercel.app domains
+      if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
+        return callback(null, true);
+      }
+
+      // Allow all localhost origins on any port
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true);
+      }
+
+      // Check against whitelist for other origins
+      if (config.cors.origins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      }
+
+      console.warn(`Blocked CORS request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Length', 'X-Requested-With'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  })
+);
 
 // Handle preflight requests explicitly
 app.options('*', cors());
@@ -82,14 +82,12 @@ app.use('/api', companyRoutes); // Add this line for company routes
 app.use('/user/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/wishlist', wishlistRoutes);
-app.use('/Suggestion/:tourName',getSuggestions.getSuggestions);
+app.use('/Suggestion/:tourName', getSuggestions.getSuggestions);
 app.use('/api/bookings', bookingRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
 app.use('/reviews', reviewRoutes);
 // Socket.IO setup
-
 
 // Add this test route at the top of your routes
 app.get('/api/test', (req, res) => {
@@ -113,11 +111,9 @@ app.use('/api/admin', adminAuth, adminAuthRoutes);
 
 // Get single tour
 
-
 // Delete tour
 
 // Update tour status
-
 
 // Update tour
 
@@ -169,7 +165,6 @@ app.get('/api/tours/:id/seat-availability', tourController.getSeatAvailability);
 // Release seats (for cancellations)
 app.patch('/api/tours/:id/release-seats', tourController.releaseSeats);
 
-
 app.use(errorHandler);
 // ✅ Make sure this matches your filename
 
@@ -186,23 +181,22 @@ app.use('/api/tours', tourRoutes);
 const seedRoutes = require('./routes/seedRoutes');
 app.use('/api', seedRoutes);
 
-
 // Health check endpoints
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'ok',
     message: 'Backend is running!',
     environment: config.nodeEnv,
     isVercel: config.isVercel,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
 app.get('/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'healthy',
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -213,8 +207,9 @@ const mongooseOptions = {
   family: 4, // Force IPv4
 };
 
-mongoose.connect(config.mongodb.uri, mongooseOptions)
-  .then(result => {
+mongoose
+  .connect(config.mongodb.uri, mongooseOptions)
+  .then(() => {
     // Only start server if not in Vercel serverless environment
     if (!config.isVercel) {
       server.listen(PORT, () => {
@@ -230,7 +225,7 @@ mongoose.connect(config.mongodb.uri, mongooseOptions)
       });
     }
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('\n❌ Database Connection Failed!');
     console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.error('Error:', err.message);
@@ -245,5 +240,3 @@ mongoose.connect(config.mongodb.uri, mongooseOptions)
 
 // Export the Express app for Vercel
 module.exports = app;
-
-

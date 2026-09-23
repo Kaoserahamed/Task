@@ -42,13 +42,13 @@ function App() {
                 <Route path="/weather" element={<WeatherSuggestion />} />
                 <Route path="/places" element={<Places />} />
                 <Route path="/hotels-and-restaurants" element={<HotelRestaurants />} />
-                <Route 
-                  path="/profile" 
+                <Route
+                  path="/profile"
                   element={
                     <PrivateRoute>
                       <ProfilePage />
                     </PrivateRoute>
-                  } 
+                  }
                 />
                 <Route path="/search" element={<SearchFilter />} />
                 <Route path="/explore/:category?" element={<ExploreByCategory />} />
@@ -68,4 +68,3 @@ function App() {
 }
 
 export default App;
-

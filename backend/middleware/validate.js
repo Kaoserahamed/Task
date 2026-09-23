@@ -76,7 +76,12 @@ function validateTour(req, res, next) {
 
   // duration is a JSON-encoded object like {"days": "3", "nights": "2"}
   const duration = parseJsonField(body.duration);
-  if (!duration.ok || !duration.value || typeof duration.value !== 'object' || Array.isArray(duration.value)) {
+  if (
+    !duration.ok ||
+    !duration.value ||
+    typeof duration.value !== 'object' ||
+    Array.isArray(duration.value)
+  ) {
     return fail("'duration' must be a JSON-encoded object with days/nights");
   }
   const days = Number(duration.value.days);

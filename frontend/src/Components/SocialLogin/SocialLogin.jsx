@@ -17,4 +17,4 @@ const SocialLogin = () => {
   );
 };
 
-export default SocialLogin; 
+export default SocialLogin;
