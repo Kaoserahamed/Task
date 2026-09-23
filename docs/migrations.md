@@ -33,11 +33,14 @@ runs again on the next attempt.
 
 ## The schema is versioned in the documents
 
-Long-lived collections carry a `schemaVersion` field. New writes set the current
-version; a migration adds it to existing documents (`$exists: false` filter) and
-bumps it when the shape changes. Application code can then keep a small
-compatibility branch for older versions instead of guessing what it just read —
-and the number tells you which migrations are still outstanding.
+Migrations that change a shape add a `schemaVersion` field while they are at it:
+the migration sets it on the documents it touches (`$exists: false` filter) and
+new writes set the current number, so application code can keep a small
+compatibility branch for older versions instead of guessing what it just read.
+
+The field is not on every model yet — no collection has needed it so far, and
+adding it without a change to justify it would be noise. The first migration
+that alters a shape adds it and documents the number in this file.
 
 ## Local practice
 

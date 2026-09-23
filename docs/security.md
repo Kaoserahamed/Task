@@ -67,6 +67,28 @@ Exceeding a limit returns `429` with `code: 'RATE_LIMITED'`.
 behind Render/Railway/Vercel/nginx — set your proxy to strip inbound
 `x-forwarded-for` values it does not generate.
 
+## Open gaps and planned work
+
+The gaps below are deliberate; they are repeated in
+[SECURITY.md](../SECURITY.md#known-gaps) so an external reviewer sees them too.
+
+- **Token lifetime.** Access tokens last `JWT_EXPIRES_IN` (default `7d`) and
+  there is no refresh rotation or revocation list. Shortening the TTL is a
+  one-line change; a refresh endpoint with a `jti` deny-list is the follow-up
+  described in
+  [ADR 0006](adr/0006-access-tokens-and-password-hashing.md).
+- **Validation coverage.** `validators/` covers the tour write endpoints; the
+  remaining write endpoints depend on Mongoose schema validation. The tour
+  validator is the template.
+- **Uploads.** When Cloudinary is not configured, files are written to
+  `backend/uploads` and served from `/uploads`; the allow-list and the 5 MB cap
+  still apply, but a production deployment should set the Cloudinary keys.
+- **Metrics.** No `/metrics` endpoint is exposed; add `prom-client` behind
+  `METRICS_TOKEN` when a dashboard needs one.
+- **Migrations.** The runner and the format exist
+  ([migrations.md](migrations.md)); no collection carries `schemaVersion` yet
+  because no shape change has needed it.
+
 ## What to do about a leaked secret
 
 1. Rotate it in the provider (Mongo user, Cloudinary key, JWT secret) — assume

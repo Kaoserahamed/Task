@@ -29,6 +29,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Database evolution: numbered migrations applied by
   `backend/scripts/run-migrations.js`, with a `_migrations` ledger, a documented
   format and `docs/migrations.md`.
+- The gaps that are deliberately left open (token lifetime, validation coverage,
+  upload fallback, metrics, `schemaVersion`) are listed in `SECURITY.md` and
+  `docs/security.md` instead of being left for a reviewer to discover.
 
 ### Changed
 
