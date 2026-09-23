@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Tour = require('../models/tours');
 const Company = require('../models/company');
-const bcrypt = require('bcryptjs');
+const { hashPassword } = require('../utils/password');
 
 const logger = require('../utils/logger');
 const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
@@ -21,8 +21,7 @@ router.get('/seed-tours', async (req, res) => {
           message: 'Missing DEMO_COMPANY_PASSWORD env var — see backend/.env.example.',
         });
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(demoCompanyPassword, salt);
+      const hashedPassword = await hashPassword(demoCompanyPassword);
 
       demoCompany = await Company.create({
         name: 'Demo Travel Company',

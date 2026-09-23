@@ -48,6 +48,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Seeding endpoints (`/api/seed-tours`, `/api/demo/create-accounts`) now require
   `SEED_ENABLED=true` and are absent by default.
 - Runtime uploads, build output and binaries are no longer tracked.
+- The duplicate native `bcrypt` dependency is removed: all hashing goes through
+  `utils/password.js` on `bcryptjs` at cost 10. Password-reset endpoints no
+  longer log the new password or the reset token, and admin passwords hashed at
+  cost 12 are now written at the documented cost.
 
 ## [1.0.0] - Initial import
 

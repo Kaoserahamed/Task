@@ -10,9 +10,13 @@ See also [SECURITY.md](../SECURITY.md) for how to report a vulnerability.
   `Authorization: Bearer <token>`.
 - **Admins:** `/api/admin/*` is mounted twice on purpose — the public part
   (login, forgot-password) and the guarded part (`middleware/adminAuth.js`).
-- **Passwords** are stored as bcrypt hashes (`bcrypt` for company accounts,
-  `bcryptjs` for legacy user records). No password ever appears in a response or
-  a log line.
+- **Passwords** are stored as bcrypt hashes produced by one module,
+  `backend/utils/password.js` (`bcryptjs`, cost 10). The native `bcrypt` package
+  that used to serve the company endpoints is gone, so every hash in the
+  database was written by the same algorithm and cost, and every verification
+  goes through the same comparison helper. No password ever appears in a
+  response or a log line — including the password-reset endpoints, which used to
+  log the new password and the reset token.
 - Any new route that touches user data must add the corresponding middleware
   before it ships; the guarded mount is a deliberate second layer.
 

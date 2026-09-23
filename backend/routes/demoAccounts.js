@@ -5,7 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
+const { hashPassword } = require('../utils/password');
 const Company = require('../models/company');
 const User = require('../models/User');
 
@@ -66,7 +66,7 @@ router.get('/create-accounts', async (req, res) => {
           id: existingCompany._id,
         };
       } else {
-        const hashedPassword = await bcrypt.hash(DEMO_COMPANY.password, 12);
+        const hashedPassword = await hashPassword(DEMO_COMPANY.password);
         const company = new Company({
           ...DEMO_COMPANY,
           password: hashedPassword,
@@ -94,7 +94,7 @@ router.get('/create-accounts', async (req, res) => {
           id: existingUser._id,
         };
       } else {
-        const hashedPassword = await bcrypt.hash(DEMO_USER.password, 12);
+        const hashedPassword = await hashPassword(DEMO_USER.password);
         const user = new User({
           ...DEMO_USER,
           password: hashedPassword,

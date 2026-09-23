@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
 const Tour = require('../models/tours');
 const Company = require('../models/company');
+const { hashPassword } = require('../utils/password');
 
 const sampleTours = [
   {
@@ -387,9 +388,7 @@ async function seedTourPackages() {
         console.error('Missing DEMO_COMPANY_PASSWORD env var — see backend/.env.example.');
         process.exit(1);
       }
-      const bcrypt = require('bcryptjs');
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(demoCompanyPassword, salt);
+      const hashedPassword = await hashPassword(demoCompanyPassword);
 
       demoCompany = await Company.create({
         name: 'Demo Travel Company',

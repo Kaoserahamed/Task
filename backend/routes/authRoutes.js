@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
+const { hashPassword, verifyPassword } = require('../utils/password');
 const crypto = require('crypto');
 const sibApiV3Sdk = require('sib-api-v3-sdk');
 const jwt = require('jsonwebtoken');
@@ -33,8 +33,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await hashPassword(password);
 
     // Create new user
     user = new User({
@@ -74,7 +73,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Verify password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await verifyPassword(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -330,13 +329,12 @@ router.post('/reset', async (req, res) => {
 router.post('/reset-password', async (req, res) => {
   const newPassword = req.body.password;
   const passwordToken = req.body.token;
-  logger.info(newPassword + ' ' + passwordToken);
+  // Never log the password or the reset token — both are credentials.
   let resetUser;
   try {
     const user = await User.findOne({ resetToken: passwordToken });
-    logger.info(user);
     resetUser = user;
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    const hashedPassword = await hashPassword(newPassword);
     ((resetUser.password = hashedPassword), (resetUser.resetToken = undefined));
     resetUser.resetTokenExpiration = undefined;
     await resetUser.save();

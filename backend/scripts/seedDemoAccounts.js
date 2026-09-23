@@ -6,7 +6,7 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const { hashPassword } = require('../utils/password');
 const User = require('../models/User');
 const { Admin, AdminProfile } = require('../models/Admin');
 const Company = require('../models/company');
@@ -61,8 +61,7 @@ async function seedDemoAccounts() {
     console.log('✅ Connected to MongoDB\n');
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(demoAccounts.user.password, salt);
+    const hashedPassword = await hashPassword(demoAccounts.user.password);
 
     // 1. Create/Update Demo User
     console.log('👤 Creating/Updating Demo User...');

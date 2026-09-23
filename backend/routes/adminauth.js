@@ -1,6 +1,6 @@
 // routes/auth.js
 const express = require('express');
-const bcrypt = require('bcrypt');
+const { hashPassword, verifyPassword } = require('../utils/password');
 const jwt = require('jsonwebtoken');
 const { Admin, AdminProfile } = require('../models/Admin'); // Adjust the path as necessary
 const adminAuth = require('../middleware/adminAuth');
@@ -11,7 +11,7 @@ const router = express.Router();
 // Sign Up Endpoint
 router.post('/signup', async (req, res) => {
   const { email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hashPassword(password);
 
   const newAdmin = new Admin({ email, password: hashedPassword });
   try {
@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const admin = await Admin.findOne({ email });
 
-  if (admin && (await bcrypt.compare(password, admin.password))) {
+  if (admin && (await verifyPassword(password, admin.password))) {
     const token = jwt.sign({ id: admin._id, isAdmin: true }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
@@ -77,7 +77,7 @@ router.post('/profile', adminAuth, async (req, res) => {
     // Find admin and check password
     const admin = await Admin.findById(adminId);
     if (!admin) return res.status(404).json({ success: false, message: 'Admin not found' });
-    const isMatch = await bcrypt.compare(password, admin.password);
+    const isMatch = await verifyPassword(password, admin.password);
     if (!isMatch) return res.status(401).json({ success: false, message: 'Incorrect password' });
     let profile = await AdminProfile.findOne({ adminId });
     if (profile) {
@@ -120,10 +120,10 @@ router.post('/change-password', adminAuth, async (req, res) => {
     const admin = await Admin.findById(adminId);
     if (!admin) return res.status(404).json({ error: 'Admin not found' });
 
-    const isMatch = await bcrypt.compare(currentPassword, admin.password);
+    const isMatch = await verifyPassword(currentPassword, admin.password);
     if (!isMatch) return res.status(401).json({ error: 'Current password is incorrect' });
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await hashPassword(newPassword);
     admin.password = hashedPassword;
     await admin.save();
 

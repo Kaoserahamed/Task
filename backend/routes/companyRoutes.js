@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Company = require('../models/company');
 const authMiddleware = require('../middleware/authMiddleware');
-const bcrypt = require('bcrypt');
+const { hashPassword, verifyPassword } = require('../utils/password');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
@@ -49,8 +49,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await hashPassword(password);
 
     // Create new user
     company = new Company({
@@ -90,7 +89,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Verify password
-    const isMatch = await bcrypt.compare(password, company.password);
+    const isMatch = await verifyPassword(password, company.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -267,13 +266,13 @@ router.post('/reset', async (req, res) => {
 router.post('/reset-password', async (req, res) => {
   const newPassword = req.body.password;
   const passwordToken = req.body.token;
-  logger.info(newPassword + ' ' + passwordToken);
+  // Never log the password or the token: both are credentials, and a reset
+  // token in a log file is a reset token anyone with log access can spend.
   let resetUser;
   try {
     const user = await Company.findOne({ resetToken: passwordToken });
-    logger.info(user);
     resetUser = user;
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    const hashedPassword = await hashPassword(newPassword);
     ((resetUser.password = hashedPassword), (resetUser.resetToken = undefined));
     resetUser.resetTokenExpiration = undefined;
     await resetUser.save();
@@ -417,7 +416,7 @@ router.post('/verify-password', authMiddleware, async (req, res) => {
     if (!company) {
       return res.status(404).json({ success: false, message: 'Company not found' });
     }
-    const isMatch = await bcrypt.compare(password, company.password);
+    const isMatch = await verifyPassword(password, company.password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Incorrect password' });
     }
