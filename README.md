@@ -2,6 +2,26 @@
 
 A comprehensive multi-tenant tour booking and management platform enabling customers to discover and book tours, tour operators to manage listings and bookings, and administrators to oversee the entire system. Features real-time communication, AI-powered recommendations, and weather-based suggestions.
 
+## Documentation
+
+| Where                                        | What it covers                                               |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| [docs/README.md](docs/README.md)             | Index of every document in this repository                   |
+| [docs/development.md](docs/development.md)   | Local setup, one-command installs, day-to-day workflow       |
+| [docs/testing.md](docs/testing.md)           | Unit vs integration suites, coverage gates, how to add tests |
+| [docs/architecture.md](docs/architecture.md) | Layered backend, the four apps, data flow and boundaries     |
+| [docs/security.md](docs/security.md)         | Auth model, secrets, CORS, rate limiting, seeding policy     |
+| [docs/ci-cd.md](docs/ci-cd.md)               | Pipeline gates, artifacts, and how to reproduce CI locally   |
+| [docs/operations.md](docs/operations.md)     | Health probes, logs, container operations, runbook           |
+| [docs/api.md](docs/api.md)                   | REST surface, error envelope and status codes                |
+| [docs/adr/](docs/adr/)                       | Architecture decision records                                |
+| [CONTRIBUTING.md](CONTRIBUTING.md)           | Commit conventions, review workflow, quality gates           |
+| [SECURITY.md](SECURITY.md)                   | How to report a vulnerability                                |
+| [CHANGELOG.md](CHANGELOG.md)                 | Notable changes per release                                  |
+
+**One command to install everything:** `npm run setup` (from the repository root).
+**One command to prove the repository is healthy:** `npm run verify`.
+
 ## Live Demo
 
 ### Production URLs
@@ -524,26 +544,39 @@ Windows users can use:
 
 ## Development
 
-### Running Tests
+Everything is driven from the repository root; each package also works on its own.
 
 ```bash
-cd backend
-npm test
+npm run setup              # install every package exactly as CI does (npm ci)
+npm run verify             # lint + format + typecheck + repo guard + all test suites
+npm run test:backend       # backend unit tests (hermetic: no database, no Docker)
+npm run test:web           # the three React suites
+npm run test:coverage      # coverage everywhere, plus the backend coverage gate
+npm run test:backend:integration   # backend against a real MongoDB (needs one, see docs/testing.md)
+npm run stack:up           # docker compose: MongoDB + API
 ```
 
-### Development Mode with Auto-reload
+Useful per-package commands:
 
 ```bash
-cd backend
-npm run dev  # Uses nodemon
+npm --prefix backend run dev        # API with nodemon
+npm --prefix frontend start         # customer app on :3000
+npm --prefix admin start            # admin dashboard on :3001
+npm --prefix tourcompanydashboard start   # company dashboard on :3002
+npm --prefix backend run validate-env     # check the backend environment
 ```
 
-### Environment Validation
+### Testing
 
-```bash
-cd backend
-npm run validate-env
-```
+The backend suite is split in two, on purpose:
+
+- **`backend/tests/unit`** — hermetic. No database, no network, no Docker; the
+  repository layer is stubbed. This is what `npm test` and every push run.
+- **`backend/tests/integration`** — the same HTTP surface against a real MongoDB
+  (`mongodb-memory-server` locally, a `mongo:7` service container in CI).
+
+See [docs/testing.md](docs/testing.md) for the full guide, and
+[docs/architecture.md](docs/architecture.md) for how the backend is layered.
 
 ## Troubleshooting
 
