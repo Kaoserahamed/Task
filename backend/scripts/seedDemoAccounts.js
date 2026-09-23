@@ -16,28 +16,31 @@ const Company = require('../models/company');
 const DEMO_USER_PASSWORD = process.env.DEMO_USER_PASSWORD;
 const DEMO_ADMIN_PASSWORD = process.env.DEMO_ADMIN_PASSWORD || process.env.DEMO_USER_PASSWORD;
 const DEMO_COMPANY_PASSWORD = process.env.DEMO_COMPANY_PASSWORD || process.env.DEMO_USER_PASSWORD;
+const DEMO_USER_EMAIL = process.env.DEMO_USER_EMAIL;
+const DEMO_ADMIN_EMAIL = process.env.DEMO_ADMIN_EMAIL;
+const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
 
-if (!DEMO_USER_PASSWORD) {
-  console.warn('Missing DEMO_USER_PASSWORD env var — refusing to seed demo accounts with a default password.');
+if (!DEMO_USER_EMAIL || !DEMO_ADMIN_EMAIL || !DEMO_COMPANY_EMAIL || !DEMO_USER_PASSWORD) {
+  console.warn('Missing demo account email/password env vars — see backend/.env.example.');
   process.exit(1);
 }
 
 const demoAccounts = {
   user: {
     name: 'Demo User',
-    email: 'user@demo.com',
+    email: DEMO_USER_EMAIL,
     password: DEMO_USER_PASSWORD,
     phone: '+1234567890'
   },
   admin: {
     name: 'Demo Admin',
-    email: 'admin@demo.com',
+    email: DEMO_ADMIN_EMAIL,
     password: DEMO_ADMIN_PASSWORD,
     role: 'admin'
   },
   company: {
     name: 'Demo Travel Company',
-    email: 'company@demo.com',
+    email: DEMO_COMPANY_EMAIL,
     password: DEMO_COMPANY_PASSWORD,
     description: 'A demo travel company for testing',
     phone: '+1234567890',
@@ -79,7 +82,7 @@ async function seedDemoAccounts() {
       console.log('✅ Demo User created');
     }
     console.log(`   📧 Email: ${demoAccounts.user.email}`);
-    console.log(`   🔑 Password: ${demoAccounts.user.password}\n`);
+    console.log('   🔑 Password: (from DEMO_USER_PASSWORD)\n');
 
     // 2. Create/Update Demo Admin
     console.log('👨‍💼 Creating/Updating Demo Admin...');
@@ -116,7 +119,7 @@ async function seedDemoAccounts() {
       console.log('✅ Demo Admin created');
     }
     console.log(`   📧 Email: ${demoAccounts.admin.email}`);
-    console.log(`   🔑 Password: ${demoAccounts.admin.password}\n`);
+    console.log('   🔑 Password: (from DEMO_ADMIN_PASSWORD)\n');
 
     // 3. Create/Update Demo Company
     console.log('🏢 Creating/Updating Demo Company...');
@@ -139,7 +142,7 @@ async function seedDemoAccounts() {
       console.log('✅ Demo Company created');
     }
     console.log(`   📧 Email: ${demoAccounts.company.email}`);
-    console.log(`   🔑 Password: ${demoAccounts.company.password}\n`);
+    console.log('   🔑 Password: (from DEMO_COMPANY_PASSWORD)\n');
 
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('🎉 All demo accounts have been created/updated!');
@@ -148,15 +151,15 @@ async function seedDemoAccounts() {
     console.log('📋 Demo Credentials Summary:');
     console.log('┌─────────────────────────────────────────┐');
     console.log('│ 👤 User Account                         │');
-    console.log('│    Email:    user@demo.com              │');
+    console.log(`│    Email:    ${demoAccounts.user.email.padEnd(27)}│`);
     console.log('│    Password: (from DEMO_USER_PASSWORD)    │');
     console.log('├─────────────────────────────────────────┤');
     console.log('│ 👨‍💼 Admin Account                        │');
-    console.log('│    Email:    admin@demo.com             │');
+    console.log(`│    Email:    ${demoAccounts.admin.email.padEnd(27)}│`);
     console.log('│    Password: (from DEMO_ADMIN_PASSWORD)   │');
     console.log('├─────────────────────────────────────────┤');
     console.log('│ 🏢 Company Account                      │');
-    console.log('│    Email:    company@demo.com           │');
+    console.log(`│    Email:    ${demoAccounts.company.email.padEnd(27)}│`);
     console.log('│    Password: (from DEMO_COMPANY_PASSWORD) │');
     console.log('└─────────────────────────────────────────┘\n');
 

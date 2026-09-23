@@ -6,6 +6,7 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
+const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
 const Tour = require('../models/tours');
 const Company = require('../models/company');
 
@@ -369,7 +370,7 @@ async function seedTourPackages() {
 
     // Find or create a demo company
     console.log('🏢 Finding/Creating demo company...');
-    let demoCompany = await Company.findOne({ email: 'company@demo.com' });
+    let demoCompany = await Company.findOne({ email: DEMO_COMPANY_EMAIL });
     
     if (!demoCompany) {
       const demoCompanyPassword = process.env.DEMO_COMPANY_PASSWORD;
@@ -383,7 +384,7 @@ async function seedTourPackages() {
       
       demoCompany = await Company.create({
         name: 'Demo Travel Company',
-        email: 'company@demo.com',
+        email: DEMO_COMPANY_EMAIL,
         password: hashedPassword,
         description: 'A demo travel company showcasing tour packages',
         phone: '+880 1234-567890',

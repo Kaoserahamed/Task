@@ -6,6 +6,9 @@ import AuthTabs from '../../Components/AuthTabs/AuthTabs';
 import './LoginSignup.css';
 import API_BASE_URL from '../../config/api';
 
+const DEMO_USER_EMAIL = process.env.REACT_APP_DEMO_USER_EMAIL || '';
+const DEMO_USER_PASSWORD = process.env.REACT_APP_DEMO_USER_PASSWORD || '';
+
 const LoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
@@ -24,8 +27,8 @@ const LoginSignup = () => {
   // Seed the matching account with DEMO_USER_PASSWORD in backend/.env (see backend/.env.example).
   const fillDemoCredentials = () => {
     setFormData({
-      email: 'user@demo.com',
-      password: process.env.REACT_APP_DEMO_USER_PASSWORD || '',
+      email: DEMO_USER_EMAIL,
+      password: DEMO_USER_PASSWORD,
       name: formData.name,
       confirmPassword: formData.confirmPassword
     });
@@ -98,7 +101,7 @@ const LoginSignup = () => {
               Fill Demo Credentials
             </button>
             <p className="demo-info">
-              Email: <strong>user@demo.com</strong> | Password: <strong>{process.env.REACT_APP_DEMO_USER_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_USER_PASSWORD'}</strong>
+              Email: <strong>{DEMO_USER_EMAIL || 'set REACT_APP_DEMO_USER_EMAIL'}</strong> | Password: <strong>{DEMO_USER_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_USER_PASSWORD'}</strong>
             </p>
           </div>
         )}

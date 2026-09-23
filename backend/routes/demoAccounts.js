@@ -11,9 +11,12 @@ const User = require('../models/User');
 
 // Demo account credentials come only from environment variables.
 // Never commit real passwords here; see backend/.env.example (DEMO_*_PASSWORD).
+const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
+const DEMO_USER_EMAIL = process.env.DEMO_USER_EMAIL;
+
 const DEMO_COMPANY = {
   name: 'Adventure Tours Ltd',
-  email: 'demo@adventuretours.com',
+  email: DEMO_COMPANY_EMAIL,
   password: process.env.DEMO_COMPANY_PASSWORD,
   phone: '+1-555-0100',
   address: '123 Travel Street, New York, NY 10001',
@@ -33,14 +36,14 @@ const DEMO_COMPANY = {
 
 const DEMO_USER = {
   name: 'Demo User',
-  email: 'user@demo.com',
+  email: DEMO_USER_EMAIL,
   password: process.env.DEMO_USER_PASSWORD,
   phone: '+1-555-0200',
 };
 
-if (!DEMO_COMPANY.password || !DEMO_USER.password) {
+if (!DEMO_COMPANY.email || !DEMO_USER.email || !DEMO_COMPANY.password || !DEMO_USER.password) {
   // Fail fast instead of seeding accounts with a default password.
-  throw new Error('Missing DEMO_USER_PASSWORD / DEMO_COMPANY_PASSWORD env vars — see backend/.env.example.');
+  throw new Error('Missing demo account email/password env vars — see backend/.env.example.');
 }
 
 router.get('/create-accounts', async (req, res) => {

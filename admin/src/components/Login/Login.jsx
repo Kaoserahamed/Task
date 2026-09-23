@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import API_BASE_URL from '../../config/api';
 
+const DEMO_ADMIN_EMAIL = process.env.REACT_APP_DEMO_ADMIN_EMAIL || '';
+const DEMO_ADMIN_PASSWORD = process.env.REACT_APP_DEMO_ADMIN_PASSWORD || '';
+
 const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -14,8 +17,8 @@ const Login = () => {
 
     // Fill demo credentials from env (see admin/.env.example).
     const fillDemoCredentials = () => {
-        setEmail('admin@demo.com');
-        setPassword(process.env.REACT_APP_DEMO_ADMIN_PASSWORD || '');
+        setEmail(DEMO_ADMIN_EMAIL);
+        setPassword(DEMO_ADMIN_PASSWORD);
     };
 
     const handleSubmit = async (e) => {
@@ -71,7 +74,7 @@ const Login = () => {
                     Fill Demo Credentials
                 </button>
                 <p style={{ fontSize: '0.85rem', color: '#78350f', margin: 0 }}>
-                    Email: <strong>admin@demo.com</strong> | Password: <strong>{process.env.REACT_APP_DEMO_ADMIN_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_ADMIN_PASSWORD'}</strong>
+                    Email: <strong>{DEMO_ADMIN_EMAIL || 'set REACT_APP_DEMO_ADMIN_EMAIL'}</strong> | Password: <strong>{DEMO_ADMIN_PASSWORD ? '••••••••' : 'set REACT_APP_DEMO_ADMIN_PASSWORD'}</strong>
                 </p>
             </div>
 

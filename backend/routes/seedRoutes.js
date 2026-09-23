@@ -3,12 +3,13 @@ const router = express.Router();
 const Tour = require('../models/tours');
 const Company = require('../models/company');
 const bcrypt = require('bcryptjs');
+const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
 
 // Seed demo tour packages - GET endpoint for easy browser testing
 router.get('/seed-tours', async (req, res) => {
   try {
     // Find or create demo company
-    let demoCompany = await Company.findOne({ email: 'company@demo.com' });
+    let demoCompany = await Company.findOne({ email: DEMO_COMPANY_EMAIL });
     
     if (!demoCompany) {
       const demoCompanyPassword = process.env.DEMO_COMPANY_PASSWORD;
@@ -23,7 +24,7 @@ router.get('/seed-tours', async (req, res) => {
       
       demoCompany = await Company.create({
         name: 'Demo Travel Company',
-        email: 'company@demo.com',
+        email: DEMO_COMPANY_EMAIL,
         password: hashedPassword,
         description: 'A demo travel company showcasing amazing tour packages across Bangladesh',
         phone: '+880 1234-567890',
