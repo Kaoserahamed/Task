@@ -25,12 +25,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "validate-env": "node validate-env.js",
-    "predeploy": "node validate-env.js"
+    "predeploy": "node validate-env.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "verify": "npm run lint && npm run format:check && npm run typecheck && npm test"
   },
   "author": "",
   "license": "ISC",
@@ -40,8 +46,15 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@types/node": "^20.19.43",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^15.0.0",
     "jest": "^30.5.2",
     "mongodb-memory-server": "^11.2.0",
-    "supertest": "^7.2.2"
+    "prettier": "^3.9.8",
+    "supertest": "^7.2.2",
+    "typescript": "^5.9.3"
   }
 }
