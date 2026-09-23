@@ -1,32 +1,17 @@
 const config = require('./config/env');
+const { createOriginValidator } = require('./config/cors');
 
 let io;
 
 module.exports = {
   init: (httpServer) => {
-    // Configure CORS for Socket.io - Allow both Vercel and localhost
+    // Socket.IO shares the HTTP CORS policy, so both transports allow exactly
+    // the same origins (config/cors.js holds the allow-list).
     const socketCorsConfig = {
-      origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, Postman)
-        if (!origin) return callback(null, true);
-
-        // Allow all Vercel domains
-        if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
-          return callback(null, true);
-        }
-
-        // Allow all localhost origins
-        if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-          return callback(null, true);
-        }
-
-        // Check against whitelist
-        if (config.cors.origins.indexOf(origin) !== -1) {
-          return callback(null, true);
-        }
-
-        callback(null, false);
-      },
+      origin: createOriginValidator({
+        nodeEnv: config.nodeEnv,
+        allowedOrigins: config.cors.origins,
+      }),
       methods: ['GET', 'POST'],
       credentials: true,
       allowedHeaders: ['Content-Type', 'Authorization'],
