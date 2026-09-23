@@ -22,6 +22,8 @@ const REQUIRED_SCRIPTS = [
   'setup',
   'test',
   'test:backend',
+  'test:backend:integration',
+  'test:coverage',
   'test:web',
   'lint',
   'format:check',
@@ -97,7 +99,7 @@ for (const script of REQUIRED_SCRIPTS) {
   }
 }
 
-// 4. Every stack pins the runtime CI and the containers use.
+// 5. Every stack pins the runtime CI and the containers use.
 for (const stack of ['', ...STACKS]) {
   const manifestPath = stack === '' ? 'package.json' : `${stack}/package.json`;
   const manifest = readJson(manifestPath);
@@ -107,7 +109,7 @@ for (const stack of ['', ...STACKS]) {
   }
 }
 
-// 5. Runtime uploads are data, not source: .gitignore must keep them out of the
+// 6. Runtime uploads are data, not source: .gitignore must keep them out of the
 //    repository while the directories themselves stay clone-able via .gitkeep.
 const gitignore = readFileSync(path.join(repoRoot, '.gitignore'), 'utf8');
 for (const rule of [
