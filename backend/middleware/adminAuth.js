@@ -20,4 +20,3 @@ module.exports = function adminAuth(req, res, next) {
     return next(new UnauthorizedError('Invalid token', 'INVALID_TOKEN'));
   }
 };
-
