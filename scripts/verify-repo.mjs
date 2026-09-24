@@ -275,6 +275,42 @@ for (const app of WEB_APPS) {
   }
 }
 
+// 13. Every build argument docker-compose.yml passes to a service is actually
+//     declared by that service's Dockerfile. CRA inlines REACT_APP_* variables
+//     at build time, so an undeclared ARG is accepted by the build and then
+//     silently ignored: the image ships with the code default instead of the
+//     configured URL, and nothing fails until runtime.
+const composeText = readFileSync(path.join(repoRoot, 'docker-compose.yml'), 'utf8');
+
+// Collect `args:` keys that follow a `build: ./<dir>` service block.
+const composeServices = composeText.split(/\n(?=\s{2}\S)/);
+for (const service of composeServices) {
+  const buildMatch = service.match(/^\s{2}[\w-]+:\s*$/m) && service.match(/build:\s*\.\/([\w-]+)/);
+  const buildDir = buildMatch && buildMatch[1];
+  if (!buildDir) continue;
+
+  const argsMatch = service.match(/^\s{4}args:\s*$/m);
+  if (!argsMatch) continue;
+
+  const argsBlock = service.slice(service.indexOf('args:'));
+  const dockerfile = path.join(repoRoot, buildDir, 'Dockerfile');
+  if (!existsSync(dockerfile)) {
+    fail(`docker-compose.yml passes build args to ${buildDir}, but ${buildDir}/Dockerfile is missing`);
+    continue;
+  }
+
+  const dockerfileText = readFileSync(dockerfile, 'utf8');
+  for (const line of argsBlock.split('\n').slice(1)) {
+    const argName = line.match(/^\s{6}([A-Z][A-Z0-9_]*)\s*:/);
+    if (!argName) break;
+    if (!new RegExp(`^ARG\\s+${argName[1]}(=|\\s|$)`, 'm').test(dockerfileText)) {
+      fail(
+        `docker-compose.yml passes ${argName[1]} to ${buildDir}, but ${buildDir}/Dockerfile has no "ARG ${argName[1]}" — the value would be silently ignored`
+      );
+    }
+  }
+}
+
 if (failures.length > 0) {
   for (const failure of failures) {
     process.stderr.write(`verify-repo: ${failure}\n`);
