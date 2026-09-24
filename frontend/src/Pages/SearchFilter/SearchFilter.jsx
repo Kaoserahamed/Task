@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToursContext } from '../../Context/ToursContext';
 import './SearchFilter.css';
 import SearchBox from '../../Components/SearchBox/SearchBox';
@@ -13,32 +13,35 @@ import {
   STATUS_OPTIONS as statusOptions,
   TOUR_TYPE_OPTIONS as tourTypeOptions,
   aggregateReviews,
-  filterAndSortTours,
   formatDate,
   formatPrice,
   getImageUrl,
   getTourStatus,
-  parseSearchFilters,
 } from '../../utils/searchFilters';
+import { useSearchFilters } from './useSearchFilters';
 
 const SearchFilter = () => {
   const { tours, loading, error } = useContext(ToursContext);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate(); // Add this
-  // Add this with your other state declarations
+  const navigate = useNavigate();
   const [averageRatings, setAverageRatings] = useState({});
-  const initialFilters = parseSearchFilters(searchParams);
   const [reviewCounts, setReviewCounts] = useState({});
-  // State for filters
-  const [searchQuery, setSearchQuery] = useState(initialFilters.query);
-  const [priceRange, setPriceRange] = useState(initialFilters.priceMax);
-  const [selectedTourTypes, setSelectedTourTypes] = useState(initialFilters.tourTypes);
-  const [selectedDurations, setSelectedDurations] = useState(initialFilters.durations);
-  const [selectedStatuses, setSelectedStatuses] = useState(initialFilters.statuses);
-  const [sortOption, setSortOption] = useState(initialFilters.sort);
-  const [filteredTours, setFilteredTours] = useState([]);
+  const {
+    searchQuery,
+    priceRange,
+    selectedTourTypes,
+    selectedDurations,
+    selectedStatuses,
+    sortOption,
+    filteredTours,
+    handleSearch,
+    handlePriceChange,
+    handleTourTypeChange,
+    handleDurationChange,
+    handleStatusChange,
+    handleSortChange,
+    resetFilters,
+  } = useSearchFilters({ tours, averageRatings, reviewCounts });
 
-  // Add this useEffect after your existing useEffects
   useEffect(() => {
     const fetchRatingsFromReviews = async () => {
       try {
@@ -65,119 +68,6 @@ const SearchFilter = () => {
       navigate(`/package/${tourId}`);
     }
   };
-
-  // Handle search input
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    updateURLParams('query', query);
-  };
-
-  // Handle price range change
-  const handlePriceChange = (e) => {
-    const value = parseInt(e.target.value);
-    setPriceRange(value);
-    updateURLParams('priceMax', value.toString());
-  };
-
-  // Handle tour type checkbox
-  const handleTourTypeChange = (type) => {
-    setSelectedTourTypes((prev) => {
-      const updated = prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type];
-
-      updateURLParams('tourType', updated, true);
-      return updated;
-    });
-  };
-
-  // Handle duration checkbox
-  const handleDurationChange = (duration) => {
-    setSelectedDurations((prev) => {
-      const updated = prev.includes(duration)
-        ? prev.filter((d) => d !== duration)
-        : [...prev, duration];
-
-      updateURLParams('duration', updated, true);
-      return updated;
-    });
-  };
-
-  // Handle status checkbox
-  const handleStatusChange = (status) => {
-    setSelectedStatuses((prev) => {
-      const updated = prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status];
-
-      updateURLParams('status', updated, true);
-      return updated;
-    });
-  };
-
-  // Handle sort change
-  const handleSortChange = (e) => {
-    const value = e.target.value;
-    setSortOption(value);
-    updateURLParams('sort', value);
-  };
-
-  // Update URL parameters
-  const updateURLParams = (param, value, isArray = false) => {
-    const newParams = new URLSearchParams(searchParams);
-
-    if (isArray) {
-      // Clear existing values for this param
-      newParams.delete(param);
-      // Add each value as a separate param entry
-      if (Array.isArray(value)) {
-        value.forEach((v) => {
-          if (v) newParams.append(param, v);
-        });
-      }
-    } else {
-      if (value) {
-        newParams.set(param, value);
-      } else {
-        newParams.delete(param);
-      }
-    }
-
-    setSearchParams(newParams);
-  };
-
-  // Reset all filters
-  const resetFilters = () => {
-    setSearchQuery('');
-    setPriceRange(1000);
-    setSelectedTourTypes([]);
-    setSelectedDurations([]);
-    setSelectedStatuses([]);
-    setSortOption('lowest');
-    setSearchParams({});
-  };
-
-  useEffect(() => {
-    setFilteredTours(
-      filterAndSortTours({
-        tours,
-        query: searchQuery,
-        priceMax: priceRange,
-        tourTypes: selectedTourTypes,
-        durations: selectedDurations,
-        statuses: selectedStatuses,
-        sort: sortOption,
-        averageRatings,
-        reviewCounts,
-      })
-    );
-  }, [
-    tours,
-    searchQuery,
-    priceRange,
-    selectedTourTypes,
-    selectedDurations,
-    selectedStatuses,
-    sortOption,
-    averageRatings,
-    reviewCounts,
-  ]);
 
   const renderStars = (tourId) => {
     const rating = averageRatings[tourId] || 0;
