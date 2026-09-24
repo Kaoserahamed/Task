@@ -27,6 +27,9 @@ const app = createApp();
 
 async function start() {
   const server = http.createServer(app);
+  server.requestTimeout = config.http.requestTimeoutMs;
+  server.headersTimeout = config.http.headersTimeoutMs;
+  server.keepAliveTimeout = 5000;
 
   // Socket.IO is unavailable on Vercel's serverless runtime; skip it there.
   if (!config.isVercel) {
@@ -58,8 +61,16 @@ function shutdown(server, signal) {
       });
 
     try {
+      const forceClose = setTimeout(() => {
+        logger.warn('graceful shutdown timed out; closing remaining connections');
+        server.closeAllConnections?.();
+      }, config.http.shutdownTimeoutMs);
+      forceClose.unref();
+
       await closeServer();
+      clearTimeout(forceClose);
       await mongoose.connection.close(false);
+      await require('./utils/redis').close();
       logger.info('shutdown complete');
       process.exit(0);
     } catch (error) {

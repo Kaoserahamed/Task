@@ -11,9 +11,11 @@ const { createCorsOptions } = require('./config/cors');
 const requestId = require('./middleware/requestId');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
+const storageRouter = require('./routes/storageRoutes');
 const { apiLimiter, authLimiter } = require('./middleware/rateLimit');
+const metrics = require('./utils/metrics');
+const idempotency = require('./middleware/idempotency');
 const logger = require('./utils/logger');
-const adminAuth = require('./middleware/adminAuth');
 
 const authRoutes = require('./routes/authRoutes');
 const companyRoutes = require('./routes/companyRoutes');
@@ -47,6 +49,7 @@ function createApp({ log = logger } = {}) {
   app.set('trust proxy', 1);
 
   app.use(requestId);
+  app.use(metrics.middleware);
 
   app.use(
     helmet({
@@ -62,6 +65,7 @@ function createApp({ log = logger } = {}) {
 
   app.use(express.json({ limit: config.http.jsonLimit }));
   app.use(express.urlencoded({ extended: true, limit: config.http.jsonLimit }));
+  app.use(idempotency);
 
   // Runtime uploads on disk (used when Cloudinary is not configured).
   for (const dir of UPLOAD_DIRS) {
@@ -104,8 +108,17 @@ function createApp({ log = logger } = {}) {
     res.json({
       status: 'healthy',
       database: databaseState(),
+      redis: config.redis.url ? 'configured' : 'disabled',
       timestamp: new Date().toISOString(),
     });
+  });
+
+  app.get('/metrics', (req, res) => {
+    if (config.metrics.token && req.header('x-metrics-token') !== config.metrics.token) {
+      return res.status(401).json({ success: false, error: 'Metrics authentication required', code: 'UNAUTHORIZED' });
+    }
+    res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+    return res.send(metrics.render());
   });
 
   app.get('/api/test', (req, res) => {
@@ -121,6 +134,7 @@ function createApp({ log = logger } = {}) {
   app.use('/api', apiLimiter);
 
   app.use('/api', companyRoutes);
+  app.use('/api/storage', storageRouter);
   app.use('/api/chat', chatRoutes);
   app.use('/api/wishlist', wishlistRoutes);
   app.use('/api/bookings', bookingRoutes);
@@ -134,8 +148,9 @@ function createApp({ log = logger } = {}) {
   app.use('/api', tourRoutes);
   app.use('/api/tours', tourRoutes);
 
-  app.use('/api/admin', adminAuthRoutes);
-  app.use('/api/admin', adminAuth, adminAuthRoutes);
+  // Mount once. The router protects every administrative mutation itself; a
+  // second unguarded mount would bypass those checks entirely.
+  app.use('/api/admin', authLimiter, adminAuthRoutes);
 
   // Seeding creates accounts and demo data with known passwords, so it is off
   // unless an operator explicitly opts in (SEED_ENABLED=true).
