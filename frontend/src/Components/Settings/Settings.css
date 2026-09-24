@@ -1,0 +1,280 @@
+/* Profile page styles */
+.profile-page {
+  background: var(--background-secondary);
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 30px;
+}
+
+.profile-content {
+  background: var(--card-bg);
+  border-radius: 15px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  overflow: hidden;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.tab-content {
+  padding: 20px;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+/* Profile tabs styles */
+.profile-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color 0.3s ease;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background: none;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--primary-color);
+  background-color: var(--border-hover);
+}
+
+.tab-btn.active {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  background-color: var(--overlay-light);
+}
+
+.tab-btn i {
+  font-size: 1.1rem;
+}
+
+/* Dark mode specific enhancements */
+[data-theme='dark'] .profile-content {
+  border: 1px solid var(--border-color);
+}
+
+[data-theme='dark'] .tab-btn:hover {
+  background-color: var(--border-hover);
+}
+
+[data-theme='dark'] .tab-btn.active {
+  background-color: var(--border-hover);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .profile-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-btn span {
+    display: none;
+  }
+
+  .profile-page {
+    padding: 20px 10px;
+  }
+}
+
+/* Settings page styles */
+.settings {
+  padding: 20px;
+}
+
+.settings-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.settings-section h3 {
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--form-bg);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--border-hover);
+}
+
+.save-btn {
+  background: var(--primary-color);
+  color: var(--text-white);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.save-btn:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--border-hover);
+}
+
+.preferences {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.preference-item:hover {
+  background-color: var(--overlay-light);
+}
+
+.preference-text span {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.preference-text p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-color);
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-white);
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.slider:hover {
+  box-shadow: 0 0 0 8px var(--border-hover);
+}
+
+.message {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.message.success {
+  background-color: var(--background-tertiary);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.message.error {
+  background-color: var(--background-tertiary);
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+
+/* Dark mode specific enhancements for settings */
+[data-theme='dark'] .settings-section {
+  border: 1px solid var(--border-color);
+}
+
+[data-theme='dark'] .preference-item:hover {
+  background-color: var(--border-hover);
+}

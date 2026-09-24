@@ -1,0 +1,18 @@
+{
+  "//": "Typecheck-only config: `npm run typecheck` runs tsc --noEmit over the JavaScript sources. It catches syntax errors and broken/relative imports without forcing JSDoc types on the whole API yet (checkJs stays off until modules are annotated).",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.js"],
+  "exclude": ["node_modules", "coverage", "uploads", "public/uploads"]
+}

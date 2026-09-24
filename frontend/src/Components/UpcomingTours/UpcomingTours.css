@@ -1,0 +1,283 @@
+/* Main Container */
+.upcoming-tours-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: var(--background-primary);
+  transition: background-color 0.3s ease;
+  padding: 20px;
+}
+
+/* Loading Container */
+.upcoming-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  min-height: 300px;
+}
+
+@keyframes upcoming-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.upcoming-loading-container p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* No Tours Message */
+.upcoming-no-tours-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 380px;
+  padding: 40px 20px;
+}
+
+.upcoming-no-tours-content {
+  text-align: center;
+  color: var(--text-secondary);
+  max-width: 500px;
+}
+
+.upcoming-no-tours-content i {
+  font-size: 4rem;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.upcoming-no-tours-content h3 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  transition: color 0.3s ease;
+}
+
+.upcoming-no-tours-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Tours Grid - Responsive Flexbox Layout */
+.upcoming-tours-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Main Row Grid Container */
+.upcoming-tour-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Optional Scroll Container if horizontal scroll is intended */
+.upcoming-tour-scroll-container {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Tour Card */
+.upcoming-tour-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  width: 280px;
+  flex: 0 0 auto;
+}
+
+.upcoming-tour-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px var(--shadow-hover);
+}
+
+/* Tour Image */
+.upcoming-tour-image {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.upcoming-tour-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.upcoming-tour-card:hover .upcoming-tour-image img {
+  transform: scale(1.05);
+}
+
+.upcoming-tour-tag {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--warning-color);
+  color: var(--text-white);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+/* Tour Info */
+.upcoming-tour-info {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.upcoming-tour-info h3 {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tour Details */
+.upcoming-tour-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+.upcoming-tour-details span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.upcoming-tour-details span i {
+  width: 18px;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.upcoming-tour-details span strong {
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+/* Tour Actions */
+.upcoming-tour-actions {
+  margin-top: auto;
+}
+
+.upcoming-view-details-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-white);
+  border: none;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.upcoming-view-details-btn:hover {
+  background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.upcoming-view-details-btn i {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.upcoming-view-details-btn:hover i {
+  transform: translateX(4px);
+}
+
+/* Responsive Design – cleaned up to preserve fixed card width */
+
+/* All the following breakpoints are commented out or removed because they adjust width/flex:
+
+@media (min-width: 1400px) { ... }
+@media (min-width: 1200px) and (max-width: 1399px) { ... }
+@media (min-width: 992px) and (max-width: 1199px) { ... }
+@media (min-width: 768px) and (max-width: 991px) { ... }
+@media (max-width: 767px) { ... }
+@media (max-width: 480px) { ... }
+
+You can keep styles for other parts like image height/text size if needed.
+*/
+
+/* Animation for cards */
+.upcoming-tour-card {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.upcoming-tour-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.upcoming-tour-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.upcoming-tour-card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.upcoming-tour-card:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

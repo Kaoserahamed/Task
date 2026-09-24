@@ -1,0 +1,21 @@
+{
+  "//": "Typecheck-only config (C2.3). Create React App is deprecated and this app is JavaScript, so the gate follows the backend's contract: `tsc --noEmit` over every source file. checkJs is off for now — it stays off until the modules carry JSDoc types — but the gate still catches syntax errors, duplicate identifiers and broken relative imports before the bundle is ever built. Set checkJs to true per file (`// @ts-check`) to opt a module in early.",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "build", "coverage"]
+}

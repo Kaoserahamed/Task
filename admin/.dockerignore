@@ -1,0 +1,20 @@
+node_modules
+build
+coverage
+npm-debug.log*
+*.log
+
+# Secrets: a real .env must never enter the build context. The bundle gets its
+# configuration from REACT_APP_* build arguments instead.
+.env
+.env.*
+
+# Build context noise
+.git
+.github
+.vscode
+Dockerfile
+.dockerignore
+README.md
+*.md
+docs

@@ -1,0 +1,36 @@
+.category-tabs {
+  display: flex;
+  gap: 15px;
+  padding: 20px 0;
+  margin-bottom: 30px;
+  overflow-x: auto;
+}
+
+.category-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  color: #666;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.category-tab i {
+  color: var(--category-color);
+}
+
+.category-tab.active {
+  background: var(--category-color);
+  color: white;
+}
+
+.category-tab.active i {
+  color: white;
+}

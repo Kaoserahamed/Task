@@ -1,0 +1,35 @@
+# Environment files
+# Allow .env.example / .env.*.example templates (placeholders only).
+# Block every other .env file (real secrets).
+*.env
+*.env.*
+!.env.example
+!.env.*.example
+
+# Dependencies
+node_modules
+
+# Build output
+build/
+dist/
+
+# Test output
+coverage/
+coverage-final.json
+
+# Runtime uploads are user data, not source. Keep the directories in git with a
+# .gitkeep marker so a fresh clone still has a writable uploads path.
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.log
+.vercel
+
+# Local verification transcripts (a hand-redirected `npm run verify` log; the
+# committed gates are the CI workflow and `npm run verify` itself).
+verify-log.txt

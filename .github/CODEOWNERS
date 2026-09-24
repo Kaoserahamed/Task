@@ -1,0 +1,35 @@
+# CODEOWNERS
+#
+# GitHub automatically requests review from these owners when a pull request
+# touches matching paths. Update the handles below to the real GitHub teams
+# for your organization before the first PR is opened.
+
+# Root configuration and governance
+/.github/CODEOWNERS        @task/maintainers
+/.github/dependabot.yml    @task/maintainers
+/.github/workflows/ci.yml  @task/maintainers
+/.github/pull_request_template.md @task/maintainers
+/*.json                     @task/maintainers
+/*.md                       @task/maintainers
+/.gitignore                @task/maintainers
+
+# Onboarding and delivery tooling
+/.devcontainer/            @task/maintainers
+/docker-compose.yml        @task/maintainers
+/docker-compose.test.yml   @task/maintainers
+/scripts/                  @task/maintainers
+
+# Documentation tree
+/docs/                     @task/maintainers
+
+# Backend (Express + MongoDB API)
+/backend/                  @task/backend
+
+# Customer store-front
+/frontend/                 @task/frontend
+
+# Admin dashboard
+/admin/                    @task/frontend
+
+# Tour-company dashboard
+/tourcompanydashboard/     @task/frontend

@@ -1,0 +1,47 @@
+.destination-search {
+  padding: 20px;
+}
+
+input {
+  padding: 12px 15px;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 2px solid #e1e1e1;
+  transition: var(--transition);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+button {
+  padding: 12px 24px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+button:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+}
+
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.destination-card {
+  background-color: #f4f4f9;
+  padding: 15px;
+  border-radius: 8px;
+  width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

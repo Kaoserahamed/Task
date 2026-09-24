@@ -1,0 +1,107 @@
+/* Homepage Styles - uses centralized theme */
+.homepage {
+  min-height: 100vh;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  width: 100%;
+  transition: color var(--transition-base);
+}
+
+/* Hero Section */
+.hero-section {
+  margin-top: var(--spacing-lg);
+  width: 90%;
+  min-height: 30vh;
+  max-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px var(--spacing-lg);
+  text-align: center;
+  position: relative;
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-3xl);
+}
+
+.tour-suggestions {
+  width: 100%;
+  max-width: var(--max-width-container);
+}
+
+.upcoming-section {
+  padding: 0 var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .upcoming-section {
+    margin: var(--spacing-3xl) 0;
+    padding: 0 var(--spacing-md);
+  }
+}
+
+/* Sections */
+.popular-section,
+.categories-section,
+.weather-section {
+  transition: background-color var(--transition-base);
+}
+
+.popular-section {
+  max-width: var(--max-width-2xl);
+  padding: var(--spacing-3xl) 0;
+  margin: 0 auto;
+}
+
+.popular-section h2 {
+  font-size: var(--font-size-3xl);
+  margin: var(--spacing-lg);
+  color: var(--text-primary);
+  text-align: center;
+  transition: color var(--transition-base);
+}
+
+.categories-section {
+  width: var(--max-width-container);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
+}
+
+.categories-section h2 {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+  text-align: center;
+  transition: color var(--transition-base);
+}
+
+.weather-section {
+  width: 100%;
+  max-width: var(--max-width-2xl);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
+}
+
+.weather-section h2 {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+  text-align: center;
+  transition: color var(--transition-base);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .popular-section h2,
+  .categories-section h2,
+  .weather-section h2 {
+    font-size: var(--font-size-2xl);
+    text-align: center;
+  }
+
+  .hero-section {
+    padding: var(--spacing-2xl) var(--spacing-sm);
+  }
+}

@@ -1,0 +1,136 @@
+.license-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 36px 32px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  position: relative;
+}
+.license-container h2 {
+  margin-bottom: 22px;
+  color: #1a237e;
+  font-size: 2.2rem;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.license-status {
+  margin-bottom: 22px;
+  font-size: 1.15rem;
+  text-align: center;
+}
+.license-status .verified {
+  color: #2ecc71;
+  font-weight: bold;
+}
+.license-status .pending {
+  color: #f1c40f;
+  font-weight: bold;
+}
+.license-status .not-verified {
+  color: #e74c3c;
+  font-weight: bold;
+}
+.license-form {
+  margin-bottom: 28px;
+}
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1976d2;
+  margin: 28px 0 12px 0;
+  border-left: 4px solid #1976d2;
+  padding-left: 10px;
+  background: #f5f7fa;
+  border-radius: 4px;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 10px;
+}
+.form-row label {
+  width: 160px;
+  font-weight: 500;
+  color: #333;
+  flex-shrink: 0;
+}
+.form-row input,
+.form-row textarea {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+}
+.form-row input:focus,
+.form-row textarea:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+}
+.form-row textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+.logo-placeholder {
+  color: #888;
+  font-style: italic;
+}
+.form-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+}
+.form-actions button {
+  padding: 8px 22px;
+  border: none;
+  border-radius: 6px;
+  background: #1976d2;
+  color: #fff;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.form-actions button:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}
+.license-request-section {
+  text-align: center;
+  margin-top: 32px;
+}
+.request-license-btn {
+  padding: 12px 36px;
+  background: #388e3c;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.request-license-btn:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}
+.error-msg {
+  color: #e74c3c;
+  margin-left: 12px;
+  font-size: 1rem;
+}
+.success-msg {
+  color: #2ecc71;
+  margin-left: 12px;
+  font-size: 1rem;
+}
+.empty-value {
+  color: #bdbdbd;
+  font-style: italic;
+  font-size: 1rem;
+}

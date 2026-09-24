@@ -1,0 +1,301 @@
+/* Auth Container - LoginSignup Page */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-primary);
+  padding: var(--spacing-lg);
+  transition: background var(--transition-base);
+}
+
+.auth-box {
+  background: var(--card-bg);
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-3xl);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: var(--shadow-lg);
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.auth-header h2 {
+  font-size: var(--font-size-3xl);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  transition: color var(--transition-base);
+}
+
+.auth-header p {
+  color: var(--text-secondary);
+  transition: color var(--transition-base);
+}
+
+.auth-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.auth-tabs button {
+  flex: 1;
+  padding: var(--spacing-md);
+  border: none;
+  background: var(--background-tertiary);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border-radius: var(--radius-md);
+}
+
+.auth-tabs button.active {
+  background: var(--primary-color);
+  color: var(--text-white);
+}
+
+.auth-tabs button:hover:not(.active) {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+}
+
+/* Form elements now use shared .form-* classes from components.css */
+/* Keeping only page-specific overrides */
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: var(--spacing-lg);
+}
+
+.forgot-password a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.forgot-password a:hover {
+  color: var(--primary-hover);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: var(--text-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.social-login {
+  margin-top: var(--spacing-2xl);
+  text-align: center;
+}
+
+.social-login p {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  transition: color var(--transition-base);
+}
+
+.social-login p::before,
+.social-login p::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 1px;
+  background: var(--border-color);
+  transition: background var(--transition-base);
+}
+
+.social-login p::before {
+  left: 0;
+}
+
+.social-login p::after {
+  right: 0;
+}
+
+.social-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.social-buttons button {
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.google-btn:hover,
+.facebook-btn:hover {
+  background: var(--background-tertiary);
+  border-color: var(--primary-color);
+}
+
+/* Loading state uses shared animation from components.css */
+.submit-btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.submit-btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--text-white);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: var(--spacing-sm);
+  }
+
+  .auth-box {
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+  }
+
+  .auth-header h2 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .social-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-tabs button {
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Demo Credentials Section */
+.demo-credentials {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 2px dashed #f59e0b;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+.demo-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: #92400e;
+  margin-bottom: var(--spacing-sm);
+}
+
+.demo-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: var(--text-white);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  margin-bottom: var(--spacing-sm);
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
+}
+
+.demo-btn:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.4);
+}
+
+.demo-btn:active {
+  transform: translateY(0);
+}
+
+.demo-info {
+  font-size: var(--font-size-xs);
+  color: #78350f;
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+.demo-info strong {
+  color: #92400e;
+  font-weight: var(--font-weight-bold);
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    border-color: #f59e0b;
+  }
+  50% {
+    border-color: #fbbf24;
+  }
+}
+
+/* Dark mode support for demo credentials */
+[data-theme='dark'] .demo-credentials {
+  background: linear-gradient(135deg, #78350f, #92400e);
+  border-color: #f59e0b;
+}
+
+[data-theme='dark'] .demo-label {
+  color: #fcd34d;
+}
+
+[data-theme='dark'] .demo-info {
+  color: #fde68a;
+}
+
+[data-theme='dark'] .demo-info strong {
+  color: #fcd34d;
+}

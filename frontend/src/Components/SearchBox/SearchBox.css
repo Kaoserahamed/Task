@@ -1,0 +1,65 @@
+/* SearchBox Styles - uses centralized theme */
+.custom-search-box {
+  max-width: var(--max-width-lg);
+  display: flex;
+  align-items: center;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-sm);
+  margin: 0 auto;
+  transition: all var(--transition-base);
+}
+
+.custom-search-input {
+  flex: 1;
+  border: none;
+  padding: var(--spacing-sm);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-sm);
+  outline: none;
+  margin-right: var(--spacing-sm);
+  background-color: var(--form-bg);
+  color: var(--text-primary);
+  transition: all var(--transition-base);
+}
+
+.custom-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.custom-search-button {
+  background-color: var(--primary-color);
+  color: var(--text-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.custom-search-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.custom-search-icon {
+  margin-right: var(--spacing-sm);
+  color: var(--text-muted);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .custom-search-box {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .custom-search-input {
+    margin-right: 0;
+  }
+
+  .custom-search-button {
+    width: 100%;
+  }
+}

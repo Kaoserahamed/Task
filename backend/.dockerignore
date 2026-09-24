@@ -1,0 +1,30 @@
+node_modules
+npm-debug.log
+*.log
+
+# Secrets: placeholders only, never a real .env
+.env
+.env.*
+!.env.example
+
+# Data, not source
+uploads
+coverage
+
+# Test and tooling files the runtime never imports
+tests
+jest.config.js
+jest.integration.config.js
+scripts/check-coverage.js
+eslint.config.js
+tsconfig.json
+
+# Build context noise
+Dockerfile
+.dockerignore
+.git
+.github
+.vscode
+README.md
+*.md
+docs

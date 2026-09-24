@@ -1,0 +1,163 @@
+.weather-recommended {
+  padding: 60px 20px;
+  background: white;
+}
+
+.section-header {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+
+.section-header h2 {
+  font-size: 2rem;
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+.section-header p {
+  color: #666;
+}
+
+.recommendations-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.recommendation-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.recommendation-image {
+  position: relative;
+  height: 220px;
+}
+
+.recommendation-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.weather-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.weather-badge i {
+  color: #fbbf24;
+}
+
+.recommendation-content {
+  padding: 20px;
+}
+
+.recommendation-content h3 {
+  font-size: 1.25rem;
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+.recommendation-content p {
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.recommendation-content p i {
+  color: var(--primary-color);
+}
+
+.recommendation-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  gap: 10px;
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.explore-btn {
+  padding: 8px 12px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.explore-btn:hover {
+  background: var(--secondary-color);
+}
+
+/* Weather-specific styles */
+.weather-badge i.fa-sun {
+  color: #fbbf24;
+}
+
+.weather-badge i.fa-snowflake {
+  color: #60a5fa;
+}
+
+.weather-badge i.fa-cloud-rain {
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .weather-recommended {
+    padding: 40px 20px;
+  }
+
+  .section-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .recommendation-content {
+    padding: 15px;
+  }
+
+  .weather-badge {
+    font-size: 0.9rem;
+  }
+}

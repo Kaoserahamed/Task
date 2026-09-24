@@ -1,0 +1,66 @@
+/* Profile tabs styles */
+.profile-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color 0.3s ease;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background: none;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--primary-color);
+  background-color: var(--border-hover);
+}
+
+.tab-btn.active {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  background-color: var(--overlay-light);
+}
+
+.tab-btn i {
+  font-size: 1.1rem;
+}
+
+/* Dark mode specific enhancements */
+[data-theme='dark'] .profile-content {
+  border: 1px solid var(--border-color);
+}
+
+[data-theme='dark'] .tab-btn:hover {
+  background-color: var(--border-hover);
+}
+
+[data-theme='dark'] .tab-btn.active {
+  background-color: var(--border-hover);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .profile-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-btn span {
+    display: none;
+  }
+
+  .profile-page {
+    padding: 20px 10px;
+  }
+}

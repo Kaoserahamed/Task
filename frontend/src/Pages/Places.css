@@ -1,0 +1,43 @@
+.places-container {
+  padding: 40px 20px;
+  background: linear-gradient(to right, #e0f7fa, #fce4ec);
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+}
+
+.places-container h2 {
+  color: #37474f;
+  font-size: 1.8rem;
+  margin: 30px 0 15px;
+}
+
+.place-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.place-card {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 15px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.place-card:hover {
+  transform: scale(1.03);
+}
+
+.place-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: #263238;
+}
+
+.place-card p {
+  font-size: 0.95rem;
+  color: #455a64;
+  margin: 4px 0;
+}

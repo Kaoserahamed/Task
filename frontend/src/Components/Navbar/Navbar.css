@@ -1,0 +1,335 @@
+/* Navbar styles with global theme variables */
+.navbar {
+  background: var(--header-bg);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.nav-container {
+  max-width: var(--max-width-2xl);
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-color);
+  text-decoration: none;
+  min-width: 100px;
+  transition: color var(--transition-base);
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-base);
+  border-radius: var(--radius-md);
+}
+
+.nav-item:hover {
+  color: var(--primary-color);
+  background: var(--overlay-light);
+}
+
+.nav-item i {
+  font-size: var(--font-size-lg);
+  transition: color var(--transition-base);
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 100px;
+  justify-content: flex-end;
+}
+
+.nav-auth-mobile {
+  display: none;
+}
+
+.login-btn,
+.profile-btn,
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.profile-btn,
+.login-btn {
+  background: var(--primary-color);
+  color: var(--text-white);
+}
+
+.profile-btn:hover,
+.login-btn:hover {
+  background: var(--primary-hover);
+}
+
+.logout-btn {
+  background: var(--error-color);
+  color: var(--text-white);
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: var(--font-size-2xl);
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: color var(--transition-base);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+.menu-toggle:hover {
+  background: var(--overlay-light);
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  margin-right: var(--spacing-sm);
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--overlay-light);
+}
+
+.theme-toggle-btn i {
+  font-size: var(--font-size-xl);
+  color: var(--text-primary);
+  transition: color var(--transition-base);
+}
+
+/* Desktop/Mobile specific styles */
+.desktop {
+  display: flex;
+}
+
+.mobile {
+  display: none;
+}
+
+/* Responsive styles for tablets and smaller screens */
+@media (max-width: 1123px) {
+  /* Hide text labels for nav items and auth buttons */
+  .nav-text,
+  .auth-text,
+  .logo-text {
+    display: none;
+  }
+
+  .nav-item {
+    padding: 8px 12px;
+    gap: 0;
+    min-width: 40px;
+    justify-content: center;
+  }
+
+  .nav-item i {
+    font-size: 1.2rem;
+  }
+
+  .login-btn,
+  .profile-btn,
+  .logout-btn {
+    padding: 8px 12px;
+    gap: 0;
+    min-width: 40px;
+    justify-content: center;
+  }
+
+  .theme-toggle-btn {
+    margin-right: 5px;
+  }
+
+  .nav-container {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+
+  .nav-menu {
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+/* Mobile specific styles */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: var(--spacing-md);
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 70px;
+    left: -100%;
+    width: 100%;
+    height: calc(100vh - 70px);
+    flex-direction: column;
+    background: var(--card-bg);
+    padding: var(--spacing-xl) var(--spacing-md);
+    transition: left var(--transition-base);
+    margin: 0;
+    box-shadow: var(--shadow-md);
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: var(--spacing-md);
+    overflow-y: auto;
+  }
+
+  .nav-menu.active {
+    left: 0;
+  }
+
+  /* Show text in mobile menu */
+  .nav-menu .nav-text {
+    display: inline;
+  }
+
+  .nav-item {
+    width: 100%;
+    justify-content: flex-start;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-lg);
+    border-radius: var(--radius-md);
+    background: var(--overlay-light);
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-md);
+  }
+
+  .nav-item:hover {
+    background: var(--primary-color);
+    color: var(--text-white);
+  }
+
+  .nav-auth-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--border-color);
+  }
+
+  .nav-auth-mobile .theme-toggle-btn,
+  .nav-auth-mobile .login-btn,
+  .nav-auth-mobile .profile-btn,
+  .nav-auth-mobile .logout-btn {
+    width: 100%;
+    justify-content: flex-start;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-lg);
+    border-radius: var(--radius-md);
+    margin: 0;
+    gap: var(--spacing-md);
+  }
+
+  .nav-auth-mobile .theme-toggle-btn {
+    background: var(--overlay-light);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    height: auto;
+    width: 100%;
+  }
+
+  .nav-auth-mobile .theme-toggle-btn:hover {
+    background: var(--primary-color);
+    color: var(--text-white);
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .desktop {
+    display: none;
+  }
+
+  .mobile {
+    display: flex;
+  }
+
+  /* Hide desktop auth items on mobile */
+  .nav-auth .theme-toggle-btn,
+  .nav-auth .login-btn,
+  .nav-auth .profile-btn,
+  .nav-auth .logout-btn {
+    display: none;
+  }
+
+  .nav-auth .menu-toggle {
+    display: block;
+  }
+
+  /* Show logo text on mobile */
+  .logo-text {
+    display: inline;
+  }
+}
+
+/* Large screen styles */
+@media (min-width: 1024px) {
+  .nav-text,
+  .auth-text,
+  .logo-text {
+    display: inline;
+  }
+}
+
+@media (min-width: 1400px) {
+  .nav-container {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+  }
+}

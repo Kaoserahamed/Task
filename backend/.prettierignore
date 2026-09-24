@@ -1,0 +1,6 @@
+node_modules
+coverage
+uploads
+public/uploads
+package-lock.json
+data/*.csv

@@ -1,0 +1,110 @@
+/* Categories Component - uses centralized theme variables */
+
+.categories-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) 0;
+}
+
+.category-card {
+  background: var(--card-bg);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.category-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto var(--spacing-md);
+  background: color-mix(in srgb, var(--category-color, var(--primary-color)) 15%, var(--card-bg));
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-base);
+}
+
+.category-icon i {
+  font-size: var(--font-size-2xl);
+  color: var(--category-color, var(--primary-color));
+  transition: color var(--transition-base);
+}
+
+.category-card h3 {
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-primary);
+  transition: color var(--transition-base);
+}
+
+.tour-count {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  transition: color var(--transition-base);
+}
+
+/* Category-specific classes using theme colors */
+.category-beach .category-icon {
+  background: color-mix(in srgb, var(--category-beach) 15%, var(--card-bg));
+}
+.category-beach .category-icon i {
+  color: var(--category-beach);
+}
+
+.category-mountain .category-icon {
+  background: color-mix(in srgb, var(--category-mountain) 15%, var(--card-bg));
+}
+.category-mountain .category-icon i {
+  color: var(--category-mountain);
+}
+
+.category-historic .category-icon {
+  background: color-mix(in srgb, var(--category-historic) 15%, var(--card-bg));
+}
+.category-historic .category-icon i {
+  color: var(--category-historic);
+}
+
+.category-adventure .category-icon {
+  background: color-mix(in srgb, var(--category-adventure) 15%, var(--card-bg));
+}
+.category-adventure .category-icon i {
+  color: var(--category-adventure);
+}
+
+.category-cruise .category-icon {
+  background: color-mix(in srgb, var(--category-cruise) 15%, var(--card-bg));
+}
+.category-cruise .category-icon i {
+  color: var(--category-cruise);
+}
+
+.category-wildlife .category-icon {
+  background: color-mix(in srgb, var(--category-wildlife) 15%, var(--card-bg));
+}
+.category-wildlife .category-icon i {
+  color: var(--category-wildlife);
+}
+
+.category-food .category-icon {
+  background: color-mix(in srgb, var(--category-food) 15%, var(--card-bg));
+}
+.category-food .category-icon i {
+  color: var(--category-food);
+}
+
+.category-wellness .category-icon {
+  background: color-mix(in srgb, var(--category-wellness) 15%, var(--card-bg));
+}
+.category-wellness .category-icon i {
+  color: var(--category-wellness);
+}

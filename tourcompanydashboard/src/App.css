@@ -1,0 +1,138 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+:root {
+  /* Light theme (default) */
+  --background-primary: linear-gradient(
+    135deg,
+    var(--bg-gradient-start) 0%,
+    var(--bg-gradient-end) 100%
+  );
+  --background-secondary: #f8f9fa;
+  --background-tertiary: #f1f3f5;
+
+  --text-primary: #151515;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+
+  --border-color: #e2e8f0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+
+  --primary-color: #3498db;
+  --primary-hover: #2980b9;
+  --success-color: #2ecc71;
+  --success-hover: #27ae60;
+  --warning-color: #e67e22;
+  --error-color: #e74c3c;
+
+  --card-bg: #ffffff;
+  --form-bg: #ffffff;
+  --header-bg: #ffffff;
+}
+
+/* Dark theme */
+[data-theme='dark'] {
+  --background-primary: #1a1a1a;
+  --background-tertiary: #4a5568;
+  --background-secondary: #3a414d;
+  --text-primary: #f7fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #f5f8fc;
+
+  --border-color: #4a5568;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+
+  --primary-color: #2e9fe5;
+  --primary-hover: #4c5d6c;
+  --success-color: #48bb78;
+  --success-hover: #38a169;
+  --warning-color: #ed8936;
+  --error-color: #f56565;
+
+  --card-bg: #2d3748;
+  --form-bg: #2d3748;
+  --header-bg: #1a202c;
+}
+
+/* Apply theme transition */
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* You can also add these to other common elements */
+input,
+select,
+textarea {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+button {
+  background-color: linear-gradient(#4f46e5, #7c3aed);
+  background-color: #7c3aed;
+  color: white;
+}

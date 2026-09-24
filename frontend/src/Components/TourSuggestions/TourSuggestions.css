@@ -1,0 +1,394 @@
+.tour-suggestions-section {
+  padding: 40px 20px;
+  margin: 40px 0;
+  transition: background 0.3s ease;
+}
+
+.tour-suggestions-header {
+  text-align: center;
+  margin-bottom: 40px; /* Reduced from 50px */
+}
+
+.tour-suggestions-header h2 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: color 0.3s ease;
+}
+
+.tour-suggestions-header p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.tour-suggestions-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 10px; /* Added padding */
+}
+
+.tour-suggestions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px; /* Adds uniform spacing */
+}
+
+.suggestion-card {
+  width: 280px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  transition: all 0.4s ease;
+  position: relative;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-card-image {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.suggestion-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.suggestion-card:hover .suggestion-card-image img {
+  transform: scale(1.08);
+}
+
+.suggestion-upcoming-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+  color: var(--text-white);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4);
+  transition: all 0.3s ease;
+}
+
+.suggestion-completed-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, var(--error-color), var(--warning-color));
+  color: var(--text-white);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+  transition: all 0.3s ease;
+}
+
+.suggestion-quick-view-btn {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: var(--text-white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.suggestion-quick-view-btn:hover {
+  background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.suggestion-card-content {
+  padding: 18px; /* Reduced from 20px */
+  background: var(--card-bg);
+  transition: background-color 0.3s ease;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px; /* Reduced from 16px */
+  min-height: 60px;
+}
+
+.suggestion-card-header h3 {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 600;
+  flex: 1;
+  margin-right: 12px;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, var(--overlay-light), rgba(255, 234, 167, 0.2));
+  padding: 6px 10px;
+  border-radius: 16px;
+  border: 1px solid var(--warning-color);
+  white-space: nowrap;
+  backdrop-filter: var(--backdrop-blur);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.suggestion-rating i {
+  color: var(--warning-color);
+  font-size: 0.8rem;
+}
+
+.suggestion-rating span {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  transition: color 0.3s ease;
+}
+
+.suggestion-card-details {
+  margin-bottom: 18px; /* Reduced from 20px */
+  flex: 1;
+}
+
+.suggestion-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px; /* Reduced from 8px */
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+  line-height: 1.4;
+}
+
+.suggestion-detail-item i {
+  color: var(--primary-color);
+  width: 14px;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.suggestion-detail-item span {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* Specific line limits for different detail items */
+.suggestion-detail-item:nth-child(1) span {
+  -webkit-line-clamp: 1;
+  /* Category - 1 line */
+}
+
+.suggestion-detail-item:nth-child(2) span {
+  -webkit-line-clamp: 1;
+  /* Duration - 1 line */
+}
+
+.suggestion-detail-item:nth-child(3) span {
+  -webkit-line-clamp: 2;
+  /* Location - 2 lines */
+}
+
+.suggestion-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  gap: 10px; /* Reduced from 12px */
+}
+
+.suggestion-price {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.price-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.price-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.suggestion-explore-btn {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: var(--text-white);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.suggestion-explore-btn:hover {
+  background: linear-gradient(135deg, var(--primary-hover), var(--secondary-hover));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.tour-suggestions-footer {
+  text-align: center;
+  margin-top: 40px; /* Reduced from 50px */
+}
+
+.view-all-suggestions-btn {
+  background: transparent;
+  color: var(--primary-color);
+  border: 3px solid var(--primary-color);
+  padding: 15px 40px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.view-all-suggestions-btn:hover {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: var(--text-white);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .tour-suggestions-grid {
+    gap: 12px; /* Further reduced gap for medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .tour-suggestions-section {
+    padding: 30px 15px; /* Reduced padding */
+  }
+
+  .tour-suggestions-header {
+    margin-bottom: 30px; /* Reduced from 40px */
+  }
+
+  .tour-suggestions-header h2 {
+    font-size: 2rem;
+  }
+
+  .tour-suggestions-grid {
+    grid-template-columns: 1fr;
+    gap: 15px; /* Maintain smaller gap on mobile */
+  }
+
+  .suggestion-card {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    min-height: 400px;
+    margin: 0 auto;
+  }
+
+  .suggestion-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px; /* Reduced from 12px */
+    min-height: auto;
+  }
+
+  .suggestion-card-footer {
+    flex-direction: column;
+    gap: 10px; /* Reduced from 12px */
+    align-items: stretch;
+  }
+
+  .suggestion-explore-btn {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .tour-suggestions-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .suggestion-card-content {
+    padding: 16px;
+  }
+
+  .view-all-suggestions-btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+
+  .tour-suggestions-grid {
+    grid-template-columns: 1fr;
+    gap: 12px; /* Smallest gap for mobile */
+  }
+}
+
+/* Dark theme specific adjustments */
+[data-theme='dark'] .suggestion-rating {
+  background: linear-gradient(135deg, var(--overlay-light), rgba(230, 126, 34, 0.2));
+  border-color: var(--warning-color);
+}
+
+[data-theme='dark'] .suggestion-completed-tag {
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.6);
+}
+
+[data-theme='dark'] .suggestion-card-overlay {
+  background: rgba(15, 15, 35, 0.8);
+}

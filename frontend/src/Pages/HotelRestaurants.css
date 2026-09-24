@@ -1,0 +1,96 @@
+.hotel-restaurant-page {
+  padding: 2rem;
+  background: linear-gradient(to right, var(--bg-gradient-start), var(--bg-gradient-end));
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.section-heading {
+  font-size: 2.2rem;
+  margin: 3rem 0 1.5rem;
+  text-align: center;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+
+.search-input {
+  display: block;
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto 2rem;
+  padding: 12px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  font-size: 16px;
+  background-color: var(--form-bg);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  color: var(--text-primary);
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  padding: 0 1rem;
+}
+
+.place-card {
+  background: var(--card-bg);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px var(--shadow-color);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card-image-wrapper {
+  height: 200px;
+  overflow: hidden;
+  background: var(--background-tertiary);
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-info {
+  padding: 16px 20px;
+}
+
+.card-info h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+.card-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-info i {
+  color: var(--primary-color);
+  min-width: 18px;
+}
+
+.card-description {
+  margin-top: 10px;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.loading,
+.empty {
+  text-align: center;
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-top: 2rem;
+}

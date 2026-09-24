@@ -1,0 +1,234 @@
+/* ===== WEATHER PAGE ===== */
+.weather-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.weather-header {
+  text-align: center;
+  margin-bottom: 30px;
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid var(--border-color);
+}
+
+.weather-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+}
+
+.weather-header p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.search-section {
+  background: var(--background-secondary);
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-color);
+}
+
+.search-form {
+  margin-bottom: 20px;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-bar {
+  flex: 1;
+  padding: 15px 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 25px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+  background: var(--background-primary);
+  color: var(--text-primary);
+}
+
+.search-bar:focus {
+  border-color: var(--primary-color);
+}
+
+.search-bar::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-btn {
+  padding: 15px 25px;
+  background: var(--primary-color);
+  color: var(--text-white);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.search-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.search-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quick-cities {
+  text-align: center;
+}
+
+.quick-cities h4 {
+  margin-bottom: 15px;
+  color: var(--text-primary);
+}
+
+.city-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.city-btn {
+  padding: 8px 16px;
+  background: var(--background-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.city-btn:hover:not(:disabled),
+.city-btn.active {
+  background: var(--primary-color);
+  border-color: var(--primary-hover);
+  color: var(--text-white);
+}
+
+.city-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.weather-error {
+  background: var(--error-color);
+  color: var(--text-white);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.current-weather {
+  margin-bottom: 30px;
+}
+
+.weather-card {
+  background: var(--secondary-color);
+  color: var(--text-white);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px var(--shadow-color);
+  transition: box-shadow 0.3s ease;
+}
+
+.weather-card:hover {
+  box-shadow: 0 8px 20px var(--shadow-hover);
+}
+
+.weather-card h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+}
+
+.temperature {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.condition {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+  color: var(--text-white);
+}
+
+.description {
+  opacity: 0.9;
+  margin-bottom: 15px;
+  text-transform: capitalize;
+  color: var(--text-white);
+}
+
+.additional-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 14px;
+  opacity: 0.9;
+  color: var(--text-white);
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+.city-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .weather-header h2 {
+    font-size: 2rem;
+  }
+
+  .search-input-group {
+    flex-direction: column;
+  }
+
+  .city-buttons {
+    gap: 8px;
+  }
+
+  .city-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .additional-info {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
