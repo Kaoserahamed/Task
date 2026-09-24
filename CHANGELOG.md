@@ -18,6 +18,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `MONGODB_URI_TEST`, both Places API key names and `VERCEL` are documented in the
   environment templates, and a contract test keeps every web app's `.env.example`
   in sync with the `process.env` reads inside its source.
+- The tour-company edit form is now an orchestrator: the six form sections live in
+  `Components/EditTour/sections/`, while API-response normalisation and the
+  multipart update body moved to tested `utils/tourPayload.js`. `EditTour.jsx`
+  dropped from 429 to under 200 lines.
 - The company HTTP surface is split by concern: `routes/companyAuthRoutes.js`
   (registration, login, password reset, re-auth) and
   `routes/companySearchRoutes.js` (directory, search, profile, admin

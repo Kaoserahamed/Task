@@ -138,7 +138,10 @@ router.patch('/update-info', authMiddleware, async (req, res) => {
 
     // A second license request while one is already waiting is a no-op that
     // would otherwise reset the queue position.
-    if (req.body.verificationStatus === 'pending' && currentCompany.verificationStatus === 'pending') {
+    if (
+      req.body.verificationStatus === 'pending' &&
+      currentCompany.verificationStatus === 'pending'
+    ) {
       return res.status(400).json({ success: false, message: 'License request already pending.' });
     }
 

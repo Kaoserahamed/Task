@@ -250,7 +250,10 @@ describe('company directory and profile endpoints', () => {
 
   describe('admin verification decision', () => {
     test('PATCH /company/auth/update-status updates the company named in the body', async () => {
-      Company.findByIdAndUpdate.mockResolvedValue({ _id: 'company-2', verificationStatus: 'approved' });
+      Company.findByIdAndUpdate.mockResolvedValue({
+        _id: 'company-2',
+        verificationStatus: 'approved',
+      });
 
       const res = await request(app)
         .patch('/company/auth/update-status')
