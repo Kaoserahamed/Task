@@ -8,6 +8,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Customer search filtering now delegates URL parsing, review aggregation, matching, sorting,
+  and display formatting to a tested `searchFilters` utility.
+
 - Fresh-clone verification now runs the complete root `npm run verify` path.
 - A root `.env.example` indexes the app-local environment templates for onboarding.
 - Terraform CI now runs formatting, validation, an offline plan, and Trivy IaC policy scanning.

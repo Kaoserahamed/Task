@@ -8,6 +8,18 @@ import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
 import { logError } from '../../utils/logger';
+import {
+  DURATION_OPTIONS as durationOptions,
+  STATUS_OPTIONS as statusOptions,
+  TOUR_TYPE_OPTIONS as tourTypeOptions,
+  aggregateReviews,
+  filterAndSortTours,
+  formatDate,
+  formatPrice,
+  getImageUrl,
+  getTourStatus,
+  parseSearchFilters,
+} from '../../utils/searchFilters';
 
 const SearchFilter = () => {
   const { tours, loading, error } = useContext(ToursContext);
@@ -15,77 +27,26 @@ const SearchFilter = () => {
   const navigate = useNavigate(); // Add this
   // Add this with your other state declarations
   const [averageRatings, setAverageRatings] = useState({});
-  // Get initial filters from URL params
-  const initialQuery = searchParams.get('query') || '';
-  const initialPriceMax = parseInt(searchParams.get('priceMax') || '1000');
-  const initialTourTypes = searchParams.getAll('tourType') || [];
-  const initialDurations = searchParams.getAll('duration') || [];
-  const initialStatuses = searchParams.getAll('status') || [];
-  const initialSort = searchParams.get('sort') || 'lowest';
+  const initialFilters = parseSearchFilters(searchParams);
   const [reviewCounts, setReviewCounts] = useState({});
   // State for filters
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [priceRange, setPriceRange] = useState(initialPriceMax);
-  const [selectedTourTypes, setSelectedTourTypes] = useState(initialTourTypes);
-  const [selectedDurations, setSelectedDurations] = useState(initialDurations);
-  const [selectedStatuses, setSelectedStatuses] = useState(initialStatuses);
-  const [sortOption, setSortOption] = useState(initialSort);
+  const [searchQuery, setSearchQuery] = useState(initialFilters.query);
+  const [priceRange, setPriceRange] = useState(initialFilters.priceMax);
+  const [selectedTourTypes, setSelectedTourTypes] = useState(initialFilters.tourTypes);
+  const [selectedDurations, setSelectedDurations] = useState(initialFilters.durations);
+  const [selectedStatuses, setSelectedStatuses] = useState(initialFilters.statuses);
+  const [sortOption, setSortOption] = useState(initialFilters.sort);
   const [filteredTours, setFilteredTours] = useState([]);
 
-  // Tour type options
-  const tourTypeOptions = [
-    { id: 'adventure', name: 'Adventure', icon: 'mountain', color: '#f97316' },
-    { id: 'Family', name: 'Family', icon: 'users', color: '#0ea5e9' },
-    { id: 'cultural', name: 'Cultural', icon: 'landmark', color: '#8b5cf6' },
-    { id: 'Educational', name: 'Educational', icon: 'graduation-cap', color: '#ec4899' },
-    { id: 'Nature & Eco', name: 'Nature & Eco', icon: 'tree', color: '#22c55e' },
-    { id: 'Honeymoon', name: 'Honeymoon', icon: 'heart', color: '#f43f5e' },
-    { id: 'Seasonal', name: 'Seasonal', icon: 'calendar', color: '#f59e0b' },
-    { id: 'Religious', name: 'Religious', icon: 'place-of-worship', color: '#6366f1' },
-    { id: 'Beach', name: 'Beach', icon: 'umbrella-beach', color: '#06b6d4' },
-    { id: 'Historical', name: 'Historical', icon: 'monument', color: '#84cc16' },
-  ];
-
-  // Duration options
-  const durationOptions = [
-    { id: '1-2', label: '1-2 Days' },
-    { id: '3-5', label: '3-5 Days' },
-    { id: '6-10', label: '6-10 Days' },
-    { id: '10+', label: '10+ Days' },
-  ];
-
-  // Status options
-  const statusOptions = [
-    { id: 'upcoming', label: 'Upcoming' },
-    { id: 'ongoing', label: 'Ongoing' },
-    { id: 'completed', label: 'Completed' },
-  ];
   // Add this useEffect after your existing useEffects
   useEffect(() => {
     const fetchRatingsFromReviews = async () => {
       try {
         const reviews = await reviewsApi.fetchReviews();
 
-        const ratingMap = {};
-        const countMap = {};
-
-        reviews.forEach((review) => {
-          const tourId = review.tourId;
-          if (!ratingMap[tourId]) {
-            ratingMap[tourId] = 0;
-            countMap[tourId] = 0;
-          }
-          ratingMap[tourId] += review.rating;
-          countMap[tourId] += 1;
-        });
-
-        const averages = {};
-        for (const id in ratingMap) {
-          averages[id] = ratingMap[id] / countMap[id];
-        }
-
+        const { averages, counts } = aggregateReviews(reviews);
         setAverageRatings(averages);
-        setReviewCounts(countMap); // Store review counts separately
+        setReviewCounts(counts);
       } catch (error) {
         logError('Error fetching ratings:', error);
         setAverageRatings({});
@@ -103,26 +64,6 @@ const SearchFilter = () => {
       logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`);
     }
-  };
-
-  // Utility function to determine tour status
-  const getTourStatus = (tour) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (!tour.startDate || !tour.endDate) return 'upcoming'; // Default if dates not available
-
-    const startDate = new Date(tour.startDate);
-    const endDate = new Date(tour.endDate);
-
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
-
-    if (today < startDate) return 'upcoming';
-    if (today >= startDate && today <= endDate) return 'ongoing';
-    if (today > endDate) return 'completed';
-
-    return 'upcoming';
   };
 
   // Handle search input
@@ -212,137 +153,20 @@ const SearchFilter = () => {
     setSearchParams({});
   };
 
-  // Check duration based on days
-  const matchesDuration = (tour, durations) => {
-    if (durations.length === 0) return true;
-
-    const totalDays = tour.duration?.days || 0;
-
-    return durations.some((d) => {
-      if (d === '1-2') return totalDays >= 1 && totalDays <= 2;
-      if (d === '3-5') return totalDays >= 3 && totalDays <= 5;
-      if (d === '6-10') return totalDays >= 6 && totalDays <= 10;
-      if (d === '10+') return totalDays > 10;
-      return false;
-    });
-  };
-
-  // Check if tour matches search query
-  const matchesSearchQuery = (tour, query) => {
-    if (!query) return true;
-
-    const searchTerm = query.toLowerCase().trim();
-
-    // Search in tour name
-    if (tour.name?.toLowerCase().includes(searchTerm)) return true;
-
-    // Search in descriptions
-    if (tour.description?.toLowerCase().includes(searchTerm)) return true;
-    if (tour.shortDescription?.toLowerCase().includes(searchTerm)) return true;
-
-    // Search in destinations
-    if (
-      tour.destinations?.some(
-        (dest) =>
-          dest.name?.toLowerCase().includes(searchTerm) ||
-          dest.description?.toLowerCase().includes(searchTerm)
-      )
-    )
-      return true;
-
-    // Search in package categories
-    if (tour.packageCategories?.some((category) => category.toLowerCase().includes(searchTerm)))
-      return true;
-
-    // Search in tour guide name
-    if (tour.tourGuide?.name?.toLowerCase().includes(searchTerm)) return true;
-
-    return false;
-  };
-
-  // Check if tour matches tour type filter
-  const matchesTourType = (tour, selectedTypes) => {
-    if (selectedTypes.length === 0) return true;
-
-    // Check package categories
-    if (tour.packageCategories?.some((category) => selectedTypes.includes(category))) return true;
-
-    // Check tour type object properties
-    if (tour.tourType) {
-      if (selectedTypes.includes('adventure') && tour.tourType.adventure) return true;
-      if (selectedTypes.includes('Family') && tour.tourType.family) return true;
-      if (selectedTypes.includes('cultural') && tour.tourType.cultural) return true;
-      if (selectedTypes.includes('Educational') && tour.tourType.educational) return true;
-      if (selectedTypes.includes('Nature & Eco') && tour.tourType.natureEco) return true;
-      if (selectedTypes.includes('Honeymoon') && tour.tourType.honeymoon) return true;
-      if (selectedTypes.includes('Seasonal') && tour.tourType.seasonal) return true;
-      if (selectedTypes.includes('Religious') && tour.tourType.religious) return true;
-      if (selectedTypes.includes('Beach') && tour.tourType.beach) return true;
-      if (selectedTypes.includes('Historical') && tour.tourType.historical) return true;
-    }
-
-    return false;
-  };
-
-  // Check if tour matches status filter
-  const matchesStatus = (tour, selectedStatuses) => {
-    if (selectedStatuses.length === 0) return true;
-
-    const tourStatus = getTourStatus(tour);
-    return selectedStatuses.includes(tourStatus);
-  };
-
-  // Filter and sort tours
-  // Updated sorting logic in the useEffect where filtering and sorting happens
   useEffect(() => {
-    if (!tours.length) return;
-
-    let result = [...tours];
-
-    // Apply search query filter
-    result = result.filter((tour) => matchesSearchQuery(tour, searchQuery));
-
-    // Apply price filter
-    result = result.filter((tour) => (tour.price || 0) <= priceRange);
-
-    // Apply tour type filter
-    result = result.filter((tour) => matchesTourType(tour, selectedTourTypes));
-
-    // Apply duration filter
-    result = result.filter((tour) => matchesDuration(tour, selectedDurations));
-
-    // Apply status filter
-    result = result.filter((tour) => matchesStatus(tour, selectedStatuses));
-
-    // Apply sorting
-    result.sort((a, b) => {
-      switch (sortOption) {
-        case 'lowest':
-          return (a.price || 0) - (b.price || 0);
-        case 'highest':
-          return (b.price || 0) - (a.price || 0);
-        case 'duration':
-          return (b.duration?.days || 0) - (a.duration?.days || 0);
-        case 'newest':
-          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-        case 'rating':
-          // Updated to use calculated average ratings from reviews
-          const ratingA = averageRatings[a._id] || 0;
-          const ratingB = averageRatings[b._id] || 0;
-          // Sort by rating descending (highest first)
-          if (ratingB !== ratingA) {
-            return ratingB - ratingA;
-          }
-          // If ratings are equal, sort by review count (more reviews first)
-          const countA = reviewCounts[a._id] || 0;
-          const countB = reviewCounts[b._id] || 0;
-          return countB - countA;
-        default:
-          return (a.price || 0) - (b.price || 0);
-      }
-    });
-
-    setFilteredTours(result);
+    setFilteredTours(
+      filterAndSortTours({
+        tours,
+        query: searchQuery,
+        priceMax: priceRange,
+        tourTypes: selectedTourTypes,
+        durations: selectedDurations,
+        statuses: selectedStatuses,
+        sort: sortOption,
+        averageRatings,
+        reviewCounts,
+      })
+    );
   }, [
     tours,
     searchQuery,
@@ -353,13 +177,10 @@ const SearchFilter = () => {
     sortOption,
     averageRatings,
     reviewCounts,
-  ]); // Added averageRatings and reviewCounts to dependencies
+  ]);
 
-  // Generate star rating display
-  // Update this function to handle decimal ratings and show count
   const renderStars = (tourId) => {
     const rating = averageRatings[tourId] || 0;
-    const roundedRating = Math.round(rating * 2) / 2; // Round to nearest 0.5
 
     return (
       <div className="rating-container">
@@ -387,32 +208,6 @@ const SearchFilter = () => {
     );
   };
 
-  // Format price
-  const formatPrice = (price) => {
-    return '$' + (price || 0).toLocaleString();
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'TBA';
-    return new Date(dateString).toLocaleDateString('en-GB');
-  };
-
-  // Get the correct image URL
-  // Fixed code - with proper forward slash handling
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return 'https://via.placeholder.com/300x200?text=No+Image';
-
-    if (imagePath.startsWith('http')) {
-      return imagePath;
-    }
-
-    // Add forward slash if imagePath doesn't start with one
-    const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-    return `${API_BASE_URL}${path}`;
-  };
-
-  // Get status badge color and text
   const getStatusBadge = (tour) => {
     const status = getTourStatus(tour);
     const statusConfig = statusOptions.find((s) => s.id === status);
@@ -577,7 +372,7 @@ const SearchFilter = () => {
                           <img
                             src={
                               tour.images && tour.images.length > 0
-                                ? getImageUrl(tour.images[0])
+                                ? getImageUrl(tour.images[0], API_BASE_URL)
                                 : 'https://via.placeholder.com/300x200?text=No+Image'
                             }
                             alt={tour.name}
