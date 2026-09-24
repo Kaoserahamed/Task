@@ -1,0 +1,34 @@
+# Copy to terraform.tfvars locally and fill every value marked required.
+# Never commit terraform.tfvars: Terraform state and tfvars may contain secrets.
+
+aws_region     = "us-east-1"
+project_name   = "task"
+environment    = "production"
+domain_name    = "task.example.com"
+api_hostname   = "api.task.example.com"
+frontend_hostname = "www.task.example.com"
+admin_hostname = "admin.task.example.com"
+company_hostname = "company.task.example.com"
+certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/replace-me"
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+backend_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/task-backend:REPLACE_WITH_SHA"
+frontend_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/task-frontend:REPLACE_WITH_SHA"
+admin_image    = "123456789012.dkr.ecr.us-east-1.amazonaws.com/task-admin:REPLACE_WITH_SHA"
+company_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/task-company:REPLACE_WITH_SHA"
+
+api_desired_count = 2
+web_desired_count = 2
+
+weather_api_key      = ""
+sendinblue_api_key   = ""
+cloudinary_cloud_name = ""
+cloudinary_api_key   = ""
+cloudinary_api_secret = ""
+pusher_app_id        = ""
+pusher_key           = ""
+pusher_secret        = ""
+pusher_cluster       = ""
+mail_from_name       = "Task"
+mail_from_email      = "no-reply@task.example.com"
+metrics_token        = "replace-with-a-long-random-metrics-token"
