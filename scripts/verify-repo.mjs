@@ -328,6 +328,39 @@ for (const service of composeServices) {
   }
 }
 
+// 14. Backend layering (C1.1): repositories are the only code that may import a
+//     Mongoose model. `backend/tests/unit/contracts/layering.test.js` is the live
+//     gate and pins the domains that are not migrated yet; this check reports the
+//     same set so `npm run verify:repo` shows the remaining work on its own.
+const backendSourceDirs = [
+  'routes',
+  'controllers',
+  'services',
+  'validators',
+  'middleware',
+  'utils',
+];
+const MODEL_IMPORT_PATTERN = /require\(\s*['"][^'"]*\/models\/[^'"]+['"]\s*\)/;
+const unlayeredBackendFiles = [];
+
+for (const dir of backendSourceDirs) {
+  for (const file of listSourceFiles(path.join(repoRoot, 'backend', dir))) {
+    const relativePath = path.relative(repoRoot, file).split(path.sep).join('/');
+    if (relativePath.startsWith('backend/repositories/')) continue;
+    if (MODEL_IMPORT_PATTERN.test(readFileSync(file, 'utf8'))) {
+      unlayeredBackendFiles.push(relativePath);
+    }
+  }
+}
+
+if (unlayeredBackendFiles.length > 0) {
+  process.stdout.write(
+    `verify-repo: layering - ${unlayeredBackendFiles.length} file(s) still query Mongoose outside a repository:\n` +
+      unlayeredBackendFiles.map((file) => `  - ${file}\n`).join('') +
+      '  (see backend/tests/unit/contracts/layering.test.js; the list only shrinks)\n'
+  );
+}
+
 if (failures.length > 0) {
   for (const failure of failures) {
     process.stderr.write(`verify-repo: ${failure}\n`);

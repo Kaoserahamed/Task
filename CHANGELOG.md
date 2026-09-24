@@ -37,6 +37,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   resource, and components no longer call `fetch` or `axios` directly. Guarded
   by `scripts/verify-repo.mjs` (check 12) and
   `backend/tests/unit/contracts/frontend-layer.test.js`; see `docs/frontend.md`.
+- The customer auth domain is layered (`routes → controller → service → repository`
+  with a validator), and the API URL / API layer rules are documented and
+  guarded. `authRoutes.js` went from 350 lines of inline Mongoose, JWT signing
+  and HTML email to middleware plus one controller call per URL.
+- A layering contract (`backend/tests/unit/contracts/layering.test.js`) makes
+  repositories the only layer allowed to import a Mongoose model. It is a
+  ratchet: the domains still to migrate are listed explicitly, a new violation
+  fails immediately, and a migrated file must be removed from the list in the
+  same commit. `npm run verify:repo` prints the remaining set.
 - The API client in each app is now type-checked: `tsconfig.json` parses every
   source file, and `src/api/client.js` opts into `checkJs` with `// @ts-check`
   plus JSDoc types for the request options, the error shape and every verb. The

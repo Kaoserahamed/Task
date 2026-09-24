@@ -53,6 +53,25 @@ POST /api/tours
 Failures never travel back as ad-hoc bodies: anything thrown becomes
 `{ success: false, error, code }` through `middleware/errorHandler.js`.
 
+### Layering status (honest, and enforced)
+
+The table above is the target. Migration is in progress, and the gap is pinned
+by `backend/tests/unit/contracts/layering.test.js` rather than left for a
+reviewer to discover. That contract is a **ratchet**: repositories are the only
+layer allowed to import a Mongoose model, and the list of files that still break
+the rule can only shrink.
+
+| Status  | Domains                                                                                                                   |
+| ------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Layered | `tour` (create/update/status/seats/suggestions), `user` (register, login, search, profile, avatar, password reset)        |
+| Pending | `company`, `booking`, `review`, `admin`, `dashboard`, `wishlist`, `chat`, `place`, `weather`, `suggestion`, `seed`/`demo` |
+
+`npm run verify:repo` prints the exact set of pending files on every run, and the
+contract test fails if a **new** file reaches for a model _or_ if a migrated file
+is left in the pending list. Two rules are already unconditional and have no
+exceptions: a service may not see `req`/`res`/`express` or a model, and a
+controller may not import a repository — it goes through a service.
+
 ## Front end conventions
 
 - One CRA app per audience; each talks to the API through `src/config/api.js`,
