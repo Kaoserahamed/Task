@@ -3,6 +3,7 @@ import './ChatWindow.css';
 import avatar from '../Assets/chat_avatar.png';
 import { useAuth } from '../../Context/AuthContext';
 import * as chatApi from '../../api/chat';
+import { logDebug, logError } from '../../utils/logger';
 
 const ChatWindow = ({ chatType, selectedChat, userId, socket }) => {
   const [newMessage, setNewMessage] = useState('');
@@ -18,7 +19,7 @@ const ChatWindow = ({ chatType, selectedChat, userId, socket }) => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  console.log(selectedChat);
+  logDebug(selectedChat);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -55,7 +56,7 @@ const ChatWindow = ({ chatType, selectedChat, userId, socket }) => {
             data.updatedChat.chatType === 'aduse' &&
             data.updatedChat.participants === userId
           ) {
-            console.log('Updating admin-company chat messages:', data.updatedChat.messages);
+            logDebug('Updating admin-company chat messages:', data.updatedChat.messages);
             setMessages(data.updatedChat.messages || []);
           }
         }
@@ -100,7 +101,7 @@ const ChatWindow = ({ chatType, selectedChat, userId, socket }) => {
       setMessages(updatedChat.messages || []);
       setNewMessage('');
     } catch (error) {
-      console.error('Error sending message:', error.message);
+      logError('Error sending message:', error.message);
       alert('Failed to send message: ' + error.message);
     }
   };

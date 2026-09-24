@@ -24,5 +24,18 @@ module.exports = {
     node: true,
     jest: true,
   },
+  rules: {
+    // C2.5: debug logging must go through `src/utils/logger.js`, which drops
+    // debug/warn calls from production bundles. Without this rule any new
+    // `console.log` silently ships user data (tokens, chat payloads) to the
+    // browser console. The override below is the single sanctioned exception.
+    'no-console': 'error',
+  },
+  overrides: [
+    {
+      files: ['src/utils/logger.js'],
+      rules: { 'no-console': 'off' },
+    },
+  ],
   ignorePatterns: ['build/', 'node_modules/', 'coverage/'],
 };

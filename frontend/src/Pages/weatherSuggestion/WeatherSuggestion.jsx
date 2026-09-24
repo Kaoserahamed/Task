@@ -8,6 +8,7 @@ import fallbackImage from './pexels-pixabay-76969.jpg';
 import API_BASE_URL from '../../config/api';
 import * as weatherApi from '../../api/weather';
 import * as toursApi from '../../api/tours';
+import { logDebug, logError } from '../../utils/logger';
 
 const WeatherSuggestion = () => {
   const navigate = useNavigate();
@@ -88,18 +89,18 @@ const WeatherSuggestion = () => {
   // Simplified filter function - only show tours matching the searched city with similar weather
   // Simplified filter function - only show tours matching the searched city with similar weather
   const filterToursByWeather = (weatherData) => {
-    console.log('🔥 filterToursByWeather called!');
-    console.log('📊 Weather data received:', weatherData);
-    console.log('🏢 Tours array length:', tours.length);
+    logDebug('🔥 filterToursByWeather called!');
+    logDebug('📊 Weather data received:', weatherData);
+    logDebug('🏢 Tours array length:', tours.length);
 
     if (!weatherData) {
-      console.log('❌ No weather data provided');
+      logDebug('❌ No weather data provided');
       setFilteredTours([]);
       return;
     }
 
     if (!tours.length) {
-      console.log('❌ No tours available');
+      logDebug('❌ No tours available');
       setFilteredTours([]);
       return;
     }
@@ -108,17 +109,17 @@ const WeatherSuggestion = () => {
     const currentCondition = weatherData.condition || weatherData.main;
     const currentCity = weatherData.city;
 
-    console.log('🔍 Filtering tours for:');
-    console.log('  - City:', currentCity);
-    console.log('  - Condition:', currentCondition);
-    console.log('  - Temperature:', currentTemp);
+    logDebug('🔍 Filtering tours for:');
+    logDebug('  - City:', currentCity);
+    logDebug('  - Condition:', currentCondition);
+    logDebug('  - Temperature:', currentTemp);
 
     const filtered = tours.filter((tour, index) => {
-      console.log(`\n🧪 Processing Tour #${index + 1}: ${tour.name}`);
+      logDebug(`\n🧪 Processing Tour #${index + 1}: ${tour.name}`);
 
       // Check if tour has weather data
       if (!tour.weather || !tour.weather.city) {
-        console.log('  - ❌ Tour has no weather data, excluding');
+        logDebug('  - ❌ Tour has no weather data, excluding');
         return false;
       }
 
@@ -126,22 +127,22 @@ const WeatherSuggestion = () => {
       const tourCondition = tour.weather.condition;
       const tourTemp = tour.weather.temp;
 
-      console.log('  - Tour city:', tourCity);
-      console.log('  - Tour condition:', tourCondition);
-      console.log('  - Tour temp:', tourTemp);
+      logDebug('  - Tour city:', tourCity);
+      logDebug('  - Tour condition:', tourCondition);
+      logDebug('  - Tour temp:', tourTemp);
 
       // EXACT city match (after normalization)
       const normalizedTourCity = normalizeCity(tourCity);
       const normalizedCurrentCity = normalizeCity(currentCity);
       const cityMatch = normalizedTourCity === normalizedCurrentCity;
 
-      console.log('  - Normalized tour city:', normalizedTourCity);
-      console.log('  - Normalized current city:', normalizedCurrentCity);
-      console.log('  - City exact match:', cityMatch);
+      logDebug('  - Normalized tour city:', normalizedTourCity);
+      logDebug('  - Normalized current city:', normalizedCurrentCity);
+      logDebug('  - City exact match:', cityMatch);
 
       // If city doesn't match exactly, exclude this tour
       if (!cityMatch) {
-        console.log("  - ❌ City doesn't match exactly, excluding tour");
+        logDebug("  - ❌ City doesn't match exactly, excluding tour");
         return false;
       }
 
@@ -160,12 +161,12 @@ const WeatherSuggestion = () => {
           ? isTemperatureSimilar(currentTemp, tourTemp)
           : false;
 
-      console.log(
+      logDebug(
         '  - Condition match:',
         conditionMatch,
         `(Tour: ${tourCondition}, Current: ${currentCondition})`
       );
-      console.log('  - Temp match:', tempMatch, `(Tour: ${tourTemp}, Current: ${currentTemp})`);
+      logDebug('  - Temp match:', tempMatch, `(Tour: ${tourTemp}, Current: ${currentTemp})`);
 
       // Must match city AND at least one weather parameter (condition OR temperature)
       // For stricter filtering, change to: cityMatch && conditionMatch && tempMatch
@@ -174,13 +175,13 @@ const WeatherSuggestion = () => {
       // For VERY strict filtering (all must match), use this instead:
       // const finalMatch = cityMatch && conditionMatch && tempMatch;
 
-      console.log('  - Final match result:', finalMatch);
+      logDebug('  - Final match result:', finalMatch);
 
       return finalMatch;
     });
 
-    console.log('✅ Filtered tours count:', filtered.length);
-    console.log('✅ Filtered tours:', filtered);
+    logDebug('✅ Filtered tours count:', filtered.length);
+    logDebug('✅ Filtered tours:', filtered);
 
     // Sort by weather similarity (temperature difference first, then condition)
     const sorted = filtered.sort((a, b) => {
@@ -205,24 +206,24 @@ const WeatherSuggestion = () => {
       return aConditionMatch - bConditionMatch;
     });
 
-    console.log('✅ Final sorted tours:', sorted);
+    logDebug('✅ Final sorted tours:', sorted);
     setFilteredTours(sorted);
   };
   const fetchCityWeather = async (cityName) => {
-    console.log('🌤️ Fetching weather for:', cityName);
+    logDebug('🌤️ Fetching weather for:', cityName);
 
     const matchingCity = findMatchingCity(cityName);
-    console.log('🎯 Matching city found:', matchingCity);
+    logDebug('🎯 Matching city found:', matchingCity);
 
     if (!bangladeshCities.some((city) => normalizeCity(city) === normalizeCity(matchingCity))) {
       const errorMsg = `${cityName} is not a valid city in our list.`;
-      console.log('❌', errorMsg);
+      logDebug('❌', errorMsg);
       setWeatherError(errorMsg);
       return;
     }
 
     if (!cityName.trim()) {
-      console.log('❌ Empty city name');
+      logDebug('❌ Empty city name');
       return;
     }
 
@@ -251,7 +252,7 @@ const WeatherSuggestion = () => {
         throw new Error('Weather data not available');
       }
     } catch (err) {
-      console.error('❌ Error fetching weather:', err);
+      logError('❌ Error fetching weather:', err);
       const errorMsg = `Could not fetch weather data for ${cityName}. Please try another city.`;
       setWeatherError(errorMsg);
       setCurrentWeather(null);
@@ -278,7 +279,7 @@ const WeatherSuggestion = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`);
     }
   };

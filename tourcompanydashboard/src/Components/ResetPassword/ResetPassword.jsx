@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ResetPasswordForm from './ResetPasswordForm/ResetPasswordForm';
 import './ResetPassword.css';
 import * as authApi from '../../api/auth';
+import { logDebug } from '../../utils/logger';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({ email: '' });
@@ -14,7 +15,7 @@ const ResetPassword = () => {
   useEffect(() => {
     // Get the current URL when component mounts
     setCurrentUrl(window.location.href);
-    console.log('Current URL:', window.location.href);
+    logDebug('Current URL:', window.location.href);
   }, []);
 
   const handleSubmit = async (e) => {

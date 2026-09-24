@@ -5,6 +5,7 @@ import './PopularTours.css';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
+import { logError } from '../../utils/logger';
 
 const PopularTours = () => {
   const { tours, loading, error } = useContext(ToursContext);
@@ -50,7 +51,7 @@ const PopularTours = () => {
         const sorted = scored.sort((a, b) => b.popularityScore - a.popularityScore);
         setSortedTours(sorted);
       } catch (err) {
-        console.error('Error computing popularity scores:', err);
+        logError('Error computing popularity scores:', err);
         setSortedTours(tours);
       }
     };
@@ -69,7 +70,7 @@ const PopularTours = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`);
     }
   };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './NewPassword.css';
 import * as authApi from '../../api/auth';
+import { logDebug } from '../../utils/logger';
 
 const NewPassword = () => {
   const [formData, setFormData] = useState({
@@ -41,7 +42,7 @@ const NewPassword = () => {
       setError(error.message);
     }
   };
-  console.log(message);
+  logDebug(message);
 
   return (
     <div className="new-password-page">

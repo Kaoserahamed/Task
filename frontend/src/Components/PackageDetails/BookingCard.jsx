@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import * as wishlistApi from '../../api/wishlist';
+import { logDebug } from '../../utils/logger';
 
 const BookingCard = ({
   price,
@@ -25,7 +26,7 @@ const BookingCard = ({
   useEffect(() => {
     if (socket) {
       socket.on('book', (data) => {
-        console.log('Booking event received:', data);
+        logDebug('Booking event received:', data);
         if (data.action === 'krlam' && data.booking && data.booking.tourId === tourId) {
           const newSeats = availableSeats - data.booking.travelers;
           if (newSeats >= 0) {
@@ -51,7 +52,7 @@ const BookingCard = ({
     }
   }, [message]);
 
-  console.log('User in BookingCard:', user?.user?.email);
+  logDebug('User in BookingCard:', user?.user?.email);
 
   const handleAddToWishlist = async () => {
     if (!user) {
@@ -59,7 +60,7 @@ const BookingCard = ({
       return;
     }
 
-    console.log('Adding to wishlist - Email:', user?.user?.email, 'Tour ID:', tourId);
+    logDebug('Adding to wishlist - Email:', user?.user?.email, 'Tour ID:', tourId);
 
     try {
       const data = await wishlistApi.addToWishlist(tourId, user?.user?.email);

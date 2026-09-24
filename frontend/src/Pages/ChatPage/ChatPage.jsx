@@ -6,6 +6,7 @@ import socket from '../../socket';
 import { useLocation } from 'react-router-dom';
 import './ChatPage.css';
 import * as chatApi from '../../api/chat';
+import { logDebug, logError } from '../../utils/logger';
 
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1';
 
@@ -20,7 +21,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (user) {
-      console.log('Current logged in user:', user);
+      logDebug('Current logged in user:', user);
     }
   }, [user]);
 
@@ -37,7 +38,7 @@ const ChatPage = () => {
         const responseData = await chatApi.fetchUserChats(userId, chatType);
         setChats(responseData || []);
       } catch (error) {
-        console.error('Error fetching chats:', error);
+        logError('Error fetching chats:', error);
         setChats([]);
       }
     };

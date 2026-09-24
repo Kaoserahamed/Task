@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import * as authApi from '../api/auth';
+import { logError } from '../utils/logger';
 
 const AuthContext = createContext(null);
 
@@ -17,7 +18,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('company-token', companyData.token);
       setCompany(companyData);
     } catch (error) {
-      console.error('Login error:', error);
+      logError('Login error:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
       setCompany(newUserData);
       return updatedUser;
     } catch (error) {
-      console.error('Update error:', error);
+      logError('Update error:', error);
       throw error;
     } finally {
       setLoading(false);

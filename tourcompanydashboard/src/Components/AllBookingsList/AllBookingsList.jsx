@@ -5,6 +5,7 @@ import socket from '../../socket';
 import { useTours } from '../../Context/ToursContext';
 import API_BASE_URL from '../../config/api';
 import * as bookingsApi from '../../api/bookings';
+import { logDebug, logError } from '../../utils/logger';
 
 const AllBookingsList = () => {
   const { tours, loading, error, fetchToursWithBookings } = useTours();
@@ -36,7 +37,7 @@ const AllBookingsList = () => {
       );
       setToursWithStats(toursStats);
     } catch (err) {
-      console.error('Error fetching tour stats:', err);
+      logError('Error fetching tour stats:', err);
       setToursWithStats([]);
     }
     setStatsLoading(false);
@@ -53,7 +54,7 @@ const AllBookingsList = () => {
   useEffect(() => {
     if (socket) {
       socket.on('book', async (data) => {
-        console.log('Booking event received:', data);
+        logDebug('Booking event received:', data);
         if (data.action === 'krlam') {
           // Fetch fresh tour data
           await fetchToursWithBookings();
@@ -63,7 +64,7 @@ const AllBookingsList = () => {
       });
 
       socket.on('seatsUpdated', async (data) => {
-        console.log('Seats update event received:', data);
+        logDebug('Seats update event received:', data);
         // Fetch fresh tour data
         await fetchToursWithBookings();
         // Update tour stats
@@ -86,7 +87,7 @@ const AllBookingsList = () => {
         setAllBookings(data.bookings);
       }
     } catch (error) {
-      console.error('Error fetching all bookings:', error);
+      logError('Error fetching all bookings:', error);
     }
   };
 

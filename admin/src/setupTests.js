@@ -15,10 +15,10 @@ jest.mock('socket.io-client', () => {
 });
 
 // jsdom doesn't implement canvas; stub getContext so chart components
-// don't emit "Not implemented" console.error (fails tests in CI mode)
+// don't emit "Not implemented" console errors (fails tests in CI mode)
 
 // jsdom doesn't implement canvas; stub getContext so chart components
-// don't emit "Not implemented" console.error (fails tests in CI mode)
+// don't emit "Not implemented" console errors (fails tests in CI mode)
 HTMLCanvasElement.prototype.getContext = function getContext() {
   return {
     fillRect: () => {},

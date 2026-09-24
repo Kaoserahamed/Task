@@ -3,6 +3,7 @@ import { ToursContext } from '../../Context/ToursContext';
 import PackageGrid from '../../Components/PackageGrid/PackageGrid';
 import './PopularTours.css';
 import * as reviewsApi from '../../api/reviews';
+import { logError } from '../../utils/logger';
 
 const PopularTours = () => {
   const { tours = [], loading } = useContext(ToursContext);
@@ -35,7 +36,7 @@ const PopularTours = () => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error('Error fetching average ratings:', err);
+        logError('Error fetching average ratings:', err);
       }
     };
 

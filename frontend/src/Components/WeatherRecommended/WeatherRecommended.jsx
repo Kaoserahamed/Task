@@ -6,6 +6,7 @@ import './WeatherRecommended.css';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
+import { logError } from '../../utils/logger';
 
 const WeatherRecommended = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const WeatherRecommended = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`); // Navigate anyway
     }
   };
@@ -48,7 +49,7 @@ const WeatherRecommended = () => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error('Error fetching reviews:', err);
+        logError('Error fetching reviews:', err);
       }
     };
 

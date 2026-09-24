@@ -5,6 +5,7 @@ import { useAuth } from '../../Context/AuthContext';
 import { useState, useEffect } from 'react';
 import * as chatApi from '../../api/chat';
 import * as companiesApi from '../../api/companies';
+import { logDebug, logError } from '../../utils/logger';
 
 const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, socket }) => {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
       const responseData = await chatApi.fetchUserChats(userId, chatType);
       setChats(responseData || []);
     } catch (error) {
-      console.error('Error fetching chats:', error);
+      logError('Error fetching chats:', error);
       setChats([]);
     } finally {
       setIsloading(false);
@@ -36,8 +37,8 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
   // Initial fetch of chats
   useEffect(() => {
     if (userId) {
-      console.log('its happening');
-      console.log(userId);
+      logDebug('its happening');
+      logDebug(userId);
       fetchChats();
     }
   }, [userId, chatType]);
@@ -49,7 +50,7 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
         if (data.action === 'create' && data.updatedChat) {
           // Check if the updated chat is for the current chat window
           if (data.updatedChat.participants === userId) {
-            console.log(data.updatedChat.participants);
+            logDebug(data.updatedChat.participants);
             setSelectedChat(data.updatedChat);
             fetchChats();
           }
@@ -77,11 +78,11 @@ const ChatList = ({ chatType, selectedChat, setSelectedChat, userId, username, s
       if (data.success) {
         setSearchResults(data.companies || []);
       } else {
-        console.error('Search failed:', data.message);
+        logError('Search failed:', data.message);
         setSearchResults([]);
       }
     } catch (error) {
-      console.error('Error searching companies:', error);
+      logError('Error searching companies:', error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);

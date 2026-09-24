@@ -4,6 +4,7 @@ import './BookingList.css';
 import socket from '../../socket';
 import * as toursApi from '../../api/tours';
 import * as bookingsApi from '../../api/bookings';
+import { logError } from '../../utils/logger';
 const BookingList = () => {
   const { tourId } = useParams(); // Get tourId from URL parameters
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const BookingList = () => {
         setTourInfo(data.tour);
       }
     } catch (error) {
-      console.error('Error fetching tour info:', error);
+      logError('Error fetching tour info:', error);
     }
   };
 
@@ -53,7 +54,7 @@ const BookingList = () => {
         setError(data.message || 'Failed to fetch bookings');
       }
     } catch (error) {
-      console.error('Error fetching tour bookings:', error);
+      logError('Error fetching tour bookings:', error);
       setError('Error fetching bookings');
     } finally {
       setLoading(false);

@@ -7,6 +7,7 @@ import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
 import * as suggestionsApi from '../../api/suggestions';
+import { logDebug, logError } from '../../utils/logger';
 
 const TourSuggestions = ({ weatherCity }) => {
   const [suggestions, setSuggestions] = useState([]);
@@ -16,7 +17,7 @@ const TourSuggestions = ({ weatherCity }) => {
   const { tours } = useContext(ToursContext);
   const { user } = useAuth();
   const navigate = useNavigate();
-  console.log('Weather City:', weatherCity);
+  logDebug('Weather City:', weatherCity);
 
   // Consistent user data access like in ProfileInfo
   const userData = user?.user || user;
@@ -47,7 +48,7 @@ const TourSuggestions = ({ weatherCity }) => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error('Error fetching reviews:', err);
+        logError('Error fetching reviews:', err);
       }
     };
 
@@ -70,7 +71,7 @@ const TourSuggestions = ({ weatherCity }) => {
     const fetchSuggestions = async () => {
       if (!tours || tours.length === 0 || !weatherCity) return;
       const recentViews = JSON.parse(localStorage.getItem('recentTourViews') || '[]');
-      console.log('console' + recentViews);
+      logDebug('console' + recentViews);
       let allSuggestedTours = [];
 
       setLoading(true);
@@ -105,7 +106,7 @@ const TourSuggestions = ({ weatherCity }) => {
 
         setSuggestions(sortedTours);
       } catch (err) {
-        console.error('Error fetching suggestions:', err);
+        logError('Error fetching suggestions:', err);
         setError('Failed to load suggestions');
         // Fallback to upcoming tours
         const upcomingTours = tours
@@ -135,7 +136,7 @@ const TourSuggestions = ({ weatherCity }) => {
 
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`);
     }
   };

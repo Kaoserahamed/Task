@@ -5,6 +5,7 @@ import AuthForm from '../../Components/AuthForm/AuthForm';
 import AuthTabs from '../../Components/AuthTabs/AuthTabs';
 import './LoginSignup.css';
 import * as authApi from '../../api/auth';
+import { logError } from '../../utils/logger';
 
 const DEMO_USER_EMAIL = process.env.REACT_APP_DEMO_USER_EMAIL || '';
 const DEMO_USER_PASSWORD = process.env.REACT_APP_DEMO_USER_PASSWORD || '';
@@ -55,7 +56,7 @@ const LoginSignup = () => {
         navigate('/');
       }
     } catch (error) {
-      console.error('Authentication error:', error);
+      logError('Authentication error:', error);
       // Here you should show an error message to the user
       // You can add a state variable for error messages
     }

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './UpcomingTours.css';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
+import { logError } from '../../utils/logger';
 
 const UpcomingTours = () => {
   const { tours = [], loading } = useContext(ToursContext);
@@ -31,7 +32,7 @@ const UpcomingTours = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`);
     }
   };

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './EditTour.css';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
+import { logError } from '../../utils/logger';
 
 const EditTour = () => {
   const { tourId } = useParams();
@@ -152,7 +153,7 @@ const EditTour = () => {
       alert('Tour updated successfully');
       navigate('/manage-tours');
     } catch (error) {
-      console.error('Error updating tour:', error);
+      logError('Error updating tour:', error);
       alert(`Failed to update tour: ${error.message}`);
     }
   };

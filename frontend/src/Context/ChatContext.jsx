@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import * as chatApi from '../api/chat';
+import { logError } from '../utils/logger';
 
 const ChatContext = createContext();
 
@@ -29,7 +30,7 @@ export const ChatProvider = ({ children }) => {
         setChats(data || []);
       } catch (err) {
         setError(err.message);
-        console.error('Error fetching chats:', err);
+        logError('Error fetching chats:', err);
       } finally {
         setLoading(false);
       }
@@ -42,7 +43,7 @@ export const ChatProvider = ({ children }) => {
       return await chatApi.sendMessage(messageData);
     } catch (err) {
       setError(err.message);
-      console.error('Error sending message:', err);
+      logError('Error sending message:', err);
       throw err;
     }
   }, []);

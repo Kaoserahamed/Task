@@ -1,6 +1,11 @@
 import opensocket from 'socket.io-client';
+import API_BASE_URL from './config/api';
+import { logDebug, logWarn } from './utils/logger';
 
-const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+// The socket reaches the same origin as the REST client, so it reads the URL
+// from the one config module instead of re-deriving it from the environment:
+// that duplication is how the socket and the API client drifted apart.
+const BACKEND_URL = API_BASE_URL;
 
 // Disable socket.io on production Vercel deployment
 // Socket.io doesn't work on Vercel serverless functions
@@ -17,19 +22,19 @@ if (!isProduction) {
   });
 
   socket.on('connect', () => {
-    console.log('✅ Socket connected to backend');
+    logDebug('✅ Socket connected to backend');
   });
 
   socket.on('connect_error', (error) => {
-    console.warn('⚠️ Socket connection error:', error.message);
-    console.log('💡 Make sure backend is running on', BACKEND_URL);
+    logWarn('⚠️ Socket connection error:', error.message);
+    logDebug('💡 Make sure backend is running on', BACKEND_URL);
   });
 
   socket.on('disconnect', () => {
-    console.log('🔌 Socket disconnected');
+    logDebug('🔌 Socket disconnected');
   });
 } else {
-  console.log('ℹ️ Socket.io disabled in production (Vercel serverless limitation)');
+  logDebug('ℹ️ Socket.io disabled in production (Vercel serverless limitation)');
   // Return a mock socket object to prevent errors
   socket = {
     on: () => {},

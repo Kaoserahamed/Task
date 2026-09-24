@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import * as toursApi from '../api/tours';
+import { logError } from '../utils/logger';
 
 export const ToursContext = createContext();
 
@@ -20,7 +21,7 @@ export const ToursProvider = ({ children }) => {
       }
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching tours:', err);
+      logError('Error fetching tours:', err);
     } finally {
       setLoading(false);
     }
@@ -36,7 +37,7 @@ export const ToursProvider = ({ children }) => {
         throw new Error(data.error);
       }
     } catch (err) {
-      console.error('Error fetching tour:', err);
+      logError('Error fetching tour:', err);
       throw err;
     }
   }, []);

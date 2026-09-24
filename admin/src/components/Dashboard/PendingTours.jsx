@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 import * as toursApi from '../../api/tours';
+import { logError } from '../../utils/logger';
 
 const PendingTours = ({ id, name, applicant, date, status, price }) => {
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -15,7 +16,7 @@ const PendingTours = ({ id, name, applicant, date, status, price }) => {
         setCurrentStatus(newStatus);
       }
     } catch (error) {
-      console.error('Error updating status:', error);
+      logError('Error updating status:', error);
     } finally {
       setIsLoading(false);
     }

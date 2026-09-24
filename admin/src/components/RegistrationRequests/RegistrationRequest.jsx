@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './RegistrationRequest.css';
 import socket from '../../socket';
 import * as companiesApi from '../../api/companies';
+import { logDebug } from '../../utils/logger';
 
 const emptySocialLinks = {
   facebook: '',
@@ -22,7 +23,7 @@ const RegistrationRequest = () => {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    console.log('Socket connected:', socket.connected); // Debug socket connection
+    logDebug('Socket connected:', socket.connected); // Debug socket connection
     async function fetchCompany() {
       setLoading(true);
       setError('');
@@ -58,7 +59,7 @@ const RegistrationRequest = () => {
         companyId: company._id,
         verificationStatus: status,
       });
-      console.log('Emitted license_response:', {
+      logDebug('Emitted license_response:', {
         companyId: company._id,
         verificationStatus: status,
       }); // Debug emit

@@ -4,6 +4,7 @@ import avatar from '../../Assets/chat_avatar.png';
 import { useState, useEffect } from 'react';
 import * as chatApi from '../../../api/chat';
 import * as usersApi from '../../../api/users';
+import { logDebug, logError } from '../../../utils/logger';
 
 const ChatList = ({
   chatType,
@@ -22,7 +23,7 @@ const ChatList = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  console.log(username);
+  logDebug(username);
   const fetchChats = async () => {
     setIsloading(true);
     try {
@@ -32,7 +33,7 @@ const ChatList = ({
       const responseData = await chatApi.fetchChats(companyId, 'comuse');
       setChats(responseData || []);
     } catch (error) {
-      console.error('Error fetching chats:', error);
+      logError('Error fetching chats:', error);
       setChats([]);
     } finally {
       setIsloading(false);
@@ -49,7 +50,7 @@ const ChatList = ({
         if (data.action === 'create' && data.updatedChat) {
           // Check if the updated chat is for the current chat window
           if (data.updatedChat.companyId === companyId) {
-            console.log(data.updatedChat.participants);
+            logDebug(data.updatedChat.participants);
             setSelectedChat(data.updatedChat);
             fetchChats();
           }
@@ -77,11 +78,11 @@ const ChatList = ({
       if (data.success) {
         setSearchResults(data.users || []);
       } else {
-        console.error('Search failed:', data.message);
+        logError('Search failed:', data.message);
         setSearchResults([]);
       }
     } catch (error) {
-      console.error('Error searching companies:', error);
+      logError('Error searching companies:', error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);

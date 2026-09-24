@@ -1,5 +1,6 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { logDebug, logError } from '../utils/logger';
 
 const AuthContext = createContext();
 
@@ -9,14 +10,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('admin-token');
-    console.log("Current user's token: ", token);
+    logDebug("Current user's token: ", token);
     if (token) {
       try {
         const userData = JSON.parse(atob(token.split('.')[1])); // Decode the token to get user data
         setUser(userData);
-        console.log(`Yes, logged in: ${userData}`);
+        logDebug(`Yes, logged in: ${userData}`);
       } catch (error) {
-        console.error('Failed to decode token:', error);
+        logError('Failed to decode token:', error);
         localStorage.removeItem('admin-token'); // Clear invalid token
       }
     }
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const userData = JSON.parse(atob(token.split('.')[1]));
         setUser(userData);
-        console.log(`Saved user data: ${userData}`);
+        logDebug(`Saved user data: ${userData}`);
       } catch (error) {
         setUser(null);
         localStorage.removeItem('admin-token');

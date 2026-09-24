@@ -1,4 +1,4 @@
-﻿/**
+/**
  * API Configuration
  *
  * The one place the admin dashboard learns where the API lives. Every request

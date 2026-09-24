@@ -18,6 +18,7 @@ import { useAuth } from '../../Context/AuthContext';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom';
 import * as authApi from '../../api/auth';
+import { logDebug, logError, logWarn } from '../../utils/logger';
 
 const Navbar = () => {
   const location = useLocation();
@@ -38,10 +39,10 @@ const Navbar = () => {
       if (data.success) {
         setCompanyDetails(data.company);
       } else {
-        console.error('Failed to fetch company details:', data.message);
+        logError('Failed to fetch company details:', data.message);
       }
     } catch (error) {
-      console.error('Error fetching company details:', error);
+      logError('Error fetching company details:', error);
     }
   }, []); // Empty dependency array means this function is created once
 
@@ -50,7 +51,7 @@ const Navbar = () => {
     if (company && company.company && company.company._id) {
       fetchCompanyDetails(company.company._id);
     } else {
-      console.log('Company object or ID not available from auth context.', company);
+      logDebug('Company object or ID not available from auth context.', company);
     }
   }, [company, fetchCompanyDetails]);
 
@@ -58,7 +59,7 @@ const Navbar = () => {
   useEffect(() => {
     if (socket) {
       socket.on('veri', (data) => {
-        console.log('Verification update received:', data);
+        logDebug('Verification update received:', data);
         if (data.action === 'done' && data.company) {
           // Re-fetch company details to get the most accurate state
           const currentCompanyId =
@@ -66,7 +67,7 @@ const Navbar = () => {
           if (currentCompanyId) {
             fetchCompanyDetails(currentCompanyId);
           } else {
-            console.warn('Could not determine company ID to re-fetch details after socket update.');
+            logWarn('Could not determine company ID to re-fetch details after socket update.');
           }
         }
       });

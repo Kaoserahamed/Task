@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import * as authApi from '../api/auth';
+import { logError } from '../utils/logger';
 
 const AuthContext = createContext(null);
 
@@ -24,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         setUser(updatedUserData);
       }
     } catch (error) {
-      console.error('Error refreshing user data:', error);
+      logError('Error refreshing user data:', error);
       // If the token is rejected, drop the session.
       if (error.status === 401) {
         logout();
@@ -47,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', userData.token);
       setUser(userData);
     } catch (error) {
-      console.error('Login error:', error);
+      logError('Login error:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -68,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 
       return updatedUser;
     } catch (error) {
-      console.error('Update error:', error);
+      logError('Update error:', error);
       throw error;
     } finally {
       setLoading(false);

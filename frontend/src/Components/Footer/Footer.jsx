@@ -2,13 +2,14 @@ import { React, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
 import { useAuth } from '../../Context/AuthContext';
+import { logDebug } from '../../utils/logger';
 
 const Footer = () => {
   const { user } = useAuth();
 
   useEffect(() => {
     if (user) {
-      console.log('Current logged in user:', user);
+      logDebug('Current logged in user:', user);
     }
   }, [user]);
   return (

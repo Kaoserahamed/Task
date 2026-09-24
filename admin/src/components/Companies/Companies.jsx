@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import './Companies.css';
 import * as companiesApi from '../../api/companies';
+import { logError } from '../../utils/logger';
 
 const Companies = () => {
   const [companies, setCompanies] = useState([]);
@@ -38,7 +39,7 @@ const Companies = () => {
       }
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching companies:', err);
+      logError('Error fetching companies:', err);
     } finally {
       setLoading(false);
     }
@@ -116,7 +117,12 @@ const Companies = () => {
       <div className={`company-modal ${showModal ? 'show' : ''}`} onClick={handleCloseModal}>
         {selectedCompany && (
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={handleCloseModal}>
+            <button
+              type="button"
+              className="close-button"
+              onClick={handleCloseModal}
+              aria-label="Close company details"
+            >
               <FaTimes />
             </button>
 

@@ -3,19 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import './UploadTour.css'; // Import the CSS file for styling
 import { useAuth } from '../../Context/AuthContext';
 import * as toursApi from '../../api/tours';
+import { logDebug, logError } from '../../utils/logger';
 
 const UploadTour = () => {
   const { company } = useAuth();
   useEffect(() => {
     if (company) {
-      console.log('Current logged in company:', company);
-      console.log('Company ID:', company._id);
+      logDebug('Current logged in company:', company);
+      logDebug('Company ID:', company._id);
     }
   }, [company]);
   const companyId = company.company._id;
   const companyName = company.company.name;
   const navigate = useNavigate();
-  console.log(companyName);
+  logDebug(companyName);
   const [tourDetails, setTourDetails] = useState({
     name: '',
     packageCategories: [],
@@ -249,7 +250,7 @@ const UploadTour = () => {
       alert('Tour uploaded successfully');
       navigate('manage-tours'); // Redirect to manage tours page
     } catch (error) {
-      console.error('Error uploading tour:', error);
+      logError('Error uploading tour:', error);
       alert(`Failed to upload tour: ${error.message}`);
     }
   };

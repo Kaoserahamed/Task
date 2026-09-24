@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './Places.css';
+import { logError, logWarn } from '../utils/logger';
 
 const PLACES_API_KEY = process.env.PLACES_API_KEY || process.env.REACT_APP_PLACES_API_KEY || '';
 if (!PLACES_API_KEY) {
-  console.warn(
+  logWarn(
     'Missing PLACES_API_KEY or REACT_APP_PLACES_API_KEY env var — Places will not load.'
   );
 }
@@ -22,7 +23,7 @@ const Places = () => {
       const data = await res.json();
       setter(data.results || []);
     } catch (err) {
-      console.error(`Failed to fetch ${type}:`, err);
+      logError(`Failed to fetch ${type}:`, err);
     }
   };
 

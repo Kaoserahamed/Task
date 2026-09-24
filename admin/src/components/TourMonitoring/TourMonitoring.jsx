@@ -4,6 +4,7 @@ import PackageInfo from '../TourDetails/PackageInfo';
 import PackageGallery from '../TourDetails/PackageGallery';
 import * as toursApi from '../../api/tours';
 import * as bookingsApi from '../../api/bookings';
+import { logError } from '../../utils/logger';
 
 const TourMonitoring = () => {
   const [tours, setTours] = useState([]);
@@ -26,7 +27,7 @@ const TourMonitoring = () => {
         const fetchedTours = Array.isArray(data) ? data : data.tours;
         setTours(fetchedTours || []);
       } catch (err) {
-        console.error('Failed to fetch tours:', err);
+        logError('Failed to fetch tours:', err);
         setTours([]); // fallback to empty array
       } finally {
         setLoading(false);
@@ -94,7 +95,7 @@ const TourMonitoring = () => {
       setReviewText('');
       setTourToReject(null);
     } catch (error) {
-      console.error('Error updating status:', error);
+      logError('Error updating status:', error);
     }
   };
 

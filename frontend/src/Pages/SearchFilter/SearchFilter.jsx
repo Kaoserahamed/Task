@@ -8,6 +8,7 @@ import { Star, Calendar, Clock, MapPin } from 'lucide-react';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
+import { logError } from '../../utils/logger';
 
 const SearchFilter = () => {
   const { tours, loading, error } = useContext(ToursContext);
@@ -87,7 +88,7 @@ const SearchFilter = () => {
         setAverageRatings(averages);
         setReviewCounts(countMap); // Store review counts separately
       } catch (error) {
-        console.error('Error fetching ratings:', error);
+        logError('Error fetching ratings:', error);
         setAverageRatings({});
         setReviewCounts({});
       }
@@ -100,7 +101,7 @@ const SearchFilter = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`);
     }
   };

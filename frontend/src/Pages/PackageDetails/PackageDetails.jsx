@@ -10,6 +10,7 @@ import socket from '../../socket';
 import TourSuggestions from '../../Components/TourSuggestions/TourSuggestions';
 import * as chatApi from '../../api/chat';
 import * as reviewsApi from '../../api/reviews';
+import { logDebug, logError } from '../../utils/logger';
 
 const PackageDetails = () => {
   const { id } = useParams();
@@ -29,18 +30,18 @@ const PackageDetails = () => {
   const [weatherCity, setWeatherCity] = useState('');
   useEffect(() => {
     if (user) {
-      console.log(user);
+      logDebug(user);
     }
   }, [user]);
   let use, userId;
   //const city=tour.weather.city
-  console.log(tour);
+  logDebug(tour);
   if (user) {
     use = user.user;
-    console.log(use);
+    logDebug(use);
     userId = use._id;
   }
-  console.log(tour);
+  logDebug(tour);
   const chatType = 'comuse';
 
   const fetchChats = async () => {
@@ -53,7 +54,7 @@ const PackageDetails = () => {
       const responseData = await chatApi.fetchUserChats(userId, chatType);
       setChats(responseData || []);
     } catch (error) {
-      console.error('Error fetching chats:', error);
+      logError('Error fetching chats:', error);
       setChats([]);
     } finally {
       setIsloading(false);
@@ -64,8 +65,8 @@ const PackageDetails = () => {
   }, [userId, chatType]);
   useEffect(() => {
     if (userId) {
-      console.log('its happening');
-      console.log(userId);
+      logDebug('its happening');
+      logDebug(userId);
       fetchChats();
     }
   }, [userId, chatType]);
@@ -109,7 +110,7 @@ const PackageDetails = () => {
       setLocalLoading(false);
     }
   };
-  console.log(avSeats);
+  logDebug(avSeats);
   useEffect(() => {
     if (id) {
       getTour();
@@ -121,7 +122,7 @@ const PackageDetails = () => {
       setWeatherCity(tour.weather.city);
     }
   }, [tour]);
-  console.log(weatherCity);
+  logDebug(weatherCity);
   if (localLoading) {
     return (
       <div className="loading-container">
@@ -164,7 +165,7 @@ const PackageDetails = () => {
 
     return stars;
   };
-  console.log(tour);
+  logDebug(tour);
   const ReviewsSection = () => (
     <div className="reviews-section">
       <h3>Customer Reviews</h3>

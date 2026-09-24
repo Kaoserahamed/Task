@@ -17,5 +17,17 @@ module.exports = {
     node: true,
     jest: true,
   },
+  rules: {
+    // C2.5: all logging goes through `src/utils/logger.js` so company records,
+    // licence responses and chat payloads stay out of end-user consoles. The
+    // override is the only sanctioned place a raw console call may live.
+    'no-console': 'error',
+  },
+  overrides: [
+    {
+      files: ['src/utils/logger.js'],
+      rules: { 'no-console': 'off' },
+    },
+  ],
   ignorePatterns: ['build/', 'node_modules/', 'coverage/'],
 };

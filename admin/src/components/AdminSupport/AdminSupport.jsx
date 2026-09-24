@@ -4,6 +4,7 @@ import avatar from '../Assets/chat_avatar.png'; // Use a default avatar if neede
 import { useAuth } from '../../context/AuthContext';
 import socket from '../../socket';
 import * as chatApi from '../../api/chat';
+import { logDebug, logError } from '../../utils/logger';
 
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; // Valid 24-character hex string
 
@@ -26,7 +27,7 @@ const AdminSupport = () => {
       const data = await chatApi.fetchAdminChats('aduse');
       setUserChats(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error fetching user chats:', error);
+      logError('Error fetching user chats:', error);
       setUserChats([]);
     }
   };
@@ -36,7 +37,7 @@ const AdminSupport = () => {
       const data = await chatApi.fetchAdminChats('adcom');
       setCompanyChats(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error fetching company chats:', error);
+      logError('Error fetching company chats:', error);
       setCompanyChats([]);
     }
   };
@@ -51,7 +52,7 @@ const AdminSupport = () => {
   useEffect(() => {
     if (socket) {
       socket.on('posts', (data) => {
-        console.log('Received socket event:', data);
+        logDebug('Received socket event:', data);
         if (data.action === 'create' && data.updatedChat) {
           // Update the active chat if it matches
           if (activeChat && activeChat._id === data.updatedChat._id) {
@@ -152,7 +153,7 @@ const AdminSupport = () => {
       setNewMessage('');
       // Socket event will handle the state update and auto-scrolling
     } catch (error) {
-      console.error('Error sending message:', error);
+      logError('Error sending message:', error);
     }
   };
 

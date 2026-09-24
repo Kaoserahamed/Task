@@ -4,6 +4,7 @@ import './PackageGrid.css';
 import { getImageUrl, handleImageError } from '../../utils/imageHelpers';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
+import { logError } from '../../utils/logger';
 
 const PackageGrid = ({ packages }) => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const PackageGrid = ({ packages }) => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`);
     }
   };
@@ -52,7 +53,7 @@ const PackageGrid = ({ packages }) => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error('Error fetching average ratings:', err);
+        logError('Error fetching average ratings:', err);
       }
     };
 

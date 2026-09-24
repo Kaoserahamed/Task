@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Users } from 'lucide-react';
 import './ContactInfoForm.css';
 import socket from '../../socket';
+import { logDebug } from '../../utils/logger';
 
 const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, selectedTour }) => {
   const [maxTravelers, setMaxTravelers] = useState(selectedTour?.availableSeats || 0);
@@ -15,7 +16,7 @@ const ContactInfoForm = ({ formData, handleChange, handleSubmitContactInfo, sele
   useEffect(() => {
     if (socket) {
       socket.on('book', (data) => {
-        console.log('Booking event received in ContactInfoForm:', data);
+        logDebug('Booking event received in ContactInfoForm:', data);
         if (data.action === 'krlam' && data.booking && data.booking.tourId === selectedTour?._id) {
           const newMaxTravelers = maxTravelers - data.booking.travelers;
           if (newMaxTravelers >= 0) {

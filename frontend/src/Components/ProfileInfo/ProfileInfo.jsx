@@ -5,6 +5,7 @@ import API_BASE_URL from '../../config/api';
 import * as wishlistApi from '../../api/wishlist';
 import * as bookingsApi from '../../api/bookings';
 import * as authApi from '../../api/auth';
+import { logError } from '../../utils/logger';
 
 const ProfileInfo = () => {
   const { user, updateUserLocal, refreshUserData } = useAuth();
@@ -50,7 +51,7 @@ const ProfileInfo = () => {
         const totalTrips = [...(bookingData.upcoming || []), ...(bookingData.completed || [])];
         setTripsCount(totalTrips.length);
       } catch (err) {
-        console.error('Error fetching counts:', err);
+        logError('Error fetching counts:', err);
         setError('Failed to load profile stats.');
       }
     };
@@ -125,7 +126,7 @@ const ProfileInfo = () => {
         setAvatarPreview(originalAvatar);
       }
     } catch (err) {
-      console.error('Upload failed:', err);
+      logError('Upload failed:', err);
 
       // Revert to original avatar on error
       setAvatarPreview(originalAvatar);

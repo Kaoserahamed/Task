@@ -12,7 +12,7 @@ jest.mock('socket.io-client', () => {
 });
 
 // jsdom doesn't implement canvas; stub getContext so chart components
-// don't emit "Not implemented" console.error (fails tests in CI mode)
+// don't emit "Not implemented" console errors (fails tests in CI mode)
 
 // Polyfill TextEncoder/TextDecoder for react-router v7 in jsdom
 const { TextEncoder, TextDecoder } = require('util');

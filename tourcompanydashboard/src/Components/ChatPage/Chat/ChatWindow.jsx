@@ -3,6 +3,7 @@ import './ChatWindow.css';
 import avatar from '../../Assets/chat_avatar.png';
 import { useAuth } from '../../../Context/AuthContext';
 import * as chatApi from '../../../api/chat';
+import { logDebug, logError } from '../../../utils/logger';
 
 const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => {
   const [newMessage, setNewMessage] = useState('');
@@ -37,16 +38,16 @@ const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => 
       container.removeEventListener('scroll', handleScroll);
     };
   }, [messagesContainerRef.current]);
-  console.log(selectedChat.chatType);
+  logDebug(selectedChat.chatType);
   useEffect(() => {
     if (socket) {
-      console.log('Socket connected in ChatWindow');
+      logDebug('Socket connected in ChatWindow');
       socket.on('posts', (data) => {
-        console.log('Received socket event in ChatWindow:', data);
+        logDebug('Received socket event in ChatWindow:', data);
         if (data.action === 'create' && data.updatedChat) {
           // For company-user chat
           if (chatType === 'comuse' && data.updatedChat.companyId === companyId) {
-            console.log('Updating company-user chat messages:', data.updatedChat.messages);
+            logDebug('Updating company-user chat messages:', data.updatedChat.messages);
             setMessages(data.updatedChat.messages);
           }
           // For admin-company chat
@@ -55,18 +56,18 @@ const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => 
             data.updatedChat.chatType === 'adcom' &&
             data.updatedChat.companyId === companyId
           ) {
-            console.log('Updating admin-company chat messages:', data.updatedChat.messages);
+            logDebug('Updating admin-company chat messages:', data.updatedChat.messages);
             setMessages(data.updatedChat.messages);
           }
         }
       });
     }
-    console.log(messages);
+    logDebug(messages);
 
     // Cleanup socket listener on component unmount
     return () => {
       if (socket) {
-        console.log('Cleaning up socket listener in ChatWindow');
+        logDebug('Cleaning up socket listener in ChatWindow');
         socket.off('posts');
       }
     };
@@ -94,7 +95,7 @@ const ChatWindow = ({ selectedChat, companyId, chatType, username, socket }) => 
         senderId: companyId,
       });
     } catch (error) {
-      console.error('Error sending message:', error);
+      logError('Error sending message:', error);
     }
   };
   return (

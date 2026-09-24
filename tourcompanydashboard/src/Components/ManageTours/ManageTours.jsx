@@ -5,6 +5,7 @@ import socket from '../../socket';
 import { useAuth } from '../../Context/AuthContext';
 import './ManageTours.css';
 import API_BASE_URL from '../../config/api';
+import { logDebug, logError } from '../../utils/logger';
 
 const ManageTours = () => {
   const { company } = useAuth();
@@ -25,18 +26,18 @@ const ManageTours = () => {
   // Verify socket connection
   useEffect(() => {
     // Log socket connection status
-    console.log('Socket connected:', socket.connected);
+    logDebug('Socket connected:', socket.connected);
 
     socket.on('connect', () => {
-      console.log('Socket connected successfully');
+      logDebug('Socket connected successfully');
     });
 
     socket.on('disconnect', () => {
-      console.log('Socket disconnected');
+      logDebug('Socket disconnected');
     });
 
     socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
+      logError('Socket connection error:', error);
     });
 
     return () => {
@@ -87,7 +88,7 @@ const ManageTours = () => {
             // Case-insensitive comparison
             return categories.some((cat) => cat.toLowerCase() === activeCategory.toLowerCase());
           } catch (error) {
-            console.error('Error parsing categories for tour:', tour.name, error);
+            logError('Error parsing categories for tour:', tour.name, error);
             return false;
           }
         }
@@ -132,7 +133,7 @@ const ManageTours = () => {
 
   const handleStatusUpdate = async (tourId, status) => {
     try {
-      console.log('Starting status update for tour:', tourId);
+      logDebug('Starting status update for tour:', tourId);
       const result = await updateTourStatus(tourId, status);
 
       if (result.success) {
@@ -152,26 +153,26 @@ const ManageTours = () => {
             };
 
             // Log and emit the socket event
-            console.log('Socket connected status:', socket.connected);
-            console.log('Emitting tour_approval_request:', eventData);
+            logDebug('Socket connected status:', socket.connected);
+            logDebug('Emitting tour_approval_request:', eventData);
 
             socket.emit('tour_approval_request', eventData, (error) => {
               if (error) {
-                console.error('Error emitting event:', error);
+                logError('Error emitting event:', error);
               } else {
-                console.log('Event emitted successfully');
+                logDebug('Event emitted successfully');
               }
             });
           } else {
-            console.error('Could not find tour details for ID:', tourId);
+            logError('Could not find tour details for ID:', tourId);
           }
         }
       } else {
-        console.error('Status update failed:', result.error);
+        logError('Status update failed:', result.error);
         alert(result.error || 'Failed to update status');
       }
     } catch (error) {
-      console.error('Error updating status:', error);
+      logError('Error updating status:', error);
       alert('Failed to update status');
     }
   };
@@ -204,7 +205,7 @@ const ManageTours = () => {
     const joinRoom = () => {
       if (company?.company?._id) {
         socket.emit('join_company_room', company.company._id);
-        console.log('Joined company room:', company.company._id);
+        logDebug('Joined company room:', company.company._id);
       }
     };
     // Join on mount (if already connected)

@@ -6,6 +6,7 @@ import './ExploreByCategory.css';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
+import { logDebug, logError } from '../../utils/logger';
 
 const ExploreByCategory = () => {
   const { category } = useParams();
@@ -40,7 +41,7 @@ const ExploreByCategory = () => {
 
         setAverageRatings(averages);
       } catch (err) {
-        console.error('Error fetching reviews:', err);
+        logError('Error fetching reviews:', err);
       }
     };
 
@@ -53,31 +54,31 @@ const ExploreByCategory = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`); // Navigate anyway
     }
   };
 
   // Fetch tours when component mounts
   useEffect(() => {
-    console.log('Active Category:', activeCategory);
-    console.log('All Tours:', tours);
+    logDebug('Active Category:', activeCategory);
+    logDebug('All Tours:', tours);
 
     if (activeCategory === 'all') {
       setFilteredTours(tours);
     } else {
       // Add debugging logs to see the structure of packageCategories
       tours.forEach((tour) => {
-        console.log(`Tour "${tour.name}" categories:`, tour.packageCategories);
+        logDebug(`Tour "${tour.name}" categories:`, tour.packageCategories);
       });
 
       const filtered = tours.filter((tour) => {
-        console.log(`Checking tour: ${tour.name}`);
-        console.log(`Categories for this tour:`, tour.packageCategories);
+        logDebug(`Checking tour: ${tour.name}`);
+        logDebug(`Categories for this tour:`, tour.packageCategories);
 
         // Check if packageCategories exists and has content
         if (!tour.packageCategories || tour.packageCategories.length === 0) {
-          console.log('No categories found for this tour');
+          logDebug('No categories found for this tour');
           return false;
         }
 
@@ -91,13 +92,13 @@ const ExploreByCategory = () => {
               // Try to extract categories from various string formats
               const cleanedStr = cat.replace(/[$$$$']/g, '');
               const possibleCategories = cleanedStr.split(',').map((c) => c.trim());
-              console.log(`Parsed categories from string: ${possibleCategories}`);
+              logDebug(`Parsed categories from string: ${possibleCategories}`);
 
               return possibleCategories.some(
                 (c) => c.toLowerCase() === activeCategory.toLowerCase()
               );
             } catch (e) {
-              console.error('Error parsing category:', e);
+              logError('Error parsing category:', e);
               // Fall back to direct comparison
               return cat.toLowerCase() === activeCategory.toLowerCase();
             }
@@ -107,11 +108,11 @@ const ExploreByCategory = () => {
           }
         });
 
-        console.log(`Match found for ${tour.name}: ${matchFound}`);
+        logDebug(`Match found for ${tour.name}: ${matchFound}`);
         return matchFound;
       });
 
-      console.log('Filtered tours:', filtered);
+      logDebug('Filtered tours:', filtered);
       setFilteredTours(filtered);
     }
   }, [activeCategory, tours]);

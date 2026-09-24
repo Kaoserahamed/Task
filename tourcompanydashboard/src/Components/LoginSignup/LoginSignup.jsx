@@ -5,6 +5,7 @@ import AuthForm from '../AuthForm/AuthForm';
 import AuthTabs from '../AuthTabs/AuthTabs';
 import * as authApi from '../../api/auth';
 import './LoginSignup.css';
+import { logError } from '../../utils/logger';
 
 const DEMO_COMPANY_EMAIL = process.env.REACT_APP_DEMO_COMPANY_EMAIL || '';
 const DEMO_COMPANY_PASSWORD = process.env.REACT_APP_DEMO_COMPANY_PASSWORD || '';
@@ -59,7 +60,7 @@ const LoginSignup = () => {
         navigate('/');
       }
     } catch (error) {
-      console.error('Authentication error:', error);
+      logError('Authentication error:', error);
       setError(error.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);

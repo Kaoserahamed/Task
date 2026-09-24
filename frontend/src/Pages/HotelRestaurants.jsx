@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './HotelRestaurants.css';
 import * as placesApi from '../api/places';
+import { logError } from '../utils/logger';
 
 const HotelRestaurants = () => {
   const [hotels, setHotels] = useState([]);
@@ -20,7 +21,7 @@ const HotelRestaurants = () => {
         setHotels(hotelsData || []);
         setRestaurants(restaurantsData || []);
       } catch (error) {
-        console.error('API fetch failed:', error);
+        logError('API fetch failed:', error);
       } finally {
         setLoading(false);
       }

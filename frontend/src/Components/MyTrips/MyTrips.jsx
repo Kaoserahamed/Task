@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as bookingsApi from '../../api/bookings';
+import { logDebug, logError } from '../../utils/logger';
 const MyTrips = () => {
   const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -16,7 +17,7 @@ const MyTrips = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`); // Navigate anyway
     }
   };
@@ -48,7 +49,7 @@ const MyTrips = () => {
       } catch (error) {
         setError('Failed to fetch trips.');
         setBookings([]);
-        console.error(error);
+        logError(error);
       }
     };
 
@@ -74,7 +75,7 @@ const MyTrips = () => {
     if (filter === 'completed') {
       return tripDate.getTime() < today.getTime();
     }
-    console.log({
+    logDebug({
       trip: trip.name,
       tripDate: trip.startDate,
       tripTimestamp: tripDate.getTime(),

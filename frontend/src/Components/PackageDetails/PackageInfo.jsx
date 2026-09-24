@@ -2,10 +2,11 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PackageInfo.css';
+import { logDebug } from '../../utils/logger';
 
 const PackageInfo = ({ tour, user, chats }) => {
   const navigate = useNavigate();
-  console.log(user);
+  logDebug(user);
   let userId, username, avatar;
   if (user) {
     userId = user._id;
@@ -15,11 +16,11 @@ const PackageInfo = ({ tour, user, chats }) => {
   const companyName = tour.companyName;
 
   const companyId = tour.companyId;
-  console.log(username);
+  logDebug(username);
 
   const handleChatClick = () => {
     const selectedData = chats.find((chat) => chat.companyName === companyName);
-    console.log(selectedData);
+    logDebug(selectedData);
     let tempchat = selectedData;
 
     if (!tempchat) {
@@ -38,7 +39,7 @@ const PackageInfo = ({ tour, user, chats }) => {
         isTemporary: true,
       };
     }
-    console.log(tempchat);
+    logDebug(tempchat);
     navigate('/chat', {
       state: {
         Chat: tempchat,

@@ -10,6 +10,7 @@ import './Checkout.css';
 import socket from '../../socket';
 import * as bookingsApi from '../../api/bookings';
 import * as toursApi from '../../api/tours';
+import { logError } from '../../utils/logger';
 
 const Checkout = () => {
   const [step, setStep] = useState(1);
@@ -117,7 +118,7 @@ const Checkout = () => {
           });
         }
       } catch (error) {
-        console.error('Failed to update tour seats:', error);
+        logError('Failed to update tour seats:', error);
       }
 
       alert(
@@ -127,7 +128,7 @@ const Checkout = () => {
       // Optional: Redirect to booking confirmation page
       // window.location.href = `/booking-confirmation/${bookingData.booking.bookingReference}`;
     } catch (err) {
-      console.error('Error confirming booking:', err);
+      logError('Error confirming booking:', err);
       alert('Failed to confirm booking. Please try again.');
     }
   };

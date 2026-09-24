@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useAuth } from './AuthContext';
 import * as toursApi from '../api/tours';
 import * as bookingsApi from '../api/bookings';
+import { logError } from '../utils/logger';
 
 const ToursContext = createContext(null); // Initialize with null
 
@@ -26,7 +27,7 @@ export const ToursProvider = ({ children }) => {
       }
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching tours:', err);
+      logError('Error fetching tours:', err);
     } finally {
       setLoading(false);
     }
@@ -44,7 +45,7 @@ export const ToursProvider = ({ children }) => {
       }
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching tours:', err);
+      logError('Error fetching tours:', err);
     } finally {
       setLoading(false);
     }
@@ -72,7 +73,7 @@ export const ToursProvider = ({ children }) => {
       setTours(toursWithBookings);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching tours with bookings:', err);
+      logError('Error fetching tours with bookings:', err);
     } finally {
       setLoading(false);
     }
@@ -89,7 +90,7 @@ export const ToursProvider = ({ children }) => {
         throw new Error(data.error);
       }
     } catch (err) {
-      console.error('Error deleting tour:', err);
+      logError('Error deleting tour:', err);
       return { success: false, error: err.message };
     }
   };
@@ -105,7 +106,7 @@ export const ToursProvider = ({ children }) => {
         throw new Error(data.error);
       }
     } catch (err) {
-      console.error('Error updating tour status:', err);
+      logError('Error updating tour status:', err);
       return { success: false, error: err.message };
     }
   };

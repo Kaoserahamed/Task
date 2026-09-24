@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as wishlistApi from '../../api/wishlist';
+import { logError } from '../../utils/logger';
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -17,7 +18,7 @@ const Wishlist = () => {
       await toursApi.incrementTourView(tourId);
       navigate(`/package/${tourId}`);
     } catch (error) {
-      console.error('Failed to increment view count:', error);
+      logError('Failed to increment view count:', error);
       navigate(`/package/${tourId}`); // Navigate anyway
     }
   };
@@ -42,7 +43,7 @@ const Wishlist = () => {
         setWishlistItems(data.wishlist);
       } catch (error) {
         setError('Failed to load wishlist items.');
-        console.error(error);
+        logError(error);
       }
     };
 
@@ -68,7 +69,7 @@ const Wishlist = () => {
       setWishlistItems((prevItems) => prevItems.filter((item) => item.tourId._id !== tourId));
     } catch (error) {
       setError('Failed to remove from wishlist.');
-      console.error(error);
+      logError(error);
     }
   };
 
@@ -85,6 +86,8 @@ const Wishlist = () => {
             {item.tourId && (
               <button
                 className="remove-btn"
+                aria-label={`Remove ${item.tourId?.name} from wishlist`}
+                title="Remove from wishlist"
                 onClick={() => handleRemoveFromWishlist(item.tourId._id)}
               >
                 <i className="fas fa-trash"></i>

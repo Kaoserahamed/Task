@@ -15,11 +15,12 @@ import AllBookingsList from './Components/AllBookingsList/AllBookingsList'; // I
 import ResetPassword from './Components/ResetPassword/ResetPassword';
 import NewPassword from './Components/NewPassword/NewPassword';
 import License from './Components/License/License';
+import { logDebug } from './utils/logger';
 // Import the Navbar component
 
 const AppContent = () => {
   const { company, logout } = useAuth();
-  console.log(company);
+  logDebug(company);
 
   return (
     <ToursProvider>

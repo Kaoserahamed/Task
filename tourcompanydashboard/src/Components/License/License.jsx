@@ -4,6 +4,7 @@ import socket from '../../socket';
 import jsPDF from 'jspdf';
 import './License.css';
 import * as authApi from '../../api/auth';
+import { logDebug } from '../../utils/logger';
 
 const emptySocialLinks = {
   facebook: '',
@@ -34,15 +35,15 @@ const License = () => {
   useEffect(() => {
     // Join company-specific socket room on mount
     if (company?.company?._id) {
-      console.log('Joining company room:', company.company._id);
+      logDebug('Joining company room:', company.company._id);
       socket.emit('join_company', company.company._id);
     }
 
     // Listen for license responses
     socket.on('license_response', (data) => {
-      console.log('Received license response:', data);
+      logDebug('Received license response:', data);
       if (data.companyId === company?.company?._id) {
-        console.log('Updating status to:', data.verificationStatus);
+        logDebug('Updating status to:', data.verificationStatus);
         setStatus(data.verificationStatus);
       }
     });
@@ -97,10 +98,10 @@ const License = () => {
 
   // Listen for license_response from admin and update status immediately
   useEffect(() => {
-    console.log('License.jsx - Socket connected:', socket.connected); // Debug socket connection
+    logDebug('License.jsx - Socket connected:', socket.connected); // Debug socket connection
     if (!company?.company?._id) return;
     const handleLicenseResponse = (data) => {
-      console.log('Received license_response:', data); // Debug received event
+      logDebug('Received license_response:', data); // Debug received event
       if (data.companyId === company.company._id) {
         if (data.verificationStatus === 'approved') setStatus('Approved');
         else if (data.verificationStatus === 'rejected') setStatus('Rejected');

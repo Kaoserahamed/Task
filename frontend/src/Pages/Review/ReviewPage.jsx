@@ -6,6 +6,7 @@ import { Star, X, Upload, Check, AlertCircle } from 'lucide-react';
 import './ReviewPage.css';
 import API_BASE_URL from '../../config/api';
 import * as reviewsApi from '../../api/reviews';
+import { logError } from '../../utils/logger';
 
 const ReviewPage = () => {
   const { tours, loading } = useContext(ToursContext); // Get tours from context
@@ -54,7 +55,7 @@ const ReviewPage = () => {
       const data = await reviewsApi.fetchReviews();
       setReviews(data);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      logError('Error fetching reviews:', error);
       // Fallback to empty array if API fails
       setReviews([]);
     } finally {
@@ -68,7 +69,7 @@ const ReviewPage = () => {
       const data = await reviewsApi.fetchTourReviews(tourId);
       setReviews(data);
     } catch (error) {
-      console.error(`Error fetching reviews for tour ${tourId}:`, error);
+      logError(`Error fetching reviews for tour ${tourId}:`, error);
       // Fallback to empty array if API fails
       setReviews([]);
     } finally {
@@ -203,7 +204,7 @@ const ReviewPage = () => {
         setSuccess(false);
       }, 3000);
     } catch (error) {
-      console.error('Error submitting review:', error);
+      logError('Error submitting review:', error);
 
       // Provide a more descriptive error message
       const errorMessage =
