@@ -88,7 +88,7 @@ router.delete('/:id', async (req, res) => {
           await storage.deleteStoredUrl(photoPath);
           return;
         }
-        const fullPath = path.join(__dirname, '../public', photoPath);
+        const fullPath = path.join(process.cwd(), photoPath.replace(/^\/+/, ''));
         if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
       }));
     }

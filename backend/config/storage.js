@@ -51,7 +51,8 @@ function validateUpload({ filename, contentType, size }) {
     error.code = 'INVALID_FILE_TYPE';
     throw error;
   }
-  if (suppliedExtension && suppliedExtension !== expectedExtension && suppliedExtension !== '.jpeg' && expectedExtension === '.jpg') {
+  const isJpegAlias = expectedExtension === '.jpg' && suppliedExtension === '.jpeg';
+  if (suppliedExtension && suppliedExtension !== expectedExtension && !isJpegAlias) {
     const error = new Error('The file extension does not match its content type');
     error.code = 'INVALID_FILE_TYPE';
     throw error;
