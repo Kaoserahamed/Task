@@ -43,8 +43,15 @@ function safeFilename(filename) {
 
 function validateUpload({ filename, contentType, size }) {
   const normalizedType = String(contentType || '').toLowerCase();
-  if (!ALLOWED_TYPES.has(normalizedType)) {
+  const expectedExtension = ALLOWED_TYPES.get(normalizedType);
+  const suppliedExtension = path.extname(String(filename || '')).toLowerCase();
+  if (!expectedExtension) {
     const error = new Error('Only JPEG, PNG, WebP and GIF images are allowed');
+    error.code = 'INVALID_FILE_TYPE';
+    throw error;
+  }
+  if (suppliedExtension && suppliedExtension !== expectedExtension && suppliedExtension !== '.jpeg' && expectedExtension === '.jpg') {
+    const error = new Error('The file extension does not match its content type');
     error.code = 'INVALID_FILE_TYPE';
     throw error;
   }

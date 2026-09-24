@@ -26,7 +26,7 @@ module.exports = async function idempotency(req, res, next) {
   if (localKeys.has(name)) return replay(res, localKeys.get(name));
 
   try {
-    const { getJson, setJson } = require('../utils/redis');
+    const { getJson } = require('../utils/redis');
     const existing = await getJson(name);
     if (existing) return replay(res, existing);
   } catch (error) {
