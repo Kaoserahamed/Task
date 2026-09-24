@@ -47,6 +47,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Tour-company dashboard metrics and chart-domain calculations now live in a pure
   tested utility, keeping the React component focused on rendering.
 - Company license status normalization and PDF generation now live in tested utilities; the component is below 500 lines and no longer duplicates its company fetch/socket effects.
+- Company license details now live in a tested presentational fields component; `License.jsx`
+  is below 250 lines while edit, document filtering, and verification actions remain stateful.
 
 - Layered backend: `app.js` factory, `validators/`, `services/` and
   `repositories/` for the tour domain, plus a typed error taxonomy
