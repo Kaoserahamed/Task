@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Company = require('../models/company');
 const authMiddleware = require('../middleware/authMiddleware');
+const adminAuth = require('../middleware/adminAuth');
 const { hashPassword, verifyPassword } = require('../utils/password');
-const jwt = require('jsonwebtoken');
+const { signAccessToken } = require('../utils/token');
+const config = require('../config/env');
 const crypto = require('crypto');
 
 const sibApiV3Sdk = require('sib-api-v3-sdk');
@@ -11,12 +13,12 @@ const sibApiV3Sdk = require('sib-api-v3-sdk');
 const logger = require('../utils/logger');
 const defaultClient = sibApiV3Sdk.ApiClient.instance;
 const apiKey = defaultClient.authentications['api-key'];
-apiKey.apiKey = process.env.SENDINBLUE_API_KEY; // Accessing from environment variable
+apiKey.apiKey = config.apis.sendinblue;
 const transEmail = new sibApiV3Sdk.TransactionalEmailsApi();
 
 const sender = {
-  name: 'Siyam',
-  email: 'ahamedsiyam43@gmail.com',
+  name: config.mail.fromName,
+  email: config.mail.fromEmail,
 };
 
 router.get('/company/:id', async (req, res) => {
@@ -61,7 +63,7 @@ router.post('/register', async (req, res) => {
     await company.save();
 
     // Create JWT token
-    const token = jwt.sign({ companyId: company._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = signAccessToken(company._id, { companyId: String(company._id) });
 
     res.status(201).json({
       token,
@@ -95,7 +97,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Create JWT token
-    const token = jwt.sign({ companyId: company._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = signAccessToken(company._id, { companyId: String(company._id) });
 
     res.json({
       token,
@@ -174,7 +176,7 @@ router.get('/search', async (req, res) => {
   }
 });
 // Get all companies (for dashboard analytics)
-router.get('/companies', async (req, res) => {
+router.get('/companies', adminAuth, async (req, res) => {
   try {
     const companies = await Company.find();
     res.json({ success: true, companies });
@@ -375,9 +377,10 @@ router.patch('/update-info', authMiddleware, async (req, res) => {
 // PATCH: Update verification status and isVerified only
 router.patch(
   '/update-status',
-  /* authMiddleware, */ async (req, res) => {
+  adminAuth,
+  async (req, res) => {
     try {
-      const companyId = req.user?.companyId || req.body.companyId; // fallback to body for unauthenticated
+      const companyId = req.user.companyId;
       const { verificationStatus, isVerified } = req.body;
       const updateData = {};
       if (verificationStatus !== undefined) updateData.verificationStatus = verificationStatus;

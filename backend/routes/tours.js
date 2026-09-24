@@ -3,7 +3,8 @@
 const express = require('express');
 const tourController = require('../controllers/tour');
 const upload = require('../config/upload');
-const { uploadLimiter } = require('../middleware/rateLimit');
+const { authLimiter, uploadLimiter } = require('../middleware/rateLimit');
+const productionAuth = require('../middleware/productionAuth');
 const {
   validateTour,
   validateTourStatus,
@@ -37,6 +38,8 @@ router.get('/tours', tourController.getTours);
 // Write (multipart uploads; multer stores or streams the images)
 router.post(
   '/tours',
+  authLimiter,
+  productionAuth,
   uploadLimiter,
   upload.array('images'),
   validateTour,
@@ -44,6 +47,8 @@ router.post(
 );
 router.put(
   '/tours/:id',
+  authLimiter,
+  productionAuth,
   uploadLimiter,
   upload.array('newImages'),
   validateTour,
@@ -51,17 +56,19 @@ router.put(
 );
 
 // Counters and seats
-router.patch('/tours/:id/status', validateTourStatus, tourController.updateTourStatus);
-router.patch('/tours/:id/increment-view', tourController.incrementViewCount);
-router.patch('/tours/:id/increment-booking', tourController.incrementBookingCount);
-router.patch('/tours/:id/book-seats', validateSeatChange('seatsToBook'), tourController.bookSeats);
+router.patch('/tours/:id/status', authLimiter, productionAuth, validateTourStatus, tourController.updateTourStatus);
+router.patch('/tours/:id/increment-view', authLimiter, tourController.incrementViewCount);
+router.patch('/tours/:id/increment-booking', authLimiter, productionAuth, tourController.incrementBookingCount);
+router.patch('/tours/:id/book-seats', authLimiter, productionAuth, validateSeatChange('seatsToBook'), tourController.bookSeats);
 router.patch(
   '/tours/:id/release-seats',
+  authLimiter,
+  productionAuth,
   validateSeatChange('seatsToRelease'),
   tourController.releaseSeats
 );
 
 // Delete last: '/tours/:id' with the DELETE verb
-router.delete('/tours/:id', tourController.deleteTour);
+router.delete('/tours/:id', authLimiter, productionAuth, tourController.deleteTour);
 
 module.exports = router;
