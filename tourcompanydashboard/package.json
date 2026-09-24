@@ -26,7 +26,8 @@
     "lint:fix": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint --no-eslintrc -c .eslintrc.cjs --ext .js,.jsx --fix src",
     "format": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,css,json}\"",
-    "verify": "npm run lint && npm run format:check && npm run test:ci && npm run build"
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run test:ci && npm run build"
   },
   "browserslist": {
     "production": [
@@ -47,7 +48,8 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-react-app": "^7.0.1",
-    "prettier": "^3.9.8"
+    "prettier": "^3.9.8",
+    "typescript": "^4.9.5"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -64,10 +66,10 @@
     },
     "coverageThreshold": {
       "global": {
-        "statements": 5,
-        "branches": 4,
-        "functions": 3,
-        "lines": 5
+        "statements": 9,
+        "branches": 7,
+        "functions": 6,
+        "lines": 9
       },
       "./src/api/": {
         "statements": 85,
