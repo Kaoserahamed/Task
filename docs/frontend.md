@@ -53,6 +53,28 @@ Two automated guards keep this honest:
 2. `backend/tests/unit/contracts/frontend-layer.test.js` asserts the same
    properties from the test suite, so a bypassed script still fails `npm test`.
 
+## Type checking
+
+The apps are JavaScript (Create React App is deprecated upstream, so a TypeScript
+migration is not on the table here), and they still run a real type gate:
+
+```bash
+npm run typecheck   # tsc --noEmit, per app and from the repo root
+```
+
+`tsconfig.json` sets `allowJs` with `checkJs: false` and includes `src`, so every
+source file is parsed and resolved — syntax errors, duplicate identifiers and
+broken relative imports fail before the bundle is ever built. On top of that,
+`src/api/client.js` opts in per file with `// @ts-check` and carries JSDoc
+types (`RequestOptions`, `ApiErrorOptions`, the `api.*` verbs), so the HTTP
+layer every screen depends on is genuinely type-checked. Enabling `checkJs` for
+the whole component tree is a follow-up, not something the current code
+supports.
+
+Both properties are guarded: `scripts/verify-repo.mjs` fails when an app loses
+its `tsconfig.json` or the `// @ts-check` pragma, and
+`backend/tests/unit/contracts/frontend-layer.test.js` asserts the same.
+
 ## Tests and coverage floors
 
 ```bash
@@ -90,7 +112,8 @@ suite layout:
 | `npm run format` / `format:check`   | Prettier over `src/**/*.{js,jsx,css,json}` |
 | `npm run test:ci`                   | Jest once, non-interactive                 |
 | `npm run test:coverage`             | Jest with coverage floors enforced         |
-| `npm run verify`                    | lint + format + tests + build              |
+| `npm run typecheck`                 | `tsc --noEmit` over every source file      |
+| `npm run verify`                    | lint + format + types + tests + build      |
 
 ## Adding an endpoint
 

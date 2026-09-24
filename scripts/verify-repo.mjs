@@ -249,6 +249,21 @@ for (const app of WEB_APPS) {
     fail(`${app}/src/api/client.js is missing — the app needs its single HTTP layer`);
   }
 
+  // The type gate (C2.3) is only meaningful if something is actually checked.
+  // `tsconfig.json` keeps checkJs off for the legacy component trees, so the
+  // API layer opts in per file with `// @ts-check`; without that pragma the
+  // "typecheck" script would parse sources and report nothing.
+  const tsconfigPath = path.join(repoRoot, app, 'tsconfig.json');
+  if (!existsSync(tsconfigPath)) {
+    fail(`${app}/tsconfig.json is missing — npm run typecheck has nothing to check`);
+  }
+  const clientSource = readFileSync(path.join(repoRoot, app, 'src', 'api', 'client.js'), 'utf8');
+  if (!/^\/\/ @ts-check/m.test(clientSource)) {
+    fail(
+      `${app}/src/api/client.js has no "// @ts-check" — the API layer is the part of a JS app the type gate must cover`
+    );
+  }
+
   for (const file of listSourceFiles(path.join(repoRoot, app, 'src'))) {
     const relative = path.relative(repoRoot, file).split(path.sep).join('/');
     if (relative.split('/').includes('api')) continue;
@@ -295,7 +310,9 @@ for (const service of composeServices) {
   const argsBlock = service.slice(service.indexOf('args:'));
   const dockerfile = path.join(repoRoot, buildDir, 'Dockerfile');
   if (!existsSync(dockerfile)) {
-    fail(`docker-compose.yml passes build args to ${buildDir}, but ${buildDir}/Dockerfile is missing`);
+    fail(
+      `docker-compose.yml passes build args to ${buildDir}, but ${buildDir}/Dockerfile is missing`
+    );
     continue;
   }
 

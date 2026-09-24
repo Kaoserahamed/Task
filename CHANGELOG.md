@@ -37,6 +37,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   resource, and components no longer call `fetch` or `axios` directly. Guarded
   by `scripts/verify-repo.mjs` (check 12) and
   `backend/tests/unit/contracts/frontend-layer.test.js`; see `docs/frontend.md`.
+- The API client in each app is now type-checked: `tsconfig.json` parses every
+  source file, and `src/api/client.js` opts into `checkJs` with `// @ts-check`
+  plus JSDoc types for the request options, the error shape and every verb. The
+  root `typecheck` script and the CI web job run it; `verify-repo` and the
+  frontend contract test fail if an app loses either the config or the pragma.
 - Web test suites: transport and endpoint-contract tests for every app, auth
   flow coverage (register mode, admin login success/failure, session cleared on
   401), `collectCoverageFrom` and `coverageThreshold` floors per manifest.

@@ -29,3 +29,7 @@ backend/public/uploads/*
 Thumbs.db
 *.log
 .vercel
+
+# Local verification transcripts (a hand-redirected `npm run verify` log; the
+# committed gates are the CI workflow and `npm run verify` itself).
+verify-log.txt

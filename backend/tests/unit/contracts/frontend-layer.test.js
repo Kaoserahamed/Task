@@ -61,6 +61,62 @@ describe('frontend API layer contract', () => {
         expect((manifest.dependencies || {}).axios).toBeUndefined();
       });
 
+      test('reads the API URL from the one config module', () => {
+        // A second copy of `process.env.REACT_APP_API_URL || '...'` is how the
+        // socket and the REST client drift: one gets the deploy-time value, the
+        // other keeps a localhost default, and only one of them connects.
+        const offenders = listSourceFiles(path.join(repoRoot, app, 'src'))
+          .map((file) => path.relative(repoRoot, file).split(path.sep).join('/'))
+          .filter((relative) => relative !== `${app}/src/config/api.js`)
+          .filter((relative) => {
+            const source = fs.readFileSync(path.join(repoRoot, relative), 'utf8');
+            return /process\.env\.REACT_APP_API_URL/.test(source);
+          });
+
+        expect(offenders).toEqual([]);
+      });
+
+      test('typechecks the API layer', () => {
+        // `tsconfig.json` leaves checkJs off for the legacy component trees, so
+        // the client opts in per file. Without the pragma the `typecheck` script
+        // would parse every source file and report nothing at all — a gate that
+        // looks green because it checks nothing is worse than no gate.
+        const tsconfig = readJson(`${app}/tsconfig.json`);
+        expect(tsconfig.include).toContain('src');
+        expect(tsconfig.compilerOptions.allowJs).toBe(true);
+
+        const client = fs.readFileSync(path.join(repoRoot, app, 'src', 'api', 'client.js'), 'utf8');
+        expect(client).toMatch(/^\/\/ @ts-check/m);
+
+        const { scripts } = readJson(`${app}/package.json`);
+        expect(scripts.typecheck).toBe('tsc --noEmit');
+      });
+
+      test('logs through the logger façade, never console directly', () => {
+        // Debug leftovers used to ship to end users and print tokens and chat
+        // payloads into the browser console. `no-console` in each app's ESLint
+        // config is the live gate; this test is the one that keeps the façade
+        // itself honest, so a renamed or deleted logger cannot silently leave
+        // the whole app unmediated.
+        const loggerPath = `${app}/src/utils/logger.js`;
+        expect(fs.existsSync(path.join(repoRoot, loggerPath))).toBe(true);
+
+        const offenders = listSourceFiles(path.join(repoRoot, app, 'src'))
+          .map((file) => path.relative(repoRoot, file).split(path.sep).join('/'))
+          .filter((relative) => relative !== loggerPath)
+          .filter((relative) => {
+            const source = fs.readFileSync(path.join(repoRoot, relative), 'utf8');
+            return /(^|[^.\w])console\s*\./.test(source);
+          });
+
+        expect(offenders).toEqual([]);
+      });
+
+      test('declares the no-console rule that enforces the façade', () => {
+        const eslintConfig = fs.readFileSync(path.join(repoRoot, app, '.eslintrc.cjs'), 'utf8');
+        expect(eslintConfig).toMatch(/'no-console':\s*'error'/);
+      });
+
       test('declares coverage collection and floors', () => {
         const { jest } = readJson(`${app}/package.json`);
         expect(Array.isArray(jest.collectCoverageFrom)).toBe(true);
@@ -76,5 +132,12 @@ describe('frontend API layer contract', () => {
     expect(guard).toMatch(/src\/api\/client\.js/);
     expect(guard).toMatch(/collectCoverageFrom/);
     expect(guard).toMatch(/coverageThreshold/);
+    // A build context that ignores `.env*` is what keeps a real API URL or key
+    // out of the published image; the guard checks every app ships one.
+    for (const app of WEB_APPS) {
+      expect(fs.existsSync(path.join(repoRoot, app, '.dockerignore'))).toBe(true);
+      const ignore = fs.readFileSync(path.join(repoRoot, app, '.dockerignore'), 'utf8');
+      expect(ignore).toMatch(/^\.env$/m);
+    }
   });
 });
