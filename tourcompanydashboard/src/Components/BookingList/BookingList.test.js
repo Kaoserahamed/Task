@@ -85,7 +85,11 @@ test('asks the operator to go back when the tour id is missing', async () => {
 });
 
 test('explains an empty booking list instead of showing a bare table', async () => {
-  bookingsApi.fetchBookingsForTour.mockResolvedValue({ success: true, bookings: [], totalPages: 1 });
+  bookingsApi.fetchBookingsForTour.mockResolvedValue({
+    success: true,
+    bookings: [],
+    totalPages: 1,
+  });
 
   renderList();
 

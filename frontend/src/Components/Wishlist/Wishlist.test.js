@@ -96,9 +96,7 @@ test('removes a saved tour through the api layer', async () => {
   );
 
   await screen.findByText('Kandy Escapade');
-  fireEvent.click(
-    screen.getByRole('button', { name: 'Remove Kandy Escapade from wishlist' })
-  );
+  fireEvent.click(screen.getByRole('button', { name: 'Remove Kandy Escapade from wishlist' }));
 
   await waitFor(() =>
     expect(wishlistApi.removeFromWishlist).toHaveBeenCalledWith('tour-1', 'ada@example.com')

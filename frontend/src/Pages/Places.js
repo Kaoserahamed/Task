@@ -4,9 +4,7 @@ import { logError, logWarn } from '../utils/logger';
 
 const PLACES_API_KEY = process.env.PLACES_API_KEY || process.env.REACT_APP_PLACES_API_KEY || '';
 if (!PLACES_API_KEY) {
-  logWarn(
-    'Missing PLACES_API_KEY or REACT_APP_PLACES_API_KEY env var — Places will not load.'
-  );
+  logWarn('Missing PLACES_API_KEY or REACT_APP_PLACES_API_KEY env var — Places will not load.');
 }
 
 const Places = () => {
