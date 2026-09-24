@@ -10,6 +10,7 @@ const { hashPassword } = require('../utils/password');
 const User = require('../models/User');
 const { Admin, AdminProfile } = require('../models/Admin');
 const Company = require('../models/company');
+const logger = require('../utils/logger');
 
 // Demo credentials — override via environment variables; never commit real secrets.
 // Seed scripts/routes read these same variables so seeded data matches local login hints.
@@ -21,7 +22,7 @@ const DEMO_ADMIN_EMAIL = process.env.DEMO_ADMIN_EMAIL;
 const DEMO_COMPANY_EMAIL = process.env.DEMO_COMPANY_EMAIL;
 
 if (!DEMO_USER_EMAIL || !DEMO_ADMIN_EMAIL || !DEMO_COMPANY_EMAIL || !DEMO_USER_PASSWORD) {
-  console.warn('Missing demo account email/password env vars — see backend/.env.example.');
+  logger.warn('Missing demo account email/password env vars — see backend/.env.example.');
   process.exit(1);
 }
 
@@ -52,19 +53,19 @@ const demoAccounts = {
 async function seedDemoAccounts() {
   try {
     // Connect to MongoDB
-    console.log('🔗 Connecting to MongoDB...');
+    logger.info('🔗 Connecting to MongoDB...');
     await mongoose.connect(process.env.MONGODB_URI, {
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 45000,
       family: 4,
     });
-    console.log('✅ Connected to MongoDB\n');
+    logger.info('✅ Connected to MongoDB\n');
 
     // Hash password
     const hashedPassword = await hashPassword(demoAccounts.user.password);
 
     // 1. Create/Update Demo User
-    console.log('👤 Creating/Updating Demo User...');
+    logger.info('👤 Creating/Updating Demo User...');
     const existingUser = await User.findOne({ email: demoAccounts.user.email });
 
     if (existingUser) {
@@ -72,25 +73,25 @@ async function seedDemoAccounts() {
       existingUser.name = demoAccounts.user.name;
       existingUser.phone = demoAccounts.user.phone;
       await existingUser.save();
-      console.log('✅ Demo User updated');
+      logger.info('✅ Demo User updated');
     } else {
       await User.create({
         ...demoAccounts.user,
         password: hashedPassword,
       });
-      console.log('✅ Demo User created');
+      logger.info('✅ Demo User created');
     }
-    console.log(`   📧 Email: ${demoAccounts.user.email}`);
-    console.log('   🔑 Password: (from DEMO_USER_PASSWORD)\n');
+    logger.info(`   📧 Email: ${demoAccounts.user.email}`);
+    logger.info('   🔑 Password: (from DEMO_USER_PASSWORD)\n');
 
     // 2. Create/Update Demo Admin
-    console.log('👨‍💼 Creating/Updating Demo Admin...');
+    logger.info('👨‍💼 Creating/Updating Demo Admin...');
     const existingAdmin = await Admin.findOne({ email: demoAccounts.admin.email });
 
     if (existingAdmin) {
       existingAdmin.password = hashedPassword;
       await existingAdmin.save();
-      console.log('✅ Demo Admin updated');
+      logger.info('✅ Demo Admin updated');
 
       // Update or create admin profile
       const existingProfile = await AdminProfile.findOne({ adminId: existingAdmin._id });
@@ -115,13 +116,13 @@ async function seedDemoAccounts() {
         name: demoAccounts.admin.name,
       });
 
-      console.log('✅ Demo Admin created');
+      logger.info('✅ Demo Admin created');
     }
-    console.log(`   📧 Email: ${demoAccounts.admin.email}`);
-    console.log('   🔑 Password: (from DEMO_ADMIN_PASSWORD)\n');
+    logger.info(`   📧 Email: ${demoAccounts.admin.email}`);
+    logger.info('   🔑 Password: (from DEMO_ADMIN_PASSWORD)\n');
 
     // 3. Create/Update Demo Company
-    console.log('🏢 Creating/Updating Demo Company...');
+    logger.info('🏢 Creating/Updating Demo Company...');
     const existingCompany = await Company.findOne({ email: demoAccounts.company.email });
 
     if (existingCompany) {
@@ -132,39 +133,39 @@ async function seedDemoAccounts() {
       existingCompany.website = demoAccounts.company.website;
       existingCompany.address = demoAccounts.company.address;
       await existingCompany.save();
-      console.log('✅ Demo Company updated');
+      logger.info('✅ Demo Company updated');
     } else {
       await Company.create({
         ...demoAccounts.company,
         password: hashedPassword,
       });
-      console.log('✅ Demo Company created');
+      logger.info('✅ Demo Company created');
     }
-    console.log(`   📧 Email: ${demoAccounts.company.email}`);
-    console.log('   🔑 Password: (from DEMO_COMPANY_PASSWORD)\n');
+    logger.info(`   📧 Email: ${demoAccounts.company.email}`);
+    logger.info('   🔑 Password: (from DEMO_COMPANY_PASSWORD)\n');
 
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('🎉 All demo accounts have been created/updated!');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    logger.info('🎉 All demo accounts have been created/updated!');
+    logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-    console.log('📋 Demo Credentials Summary:');
-    console.log('┌─────────────────────────────────────────┐');
-    console.log('│ 👤 User Account                         │');
-    console.log(`│    Email:    ${demoAccounts.user.email.padEnd(27)}│`);
-    console.log('│    Password: (from DEMO_USER_PASSWORD)    │');
-    console.log('├─────────────────────────────────────────┤');
-    console.log('│ 👨‍💼 Admin Account                        │');
-    console.log(`│    Email:    ${demoAccounts.admin.email.padEnd(27)}│`);
-    console.log('│    Password: (from DEMO_ADMIN_PASSWORD)   │');
-    console.log('├─────────────────────────────────────────┤');
-    console.log('│ 🏢 Company Account                      │');
-    console.log(`│    Email:    ${demoAccounts.company.email.padEnd(27)}│`);
-    console.log('│    Password: (from DEMO_COMPANY_PASSWORD) │');
-    console.log('└─────────────────────────────────────────┘\n');
+    logger.info('📋 Demo Credentials Summary:');
+    logger.info('┌─────────────────────────────────────────┐');
+    logger.info('│ 👤 User Account                         │');
+    logger.info(`│    Email:    ${demoAccounts.user.email.padEnd(27)}│`);
+    logger.info('│    Password: (from DEMO_USER_PASSWORD)    │');
+    logger.info('├─────────────────────────────────────────┤');
+    logger.info('│ 👨‍💼 Admin Account                        │');
+    logger.info(`│    Email:    ${demoAccounts.admin.email.padEnd(27)}│`);
+    logger.info('│    Password: (from DEMO_ADMIN_PASSWORD)   │');
+    logger.info('├─────────────────────────────────────────┤');
+    logger.info('│ 🏢 Company Account                      │');
+    logger.info(`│    Email:    ${demoAccounts.company.email.padEnd(27)}│`);
+    logger.info('│    Password: (from DEMO_COMPANY_PASSWORD) │');
+    logger.info('└─────────────────────────────────────────┘\n');
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error seeding demo accounts:', error);
+    logger.error('❌ Error seeding demo accounts:', error);
     process.exit(1);
   }
 }

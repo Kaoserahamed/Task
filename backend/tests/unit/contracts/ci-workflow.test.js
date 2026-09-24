@@ -135,6 +135,20 @@ describe('secrets contract', () => {
     expect(gitignore).toMatch(/^!\.env\.example$/m);
   });
 
+  test('root environment template stays aligned with backend variables', () => {
+    const names = (path) =>
+      new Set(
+        read(path)
+          .split(/\r?\n/)
+          .map((line) => line.match(/^#?\s*([A-Z][A-Z0-9_]*)=/)?.[1])
+          .filter(Boolean)
+      );
+    const rootNames = names('.env.example');
+    const backendNames = names('backend/.env.example');
+    const missing = [...backendNames].filter((name) => !rootNames.has(name));
+    expect(missing).toEqual([]);
+  });
+
   test('the committed env template only carries placeholders', () => {
     const template = read('backend', '.env.example');
 

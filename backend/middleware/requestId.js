@@ -1,6 +1,7 @@
 'use strict';
 
 const { randomUUID } = require('crypto');
+const { createRequestLogger, withRequestContext } = require('../utils/logger');
 
 /**
  * Give every request an identifier.
@@ -15,9 +16,10 @@ function requestId(req, res, next) {
   const id = typeof incoming === 'string' && incoming.trim() ? incoming.trim() : randomUUID();
 
   req.id = id;
+  req.log = createRequestLogger(id);
   res.setHeader('x-request-id', id);
 
-  next();
+  withRequestContext(id, next);
 }
 
 module.exports = requestId;

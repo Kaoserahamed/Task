@@ -32,9 +32,23 @@ See also [SECURITY.md](../SECURITY.md) for how to report a vulnerability.
   at the first request. Under `NODE_ENV=test` it records the gap in
   `config.validation.missing` rather than exiting.
 - `backend/tests/unit/contracts/env-template.test.js` fails the build if the code
-  reads a variable that `backend/.env.example` does not document.
+  reads a variable that `backend/.env.example` does not document. The root
+  `.env.example` mirrors the complete backend contract and is the fresh-clone
+  index; the app-local templates remain the source each process loads.
 - Demo credentials (`DEMO_*_PASSWORD`) have no defaults: the seed scripts and
   routes error out until they are set.
+
+### Environment classification
+
+| Class                       | Variables                                                                                                                                                                                        | Handling                                                                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Secrets                     | `JWT_SECRET`, `MONGODB_URI`, `REDIS_URL`, `CLOUDINARY_API_SECRET`, `PUSHER_SECRET`, `METRICS_TOKEN`, `SENDINBLUE_API_KEY`, `WEATHER_API_KEY`                                                     | Store in a secret manager or untracked `.env`; never commit or print values. ECS uses IAM role credentials rather than static AWS keys. |
+| Credentials                 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_CLUSTER`                                                                                                   | Treat as provider configuration; use placeholders locally and rotate through the provider.                                              |
+| Non-sensitive configuration | `PORT`, `NODE_ENV`, `JSON_BODY_LIMIT`, `LOG_LEVEL`, HTTP/S3/Redis/idempotency timeouts, `FRONTEND_URL`, `ADMIN_URL`, `COMPANY_URL`, `CORS_EXTRA_ORIGINS`, `AWS_REGION`, `S3_BUCKET`, `S3_PREFIX` | Safe to configure per environment, but validate values and do not expose admin-only settings publicly.                                  |
+| Demo-only                   | `DEMO_*_EMAIL`, `DEMO_*_PASSWORD`, `SEED_ENABLED`                                                                                                                                                | Keep disabled in production; replace values before enabling any seed route or script.                                                   |
+
+The authoritative placeholders are in the root
+[`.env.example`](../.env.example) and app-local `backend/.env.example`.
 
 ## Seeding and demo data
 

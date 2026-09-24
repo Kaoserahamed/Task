@@ -133,8 +133,8 @@ const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
 if (missingEnvVars.length > 0 && config.nodeEnv !== 'test') {
   // The structured logger requires this module, so bootstrapping reports
   // through stderr directly.
-  console.error('Missing required environment variables:');
-  missingEnvVars.forEach((envVar) => console.error(`  - ${envVar}`));
+  process.stderr.write('Missing required environment variables:\n');
+  missingEnvVars.forEach((envVar) => process.stderr.write(`  - ${envVar}\n`));
   process.exit(1);
 }
 

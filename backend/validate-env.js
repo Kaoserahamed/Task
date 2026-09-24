@@ -23,40 +23,42 @@ const requiredVars = [
 
 const optionalVars = ['WEATHER_API_KEY', 'SENDINBLUE_API_KEY'];
 
-console.log('🔍 Validating Environment Variables...\n');
+const output = (...args) => process.stdout.write(`${args.join(' ')}\n`);
+
+output('🔍 Validating Environment Variables...\n');
 
 let hasErrors = false;
 let hasWarnings = false;
 
 // Check required variables
-console.log('✅ Required Variables:');
+output('✅ Required Variables:');
 requiredVars.forEach((varName) => {
   const value = process.env[varName];
   if (!value) {
-    console.log(`   ❌ ${varName} - MISSING`);
+    output(`   ❌ ${varName} - MISSING`);
     hasErrors = true;
   } else if (value.includes('your_') || value.includes('YOUR_')) {
-    console.log(`   ⚠️  ${varName} - Still has placeholder value`);
+    output(`   ⚠️  ${varName} - Still has placeholder value`);
     hasWarnings = true;
   } else {
-    console.log(`   ✓ ${varName} - Set`);
+    output(`   ✓ ${varName} - Set`);
   }
 });
 
 // Check optional variables
-console.log('\n📋 Optional Variables:');
+output('\n📋 Optional Variables:');
 optionalVars.forEach((varName) => {
   const value = process.env[varName];
   if (!value) {
-    console.log(`   ⚠️  ${varName} - Not set (some features may not work)`);
+    output(`   ⚠️  ${varName} - Not set (some features may not work)`);
     hasWarnings = true;
   } else {
-    console.log(`   ✓ ${varName} - Set`);
+    output(`   ✓ ${varName} - Set`);
   }
 });
 
 // Validate specific formats
-console.log('\n🔬 Format Validation:');
+output('\n🔬 Format Validation:');
 
 // MongoDB URI
 if (process.env.MONGODB_URI) {
@@ -64,16 +66,14 @@ if (process.env.MONGODB_URI) {
     process.env.MONGODB_URI.startsWith('mongodb+srv://') ||
     process.env.MONGODB_URI.startsWith('mongodb://')
   ) {
-    console.log('   ✓ MONGODB_URI - Valid format');
+    output('   ✓ MONGODB_URI - Valid format');
   } else {
-    console.log(
-      '   ❌ MONGODB_URI - Invalid format (should start with mongodb:// or mongodb+srv://)'
-    );
+    output('   ❌ MONGODB_URI - Invalid format (should start with mongodb:// or mongodb+srv://)');
     hasErrors = true;
   }
 
   if (process.env.MONGODB_URI.includes('<password>')) {
-    console.log('   ❌ MONGODB_URI - Contains placeholder <password>');
+    output('   ❌ MONGODB_URI - Contains placeholder <password>');
     hasErrors = true;
   }
 }
@@ -81,12 +81,12 @@ if (process.env.MONGODB_URI) {
 // JWT Secret length
 if (process.env.JWT_SECRET) {
   if (process.env.JWT_SECRET.length < 32) {
-    console.log(
+    output(
       `   ⚠️  JWT_SECRET - Too short (${process.env.JWT_SECRET.length} chars, recommended: 32+)`
     );
     hasWarnings = true;
   } else {
-    console.log(`   ✓ JWT_SECRET - Good length (${process.env.JWT_SECRET.length} chars)`);
+    output(`   ✓ JWT_SECRET - Good length (${process.env.JWT_SECRET.length} chars)`);
   }
 }
 
@@ -97,13 +97,13 @@ urlVars.forEach((varName) => {
   if (value) {
     if (value.startsWith('http://') || value.startsWith('https://')) {
       if (value.endsWith('/')) {
-        console.log(`   ⚠️  ${varName} - Has trailing slash (may cause CORS issues)`);
+        output(`   ⚠️  ${varName} - Has trailing slash (may cause CORS issues)`);
         hasWarnings = true;
       } else {
-        console.log(`   ✓ ${varName} - Valid format`);
+        output(`   ✓ ${varName} - Valid format`);
       }
     } else {
-      console.log(`   ❌ ${varName} - Must start with http:// or https://`);
+      output(`   ❌ ${varName} - Must start with http:// or https://`);
       hasErrors = true;
     }
   }
@@ -113,10 +113,10 @@ urlVars.forEach((varName) => {
 if (process.env.PORT) {
   const port = parseInt(process.env.PORT);
   if (isNaN(port) || port < 1 || port > 65535) {
-    console.log('   ❌ PORT - Invalid port number');
+    output('   ❌ PORT - Invalid port number');
     hasErrors = true;
   } else {
-    console.log(`   ✓ PORT - Valid (${port})`);
+    output(`   ✓ PORT - Valid (${port})`);
   }
 }
 
@@ -124,22 +124,22 @@ if (process.env.PORT) {
 if (process.env.NODE_ENV) {
   const validEnvs = ['development', 'production', 'test'];
   if (validEnvs.includes(process.env.NODE_ENV)) {
-    console.log(`   ✓ NODE_ENV - Valid (${process.env.NODE_ENV})`);
+    output(`   ✓ NODE_ENV - Valid (${process.env.NODE_ENV})`);
   } else {
-    console.log(`   ⚠️  NODE_ENV - Unusual value: ${process.env.NODE_ENV}`);
+    output(`   ⚠️  NODE_ENV - Unusual value: ${process.env.NODE_ENV}`);
     hasWarnings = true;
   }
 }
 
 // Summary
-console.log('\n' + '='.repeat(50));
+output('\n' + '='.repeat(50));
 if (hasErrors) {
-  console.log('❌ VALIDATION FAILED - Fix errors before deploying');
+  output('❌ VALIDATION FAILED - Fix errors before deploying');
   process.exit(1);
 } else if (hasWarnings) {
-  console.log('⚠️  VALIDATION PASSED WITH WARNINGS - Review warnings');
+  output('⚠️  VALIDATION PASSED WITH WARNINGS - Review warnings');
   process.exit(0);
 } else {
-  console.log('✅ ALL CHECKS PASSED - Ready to deploy!');
+  output('✅ ALL CHECKS PASSED - Ready to deploy!');
   process.exit(0);
 }
