@@ -100,6 +100,13 @@ npm run format:check
 npm run verify      # lint + format + typecheck + verify:repo + test
 ```
 
+`npm run test:offline` is the hermetic path: it runs the backend unit suite and
+all three web suites with no database, no Docker and no external account, so a
+fresh clone that only copied the `.env.example` placeholders can execute it
+immediately. The separate integration suite starts a throwaway
+`mongodb-memory-server` unless `MONGODB_URI_TEST` points somewhere else — see
+[testing.md](testing.md).
+
 ## Environment variables
 
 - **Backend** — copy `backend/.env.example` to `backend/.env` and fill in the

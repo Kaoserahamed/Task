@@ -15,6 +15,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Integration tests use `mongodb-memory-server` when no database URI is supplied;
   a cold clone gets a longer one-time binary-download budget.
 - A root `.env.example` indexes the app-local environment templates for onboarding.
+- `MONGODB_URI_TEST`, both Places API key names and `VERCEL` are documented in the
+  environment templates, and a contract test keeps every web app's `.env.example`
+  in sync with the `process.env` reads inside its source.
 - Terraform CI now runs formatting, validation, an offline plan, and Trivy IaC policy scanning.
 - Pull requests touching `infrastructure/**` get a dedicated Terraform plan, tfsec
   gate, uploaded plan artifact, and review comment.
