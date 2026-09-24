@@ -34,6 +34,7 @@
     "dev": "nodemon index.js",
     "validate-env": "node validate-env.js",
     "predeploy": "node validate-env.js",
+    "db:indexes": "node scripts/create-indexes.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

@@ -1,6 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Booking = require('../models/Booking');
+const Tour = require('../models/tours');
+const User = require('../models/User');
+const { runInTransaction } = require('../utils/transaction');
+const { ConflictError, NotFoundError, UnauthorizedError, ValidationError } = require('../utils/errors');
 const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
 const socketIO = require('../socket');
@@ -71,7 +75,6 @@ router.post('/add', authMiddleware, async (req, res) => {
   try {
     const {
       tourId,
-      email,
       firstName,
       lastName,
       phone,
@@ -87,11 +90,16 @@ router.post('/add', authMiddleware, async (req, res) => {
       totalAmount,
     } = req.body;
 
-    // Validate required fields
-    if (!email || !tourId) {
+    const account = await User.findById(req.user.userId).select('email').lean();
+    if (!account) throw new UnauthorizedError('Authenticated account was not found', 'ACCOUNT_NOT_FOUND');
+
+    // Validate required fields. The booking email always comes from the token's
+    // account; a caller cannot create a booking for somebody else's address.
+    if (!tourId) {
       return res.status(400).json({
         success: false,
-        message: 'Email and tour ID are required',
+        code: 'VALIDATION_ERROR',
+        message: 'Tour ID is required',
       });
     }
 
@@ -105,43 +113,78 @@ router.post('/add', authMiddleware, async (req, res) => {
 
     logger.info('Creating booking for tourId:', tourId); // Debug log
 
-    // Check if tour is already booked by this user
-    const existing = await Booking.findOne({
-      email,
-      tourId: new mongoose.Types.ObjectId(tourId),
-    });
-
-    if (existing) {
-      return res.status(400).json({
-        success: false,
-        message: 'Tour already booked',
-      });
+    // Check if the tour is already booked by this user, reserve seats, and write
+    // the booking in one transaction. The seat guard is part of the same atomic
+    // unit, so two requests cannot oversell the final seats.
+    const seatCount = Number(travelers);
+    if (!Number.isInteger(seatCount) || seatCount < 1) {
+      throw new ValidationError('Travelers must be a positive whole number');
     }
 
-    // Create booking with enhanced data
-    const bookingData = {
-      email,
-      tourId: new mongoose.Types.ObjectId(tourId),
-      firstName: firstName || 'Unknown',
-      lastName: lastName || 'User',
-      phone: phone || '',
-      address: address || '',
-      city: city || '',
-      country: country || '',
-      travelers: travelers || 1,
-      startDate: startDate || new Date(),
-      specialRequests: specialRequests || '',
-      paymentMethod: paymentMethod || 'credit-card',
-      cardHolder: cardHolder || '',
-      cardLastFour: cardNumber ? cardNumber.slice(-4) : null,
-      totalAmount: totalAmount || 0,
-      userId: req.userId || null,
-    };
+    const { booking, tour } = await runInTransaction(async (session) => {
+      const existing = await Booking.findOne({ email: account.email, tourId: new mongoose.Types.ObjectId(tourId) }).session(session);
+      if (existing) throw new ConflictError('Tour already booked', 'TOUR_ALREADY_BOOKED');
 
-    const booking = new Booking(bookingData);
-    await booking.save();
+      const seatCount = Number(travelers);
+      const tour = await Tour.findOneAndUpdate(
+        {
+          _id: tourId,
+          'tourType.group': true,
+          availableSeats: { $gte: seatCount },
+        },
+        { $inc: { availableSeats: -seatCount, 'popularity.bookings': 1 } },
+        { new: true, runValidators: true, session }
+      );
+      if (!tour) {
+        const existingTour = await Tour.findById(tourId).session(session);
+        if (!existingTour) throw new NotFoundError('Tour not found', 'TOUR_NOT_FOUND');
+        if (!existingTour.tourType?.group) {
+          const created = new Booking({
+            email: account.email,
+            tourId: new mongoose.Types.ObjectId(tourId),
+            firstName: firstName || 'Unknown',
+            lastName: lastName || 'User',
+            phone: phone || '',
+            address: address || '',
+            city: city || '',
+            country: country || '',
+            travelers: seatCount,
+            startDate: startDate || new Date(),
+            specialRequests: specialRequests || '',
+            paymentMethod: paymentMethod || 'credit-card',
+            cardHolder: cardHolder || '',
+            cardLastFour: cardNumber ? cardNumber.slice(-4) : null,
+            totalAmount: totalAmount || 0,
+            userId: req.user.userId,
+          });
+          await created.save({ session });
+          return { booking: created, tour: existingTour };
+        }
+        throw new ValidationError(`Only ${existingTour.availableSeats || 0} seats available`);
+      }
 
-    // Get the socket instance and emit the event
+      const created = new Booking({
+        email: account.email,
+        tourId: new mongoose.Types.ObjectId(tourId),
+        firstName: firstName || 'Unknown',
+        lastName: lastName || 'User',
+        phone: phone || '',
+        address: address || '',
+        city: city || '',
+        country: country || '',
+        travelers: seatCount,
+        startDate: startDate || new Date(),
+        specialRequests: specialRequests || '',
+        paymentMethod: paymentMethod || 'credit-card',
+        cardHolder: cardHolder || '',
+        cardLastFour: cardNumber ? cardNumber.slice(-4) : null,
+        totalAmount: totalAmount || 0,
+        userId: req.user.userId,
+      });
+      await created.save({ session });
+      return { booking: created, tour };
+    }).then(({ booking: created, tour }) => ({ booking: created, tour }));
+
     const io = socketIO.getIO();
     if (io) {
       // Emit booking event
@@ -149,13 +192,13 @@ router.post('/add', authMiddleware, async (req, res) => {
         action: 'krlam',
         booking,
         tourId,
-        availableSeats: booking.tourId.availableSeats,
+        availableSeats: tour.availableSeats,
       });
 
       // Emit seats update event
       io.emit('seatsUpdated', {
         tourId,
-        availableSeats: booking.tourId.availableSeats,
+        availableSeats: tour.availableSeats,
         travelers: booking.travelers,
       });
     }
@@ -170,10 +213,11 @@ router.post('/add', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     logger.error('Error adding booking:', error);
-    res.status(500).json({
+    const status = error.status || 500;
+    res.status(status).json({
       success: false,
-      message: 'Failed to book tour',
-      error: error.message,
+      code: error.code || 'BOOKING_FAILED',
+      message: status >= 500 ? 'Failed to book tour' : error.message,
     });
   }
 });

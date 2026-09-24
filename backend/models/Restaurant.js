@@ -9,4 +9,6 @@ const restaurantSchema = new mongoose.Schema({
   description: String,
 });
 
+restaurantSchema.index({ location: 1, rating: -1 });
+
 module.exports = mongoose.model('Restaurant', restaurantSchema);

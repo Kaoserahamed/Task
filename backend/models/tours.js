@@ -193,5 +193,10 @@ const tourSchema = new mongoose.Schema({
   },
 });
 
+tourSchema.index({ status: 1, createdAt: -1 });
+tourSchema.index({ companyId: 1, status: 1, createdAt: -1 });
+tourSchema.index({ packageCategories: 1, status: 1 });
+tourSchema.index({ 'destinations.name': 1, status: 1 });
+
 const Tour = mongoose.model('Tour', tourSchema);
 module.exports = Tour;
