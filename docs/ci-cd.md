@@ -29,14 +29,7 @@ runs on every push and pull-request to `main` / `develop`. It mirrors the local
 The `fresh-clone` job is what makes the README's Quick Start executable: it runs
 `npm run setup` and then the complete root `npm run verify` path on a checkout
 with no `node_modules`, so a missing lockfile, broken script, test, or formatter
-fails CI before a contributor hits it. The separate `security.yml` workflow also
-runs Terraform `fmt`, `init`, `validate`, an offline `plan`, and a Trivy IaC
-policy scan on every push and pull request.
-
-Pull requests that touch `infrastructure/**` additionally run the dedicated
-`terraform-plan.yml` workflow. It uploads the plan artifact and posts a bounded
-plan excerpt to the pull request, so infrastructure changes are reviewable
-before the production deployment workflow can run.
+fails CI before a contributor hits it.
 
 ### Node version
 
@@ -54,6 +47,59 @@ npm run format:check
 
 The `verify` script is intentionally identical in spirit to CI so a developer
 can catch gate failures before pushing.
+
+## Infrastructure pipeline (Terraform)
+
+Three workflows cover `infrastructure/terraform`:
+
+| Workflow             | Trigger                         | Gate                                                                                            |
+| -------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `terraform-plan.yml` | PR touching `infrastructure/**` | `fmt -check -recursive`, `init -backend=false`, `validate`, offline `plan`, tfsec HIGH/CRITICAL |
+| `security.yml`       | every push and pull request     | `fmt`, `init -backend=false`, `validate`, Trivy IaC policy scan                                 |
+| `aws-production.yml` | `v*` tag or manual dispatch     | `npm run verify` plus the integration suite, then apply against the remote state                |
+
+The review job never talks to AWS: it initialises without a backend
+(`-backend=false`), plans against `terraform.tfvars.example` with
+`-refresh=false`, uploads `terraform.tfplan` and `terraform-plan.txt` as a build
+artifact, and posts a bounded plan excerpt back to the pull request. The
+[aquasecurity/tfsec-action](https://github.com/aquasecurity/tfsec-action) step
+runs with `soft_fail: false` and `--severity HIGH,CRITICAL`, so a high-severity
+finding fails the job instead of annotating it for later.
+
+### Remote state
+
+`infrastructure/terraform/versions.tf` declares an empty S3 backend
+(`backend "s3" {}`). The deployment workflow supplies the location through
+`-backend-config` flags, so no account id or bucket name is committed:
+
+| Repository variable | `-backend-config` key | Purpose                                                     |
+| ------------------- | --------------------- | ----------------------------------------------------------- |
+| `TF_STATE_BUCKET`   | `bucket`              | S3 bucket holding the state file                            |
+| `TF_STATE_KEY`      | `key`                 | State path, defaults to `task/production/terraform.tfstate` |
+| `TF_LOCK_TABLE`     | `dynamodb_table`      | DynamoDB table used for state locking                       |
+
+Every `init` also passes `encrypt=true`, so the state object is encrypted at
+rest, and the DynamoDB table serialises concurrent applies. Terraform generates
+the DocumentDB, Redis and JWT credentials **inside this state**, so the bucket
+must be access-restricted like the production secrets themselves. Configure all
+three as repository variables (the names are not secret; the state they hold
+is).
+
+To work locally against the same state:
+
+```bash
+cd infrastructure/terraform
+terraform init \
+  -backend-config="bucket=$TF_STATE_BUCKET" \
+  -backend-config="key=$TF_STATE_KEY" \
+  -backend-config="region=$AWS_REGION" \
+  -backend-config="dynamodb_table=$TF_LOCK_TABLE" \
+  -backend-config="encrypt=true"
+```
+
+Creating the bucket (versioning + encryption + restricted policy) and the lock
+table is a one-time operator action; step-by-step preparation is listed in
+[infrastructure/terraform/README.md](../infrastructure/terraform/README.md).
 
 ## Deployment note
 

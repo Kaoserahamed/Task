@@ -18,6 +18,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Terraform CI now runs formatting, validation, an offline plan, and Trivy IaC policy scanning.
 - Pull requests touching `infrastructure/**` get a dedicated Terraform plan, tfsec
   gate, uploaded plan artifact, and review comment.
+- The Terraform remote state backend (encrypted S3 state plus DynamoDB lock, wired
+  through `TF_STATE_BUCKET` / `TF_STATE_KEY` / `TF_LOCK_TABLE`) is now documented in
+  `docs/ci-cd.md` and the infrastructure README, including the one-time bootstrap.
 - The storefront hero styles now live in `HeroSection.css` instead of an inline
   `<style jsx>` block, with a focused render test covering the extracted component.
 - Tour-company upload/edit forms now share `useTourForm` and centralized form options,
