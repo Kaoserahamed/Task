@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import StatCard from '../ui/StatCard';
 import StatusState from '../ui/StatusState';
+import buildDashboardMetrics from '../../utils/dashboardMetrics';
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -38,85 +39,7 @@ const Dashboard = () => {
     }
   }, [company, navigate]);
 
-  // Compute stats from tours
-  const stats = useMemo(() => {
-    if (!tours || tours.length === 0) return null;
-    const now = new Date();
-    // Always show Jan-Dec for the current year
-    const monthlyRevenueData = Array(12).fill(0);
-    const monthlyLabels = Array.from({ length: 12 }, (_, i) =>
-      new Date(0, i).toLocaleString('default', { month: 'short' })
-    );
-    let allBookings = [];
-    let allCustomerEmails = new Set();
-    let allRatings = [];
-    tours.forEach((tour) => {
-      if (Array.isArray(tour.bookings)) {
-        allBookings = allBookings.concat(tour.bookings);
-        tour.bookings.forEach((b) => {
-          if (b.email) allCustomerEmails.add(b.email);
-          // Assign revenue to the correct month of the current year
-          if (b.bookingDate) {
-            const d = new Date(b.bookingDate);
-            if (d.getFullYear() === now.getFullYear()) {
-              monthlyRevenueData[d.getMonth()] += b.totalAmount || 0;
-            }
-          }
-        });
-      }
-      if (tour.popularity?.rating?.average) {
-        allRatings.push(tour.popularity.rating.average);
-      }
-    });
-    const activePackages = tours.filter(
-      (t) => new Date(t.startDate) <= now && new Date(t.endDate) >= now
-    ).length;
-    const completedTours = tours.filter((t) => new Date(t.endDate) < now).length;
-    const lifetimeRevenue = allBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
-    const customerRating =
-      allRatings.length > 0
-        ? (allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(2)
-        : 'N/A';
-    const newBookings = allBookings.length;
-    const packageRevenue = tours.map((tour) => {
-      const revenue = Array.isArray(tour.bookings)
-        ? tour.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
-        : 0;
-      return { name: tour.name || tour.title || 'Untitled', revenue };
-    });
-    // Popular packages: top 3 by revenue
-    // Attach bookings, price, and rating info for display
-    const popularPackages = [...tours]
-      .map((tour) => {
-        const bookings = Array.isArray(tour.bookings) ? tour.bookings.length : 0;
-        const revenue = Array.isArray(tour.bookings)
-          ? tour.bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0)
-          : 0;
-        return {
-          _id: tour._id,
-          name: tour.name || tour.title || 'Untitled',
-          bookings,
-          price: tour.price || 0,
-          rating: tour.popularity?.rating?.average || 'N/A',
-          revenue,
-        };
-      })
-      .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 3);
-    const recentFeedback = tours.flatMap((t) => t.reviews || []).slice(0, 5);
-    return {
-      activePackages,
-      completedTours,
-      newBookings,
-      totalCustomers: allCustomerEmails.size,
-      lifetimeRevenue,
-      monthlyRevenue: { labels: monthlyLabels, data: monthlyRevenueData },
-      packageRevenue,
-      popularPackages,
-      recentFeedback,
-      customerRating,
-    };
-  }, [tours]);
+  const stats = useMemo(() => buildDashboardMetrics(tours), [tours]);
 
   if (loading) return <StatusState status="loading" title="Loading dashboard..." />;
   if (error)
