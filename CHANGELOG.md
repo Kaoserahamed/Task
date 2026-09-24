@@ -12,6 +12,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   and display formatting to a tested `searchFilters` utility.
 
 - Fresh-clone verification now runs the complete root `npm run verify` path.
+- Integration tests use `mongodb-memory-server` when no database URI is supplied;
+  a cold clone gets a longer one-time binary-download budget.
 - A root `.env.example` indexes the app-local environment templates for onboarding.
 - Terraform CI now runs formatting, validation, an offline plan, and Trivy IaC policy scanning.
 - The storefront hero styles now live in `HeroSection.css` instead of an inline

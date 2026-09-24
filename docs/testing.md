@@ -19,23 +19,42 @@ npm test                  # backend unit suite + all three React app suites
 npm run test:coverage    # coverage gates for every package
 ```
 
-The backend integration suite is intentionally separate. It either starts a
-throwaway `mongodb-memory-server` (first run may download MongoDB) or uses the
-explicit `MONGODB_URI_TEST` service when one is already running:
+The backend integration suite is intentionally separate. It starts a
+throwaway `mongodb-memory-server` when `MONGODB_URI_TEST` is not set, so a fresh
+clone does not need Docker, a live database, or an account. The first run may
+download the MongoDB binary once; later runs use the local cache. To use an
+existing service instead, set `MONGODB_URI_TEST` explicitly.
+
+### Fresh-clone sequence
+
+From a new checkout, the complete offline test path is:
 
 ```bash
-# In-memory integration database
-npm --prefix backend run test:integration
+git clone <repository-url>
+cd Task
+npm run setup
+npm run test:offline
+```
 
-# Or the Docker Compose MongoDB service
+`test:offline` is hermetic: it runs the backend unit suite and all React app
+suites without MongoDB, Docker, Cloudinary, Pusher, or Sendinblue. The
+integration suite is also account-free when its MongoDB binary is cached:
+
+```bash
+npm run test:backend:integration
+```
+
+For a real service container, use the explicit alternative:
+
+```bash
 npm run stack:test:up
 $env:MONGODB_URI_TEST='mongodb://127.0.0.1:27017/task-integration'
-npm --prefix backend run test:integration
+npm run test:backend:integration
 npm run stack:test:down
 ```
 
-External API keys are not required by either suite: unit tests mock those
-boundaries, and the integration suite is concerned with the API/database contract.
+External API keys are not required by the offline unit/web suites or the
+in-memory integration suite.
 
 The default backend unit suite is configured by `backend/jest.config.js` and
 `backend/tests/unit/setup-env.js`; it does not open a database connection. The

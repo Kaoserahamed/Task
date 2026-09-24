@@ -96,6 +96,15 @@ describe('CI workflow contract', () => {
   });
 });
 
+describe('integration test infrastructure', () => {
+  test('uses an in-memory MongoDB fallback when no service URI is configured', () => {
+    const setup = read('backend', 'tests', 'integration', 'setup.js');
+    expect(setup).toMatch(/MongoMemoryServer/);
+    expect(setup).toMatch(/MONGODB_URI_TEST/);
+    expect(setup).toMatch(/300000/);
+  });
+});
+
 describe('secrets contract', () => {
   test('the monorepo has a discoverable root environment template', () => {
     const rootTemplate = read('.env.example');
