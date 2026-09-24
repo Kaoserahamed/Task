@@ -71,10 +71,10 @@
     },
     "coverageThreshold": {
       "global": {
-        "statements": 13,
-        "branches": 8,
-        "functions": 7,
-        "lines": 14
+        "statements": 18,
+        "branches": 11,
+        "functions": 11,
+        "lines": 19
       },
       "./src/api/": {
         "statements": 85,
