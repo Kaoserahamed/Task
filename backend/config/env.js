@@ -63,6 +63,14 @@ const config = {
     sendinblue: process.env.SENDINBLUE_API_KEY,
   },
 
+  // Transactional email. The sender used to be a hard-coded personal address
+  // inside the route file, which meant a deployment silently sent "Task" mail
+  // from somebody's inbox.
+  mail: {
+    fromName: process.env.MAIL_FROM_NAME || 'Task',
+    fromEmail: process.env.MAIL_FROM_EMAIL || 'no-reply@example.com',
+  },
+
   // File Upload (Cloudinary)
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
