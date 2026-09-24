@@ -13,6 +13,11 @@ output "uploads_bucket" {
   description = "Private S3 bucket used for presigned uploads."
 }
 
+output "backups_bucket" {
+  value       = aws_s3_bucket.backups.bucket
+  description = "Private, encrypted and versioned S3 bucket used for logical backups."
+}
+
 output "documentdb_endpoint" {
   value       = aws_docdb_cluster.main.endpoint
   description = "DocumentDB endpoint for operator diagnostics."

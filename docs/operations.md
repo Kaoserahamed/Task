@@ -52,6 +52,9 @@ Graceful shutdown: on `SIGTERM`/`SIGINT` the API stops accepting connections,
 finishes in-flight requests, closes the Mongo connection and exits `0`
 (bounded by the orchestrator's kill timeout — keep it above a few seconds).
 
+Database recovery, backup verification, RPO/RTO targets, and the restore drill
+are documented in [disaster-recovery.md](disaster-recovery.md).
+
 ### The API image
 
 `backend/Dockerfile` is the deployable artefact, and the properties that matter
