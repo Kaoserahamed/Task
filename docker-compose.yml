@@ -46,3 +46,38 @@ services:
     # passwords) from backend/.env without baking them into the image.
     # env_file:
     #   - ./backend/.env
+
+  # Customer storefront (React build served by nginx)
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '3000:80'
+    # CRA inlines REACT_APP_* at build time, so this is a build argument:
+    # the browser talks to the API directly, not through this container.
+    args:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:4000}
+
+  # Admin console (React build served by nginx)
+  admin:
+    build: ./admin
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '3001:80'
+    args:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:4000}
+
+  # Tour company dashboard (React build served by nginx)
+  company:
+    build: ./tourcompanydashboard
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '3002:80'
+    args:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:4000}

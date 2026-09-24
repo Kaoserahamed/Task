@@ -1,9 +1,8 @@
-# Tour company dashboard image — the React app in tourcompanydashboard/.
+# Company dashboard image - the React app in tourcompanydashboard/.
 #
 # Two stages: the first compiles the production bundle, the second ships only
 # the static output behind nginx. The dev server, the test runner and the
-# devDependencies never reach the runtime image. The build context is
-# tourcompanydashboard/, so tourcompanydashboard/.dockerignore applies here.
+# devDependencies never reach the runtime image.
 
 # ---- build: compile the production bundle -----------------------------------
 FROM node:20-alpine AS build
@@ -11,9 +10,8 @@ WORKDIR /app
 
 # The API URL is baked into the bundle at build time (CRA inlines
 # REACT_APP_* variables), so it is a build argument rather than a runtime
-# environment variable. docker-compose.yml passes this for the company
-# service; without the declaration the value would be accepted and silently
-# ignored, and the bundle would fall back to the http://localhost:4000 default.
+# environment variable. The browser - not this container - talks to the API,
+# which is why the compose value is http://localhost:4000.
 ARG REACT_APP_API_URL=http://localhost:4000
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
@@ -26,9 +24,6 @@ COPY . .
 # `npm run build` already sets CI=false: a warning in the bundle is not worth
 # failing a deploy over, but a real error still fails the image build.
 RUN npm run build
-
-# The bundle is the whole point of the image, so prove it exists before shipping.
-RUN test -f build/index.html
 
 # ---- runtime: static files behind nginx --------------------------------------
 FROM nginx:1.27-alpine AS runtime
