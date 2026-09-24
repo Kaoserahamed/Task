@@ -89,6 +89,18 @@ describe('CI workflow contract', () => {
     expect(securityWorkflow).toMatch(/scanners: misconfig/);
   });
 
+  test('runs a dedicated PR-only Terraform plan and policy gate', () => {
+    const terraformWorkflow = read('.github', 'workflows', 'terraform-plan.yml');
+    expect(terraformWorkflow).toMatch(/pull_request:/);
+    expect(terraformWorkflow).toMatch(/infrastructure\/\*\*/);
+    expect(terraformWorkflow).toMatch(/terraform fmt -check -recursive/);
+    expect(terraformWorkflow).toMatch(/terraform validate/);
+    expect(terraformWorkflow).toMatch(/terraform plan/);
+    expect(terraformWorkflow).toMatch(/tfsec-action/);
+    expect(terraformWorkflow).toMatch(/upload-artifact/);
+    expect(terraformWorkflow).toMatch(/github-script/);
+  });
+
   test('runs the integration suite against a real database service', () => {
     expect(workflow).toMatch(/integration:/);
     expect(workflow).toMatch(/mongo:/);

@@ -33,6 +33,11 @@ fails CI before a contributor hits it. The separate `security.yml` workflow also
 runs Terraform `fmt`, `init`, `validate`, an offline `plan`, and a Trivy IaC
 policy scan on every push and pull request.
 
+Pull requests that touch `infrastructure/**` additionally run the dedicated
+`terraform-plan.yml` workflow. It uploads the plan artifact and posts a bounded
+plan excerpt to the pull request, so infrastructure changes are reviewable
+before the production deployment workflow can run.
+
 ### Node version
 
 All jobs pin **Node 20** via `actions/setup-node@v4` with an `npm` cache keyed on
