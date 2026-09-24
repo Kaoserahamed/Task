@@ -292,6 +292,12 @@ for (const app of WEB_APPS) {
   if (!manifest.jest || !manifest.jest.coverageThreshold) {
     fail(`${app}/package.json must declare jest coverageThreshold floors`);
   }
+  if (!manifest.scripts?.['coverage:check']) {
+    fail(`${app}/package.json must declare an independently runnable coverage:check script`);
+  }
+  if (!manifest.jest?.coverageReporters?.includes('json-summary')) {
+    fail(`${app}/package.json must emit json-summary coverage evidence`);
+  }
 }
 
 // 13. Every build argument docker-compose.yml passes to a service is actually

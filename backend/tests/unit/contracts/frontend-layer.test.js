@@ -118,11 +118,14 @@ describe('frontend API layer contract', () => {
       });
 
       test('declares coverage collection and floors', () => {
-        const { jest } = readJson(`${app}/package.json`);
+        const manifest = readJson(`${app}/package.json`);
+        const { jest } = manifest;
         expect(Array.isArray(jest.collectCoverageFrom)).toBe(true);
         expect(jest.collectCoverageFrom).toContain('src/**/*.{js,jsx}');
         expect(jest.coverageThreshold.global).toBeDefined();
         expect(jest.coverageThreshold['./src/api/']).toBeDefined();
+        expect(jest.coverageReporters).toContain('json-summary');
+        expect(manifest.scripts['coverage:check']).toBe('node ../scripts/check-web-coverage.mjs');
       });
     });
   }

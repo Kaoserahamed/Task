@@ -50,8 +50,10 @@ jobs:
         run: npm run typecheck
       - name: Audit dependencies (fails on high severity)
         run: npm audit --audit-level=high
-      - name: Unit tests with coverage gate
+      - name: Unit tests with global and per-area coverage gates
         run: npm run test:coverage
+      - name: Verify backend coverage summary
+        run: npm run coverage:check
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
@@ -123,8 +125,10 @@ jobs:
         run: npm run typecheck
       - name: Audit dependencies (fails on high severity)
         run: npm audit --audit-level=high
-      - name: Tests with coverage thresholds
+      - name: Tests with global and API coverage thresholds
         run: npm run test:coverage
+      - name: Verify ${{ matrix.app }} coverage summary
+        run: npm run coverage:check
       - name: Production build
         run: npm run build
         env:

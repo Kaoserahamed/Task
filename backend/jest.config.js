@@ -37,14 +37,14 @@ module.exports = {
   ],
   coverageReporters: ['text-summary', 'json-summary', 'lcov', 'clover'],
 
-  // A backstop so `jest --coverage` can never be green with the suite deleted.
-  // The meaningful, per-area floors live in scripts/check-coverage.js.
+  // Keep the Jest floor visible in the config as well as in the per-area checker.
+  // These values match the current measured baseline and the custom floors below.
   coverageThreshold: {
     global: {
-      branches: 5,
-      functions: 5,
-      lines: 5,
-      statements: 5,
+      branches: 60,
+      functions: 55,
+      lines: 60,
+      statements: 60,
     },
   },
 };

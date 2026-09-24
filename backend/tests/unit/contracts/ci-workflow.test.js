@@ -69,6 +69,12 @@ describe('CI workflow contract', () => {
     expect(workflow).toMatch(/backend\/coverage/);
   });
 
+  test('runs an independent coverage check after tests', () => {
+    expect(workflow).toMatch(/name: Verify backend coverage summary/);
+    expect(workflow).toMatch(/run: npm run coverage:check/);
+    expect(workflow).toMatch(/name: Verify .* coverage summary/);
+  });
+
   test('audits dependencies at a level that fails on high severity', () => {
     expect(workflow).toMatch(/npm audit --audit-level=high/);
   });
