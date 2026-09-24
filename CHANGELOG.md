@@ -11,6 +11,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fresh-clone verification now runs the complete root `npm run verify` path.
 - A root `.env.example` indexes the app-local environment templates for onboarding.
 - Terraform CI now runs formatting, validation, an offline plan, and Trivy IaC policy scanning.
+- The storefront hero styles now live in `HeroSection.css` instead of an inline
+  `<style jsx>` block, with a focused render test covering the extracted component.
 - Tour-company upload/edit forms now share `useTourForm` and centralized form options,
   with focused hook tests covering nested state and file updates.
 - Layered backend: `app.js` factory, `validators/`, `services/` and
