@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { ToursContext } from '../../Context/ToursContext';
 import './SearchFilter.css';
 import SearchBox from '../../Components/SearchBox/SearchBox';
