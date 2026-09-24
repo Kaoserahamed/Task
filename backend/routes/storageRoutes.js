@@ -7,6 +7,18 @@ const { BadRequestError, NotFoundError } = require('../utils/errors');
 
 const router = express.Router();
 
+router.get('/object/*', async (req, res, next) => {
+  try {
+    const key = req.params[0] || '';
+    const url = await storage.createPresignedDownload(key);
+    res.set('Cache-Control', 'private, max-age=300');
+    return res.redirect(302, url);
+  } catch (error) {
+    if (error.code === 'STORAGE_NOT_CONFIGURED') return next(new NotFoundError(error.message, error.code));
+    return next(new BadRequestError(error.message, 'INVALID_STORAGE_KEY'));
+  }
+});
+
 router.post('/presign-upload', authMiddleware, async (req, res, next) => {
   try {
     const result = await storage.createPresignedUpload({

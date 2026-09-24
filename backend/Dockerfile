@@ -15,6 +15,7 @@ ENV PORT=4000
 COPY --from=build /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
 COPY . .
+ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /etc/ssl/certs/aws-rds-global-bundle.pem
 
 # The image remains useful without a mounted volume, while ECS can mount an
 # EFS/S3-backed path later. Only the unprivileged node user owns runtime data.
