@@ -214,33 +214,34 @@ Optional secrets (Cloudinary, Pusher, email, demo passwords) can be provided by 
 
 ### Local Development Setup
 
-1. **Clone and navigate to project**
+1. **Clone and navigate to the project**
 
 ```bash
 git clone <repository-url>
 cd Task
 ```
 
-2. **Install dependencies for all applications**
+2. **Install all locked dependencies**
 
 ```bash
-# Backend
-cd backend && npm install && cd ..
-
-# Frontend applications
-cd frontend && npm install && cd ..
-cd admin && npm install && cd ..
-cd tourcompanydashboard && npm install && cd ..
+npm run setup
 ```
 
-3. **Configure environment variables**
+3. **Create local environment files**
+
+The root `.env.example` is a discoverable index. The app-local files are
+what each process loads:
 
 ```bash
-cd backend
 cp .env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+cp admin/.env.example admin/.env
+cp tourcompanydashboard/.env.example tourcompanydashboard/.env
 ```
 
-Edit `backend/.env` with your credentials (see [Environment Configuration](#environment-variables) below).
+Edit the local files with development-only values. Never commit `.env` files;
+the repository guard and Git ignore rules reject them.
 
 4. **Start all services in separate terminals**
 

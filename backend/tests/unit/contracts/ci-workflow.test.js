@@ -76,6 +76,17 @@ describe('CI workflow contract', () => {
   test('proves a fresh clone installs and verifies itself', () => {
     expect(workflow).toMatch(/fresh-clone:/);
     expect(workflow).toMatch(/npm run verify:repo/);
+    expect(workflow).toMatch(/npm run verify/);
+  });
+
+  test('gates Terraform formatting, validation, planning, and policy scanning', () => {
+    const securityWorkflow = read('.github', 'workflows', 'security.yml');
+    expect(securityWorkflow).toMatch(/terraform fmt -check -recursive/);
+    expect(securityWorkflow).toMatch(/terraform validate/);
+    expect(securityWorkflow).toMatch(/terraform plan/);
+    expect(securityWorkflow).toMatch(/scan-ref: infrastructure\/terraform/);
+    expect(securityWorkflow).toMatch(/scan-type: config/);
+    expect(securityWorkflow).toMatch(/scanners: misconfig/);
   });
 
   test('runs the integration suite against a real database service', () => {
@@ -86,6 +97,15 @@ describe('CI workflow contract', () => {
 });
 
 describe('secrets contract', () => {
+  test('the monorepo has a discoverable root environment template', () => {
+    const rootTemplate = read('.env.example');
+    expect(rootTemplate).toMatch(/MONGODB_URI=/);
+    expect(rootTemplate).toMatch(/JWT_SECRET=your_/);
+    expect(rootTemplate).toMatch(/REACT_APP_API_URL=/);
+    expect(rootTemplate).toMatch(/Never put real credentials/i);
+    expect(rootTemplate).not.toMatch(/AKIA[0-9A-Z]{16}/);
+  });
+
   test('no .env file is tracked in git', () => {
     const gitignore = read('.gitignore');
 

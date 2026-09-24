@@ -161,6 +161,8 @@ jobs:
         run: npm run verify:repo
       - name: Formatting is clean on a fresh clone
         run: npm run format:check
+      - name: Full fresh-clone verification
+        run: npm run verify
 
   # ---------------------------------------------------------------------------
   # The containers the README promises must build and configure cleanly

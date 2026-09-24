@@ -64,7 +64,7 @@ jobs:
           format: table
 
   terraform:
-    name: Terraform validation
+    name: Terraform validation and plan
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -80,3 +80,20 @@ jobs:
         run: terraform init -backend=false
       - name: Validate configuration
         run: terraform validate
+      - name: Plan without refreshing remote state
+        run: terraform plan -input=false -lock=false -refresh=false -var-file=terraform.tfvars.example
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_EC2_METADATA_DISABLED: 'true'
+          AWS_SKIP_CREDENTIALS_VALIDATION: 'true'
+          AWS_SKIP_REQUESTING_ACCOUNT_ID: 'true'
+      - name: Scan Terraform policy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: config
+          scan-ref: infrastructure/terraform
+          scanners: misconfig
+          exit-code: '1'
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: table

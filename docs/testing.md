@@ -9,23 +9,37 @@
 - Tests are fast, deterministic, and hermetic: a green `npm test` on a fresh
   checkout is the bar for merging.
 
-## Backend (Jest)
+## Offline versus integration tests
 
-Configuration: `backend/jest.config.js`, setup: `backend/tests/setup.js`.
-
-The setup file spins up an in-memory Mongo, connects Mongoose, wipes collections
-between tests, and tears Mongo down in `afterAll`. The suite uses `supertest` to
-exercise the Express app end-to-end through the controller + route layers.
+The default suites are offline and do not require MongoDB, Docker, Cloudinary,
+Pusher, or email credentials:
 
 ```bash
-cd backend
-npm test                  # jest --runInBand
-npm run test:coverage     # with a coverage report in coverage/
+npm test                  # backend unit suite + all three React app suites
+npm run test:coverage    # coverage gates for every package
 ```
 
-`mongodb-memory-server` downloads its own `mongod` binary on first run (cached in
-`node_modules/.cache`). On CI (Linux) the download happens automatically; locally
-on Windows ensure the binary can be fetched (see `.nvmrc` + Node ≥ 20).
+The backend integration suite is intentionally separate. It either starts a
+throwaway `mongodb-memory-server` (first run may download MongoDB) or uses the
+explicit `MONGODB_URI_TEST` service when one is already running:
+
+```bash
+# In-memory integration database
+npm --prefix backend run test:integration
+
+# Or the Docker Compose MongoDB service
+npm run stack:test:up
+$env:MONGODB_URI_TEST='mongodb://127.0.0.1:27017/task-integration'
+npm --prefix backend run test:integration
+npm run stack:test:down
+```
+
+External API keys are not required by either suite: unit tests mock those
+boundaries, and the integration suite is concerned with the API/database contract.
+
+The default backend unit suite is configured by `backend/jest.config.js` and
+`backend/tests/unit/setup-env.js`; it does not open a database connection. The
+integration suite is configured separately by `backend/jest.integration.config.js`.
 
 ### Coverage
 
