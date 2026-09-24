@@ -62,11 +62,17 @@ integration suite is configured separately by `backend/jest.integration.config.j
 
 ### Coverage
 
-`test:coverage` writes `backend/coverage/lcov-report/index.html`. The
-`jest.config.js` declares `collectCoverageFrom` and `coverageThreshold`
-**global** floors; CI runs `--coverage` so a regression in coverage fails the
-build. Ratchet thresholds upward when a new area is brought under test — never
-turn the gate off.
+Each app now runs a real coverage command and a second, independently runnable
+`coverage:check` command. The first command executes Jest with its package-level
+`coverageThreshold`; the second reads the generated `coverage-summary.json` and
+re-checks both the global floor and the stricter `./src/api/` floor. CI performs
+both steps, so a missing report or a threshold that is only documented cannot
+produce a green build.
+
+The repository has 73 tracked test/spec files across the backend and three React
+apps. The endpoint contract suites cover every exported resource function, and
+`backend/tests/unit/contracts/frontend-layer.test.js` fails if a new export is
+added without a corresponding contract assertion.
 
 ### Writing a new backend test
 

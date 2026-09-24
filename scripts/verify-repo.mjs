@@ -26,6 +26,7 @@ const REQUIRED_SCRIPTS = [
   'test:backend:integration',
   'test:offline',
   'test:coverage',
+  'coverage:check',
   'test:web',
   'lint',
   'format:check',

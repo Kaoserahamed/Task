@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import NewPassword from './NewPassword';
 import * as authApi from '../../api/auth';
@@ -54,14 +55,15 @@ test('resets a valid password and returns the user to login', async () => {
   fireEvent.change(screen.getByPlaceholderText('Confirm new password'), {
     target: { value: 'secret123' },
   });
-  await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'Set New Password' }));
-  });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await user.click(screen.getByRole('button', { name: 'Set New Password' }));
 
   expect(authApi.resetPassword).toHaveBeenCalledWith('token-1', 'secret123');
-  expect(screen.getByText('Password has been reset successfully')).toBeInTheDocument();
-  act(() => jest.advanceTimersByTime(2000));
-  expect(screen.getByText('Login page')).toBeInTheDocument();
+  expect(await screen.findByText('Password has been reset successfully')).toBeInTheDocument();
+  act(() => {
+    jest.advanceTimersByTime(2000);
+  });
+  expect(await screen.findByText('Login page')).toBeInTheDocument();
 });
 
 test('shows an API error when password reset fails', async () => {
@@ -73,9 +75,8 @@ test('shows an API error when password reset fails', async () => {
   fireEvent.change(screen.getByPlaceholderText('Confirm new password'), {
     target: { value: 'secret123' },
   });
-  await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'Set New Password' }));
-  });
+  const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  await user.click(screen.getByRole('button', { name: 'Set New Password' }));
 
-  expect(screen.getByText('Reset link expired')).toBeInTheDocument();
+  expect(await screen.findByText('Reset link expired')).toBeInTheDocument();
 });
