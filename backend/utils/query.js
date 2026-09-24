@@ -10,7 +10,10 @@ function safeText(value, maxLength = 120) {
 }
 
 function safeMongoText(value, maxLength = 120) {
-  return { value: safeText(value, maxLength), regex: new RegExp(escapeRegExp(safeText(value, maxLength)), 'i') };
+  return {
+    value: safeText(value, maxLength),
+    regex: new RegExp(escapeRegExp(safeText(value, maxLength)), 'i'),
+  };
 }
 
 module.exports = { escapeRegExp, safeText, safeMongoText };

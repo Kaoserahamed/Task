@@ -7,12 +7,12 @@ provides the primary backup and availability controls; the shell scripts in
 
 ## Targets and assumptions
 
-| Target | Objective | Verification |
-| --- | --- | --- |
-| Database RPO | ≤ 15 minutes | Native DocumentDB backup/restore drill and a current logical archive |
-| Application RTO | ≤ 2 hours | ECS task definitions, immutable ECR images, ALB and secrets verified |
-| Upload RPO | ≤ 15 minutes | S3 versioning and object inventory review |
-| Configuration RTO | ≤ 1 hour | Encrypted Terraform state and tagged infrastructure |
+| Target            | Objective    | Verification                                                         |
+| ----------------- | ------------ | -------------------------------------------------------------------- |
+| Database RPO      | ≤ 15 minutes | Native DocumentDB backup/restore drill and a current logical archive |
+| Application RTO   | ≤ 2 hours    | ECS task definitions, immutable ECR images, ALB and secrets verified |
+| Upload RPO        | ≤ 15 minutes | S3 versioning and object inventory review                            |
+| Configuration RTO | ≤ 1 hour     | Encrypted Terraform state and tagged infrastructure                  |
 
 The targets are objectives, not guarantees. A restore is not considered
 complete until the readiness probe, smoke checks, and data-count checks pass.
@@ -98,7 +98,6 @@ export CONFIRM_RESTORE='RESTORE'
 ./scripts/restore-mongodb.sh
 ```
 
-
 ## Verification checklist
 
 After either recovery path:
@@ -143,4 +142,3 @@ RTO. Record gaps, owners, and due dates in the change log.
 The script downloads to a temporary directory, restores only the `tourmate`
 database with `--drop`, and removes the local file on exit. It intentionally
 does not accept a missing confirmation value.
-

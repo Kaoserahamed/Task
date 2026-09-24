@@ -14,7 +14,8 @@ router.get('/object/*', async (req, res, next) => {
     res.set('Cache-Control', 'private, max-age=300');
     return res.redirect(302, url);
   } catch (error) {
-    if (error.code === 'STORAGE_NOT_CONFIGURED') return next(new NotFoundError(error.message, error.code));
+    if (error.code === 'STORAGE_NOT_CONFIGURED')
+      return next(new NotFoundError(error.message, error.code));
     return next(new BadRequestError(error.message, 'INVALID_STORAGE_KEY'));
   }
 });
@@ -30,7 +31,10 @@ router.post('/presign-upload', authMiddleware, async (req, res, next) => {
     res.json({ success: true, ...result });
   } catch (error) {
     next(
-      new BadRequestError(error.message, error.code === 'STORAGE_NOT_CONFIGURED' ? 'STORAGE_NOT_CONFIGURED' : 'INVALID_FILE')
+      new BadRequestError(
+        error.message,
+        error.code === 'STORAGE_NOT_CONFIGURED' ? 'STORAGE_NOT_CONFIGURED' : 'INVALID_FILE'
+      )
     );
   }
 });
@@ -42,7 +46,8 @@ router.post('/presign-download', authMiddleware, async (req, res, next) => {
     const url = await storage.createPresignedDownload(key);
     res.json({ success: true, url, expiresIn: 900 });
   } catch (error) {
-    if (error.code === 'STORAGE_NOT_CONFIGURED') return next(new NotFoundError(error.message, error.code));
+    if (error.code === 'STORAGE_NOT_CONFIGURED')
+      return next(new NotFoundError(error.message, error.code));
     return next(new BadRequestError(error.message, 'INVALID_STORAGE_KEY'));
   }
 });

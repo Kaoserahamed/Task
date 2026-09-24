@@ -20,7 +20,9 @@ class CircuitBreaker {
     return false;
   }
 
-  success() { this.failures = 0; }
+  success() {
+    this.failures = 0;
+  }
   failure() {
     this.failures += 1;
     if (this.failures >= this.threshold) this.openedAt = Date.now();

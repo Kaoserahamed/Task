@@ -375,41 +375,37 @@ router.patch('/update-info', authMiddleware, async (req, res) => {
 });
 
 // PATCH: Update verification status and isVerified only
-router.patch(
-  '/update-status',
-  adminAuth,
-  async (req, res) => {
+router.patch('/update-status', adminAuth, async (req, res) => {
+  try {
+    const companyId = req.user.companyId;
+    const { verificationStatus, isVerified } = req.body;
+    const updateData = {};
+    if (verificationStatus !== undefined) updateData.verificationStatus = verificationStatus;
+    if (isVerified !== undefined) updateData.isVerified = isVerified;
+    // If no companyId, return error
+    if (!companyId) return res.status(400).json({ message: 'No companyId provided' });
+    const company = await Company.findByIdAndUpdate(companyId, updateData, { new: true });
+    logger.info(company);
+    if (!company) return res.status(404).json({ message: 'Company not found' });
+
+    // Emit socket event before sending response
     try {
-      const companyId = req.user.companyId;
-      const { verificationStatus, isVerified } = req.body;
-      const updateData = {};
-      if (verificationStatus !== undefined) updateData.verificationStatus = verificationStatus;
-      if (isVerified !== undefined) updateData.isVerified = isVerified;
-      // If no companyId, return error
-      if (!companyId) return res.status(400).json({ message: 'No companyId provided' });
-      const company = await Company.findByIdAndUpdate(companyId, updateData, { new: true });
-      logger.info(company);
-      if (!company) return res.status(404).json({ message: 'Company not found' });
-
-      // Emit socket event before sending response
-      try {
-        const io = require('../socket').getIO();
-        io.emit('veri', {
-          action: 'done',
-          company,
-        });
-      } catch (socketErr) {
-        logger.warn('Socket emit failed:', socketErr.message);
-      }
-
-      res.json({ success: true, company });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ success: false, message: 'Failed to update status', error: error.message });
+      const io = require('../socket').getIO();
+      io.emit('veri', {
+        action: 'done',
+        company,
+      });
+    } catch (socketErr) {
+      logger.warn('Socket emit failed:', socketErr.message);
     }
+
+    res.json({ success: true, company });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: 'Failed to update status', error: error.message });
   }
-);
+});
 // POST: Verify company password
 router.post('/verify-password', authMiddleware, async (req, res) => {
   try {

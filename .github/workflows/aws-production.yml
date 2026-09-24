@@ -220,4 +220,3 @@ jobs:
           exit 1
         env:
           API_HOSTNAME: ${{ vars.API_HOSTNAME }}
-

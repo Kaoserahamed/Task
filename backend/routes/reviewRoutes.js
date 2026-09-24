@@ -83,14 +83,16 @@ router.delete('/:id', async (req, res) => {
 
     // Delete associated photos
     if (review.photos && review.photos.length > 0) {
-      await Promise.all(review.photos.map(async (photoPath) => {
-        if (photoPath.startsWith('/api/storage/object/')) {
-          await storage.deleteStoredUrl(photoPath);
-          return;
-        }
-        const fullPath = path.join(process.cwd(), photoPath.replace(/^\/+/, ''));
-        if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-      }));
+      await Promise.all(
+        review.photos.map(async (photoPath) => {
+          if (photoPath.startsWith('/api/storage/object/')) {
+            await storage.deleteStoredUrl(photoPath);
+            return;
+          }
+          const fullPath = path.join(process.cwd(), photoPath.replace(/^\/+/, ''));
+          if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+        })
+      );
     }
 
     await Review.findByIdAndDelete(id);

@@ -4,9 +4,10 @@ const { UnauthorizedError, ForbiddenError } = require('../utils/errors');
 
 module.exports = function adminAuth(req, res, next) {
   const authorization = req.headers.authorization;
-  const token = typeof authorization === 'string' && authorization.startsWith('Bearer ')
-    ? authorization.slice(7)
-    : null;
+  const token =
+    typeof authorization === 'string' && authorization.startsWith('Bearer ')
+      ? authorization.slice(7)
+      : null;
   if (!token) return next(new UnauthorizedError('No token provided', 'NO_TOKEN'));
 
   try {

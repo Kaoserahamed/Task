@@ -9,6 +9,9 @@ describe('parsePagination', () => {
   });
 
   test('caps the requested page size', () => {
-    expect(parsePagination({ page: '2', limit: String(MAX_LIMIT + 50) })).toEqual({ page: 2, limit: MAX_LIMIT });
+    expect(parsePagination({ page: '2', limit: String(MAX_LIMIT + 50) })).toEqual({
+      page: 2,
+      limit: MAX_LIMIT,
+    });
   });
 });

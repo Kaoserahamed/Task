@@ -4,7 +4,12 @@ const Booking = require('../models/Booking');
 const Tour = require('../models/tours');
 const User = require('../models/User');
 const { runInTransaction } = require('../utils/transaction');
-const { ConflictError, NotFoundError, UnauthorizedError, ValidationError } = require('../utils/errors');
+const {
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} = require('../utils/errors');
 const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
 const socketIO = require('../socket');
@@ -91,7 +96,8 @@ router.post('/add', authMiddleware, async (req, res) => {
     } = req.body;
 
     const account = await User.findById(req.user.userId).select('email').lean();
-    if (!account) throw new UnauthorizedError('Authenticated account was not found', 'ACCOUNT_NOT_FOUND');
+    if (!account)
+      throw new UnauthorizedError('Authenticated account was not found', 'ACCOUNT_NOT_FOUND');
 
     // Validate required fields. The booking email always comes from the token's
     // account; a caller cannot create a booking for somebody else's address.
@@ -122,7 +128,10 @@ router.post('/add', authMiddleware, async (req, res) => {
     }
 
     const { booking, tour } = await runInTransaction(async (session) => {
-      const existing = await Booking.findOne({ email: account.email, tourId: new mongoose.Types.ObjectId(tourId) }).session(session);
+      const existing = await Booking.findOne({
+        email: account.email,
+        tourId: new mongoose.Types.ObjectId(tourId),
+      }).session(session);
       if (existing) throw new ConflictError('Tour already booked', 'TOUR_ALREADY_BOOKED');
 
       const seatCount = Number(travelers);

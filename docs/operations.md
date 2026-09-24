@@ -6,8 +6,8 @@
 | --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/health/live`  | Liveness   | `200 { status: 'alive', uptime }` — the process is serving. Never touches the database, so a slow Mongo cannot restart a healthy container. |
 | `/health/ready` | Readiness  | `200` when the Mongoose connection is up, `503 { status: 'degraded' }` otherwise. Point load-balancer/readiness checks here.                |
-| `/metrics`        | Metrics    | Prometheus text response. Set `METRICS_TOKEN` and send `x-metrics-token` from the private monitor.                                      |
-| `/health`          | Legacy     | `{ status: 'healthy', database, redis }`, kept for existing uptime checks.                                                               |
+| `/metrics`      | Metrics    | Prometheus text response. Set `METRICS_TOKEN` and send `x-metrics-token` from the private monitor.                                          |
+| `/health`       | Legacy     | `{ status: 'healthy', database, redis }`, kept for existing uptime checks.                                                                  |
 | `/`             | Smoke test | `{ status: 'ok', environment, isVercel, timestamp }`.                                                                                       |
 
 The `docker-compose.yml` stack wires a `healthcheck` and starts the API only

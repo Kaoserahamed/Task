@@ -22,8 +22,12 @@ function render() {
   ];
   for (const [key, value] of metrics.entries()) {
     const [method, route, status] = key.split('|');
-    lines.push(`task_http_requests_total{method="${method}",route="${route}",status="${status}"} ${value.count}`);
-    lines.push(`task_http_request_duration_ms_sum{method="${method}",route="${route}"} ${value.durationMs}`);
+    lines.push(
+      `task_http_requests_total{method="${method}",route="${route}",status="${status}"} ${value.count}`
+    );
+    lines.push(
+      `task_http_request_duration_ms_sum{method="${method}",route="${route}"} ${value.durationMs}`
+    );
   }
   lines.push('# HELP task_process_uptime_seconds Process uptime in seconds.');
   lines.push('# TYPE task_process_uptime_seconds gauge');
@@ -35,7 +39,12 @@ function middleware(req, res, next) {
   const start = process.hrtime.bigint();
   res.on('finish', () => {
     const durationMs = Number(process.hrtime.bigint() - start) / 1e6;
-    recordRequest({ method: req.method, route: req.route?.path || 'unmatched', statusCode: res.statusCode, durationMs });
+    recordRequest({
+      method: req.method,
+      route: req.route?.path || 'unmatched',
+      statusCode: res.statusCode,
+      durationMs,
+    });
   });
   next();
 }

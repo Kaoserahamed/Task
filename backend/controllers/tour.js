@@ -32,14 +32,20 @@ exports.getCompanyTours = asyncHandler(async (req, res) => {
 
 exports.getTours = asyncHandler(async (req, res) => {
   const wantsPage = req.query.page !== undefined || req.query.limit !== undefined;
-  const result = wantsPage ? await tours.listAll(parsePagination(req.query)) : await tours.listAll();
+  const result = wantsPage
+    ? await tours.listAll(parsePagination(req.query))
+    : await tours.listAll();
   if (!wantsPage) return res.json({ success: true, tours: result });
-  return res.json({ success: true, tours: result.items, pagination: {
-    page: result.page,
-    limit: result.limit,
-    total: result.total,
-    totalPages: result.totalPages,
-  } });
+  return res.json({
+    success: true,
+    tours: result.items,
+    pagination: {
+      page: result.page,
+      limit: result.limit,
+      total: result.total,
+      totalPages: result.totalPages,
+    },
+  });
 });
 
 exports.getApprovedTours = asyncHandler(async (req, res) => {

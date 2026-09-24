@@ -28,12 +28,15 @@ async function ensureConnected() {
   if (!redis) return null;
   if (redis.status === 'ready') return redis;
   if (!connecting) {
-    connecting = redis.connect().catch((error) => {
-      logger.warn({ err: error }, 'redis connection failed; continuing without cache');
-      return null;
-    }).finally(() => {
-      connecting = null;
-    });
+    connecting = redis
+      .connect()
+      .catch((error) => {
+        logger.warn({ err: error }, 'redis connection failed; continuing without cache');
+        return null;
+      })
+      .finally(() => {
+        connecting = null;
+      });
   }
   return connecting;
 }

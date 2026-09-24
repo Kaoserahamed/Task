@@ -68,9 +68,11 @@ function validateUpload({ filename, contentType, size }) {
 function buildObjectKey({ filename, contentType }) {
   const { extension } = validateUpload({ filename, contentType, size: 1 });
   const safeName = safeFilename(filename);
-  const normalizedName = safeName.toLowerCase().endsWith(extension) || (extension === '.jpg' && safeName.toLowerCase().endsWith('.jpeg'))
-    ? safeName
-    : `${safeName}${extension}`;
+  const normalizedName =
+    safeName.toLowerCase().endsWith(extension) ||
+    (extension === '.jpg' && safeName.toLowerCase().endsWith('.jpeg'))
+      ? safeName
+      : `${safeName}${extension}`;
   return `${config.aws.s3Prefix}/${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}-${normalizedName}`;
 }
 
@@ -91,21 +93,29 @@ function createS3Storage() {
     _handleFile(req, file, callback) {
       let key;
       try {
-        const { contentType } = validateUpload({ filename: file.originalname, contentType: file.mimetype, size: file.size });
+        const { contentType } = validateUpload({
+          filename: file.originalname,
+          contentType: file.mimetype,
+          size: file.size,
+        });
         key = buildObjectKey({ filename: file.originalname, contentType });
       } catch (error) {
         return callback(error);
       }
 
       createClient()
-        .send(new PutObjectCommand({
-          Bucket: config.aws.s3Bucket,
-          Key: key,
-          Body: file.stream,
-          ContentType: file.mimetype,
-          ContentLength: file.size,
-          Metadata: { uploadedBy: String(req.user?.userId || req.user?.id || 'anonymous').slice(0, 128) },
-        }))
+        .send(
+          new PutObjectCommand({
+            Bucket: config.aws.s3Bucket,
+            Key: key,
+            Body: file.stream,
+            ContentType: file.mimetype,
+            ContentLength: file.size,
+            Metadata: {
+              uploadedBy: String(req.user?.userId || req.user?.id || 'anonymous').slice(0, 128),
+            },
+          })
+        )
         .then(() => {
           file.storageKey = key;
           file.path = stableObjectUrl(key);
@@ -116,7 +126,9 @@ function createS3Storage() {
     },
     _removeFile(req, file, callback) {
       if (!file.storageKey) return callback(null);
-      deleteObject(file.storageKey).then(() => callback(null)).catch(callback);
+      deleteObject(file.storageKey)
+        .then(() => callback(null))
+        .catch(callback);
     },
   };
 }
@@ -127,7 +139,11 @@ function createS3Upload() {
     limits: { fileSize: MAX_FILE_SIZE, files: 5 },
     fileFilter: (req, file, callback) => {
       try {
-        validateUpload({ filename: file.originalname, contentType: file.mimetype, size: file.size });
+        validateUpload({
+          filename: file.originalname,
+          contentType: file.mimetype,
+          size: file.size,
+        });
         callback(null, true);
       } catch (error) {
         callback(error);

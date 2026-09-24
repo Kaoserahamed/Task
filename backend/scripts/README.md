@@ -3,15 +3,15 @@
 Operator commands. None of them run as part of the server boot, and every one
 that writes data is documented in [docs/](../../docs/README.md).
 
-| Script                | Purpose                                          |
-| --------------------- | ------------------------------------------------ |
-| `seedDemoAccounts.js` | Create/refresh the demo user, admin and company  |
-| `seedTourPackages.js` | Create five sample tour packages                 |
-| `create-indexes.js`  | Create declared MongoDB indexes after schema changes |
-| `backup-mongodb.sh`  | Create and upload an encrypted logical backup       |
-| `restore-mongodb.sh` | Restore a logical backup with an explicit guard      |
-| `run-migrations.js`   | Apply the versioned migrations in `migrations/`  |
-| `check-coverage.js`   | Coverage floors (run by `npm run test:coverage`) |
+| Script                | Purpose                                              |
+| --------------------- | ---------------------------------------------------- |
+| `seedDemoAccounts.js` | Create/refresh the demo user, admin and company      |
+| `seedTourPackages.js` | Create five sample tour packages                     |
+| `create-indexes.js`   | Create declared MongoDB indexes after schema changes |
+| `backup-mongodb.sh`   | Create and upload an encrypted logical backup        |
+| `restore-mongodb.sh`  | Restore a logical backup with an explicit guard      |
+| `run-migrations.js`   | Apply the versioned migrations in `migrations/`      |
+| `check-coverage.js`   | Coverage floors (run by `npm run test:coverage`)     |
 
 ## Seeding demo data
 
@@ -71,4 +71,3 @@ for the recovery decision tree and rehearsal procedure.
 Format, contract and rollback story:
 [`migrations/README.md`](migrations/README.md) and
 [`docs/migrations.md`](../../docs/migrations.md).
-

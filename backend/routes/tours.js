@@ -56,10 +56,27 @@ router.put(
 );
 
 // Counters and seats
-router.patch('/tours/:id/status', authLimiter, productionAuth, validateTourStatus, tourController.updateTourStatus);
+router.patch(
+  '/tours/:id/status',
+  authLimiter,
+  productionAuth,
+  validateTourStatus,
+  tourController.updateTourStatus
+);
 router.patch('/tours/:id/increment-view', authLimiter, tourController.incrementViewCount);
-router.patch('/tours/:id/increment-booking', authLimiter, productionAuth, tourController.incrementBookingCount);
-router.patch('/tours/:id/book-seats', authLimiter, productionAuth, validateSeatChange('seatsToBook'), tourController.bookSeats);
+router.patch(
+  '/tours/:id/increment-booking',
+  authLimiter,
+  productionAuth,
+  tourController.incrementBookingCount
+);
+router.patch(
+  '/tours/:id/book-seats',
+  authLimiter,
+  productionAuth,
+  validateSeatChange('seatsToBook'),
+  tourController.bookSeats
+);
 router.patch(
   '/tours/:id/release-seats',
   authLimiter,

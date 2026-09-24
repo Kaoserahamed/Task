@@ -24,13 +24,13 @@ answers.
 
 ## Quality and delivery
 
-| Document                       | Answers                                              |
-| ------------------------------ | ---------------------------------------------------- |
-| [testing.md](testing.md)       | What test layers exist, and how do I write one?      |
-| [ci-cd.md](ci-cd.md)           | What does CI run, and how do I reproduce it locally? |
-| [operations.md](operations.md) | How do I run, probe, log and roll back a deployment? |
-| [disaster-recovery.md](disaster-recovery.md) | How do I recover the database and restore service? |
-| [migrations.md](migrations.md) | How does the database schema evolve after a release? |
+| Document                                     | Answers                                              |
+| -------------------------------------------- | ---------------------------------------------------- |
+| [testing.md](testing.md)                     | What test layers exist, and how do I write one?      |
+| [ci-cd.md](ci-cd.md)                         | What does CI run, and how do I reproduce it locally? |
+| [operations.md](operations.md)               | How do I run, probe, log and roll back a deployment? |
+| [disaster-recovery.md](disaster-recovery.md) | How do I recover the database and restore service?   |
+| [migrations.md](migrations.md)               | How does the database schema evolve after a release? |
 
 ## Security
 

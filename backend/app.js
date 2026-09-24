@@ -115,7 +115,9 @@ function createApp({ log = logger } = {}) {
 
   app.get('/metrics', (req, res) => {
     if (config.metrics.token && req.header('x-metrics-token') !== config.metrics.token) {
-      return res.status(401).json({ success: false, error: 'Metrics authentication required', code: 'UNAUTHORIZED' });
+      return res
+        .status(401)
+        .json({ success: false, error: 'Metrics authentication required', code: 'UNAUTHORIZED' });
     }
     res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
     return res.send(metrics.render());
