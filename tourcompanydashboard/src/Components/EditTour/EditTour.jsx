@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTourForm } from '../../hooks/useTourForm';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EditTour.css';
 import API_BASE_URL from '../../config/api';
@@ -10,77 +11,26 @@ const EditTour = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const packageCategories = [
-    'Adventure',
-    'Cultural',
-    'Nature & Eco',
-    'Family',
-    'Honeymoon',
-    'Educational',
-    'Seasonal',
-  ];
-
-  const transportationTypes = ['Bus', 'Mini Bus', 'Car', 'Premium Car', 'Other'];
-
-  const weatherConditions = [
-    'Sunny',
-    'Partly Cloudy',
-    'Cloudy',
-    'Rainy',
-    'Stormy',
-    'Snowy',
-    'Foggy',
-    'Hot',
-    'Cold',
-    'Mild',
-  ];
-
-  const [tourDetails, setTourDetails] = useState({
-    name: '',
-    packageCategories: [],
-    customCategory: '',
-    tourType: {
-      single: false,
-      group: false,
-    },
-    duration: {
-      days: '',
-      nights: '',
-    },
-    startDate: '',
-    endDate: '',
-    meals: {
-      breakfast: false,
-      lunch: false,
-      dinner: false,
-    },
-    transportation: {
-      type: '',
-      details: '',
-    },
-    tourGuide: false,
-    price: '',
-    maxGroupSize: '',
-    availableSeats: '',
-    destinations: [
-      {
-        name: '',
-        description: '',
-        stayDuration: '',
-      },
-    ],
-    images: [],
-    includes: [''],
-    excludes: [''],
-    specialNote: '',
-    cancellationPolicy: '',
-    weather: {
-      city: '',
-      condition: '',
-      temp: '',
-    },
-  });
+  const {
+    tourDetails,
+    setTourDetails,
+    packageCategories,
+    transportationTypes,
+    weatherConditions,
+    handleChange,
+    handleDurationChange,
+    handleMealChange,
+    handleTransportationChange,
+    handleWeatherChange,
+    handleCategoryChange,
+    handleTourTypeChange,
+    handleArrayFieldChange,
+    addArrayField,
+    handleDestinationsChange,
+    addDestination,
+    handleFileChange,
+    handleRemoveImage,
+  } = useTourForm();
 
   useEffect(() => {
     fetchTourDetails();
@@ -156,127 +106,6 @@ const EditTour = () => {
       logError('Error updating tour:', error);
       alert(`Failed to update tour: ${error.message}`);
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTourDetails({
-      ...tourDetails,
-      [name]: value,
-    });
-  };
-
-  const handleDurationChange = (e) => {
-    const { name, value } = e.target;
-    const parsedValue = value === '' ? '' : Math.max(0, parseInt(value) || 0);
-
-    setTourDetails({
-      ...tourDetails,
-      duration: {
-        ...tourDetails.duration,
-        [name]: parsedValue,
-      },
-    });
-  };
-
-  const handleMealChange = (meal) => {
-    setTourDetails({
-      ...tourDetails,
-      meals: {
-        ...tourDetails.meals,
-        [meal]: !tourDetails.meals[meal],
-      },
-    });
-  };
-
-  const handleTransportationChange = (e) => {
-    const { name, value } = e.target;
-    setTourDetails({
-      ...tourDetails,
-      transportation: {
-        ...tourDetails.transportation,
-        [name]: value,
-      },
-    });
-  };
-
-  const handleCategoryChange = (category) => {
-    setTourDetails((prev) => ({
-      ...prev,
-      packageCategories: prev.packageCategories.includes(category)
-        ? prev.packageCategories.filter((c) => c !== category)
-        : [...prev.packageCategories, category],
-    }));
-  };
-
-  const handleTourTypeChange = (type) => {
-    setTourDetails((prev) => ({
-      ...prev,
-      tourType: {
-        ...prev.tourType,
-        [type]: !prev.tourType[type],
-      },
-    }));
-  };
-
-  const handleArrayFieldChange = (index, field, value) => {
-    const updatedArray = [...tourDetails[field]];
-    updatedArray[index] = value;
-    setTourDetails({
-      ...tourDetails,
-      [field]: updatedArray,
-    });
-  };
-
-  const addArrayField = (field) => {
-    setTourDetails({
-      ...tourDetails,
-      [field]: [...tourDetails[field], ''],
-    });
-  };
-
-  const handleDestinationsChange = (e, index, field) => {
-    const { value } = e.target;
-    const newDestinations = [...tourDetails.destinations];
-    newDestinations[index][field] = value;
-    setTourDetails({
-      ...tourDetails,
-      destinations: newDestinations,
-    });
-  };
-
-  const addDestination = () => {
-    setTourDetails({
-      ...tourDetails,
-      destinations: [...tourDetails.destinations, { name: '', description: '', stayDuration: '' }],
-    });
-  };
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setTourDetails({
-      ...tourDetails,
-      images: [...tourDetails.images, ...files],
-    });
-  };
-
-  const handleRemoveImage = (index) => {
-    const updatedImages = tourDetails.images.filter((_, i) => i !== index);
-    setTourDetails({
-      ...tourDetails,
-      images: updatedImages,
-    });
-  };
-
-  const handleWeatherChange = (e) => {
-    const { name, value } = e.target;
-    setTourDetails({
-      ...tourDetails,
-      weather: {
-        ...(tourDetails.weather || { city: '', condition: '', temp: '' }),
-        [name]: value,
-      },
-    });
   };
 
   if (loading) return <div className="loading">Loading tour details...</div>;
