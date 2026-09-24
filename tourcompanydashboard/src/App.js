@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { ToursProvider } from './Context/ToursContext';
 import { AuthProvider } from './Context/AuthContext';
 import Dashboard from './Components/Dashboard/Dashboard';
-import Navbar from './Components/Navbar/Navbar';
+import CompanyLayout from './layouts/CompanyLayout';
 import UploadTour from './Components/UploadTour/UploadTour';
 import ManageTours from './Components/ManageTours/ManageTours';
 import { useAuth } from './Context/AuthContext';
@@ -25,25 +25,22 @@ const AppContent = () => {
   return (
     <ToursProvider>
       {company ? (
-        <div className="app">
-          <Navbar /> {/* Render the Navbar */}
-          <div className="content">
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/reset-password/:token" element={<NewPassword />} />
-              <Route path="/upload-tour" element={<UploadTour />} />
-              <Route path="/chat" element={<ChatPage />} />
-              <Route path="/manage-tours" element={<ManageTours />} />
-              <Route path="/edit-tour/:tourId" element={<EditTour />} />
-              <Route path="/login" element={<LoginSignup />} />
-              <Route path="/bookings" element={<AllBookingsList />} />
-              <Route path="/bookings/:tourId" element={<BookingList />} />
-              <Route path="/license" element={<License />} />
-            </Routes>
-          </div>
-        </div>
+        <CompanyLayout>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/reset-password/:token" element={<NewPassword />} />
+            <Route path="/upload-tour" element={<UploadTour />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/manage-tours" element={<ManageTours />} />
+            <Route path="/edit-tour/:tourId" element={<EditTour />} />
+            <Route path="/login" element={<LoginSignup />} />
+            <Route path="/bookings" element={<AllBookingsList />} />
+            <Route path="/bookings/:tourId" element={<BookingList />} />
+            <Route path="/license" element={<License />} />
+          </Routes>
+        </CompanyLayout>
       ) : (
         <div className="app">
           <Routes>

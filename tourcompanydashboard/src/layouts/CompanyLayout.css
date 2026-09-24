@@ -1,0 +1,9 @@
+.company-shell {
+  min-height: 100vh;
+  background: var(--background-secondary);
+}
+
+.company-shell .content {
+  width: 100%;
+  min-width: 0;
+}

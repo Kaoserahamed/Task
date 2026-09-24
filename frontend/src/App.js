@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './Components/Navbar/Navbar';
+import AppLayout from './layouts/AppLayout';
 import Homepage from './Pages/Homepage/Homepage';
 import PackageDetails from './Pages/PackageDetails/PackageDetails';
 import LoginSignup from './Pages/LoginSignup/LoginSignup';
@@ -29,8 +29,7 @@ function App() {
       <ToursProvider>
         <ThemeProvider>
           <BrowserRouter>
-            <div className="App">
-              <Navbar />
+            <AppLayout>
               <Routes>
                 <Route path="/" element={<Homepage />} />
                 <Route path="/package/:id" element={<PackageDetails />} />
@@ -59,7 +58,7 @@ function App() {
                 <Route path="/review" element={<ReviewPage />} />
                 <Route path="/weather" element={<WeatherSuggestion />} />
               </Routes>
-            </div>
+            </AppLayout>
           </BrowserRouter>
         </ThemeProvider>
       </ToursProvider>

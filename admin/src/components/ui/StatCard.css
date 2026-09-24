@@ -1,0 +1,57 @@
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 0;
+  padding: var(--spacing-lg);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-card__icon {
+  display: grid;
+  flex: 0 0 3.25rem;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  color: var(--stat-accent, var(--primary));
+  font-size: 1.25rem;
+  background: color-mix(in srgb, var(--stat-accent, var(--primary)) 12%, transparent);
+  border-radius: var(--radius-md);
+}
+
+.stat-card__body {
+  min-width: 0;
+}
+.stat-card__label {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+.stat-card__value {
+  margin: 0.25rem 0 0;
+  color: var(--text-primary);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+}
+.stat-card__trend {
+  margin: 0.35rem 0 0;
+  font-size: var(--text-xs);
+}
+.stat-card__trend--positive {
+  color: var(--success);
+}
+.stat-card__trend--negative {
+  color: var(--danger);
+}
+.stat-card--success {
+  --stat-accent: var(--success);
+}
+.stat-card--info {
+  --stat-accent: var(--info);
+}
+.stat-card--warning {
+  --stat-accent: var(--warning);
+}

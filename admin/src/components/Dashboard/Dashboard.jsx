@@ -1,5 +1,6 @@
 import React from 'react';
 import './Dashboard.css';
+import StatCard from '../ui/StatCard';
 import { useState, useEffect } from 'react';
 import Pendingtours from './PendingTours';
 import socket from '../../socket';
@@ -208,57 +209,34 @@ const Dashboard = () => {
       </div>
 
       <div className="analytics-overview">
-        <div className="card primary-card">
-          <div className="card-icon">
-            <i className="fas fa-calendar-check"></i>
-          </div>
-          <div className="card-content">
-            <h3>Active Packages</h3>
-            <p className="card-value">{upcomingTrips}</p>
-            <p className="card-trend positive">
-              <i className="fas fa-arrow-up"></i>
-            </p>
-          </div>
-        </div>
-
-        <div className="card success-card">
-          <div className="card-icon">
-            <i className="fas fa-users"></i>
-          </div>
-          <div className="card-content">
-            <h3>Companies</h3>
-            <p className="card-value">{approvedCompanies.length}</p>
-            <p className="card-trend positive">
-              <i className="fas fa-arrow-up"></i>
-            </p>
-          </div>
-        </div>
-
-        <div className="card info-card">
-          <div className="card-icon">
-            <i className="fas fa-dollar-sign"></i>
-          </div>
-          <div className="card-content">
-            <h3>Total Revenue</h3>
-            <p className="card-value">${bookingsData.totalRevenue?.toLocaleString() || 0}</p>
-            <p className="card-trend positive">
-              <i className="fas fa-arrow-up"></i>
-            </p>
-          </div>
-        </div>
-
-        <div className="card warning-card">
-          <div className="card-icon">
-            <i className="fas fa-flag-checkered"></i>
-          </div>
-          <div className="card-content">
-            <h3>Finished Trips</h3>
-            <p className="card-value">{finishedTrips}</p>
-            <p className="card-trend positive">
-              <i className="fas fa-arrow-up"></i>
-            </p>
-          </div>
-        </div>
+        <StatCard
+          label="Active Packages"
+          value={upcomingTrips}
+          icon={<i className="fas fa-calendar-check" />}
+          tone="primary"
+          trend={{ label: 'Live inventory', tone: 'positive' }}
+        />
+        <StatCard
+          label="Companies"
+          value={approvedCompanies.length}
+          icon={<i className="fas fa-users" />}
+          tone="success"
+          trend={{ label: 'Approved accounts', tone: 'positive' }}
+        />
+        <StatCard
+          label="Total Revenue"
+          value={`$${bookingsData.totalRevenue?.toLocaleString() || 0}`}
+          icon={<i className="fas fa-dollar-sign" />}
+          tone="info"
+          trend={{ label: 'Recorded revenue', tone: 'positive' }}
+        />
+        <StatCard
+          label="Finished Trips"
+          value={finishedTrips}
+          icon={<i className="fas fa-flag-checkered" />}
+          tone="warning"
+          trend={{ label: 'Completed tours', tone: 'positive' }}
+        />
       </div>
 
       <div className="dashboard-content">

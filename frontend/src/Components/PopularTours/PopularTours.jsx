@@ -6,6 +6,7 @@ import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
 import { logError } from '../../utils/logger';
+import StatusState from '../ui/StatusState';
 
 const PopularTours = () => {
   const { tours, loading, error } = useContext(ToursContext);
@@ -83,20 +84,14 @@ const PopularTours = () => {
   };
 
   if (loading) {
-    return (
-      <div className="popular-tours-loading-container">
-        <div className="popular-tours-loading-spinner"></div>
-        <p>Loading popular tours...</p>
-      </div>
-    );
+    return <StatusState status="loading" title="Loading popular tours..." />;
   }
 
   if (error) {
     return (
-      <div className="popular-tours-error-container">
-        <i className="fas fa-exclamation-circle"></i>
-        <p>Error loading popular tours. Please try again later.</p>
-      </div>
+      <StatusState status="error" title="We couldn't load popular tours.">
+        Please try again in a moment.
+      </StatusState>
     );
   }
 

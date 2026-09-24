@@ -22,6 +22,8 @@ import { useTours } from '../../Context/ToursContext';
 import { useAuth } from '../../Context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
+import StatCard from '../ui/StatCard';
+import StatusState from '../ui/StatusState';
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -116,23 +118,18 @@ const Dashboard = () => {
     };
   }, [tours]);
 
-  if (loading)
-    return (
-      <div className="dashboard">
-        <h2>Loading dashboard...</h2>
-      </div>
-    );
+  if (loading) return <StatusState status="loading" title="Loading dashboard..." />;
   if (error)
     return (
-      <div className="dashboard">
-        <h2>Error: {error}</h2>
-      </div>
+      <StatusState status="error" title="We couldn't load this dashboard.">
+        {error}
+      </StatusState>
     );
   if (!stats)
     return (
-      <div className="dashboard">
-        <h2>No data available.</h2>
-      </div>
+      <StatusState status="empty" title="No data available yet.">
+        Once tours are published, your metrics will appear here.
+      </StatusState>
     );
 
   // Prepare chart data
@@ -203,60 +200,37 @@ const Dashboard = () => {
     <div className="dashboard">
       <h1>Dashboard Overview</h1>
       <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon">
-            <FaSuitcase />
-          </div>
-          <div className="stat-details">
-            <h3>Active Packages</h3>
-            <p>{stats.activePackages}</p>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon money">
-            <FaMoneyBillWave />
-          </div>
-          <div className="stat-details">
-            <h3>Lifetime Revenue</h3>
-            <p>${stats.lifetimeRevenue.toLocaleString()}</p>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon bookings">
-            <FaCalendarCheck />
-          </div>
-          <div className="stat-details">
-            <h3>New Bookings</h3>
-            <p>{stats.newBookings}</p>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon rating">
-            <FaStar />
-          </div>
-          <div className="stat-details">
-            <h3>Average Rating</h3>
-            <p>{stats.customerRating}/5.0</p>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon customers">
-            <FaUsers />
-          </div>
-          <div className="stat-details">
-            <h3>Total Customers</h3>
-            <p>{stats.totalCustomers}</p>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon completed">
-            <FaChartLine />
-          </div>
-          <div className="stat-details">
-            <h3>Completed Tours</h3>
-            <p>{stats.completedTours}</p>
-          </div>
-        </div>
+        <StatCard label="Active Packages" value={stats.activePackages} icon={<FaSuitcase />} />
+        <StatCard
+          label="Lifetime Revenue"
+          value={`$${stats.lifetimeRevenue.toLocaleString()}`}
+          icon={<FaMoneyBillWave />}
+          tone="success"
+        />
+        <StatCard
+          label="New Bookings"
+          value={stats.newBookings}
+          icon={<FaCalendarCheck />}
+          tone="warning"
+        />
+        <StatCard
+          label="Average Rating"
+          value={`${stats.customerRating}/5.0`}
+          icon={<FaStar />}
+          tone="danger"
+        />
+        <StatCard
+          label="Total Customers"
+          value={stats.totalCustomers}
+          icon={<FaUsers />}
+          tone="violet"
+        />
+        <StatCard
+          label="Completed Tours"
+          value={stats.completedTours}
+          icon={<FaChartLine />}
+          tone="teal"
+        />
       </div>
       <div className="charts-grid">
         <div className="dashboard-card">
