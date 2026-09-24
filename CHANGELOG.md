@@ -18,6 +18,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `MONGODB_URI_TEST`, both Places API key names and `VERCEL` are documented in the
   environment templates, and a contract test keeps every web app's `.env.example`
   in sync with the `process.env` reads inside its source.
+- The company HTTP surface is split by concern: `routes/companyAuthRoutes.js`
+  (registration, login, password reset, re-auth) and
+  `routes/companySearchRoutes.js` (directory, search, profile, admin
+  verification), each with its own route test. The profile allow-list lives in
+  `utils/companyUpdate.js`, so approval state and the reset token can never be
+  written by a profile request.
 - Terraform CI now runs formatting, validation, an offline plan, and Trivy IaC policy scanning.
 - Pull requests touching `infrastructure/**` get a dedicated Terraform plan, tfsec
   gate, uploaded plan artifact, and review comment.
@@ -103,6 +109,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `PATCH /company/auth/update-status` now updates the `companyId` the admin
+  dashboard sends in the body — it previously read an id only a company token
+  carries, so every admin approval answered 400 — and rejects a status outside
+  the model enum.
+- `GET /api/search` escapes regex metacharacters, so a `[` in the search box is
+  a search again instead of a 500, and company register/login answer 400 for a
+  missing field instead of 500.
+- Company password reset rejects an expired token, answers `{ success: true }`
+  instead of the historical `succes` typo, and no longer logs the company
+  document (which carried the password hash and the reset token).
 - The error handler was mounted before several routers, so errors raised by
   those routes bypassed it.
 - Malformed multipart JSON in tour payloads returned a 500 instead of a typed 400.

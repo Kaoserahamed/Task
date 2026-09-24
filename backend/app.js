@@ -18,7 +18,8 @@ const idempotency = require('./middleware/idempotency');
 const logger = require('./utils/logger');
 
 const authRoutes = require('./routes/authRoutes');
-const companyRoutes = require('./routes/companyRoutes');
+const companyAuthRoutes = require('./routes/companyAuthRoutes');
+const companySearchRoutes = require('./routes/companySearchRoutes');
 const adminAuthRoutes = require('./routes/adminauth');
 const chatRoutes = require('./routes/chatRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
@@ -131,11 +132,16 @@ function createApp({ log = logger } = {}) {
   // Feature routers
   // ---------------------------------------------------------------------------
   // Credential endpoints are rate limited before they ever reach a controller.
+  // The company surface is split by concern (credentials vs. directory and
+  // profile) but both halves stay mounted on both prefixes: the dashboards call
+  // the same handlers through `/company/auth/...` and `/api/...`.
   app.use('/user/auth', authLimiter, authRoutes);
-  app.use('/company/auth', authLimiter, companyRoutes);
+  app.use('/company/auth', authLimiter, companyAuthRoutes);
+  app.use('/company/auth', authLimiter, companySearchRoutes);
   app.use('/api', apiLimiter);
 
-  app.use('/api', companyRoutes);
+  app.use('/api', companyAuthRoutes);
+  app.use('/api', companySearchRoutes);
   app.use('/api/storage', storageRouter);
   app.use('/api/chat', chatRoutes);
   app.use('/api/wishlist', wishlistRoutes);
