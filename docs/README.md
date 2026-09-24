@@ -17,6 +17,7 @@ answers.
 | ---------------------------------------------------- | ------------------------------------------------------------------ |
 | [architecture.md](architecture.md)                   | How is the code organised, and where does a change belong?         |
 | [api.md](api.md)                                     | What endpoints exist, and what does a response look like?          |
+| [frontend.md](frontend.md)                           | How do the React apps reach the API, and what owns an HTTP call?   |
 | [frontend-theme-guide.md](frontend-theme-guide.md)   | How does the storefront theme system work, and how do I extend it? |
 | [frontend-css-refactor.md](frontend-css-refactor.md) | What did the front-end CSS refactor change?                        |
 | [adr/](adr/)                                         | Why was this decision made, and what were the alternatives?        |

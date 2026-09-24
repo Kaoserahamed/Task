@@ -102,7 +102,8 @@ values in `backend/.env` (see `backend/.env.example`):
 **Frontend Applications**
 
 - React 19 with React Router v7
-- Axios for API requests
+- A single fetch-based API layer per app (`src/api/`), see
+  [docs/frontend.md](docs/frontend.md)
 - Context API for state management
 - Socket.IO client for real-time features
 - Lucide React for UI icons
@@ -123,7 +124,8 @@ The system consists of four independent React applications served by a single No
 3. **Company Dashboard** (port 3002) - Tour operator management interface
 4. **Backend API** (port 4000) - RESTful API serving all frontends
 
-All frontends connect to the backend API via Axios and Socket.IO for real-time features.
+All frontends connect to the backend API through the `src/api/` layer described
+in [docs/frontend.md](docs/frontend.md), plus Socket.IO for real-time features.
 
 ## Project Structure
 

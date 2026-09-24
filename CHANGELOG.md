@@ -32,6 +32,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The gaps that are deliberately left open (token lifetime, validation coverage,
   upload fallback, metrics, `schemaVersion`) are listed in `SECURITY.md` and
   `docs/security.md` instead of being left for a reviewer to discover.
+- Each React app now speaks HTTP through one door: `src/api/` holds the shared
+  client (bearer token, JSON/`FormData`, `ApiError`) plus one module per
+  resource, and components no longer call `fetch` or `axios` directly. Guarded
+  by `scripts/verify-repo.mjs` (check 12) and
+  `backend/tests/unit/contracts/frontend-layer.test.js`; see `docs/frontend.md`.
+- Web test suites: transport and endpoint-contract tests for every app, auth
+  flow coverage (register mode, admin login success/failure, session cleared on
+  401), `collectCoverageFrom` and `coverageThreshold` floors per manifest.
+- Dead weight removed from the three apps: 0-byte modules, 14 MB of duplicated
+  unreferenced assets, the no-op `reportWebVitals` boilerplate, and unused
+  dependencies (`axios`, `cra-template`, `crypto`, `@stripe/stripe-js`,
+  `@iconify/react`, `@fortawesome/fontawesome-free`).
 
 ### Changed
 

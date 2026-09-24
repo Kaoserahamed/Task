@@ -219,6 +219,62 @@ for (const stack of ['', ...STACKS]) {
   }
 }
 
+// 12. The three React apps keep exactly one HTTP layer. `src/api/` owns every
+//     network call (the reference's rule: "api/ is the only fetch layer"), the
+//     components import it instead of speaking HTTP, no app carries a client
+//     library, and each manifest declares the coverage floors that keep the
+//     layer tested. The one exemption is the Google Places page, which calls
+//     the dev-server /proxy route — not our API.
+const WEB_APPS = ['frontend', 'admin', 'tourcompanydashboard'];
+const API_LAYER_EXEMPTIONS = new Set([
+  'frontend/src/Pages/Places.js', // Google Places via the /proxy dev-server route
+]);
+
+function listSourceFiles(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === 'Assets') continue;
+      out.push(...listSourceFiles(full));
+    } else if (/\.(js|jsx)$/.test(entry.name)) {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+for (const app of WEB_APPS) {
+  if (!existsSync(path.join(repoRoot, app, 'src', 'api', 'client.js'))) {
+    fail(`${app}/src/api/client.js is missing — the app needs its single HTTP layer`);
+  }
+
+  for (const file of listSourceFiles(path.join(repoRoot, app, 'src'))) {
+    const relative = path.relative(repoRoot, file).split(path.sep).join('/');
+    if (relative.split('/').includes('api')) continue;
+    if (API_LAYER_EXEMPTIONS.has(relative)) continue;
+
+    const source = readFileSync(file, 'utf8');
+    if (/(^|[^.\w])fetch\s*\(/.test(source)) {
+      fail(`${relative} calls fetch() directly — move the call behind ${app}/src/api/`);
+    }
+    if (/from\s+['"]axios['"]|require\(\s*['"]axios['"]\s*\)/.test(source)) {
+      fail(`${relative} imports axios — the api client is the only HTTP dependency`);
+    }
+  }
+
+  const manifest = readJson(`${app}/package.json`);
+  if (manifest.dependencies && manifest.dependencies.axios) {
+    fail(`${app}/package.json must not declare axios — src/api/ owns HTTP`);
+  }
+  if (!manifest.jest || !manifest.jest.collectCoverageFrom) {
+    fail(`${app}/package.json must declare jest collectCoverageFrom`);
+  }
+  if (!manifest.jest || !manifest.jest.coverageThreshold) {
+    fail(`${app}/package.json must declare jest coverageThreshold floors`);
+  }
+}
+
 if (failures.length > 0) {
   for (const failure of failures) {
     process.stderr.write(`verify-repo: ${failure}\n`);
