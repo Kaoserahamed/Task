@@ -22,6 +22,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `<style jsx>` block, with a focused render test covering the extracted component.
 - Tour-company upload/edit forms now share `useTourForm` and centralized form options,
   with focused hook tests covering nested state and file updates.
+- Tour-company upload/edit forms now share client-side validation and accessible inline
+  status feedback instead of browser alerts.
 - Layered backend: `app.js` factory, `validators/`, `services/` and
   `repositories/` for the tour domain, plus a typed error taxonomy
   (`utils/errors.js`) and one central error handler.

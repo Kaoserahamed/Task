@@ -5,12 +5,14 @@ import './EditTour.css';
 import API_BASE_URL from '../../config/api';
 import * as toursApi from '../../api/tours';
 import { logError } from '../../utils/logger';
+import validateTourForm from '../../validators/tourForm';
 
 const EditTour = () => {
   const { tourId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formStatus, setFormStatus] = useState({ type: '', message: '' });
   const {
     tourDetails,
     setTourDetails,
@@ -68,17 +70,13 @@ const EditTour = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormStatus({ type: '', message: '' });
+    const validation = validateTourForm(tourDetails);
+    if (!validation.valid) {
+      setFormStatus({ type: 'error', message: validation.message });
+      return;
+    }
     const formData = new FormData();
-
-    if (!tourDetails.tourType.single && !tourDetails.tourType.group) {
-      alert('Please select at least one tour type (Single or Group)');
-      return;
-    }
-
-    if (tourDetails.packageCategories.length === 0 && !tourDetails.customCategory) {
-      alert('Please select at least one category or add a custom category');
-      return;
-    }
 
     Object.keys(tourDetails).forEach((key) => {
       if (key === 'images') {
@@ -100,11 +98,11 @@ const EditTour = () => {
 
     try {
       await toursApi.updateTour(tourId, formData);
-      alert('Tour updated successfully');
+      setFormStatus({ type: 'success', message: 'Tour updated successfully.' });
       navigate('/manage-tours');
     } catch (error) {
       logError('Error updating tour:', error);
-      alert(`Failed to update tour: ${error.message}`);
+      setFormStatus({ type: 'error', message: `Failed to update tour: ${error.message}` });
     }
   };
 
@@ -115,6 +113,14 @@ const EditTour = () => {
     <div className="upload-tour">
       <h1>Edit Tour Package</h1>
       <form onSubmit={handleSubmit}>
+        {formStatus.message && (
+          <p
+            className={`form-status form-status--${formStatus.type}`}
+            role={formStatus.type === 'error' ? 'alert' : 'status'}
+          >
+            {formStatus.message}
+          </p>
+        )}
         <div className="form-section">
           <h2>Basic Information</h2>
           <input

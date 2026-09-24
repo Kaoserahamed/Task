@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UploadTour.css'; // Import the CSS file for styling
 import { useAuth } from '../../Context/AuthContext';
 import { useTourForm } from '../../hooks/useTourForm';
 import * as toursApi from '../../api/tours';
 import { logDebug, logError } from '../../utils/logger';
+import validateTourForm from '../../validators/tourForm';
 
 const UploadTour = () => {
   const { company } = useAuth();
@@ -18,6 +19,7 @@ const UploadTour = () => {
   const companyName = company.company.name;
   const navigate = useNavigate();
   logDebug(companyName);
+  const [formStatus, setFormStatus] = useState({ type: '', message: '' });
   const {
     tourDetails,
     setTourDetails,
@@ -40,19 +42,13 @@ const UploadTour = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormStatus({ type: '', message: '' });
+    const validation = validateTourForm(tourDetails);
+    if (!validation.valid) {
+      setFormStatus({ type: 'error', message: validation.message });
+      return;
+    }
     const formData = new FormData();
-
-    // Add validation for tour type
-    if (!tourDetails.tourType.single && !tourDetails.tourType.group) {
-      alert('Please select at least one tour type (Single or Group)');
-      return;
-    }
-
-    // Add validation for categories
-    if (tourDetails.packageCategories.length === 0 && !tourDetails.customCategory) {
-      alert('Please select at least one category or add a custom category');
-      return;
-    }
 
     formData.append('name', tourDetails.name);
     formData.append('packageCategories', JSON.stringify(tourDetails.packageCategories));
@@ -83,11 +79,11 @@ const UploadTour = () => {
     try {
       await toursApi.createTour(formData);
 
-      alert('Tour uploaded successfully');
-      navigate('manage-tours'); // Redirect to manage tours page
+      setFormStatus({ type: 'success', message: 'Tour uploaded successfully.' });
+      navigate('/manage-tours');
     } catch (error) {
       logError('Error uploading tour:', error);
-      alert(`Failed to upload tour: ${error.message}`);
+      setFormStatus({ type: 'error', message: `Failed to upload tour: ${error.message}` });
     }
   };
 
@@ -95,6 +91,14 @@ const UploadTour = () => {
     <div className="upload-tour">
       <h1>Create New Tour Package</h1>
       <form onSubmit={handleSubmit}>
+        {formStatus.message && (
+          <p
+            className={`form-status form-status--${formStatus.type}`}
+            role={formStatus.type === 'error' ? 'alert' : 'status'}
+          >
+            {formStatus.message}
+          </p>
+        )}
         <div className="form-section">
           <h2>Basic Information</h2>
           <input
