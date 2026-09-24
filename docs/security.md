@@ -8,8 +8,10 @@ See also [SECURITY.md](../SECURITY.md) for how to report a vulnerability.
   `POST /company/auth/login` return a JWT signed with `JWT_SECRET`
   (`JWT_EXPIRES_IN`, default `7d`). Protected routes require
   `Authorization: Bearer <token>`.
-- **Admins:** `/api/admin/*` is mounted twice on purpose — the public part
-  (login, forgot-password) and the guarded part (`middleware/adminAuth.js`).
+- **Admins:** `/api/admin/*` is mounted once. The router keeps login public and
+  applies `middleware/adminAuth.js` to every administrative mutation. The
+  production signup route is disabled; administrators are provisioned by an
+  operator or controlled seed process.
 - **Passwords** are stored as bcrypt hashes produced by one module,
   `backend/utils/password.js` (`bcryptjs`, cost 10). The native `bcrypt` package
   that used to serve the company endpoints is gone, so every hash in the
@@ -80,11 +82,12 @@ The gaps below are deliberate; they are repeated in
 - **Validation coverage.** `validators/` covers the tour write endpoints; the
   remaining write endpoints depend on Mongoose schema validation. The tour
   validator is the template.
-- **Uploads.** When Cloudinary is not configured, files are written to
-  `backend/uploads` and served from `/uploads`; the allow-list and the 5 MB cap
-  still apply, but a production deployment should set the Cloudinary keys.
-- **Metrics.** No `/metrics` endpoint is exposed; add `prom-client` behind
-  `METRICS_TOKEN` when a dashboard needs one.
+- **Uploads.** Production selects private S3 when `S3_BUCKET` and AWS region
+  are configured; legacy Cloudinary multipart uploads remain available when
+  explicitly configured. S3 buckets are private and downloads use short-lived
+  presigned redirects.
+- **Metrics.** `/metrics` exposes Prometheus text metrics; set `METRICS_TOKEN`
+  and restrict the path to the private monitoring path/role.
 - **Migrations.** The runner and the format exist
   ([migrations.md](migrations.md)); no collection carries `schemaVersion` yet
   because no shape change has needed it.

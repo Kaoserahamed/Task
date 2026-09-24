@@ -53,6 +53,10 @@ const config = {
     token: process.env.METRICS_TOKEN,
   },
 
+  worker: {
+    mode: process.env.WORKER_MODE === 'true',
+  },
+
   // Seeding creates demo accounts with known passwords: opt-in, never default.
   seed: {
     enabled: process.env.SEED_ENABLED === 'true',
@@ -122,7 +126,7 @@ const config = {
 // Validate required environment variables up front: a server that boots without
 // a database URI or a JWT secret fails at the first request, which is far
 // harder to diagnose than refusing to start.
-const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
+const requiredEnvVars = config.worker.mode ? [] : ['MONGODB_URI', 'JWT_SECRET'];
 
 const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
 

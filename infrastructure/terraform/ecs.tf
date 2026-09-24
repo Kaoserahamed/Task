@@ -196,6 +196,7 @@ resource "aws_ecs_task_definition" "worker" {
     command   = ["node", "scripts/background-worker.js"]
     environment = [
       { name = "NODE_ENV", value = "production" },
+      { name = "WORKER_MODE", value = "true" },
       { name = "AWS_REGION", value = var.aws_region }
     ]
     secrets = [
