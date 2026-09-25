@@ -38,7 +38,6 @@ const MODEL_IMPORT_EXEMPTIONS = new Map([
   ['routes/reviewRoutes.js', 'customer reviews and moderation'],
   ['routes/adminauth.js', 'admin login and profile'],
   ['routes/dashboardRoutes.js', 'admin dashboard aggregate queries'],
-  ['routes/wishlistRoutes.js', 'wishlist items per user'],
   ['routes/seedRoutes.js', 'local seeding, already behind SEED_ENABLED'],
   ['routes/demoAccounts.js', 'local demo accounts, already behind SEED_ENABLED'],
   ['controllers/chat.js', 'chat controller still queries Chat and Message'],
@@ -129,7 +128,7 @@ describe('backend layering contract', () => {
 
   test('the repository layer exists for every migrated domain', () => {
     // A domain that claims to be layered but has no repository is not layered.
-    for (const domain of ['tour', 'user']) {
+    for (const domain of ['tour', 'user', 'wishlist']) {
       expect(
         sourceFiles.some((entry) => entry.name === `repositories/${domain}.repository.js`)
       ).toBe(true);

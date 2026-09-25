@@ -81,7 +81,7 @@ test('lists the saved tours for the signed-in traveller', async () => {
   );
 
   expect(await screen.findByText('Kandy Escapade')).toBeInTheDocument();
-  expect(wishlistApi.fetchWishlist).toHaveBeenCalledWith('ada@example.com');
+  expect(wishlistApi.fetchWishlist).toHaveBeenCalledWith();
   expect(screen.getByText('3 Days, 2 Nights')).toBeInTheDocument();
 });
 
@@ -98,9 +98,7 @@ test('removes a saved tour through the api layer', async () => {
   await screen.findByText('Kandy Escapade');
   fireEvent.click(screen.getByRole('button', { name: 'Remove Kandy Escapade from wishlist' }));
 
-  await waitFor(() =>
-    expect(wishlistApi.removeFromWishlist).toHaveBeenCalledWith('tour-1', 'ada@example.com')
-  );
+  await waitFor(() => expect(wishlistApi.removeFromWishlist).toHaveBeenCalledWith('tour-1'));
   await waitFor(() => expect(screen.queryByText('Kandy Escapade')).not.toBeInTheDocument());
 });
 

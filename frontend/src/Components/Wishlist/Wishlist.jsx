@@ -38,7 +38,7 @@ const Wishlist = () => {
       }
 
       try {
-        const data = await wishlistApi.fetchWishlist(user.user.email);
+        const data = await wishlistApi.fetchWishlist();
 
         setWishlistItems(data.wishlist);
       } catch (error) {
@@ -63,7 +63,7 @@ const Wishlist = () => {
     }
 
     try {
-      await wishlistApi.removeFromWishlist(tourId, user.user.email);
+      await wishlistApi.removeFromWishlist(tourId);
 
       // Remove the item from the state after successful deletion
       setWishlistItems((prevItems) => prevItems.filter((item) => item.tourId._id !== tourId));

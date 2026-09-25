@@ -55,6 +55,22 @@ Errors may add context fields, for example a failed booking:
 | GET    | `/health/live`  | Liveness — never touches the database         |
 | GET    | `/health/ready` | Readiness — `503` when MongoDB is unreachable |
 
+## Wishlist
+
+All wishlist routes require a customer access token. The API derives ownership
+from the verified account and ignores any email sent by the client.
+
+| Method | Path                           | Body / result                                        |
+| ------ | ------------------------------ | ---------------------------------------------------- |
+| GET    | `/api/wishlist`                | `{ success, wishlist }` for the token owner          |
+| POST   | `/api/wishlist/add`            | `{ tourId }`; returns `201` or `409` when duplicated |
+| DELETE | `/api/wishlist/remove/:tourId` | Removes the token owner's item; `404` when absent    |
+
+`tourId` must be a 24-character MongoDB ObjectId. A forged body/query email
+never selects another account. The response does not repeat the owner's email.
+The `(email, tourId)` database key is unique; run the wishlist normalization
+migration and `npm run db:indexes` during deployment.
+
 ## Tours
 
 | Method | Path                                        | Notes                                                                                     |

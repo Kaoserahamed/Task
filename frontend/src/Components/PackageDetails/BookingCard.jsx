@@ -52,18 +52,16 @@ const BookingCard = ({
     }
   }, [message]);
 
-  logDebug('User in BookingCard:', user?.user?.email);
-
   const handleAddToWishlist = async () => {
     if (!user) {
       setMessage('Please log in to add to wishlist');
       return;
     }
 
-    logDebug('Adding to wishlist - Email:', user?.user?.email, 'Tour ID:', tourId);
+    logDebug('Adding to wishlist - Tour ID:', tourId);
 
     try {
-      const data = await wishlistApi.addToWishlist(tourId, user?.user?.email);
+      const data = await wishlistApi.addToWishlist(tourId);
 
       setMessage(data.message);
     } catch (error) {

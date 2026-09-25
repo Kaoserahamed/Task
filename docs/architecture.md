@@ -61,10 +61,10 @@ reviewer to discover. That contract is a **ratchet**: repositories are the only
 layer allowed to import a Mongoose model, and the list of files that still break
 the rule can only shrink.
 
-| Status  | Domains                                                                                                                   |
-| ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Layered | `tour` (create/update/status/seats/suggestions), `user` (register, login, search, profile, avatar, password reset)        |
-| Pending | `company`, `booking`, `review`, `admin`, `dashboard`, `wishlist`, `chat`, `place`, `weather`, `suggestion`, `seed`/`demo` |
+| Status  | Domains                                                                                                                                                       |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Layered | `tour` (create/update/status/seats/suggestions), `user` (register, login, search, profile, avatar, password reset), `wishlist` (owner-scoped add/list/remove) |
+| Pending | `company`, `booking`, `review`, `admin`, `dashboard`, `chat`, `place`, `weather`, `suggestion`, `seed`/`demo`                                                 |
 
 `npm run verify:repo` prints the exact set of pending files on every run, and the
 contract test fails if a **new** file reaches for a model _or_ if a migrated file

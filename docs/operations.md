@@ -90,12 +90,15 @@ an instance out of rotation without killing it.
 
 ### Changing data
 
-Schema changes are migrations, applied by an operator and never at boot:
+Schema changes are migrations, applied by an operator and never at boot.
+Wishlist uniqueness is a two-step deployment: run the numbered normalization
+migration first, then apply model indexes:
 
 ```bash
 cd backend
-node scripts/run-migrations.js --dry-run   # what would run
-node scripts/run-migrations.js             # apply and record
+node scripts/run-migrations.js --dry-run   # inspect pending migrations
+node scripts/run-migrations.js             # normalize and deduplicate
+npm run db:indexes                          # create the unique owner/tour index
 ```
 
 Against a production database the runner refuses to start unless

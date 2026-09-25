@@ -97,9 +97,7 @@ describe('api/client', () => {
     fetch.mockReturnValue(
       Promise.resolve({ status: 200, ok: true, text: () => Promise.resolve(''), json: () => null })
     );
-    await expect(api.delete('/api/wishlist/remove/42', { body: { email: 'a@b.c' } })).resolves.toBe(
-      null
-    );
+    await expect(api.delete('/api/wishlist/remove/42')).resolves.toBeNull();
   });
 
   test('exposes the PATCH verb used by tour actions', async () => {

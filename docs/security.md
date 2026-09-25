@@ -93,7 +93,10 @@ The gaps below are deliberate; they are repeated in
   one-line change; a refresh endpoint with a `jti` deny-list is the follow-up
   described in
   [ADR 0006](adr/0006-access-tokens-and-password-hashing.md).
-- **Validation coverage.** `validators/` covers the tour and company write endpoints; the tour validator is the template.
+- **Validation coverage.** `validators/` covers the tour, company, and wishlist
+  write endpoints; the tour validator is the template. The wishlist owner key is
+  normalized and unique per tour, with a numbered migration removing historical
+  duplicates before the index is created.
 - **Uploads.** Production selects private S3 when `S3_BUCKET` and AWS region
   are configured; legacy Cloudinary multipart uploads remain available when
   explicitly configured. S3 buckets are private and downloads use short-lived

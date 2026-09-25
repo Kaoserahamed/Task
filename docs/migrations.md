@@ -31,6 +31,9 @@ renamed or deleted) it stops with an error instead of applying the rest against
 an unreproducible state. A migration whose `up()` throws is not recorded, so it
 runs again on the next attempt.
 
+The wishlist migration also drops the legacy non-unique owner/tour index after
+the collection is clean, allowing the new unique index to be created.
+
 ## The schema is versioned in the documents
 
 Migrations that change a shape add a `schemaVersion` field while they are at it:

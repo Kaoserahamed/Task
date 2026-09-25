@@ -79,7 +79,7 @@ re-checks both the global floor and the stricter `./src/api/` floor. CI performs
 both steps, so a missing report or a threshold that is only documented cannot
 produce a green build.
 
-The repository has 80 tracked test/spec files across the backend and three React
+The repository has 89 tracked test/spec files across the backend and three React
 apps. The endpoint contract suites cover every exported resource function, and
 `backend/tests/unit/contracts/frontend-layer.test.js` fails if a new export is
 added without a corresponding contract assertion.

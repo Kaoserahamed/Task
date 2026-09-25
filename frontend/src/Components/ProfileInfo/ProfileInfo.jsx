@@ -43,7 +43,7 @@ const ProfileInfo = () => {
 
       try {
         // Fetch Wishlist Count
-        const wishlistData = await wishlistApi.fetchWishlist(userData.email);
+        const wishlistData = await wishlistApi.fetchWishlist();
         setWishlistCount(wishlistData.wishlist?.length || 0);
 
         // Fetch Bookings (trips)

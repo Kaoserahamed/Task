@@ -106,20 +106,20 @@ describe('api endpoint contract', () => {
   });
 
   test('wishlist, places, weather and suggestion endpoints', async () => {
-    await wishlist.fetchWishlist('a@b.c');
-    expect(lastCall().url).toBe('http://localhost:4000/api/wishlist?email=a%40b.c');
+    await wishlist.fetchWishlist();
+    expect(lastCall().url).toBe('http://localhost:4000/api/wishlist');
 
-    await wishlist.addToWishlist('t1', 'a@b.c');
-    expect(lastCall()).toMatchObject({
-      url: 'http://localhost:4000/api/wishlist/add',
-      options: { method: 'POST' },
-    });
+    await wishlist.addToWishlist('t1');
+    expect(lastCall().url).toBe('http://localhost:4000/api/wishlist/add');
+    expect(lastCall().options.method).toBe('POST');
+    expect(lastCall().options.body).toBe(JSON.stringify({ tourId: 't1' }));
 
-    await wishlist.removeFromWishlist('t1', 'a@b.c');
+    await wishlist.removeFromWishlist('t1');
     expect(lastCall()).toMatchObject({
       url: 'http://localhost:4000/api/wishlist/remove/t1',
       options: { method: 'DELETE' },
     });
+    expect(lastCall().options.body).toBeUndefined();
 
     await places.fetchHotels();
     expect(lastCall().url).toBe('http://localhost:4000/api/hotels');

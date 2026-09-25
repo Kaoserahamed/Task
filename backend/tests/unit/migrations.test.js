@@ -38,8 +38,11 @@ describe('loadMigrations', () => {
     expect(() => loadMigrations(dir)).toThrow(/must export an up\(\) function/);
   });
 
-  test('ships an empty-but-valid migrations directory today', () => {
-    expect(Array.isArray(shipped())).toBe(true);
+  test('ships the wishlist normalization migration', () => {
+    const migrations = shipped();
+
+    expect(migrations.map((migration) => migration.id)).toEqual(['001']);
+    expect(migrations[0].description).toMatch(/wishlist ownership keys/);
   });
 });
 

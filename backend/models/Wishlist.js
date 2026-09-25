@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 const wishlistSchema = new mongoose.Schema({
   email: {
-    // Store user's email instead of userId
+    // Normalize ownership keys so casing cannot create duplicate wishlist rows.
     type: String,
     required: true,
+    lowercase: true,
+    trim: true,
   },
   tourId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +19,7 @@ const wishlistSchema = new mongoose.Schema({
   },
 });
 
-wishlistSchema.index({ email: 1, tourId: 1 });
+wishlistSchema.index({ email: 1, tourId: 1 }, { unique: true });
 wishlistSchema.index({ tourId: 1, createdAt: -1 });
 
 const Wishlist = mongoose.model('Wishlist', wishlistSchema);
