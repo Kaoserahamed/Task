@@ -1,0 +1,57 @@
+name: Conventional Commit messages
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: commitlint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  commitlint:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the complete history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install commit tooling
+        run: npm ci
+      - name: Validate Conventional Commit messages
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            FROM="$BASE_SHA"
+            TO="$PR_HEAD_SHA"
+          elif [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            FROM="${HEAD_SHA}^"
+            TO="$HEAD_SHA"
+          else
+            FROM="$BEFORE_SHA"
+            TO="$HEAD_SHA"
+          fi
+          if ! git rev-list --count "$FROM..$TO" >/dev/null 2>&1; then
+            echo "No commit range available for commitlint; skipping."
+            exit 0
+          fi
+          npx commitlint --from "$FROM" --to "$TO" --verbose

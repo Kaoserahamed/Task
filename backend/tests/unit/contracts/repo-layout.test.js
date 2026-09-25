@@ -123,6 +123,14 @@ describe('monorepo layout', () => {
     }
     expect(checker).toContain('networkPrimitive');
   });
+
+  test('the commit message policy is configured locally and in CI', () => {
+    const manifest = readJson('package.json');
+    expect(manifest.scripts['lint:commits']).toContain('commitlint');
+    expect(manifest.devDependencies['@commitlint/cli']).toBeDefined();
+    expect(manifest.devDependencies['@commitlint/config-conventional']).toBeDefined();
+    expect(exists('commitlint.config.mjs')).toBe(true);
+  });
 });
 
 describe('documentation layout', () => {

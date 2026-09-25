@@ -85,8 +85,10 @@ reject it.
 
 ## Commits
 
-This repository uses [Conventional Commits](https://www.conventionalcommits.org/)
-enforced by a `commit-msg` git hook (Husky):
+This repository uses [Conventional Commits](https://www.conventionalcommits.org/).
+The `lint:commits` command validates the most recent local commit, and the
+`commitlint.yml` workflow validates every commit introduced by a pull request
+and every new commit pushed to `main` or `develop`:
 
 ```
 <type>[optional scope]: <description>

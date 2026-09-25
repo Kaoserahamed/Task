@@ -8,6 +8,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Conventional Commit messages are now enforced locally with `lint:commits` and
+  in CI for pull-request and protected-branch commit ranges, without rewriting
+  history.
 - The offline test path now clears external provider credentials and runs a
   repository contract that rejects unmocked network SDKs or direct network calls
   in unit tests. CI runs the boundary check from a fresh clone.

@@ -24,6 +24,7 @@ runs on every push and pull-request to `main` / `develop`. It mirrors the local
 | `web`               | matrix over `frontend`, `admin`, `tourcompanydashboard`                                      | lint error, test failure, or build failure                                  |
 | `typecheck-backend` | `npm run typecheck --prefix backend`                                                         | any TypeScript error                                                        |
 | `fresh-clone`       | `npm run setup`, repository guard, offline boundary, format check, and full `npm run verify` | install, test, type, format, provider-boundary, or repository drift failure |
+| `commitlint`        | Conventional Commit validation over the push or pull-request range                           | a non-conforming commit message                                             |
 | `docker`            | `docker compose -f docker-compose.test.yml build` and the image health                       | build failure or a container that never turns healthy                       |
 
 The `fresh-clone` job is what makes the README's Quick Start executable: it runs

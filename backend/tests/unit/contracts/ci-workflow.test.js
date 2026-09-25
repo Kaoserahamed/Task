@@ -97,6 +97,17 @@ describe('CI workflow contract', () => {
     expect(workflow).toMatch(/name: Verify the offline test boundary/);
   });
 
+  test('enforces Conventional Commit messages without rewriting history', () => {
+    const commitlint = read('.github', 'workflows', 'commitlint.yml');
+    expect(commitlint).toMatch(/^name: Conventional Commit messages/m);
+    expect(commitlint).toMatch(/pull_request:/);
+    expect(commitlint).toMatch(/push:/);
+    expect(commitlint).toMatch(/fetch-depth: 0/);
+    expect(commitlint).toMatch(/npm ci/);
+    expect(commitlint).toMatch(/npx commitlint --from "\$FROM" --to "\$TO"/);
+    expect(commitlint).toMatch(/contents: read/);
+  });
+
   test('gates Terraform formatting, validation, planning, and policy scanning', () => {
     const securityWorkflow = read('.github', 'workflows', 'security.yml');
     expect(securityWorkflow).toMatch(/terraform fmt -check -recursive/);

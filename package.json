@@ -30,6 +30,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:root": "eslint scripts",
+    "lint:commits": "commitlint --from HEAD^ --to HEAD --verbose",
     "verify:repo": "node scripts/verify-repo.mjs",
     "verify": "npm run dependency:check && npm run lint && npm run lint:root && npm run format:check && npm run typecheck && npm run verify:repo && npm test && npm run verify:build",
     "stack:up": "docker compose up --build",
@@ -44,6 +45,8 @@
   ],
   "license": "UNLICENSED",
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.16.0",
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^10.1.8",
