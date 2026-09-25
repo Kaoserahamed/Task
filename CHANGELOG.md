@@ -8,6 +8,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Optional, privacy-safe Sentry monitoring and root error containment in all
+  three React apps, with event-reference fallback UI, retry recovery, environment
+  templates, focused tests, and a cross-app architecture contract. Sentry 11's
+  Node requirement is reflected in every package's `>=20.19.0` engine floor.
 - Customer search filtering now delegates URL parsing, review aggregation, matching, sorting,
   and display formatting to a tested `searchFilters` utility.
 

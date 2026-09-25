@@ -103,9 +103,10 @@ values in `backend/.env` (see `backend/.env.example`):
 
 **Frontend Applications**
 
-- React 19 with React Router v7
+- React 18 with React Router v7
 - A single fetch-based API layer per app (`src/api/`), see
   [docs/frontend.md](docs/frontend.md)
+- Root error boundaries with optional Sentry monitoring and default PII disabled
 - Context API for state management
 - Socket.IO client for real-time features
 - Lucide React for UI icons
@@ -173,7 +174,7 @@ Task/
 
 ### Prerequisites
 
-- Node.js 20+ and npm (see `.nvmrc`)
+- Node.js 20.19+ and npm (see `.nvmrc`)
 - MongoDB (local or MongoDB Atlas account)
 - Docker (optional — for the compose stack and the integration suite)
 - Cloudinary account (free tier available)

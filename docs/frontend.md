@@ -75,6 +75,33 @@ Both properties are guarded: `scripts/verify-repo.mjs` fails when an app loses
 its `tsconfig.json` or the `// @ts-check` pragma, and
 `backend/tests/unit/contracts/frontend-layer.test.js` asserts the same.
 
+## Error containment and browser monitoring
+
+Every app initializes optional Sentry monitoring before mounting React and wraps
+the complete application in `AppErrorBoundary`:
+
+```text
+src/index.js
+  → initializeMonitoring()
+  → AppErrorBoundary
+    → StrictMode
+      → App
+```
+
+- `REACT_APP_SENTRY_DSN` is optional. An empty value leaves the application fully
+  functional and sends nothing.
+- `REACT_APP_RELEASE` should be an immutable release identifier such as
+  `task-frontend@1.0.0`; set it separately in each deployment.
+- `sendDefaultPii` is always `false`, and the initializer refuses to start twice
+  or crash the application when configuration is invalid.
+- The fallback never renders the raw error. When monitoring is configured, it
+  shows the Sentry event ID when available, gives the user a safe retry that
+  remounts the subtree, and links to the home page for a full recovery path.
+
+Each app has focused tests for disabled/configured/rejected monitoring and for
+fallback plus retry behavior. The cross-app contract fails if a dependency,
+initializer, root boundary, release variable, or PII-safe setting disappears.
+
 ## Tests and coverage floors
 
 ```bash

@@ -19,7 +19,7 @@ we use for changes.
 
 ## Prerequisites
 
-- Node.js **20** (see `.nvmrc` at the repository root)
+- Node.js **20.19+** (see `.nvmrc` at the repository root)
 - npm **10+**
 - Docker + Docker Compose (only required for the full-stack local dev server)
 

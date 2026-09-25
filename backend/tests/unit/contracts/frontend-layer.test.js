@@ -131,6 +131,28 @@ describe('frontend API layer contract', () => {
         expect(eslintConfig).toMatch(/'no-console':\s*'error'/);
       });
 
+      test('contains root render failures in privacy-safe optional monitoring', () => {
+        const manifest = readJson(`${app}/package.json`);
+        const sourceRoot = path.join(repoRoot, app, 'src');
+        const entry = fs.readFileSync(path.join(sourceRoot, 'index.js'), 'utf8');
+        const monitoring = fs.readFileSync(path.join(sourceRoot, 'monitoring.js'), 'utf8');
+        const boundaryName = app === 'admin' ? 'components' : 'Components';
+        const boundary = fs.readFileSync(
+          path.join(sourceRoot, boundaryName, 'ui', 'AppErrorBoundary.jsx'),
+          'utf8'
+        );
+
+        expect(manifest.dependencies['@sentry/react']).toBe('^11.0.0');
+        expect(entry).toContain('initializeMonitoring()');
+        expect(entry).toContain('<AppErrorBoundary>');
+        expect(monitoring).toContain('REACT_APP_SENTRY_DSN');
+        expect(monitoring).toContain('REACT_APP_RELEASE');
+        expect(monitoring).toMatch(/sendDefaultPii:\s*false/);
+        expect(boundary).toContain("from '@sentry/react'");
+        expect(boundary).toContain('resetError');
+        expect(boundary).toContain('eventId');
+      });
+
       test('declares coverage collection and floors', () => {
         const manifest = readJson(`${app}/package.json`);
         const { jest } = manifest;

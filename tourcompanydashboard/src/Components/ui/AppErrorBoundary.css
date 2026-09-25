@@ -1,0 +1,66 @@
+.app-error-boundary {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: var(--background-color, #f5f6fa);
+  color: var(--text-color, #2c3e50);
+}
+
+.app-error-boundary__card {
+  width: min(100%, 36rem);
+  padding: 2rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 1rem 3rem rgb(15 23 42 / 12%);
+}
+
+.app-error-boundary__eyebrow {
+  color: #b45309;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-error-boundary h1 {
+  margin: 0.5rem 0 1rem;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.app-error-boundary__reference {
+  margin-top: 1rem;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+.app-error-boundary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.app-error-boundary button,
+.app-error-boundary a {
+  border-radius: 0.5rem;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-error-boundary button {
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--primary-color, #0f766e);
+  background: var(--primary-color, #0f766e);
+  color: white;
+  cursor: pointer;
+}
+
+.app-error-boundary a {
+  padding: 0.7rem 0.25rem;
+  color: var(--primary-color, #0f766e);
+  text-decoration: underline;
+}

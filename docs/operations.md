@@ -39,6 +39,23 @@ Typical line:
 }
 ```
 
+## Browser errors
+
+All three React applications use the same root error-containment contract:
+
+1. `src/index.js` calls `initializeMonitoring()` before React mounts.
+2. `src/monitoring.js` initializes Sentry only when `REACT_APP_SENTRY_DSN` is set,
+   disables default PII collection, and attaches `REACT_APP_RELEASE` when the
+   deployment provides it.
+3. `AppErrorBoundary` contains a render failure, shows the Sentry event ID when
+   monitoring is configured and the event was captured, and offers **Try again**
+   without requiring a full-page reload.
+
+An empty DSN is the supported local/test configuration. Set an app-specific DSN
+and immutable release only in that app's Vercel/ECS deployment. A user reporting
+an error should provide the visible support reference; use it to find the browser
+event and correlate it with the backend `x-request-id` for API failures.
+
 ## Running it
 
 ```bash

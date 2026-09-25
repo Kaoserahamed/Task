@@ -51,7 +51,7 @@
   "description": "",
   "packageManager": "npm@11.14.1",
   "engines": {
-    "node": ">=20",
+    "node": ">=20.19.0",
     "npm": ">=10 <12"
   },
   "devDependencies": {

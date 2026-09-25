@@ -31,7 +31,8 @@ lint:fix` and `npm run format` before pushing.
 
 ## Dev container (zero-install onboarding)
 
-`.devcontainer/devcontainer.json` gives you Node 20, Docker-in-Docker (for
+`.devcontainer/devcontainer.json` gives you the current Node 20 release,
+Docker-in-Docker (for
 `docker compose`), the GitHub CLI and the ESLint/Prettier/MongoDB extensions in
 one click — locally in VS Code via _Dev Containers: Reopen in Container_, or in
 a Codespace. It runs `npm run setup` on creation and forwards the ports the rest

@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const packageDirs = ['', 'backend', 'frontend', 'admin', 'tourcompanydashboard'];
 const expectedPackageManager = 'npm@11.14.1';
+const expectedNodeEngine = '>=20.19.0';
 const failures = [];
 const inventory = [];
 
@@ -44,8 +45,8 @@ for (const packageDir of packageDirs) {
   if (manifest.packageManager !== expectedPackageManager) {
     fail(`${manifestPath}: packageManager must be ${expectedPackageManager}`);
   }
-  if (manifest.engines?.node !== '>=20') {
-    fail(`${manifestPath}: engines.node must be >=20`);
+  if (manifest.engines?.node !== expectedNodeEngine) {
+    fail(`${manifestPath}: engines.node must be ${expectedNodeEngine}`);
   }
   if (manifest.engines?.npm !== '>=10 <12') {
     fail(`${manifestPath}: engines.npm must be >=10 <12`);
@@ -88,7 +89,7 @@ process.stdout.write(`Dependency inventory:\n${report}\n`);
 
 if (process.argv.includes('--report')) {
   process.stdout.write(
-    `Policy: packageManager=${expectedPackageManager}; Node >=20; npm >=10 <12; lockfile v3; no floating/git/URL dependency ranges.\n`
+    `Policy: packageManager=${expectedPackageManager}; Node ${expectedNodeEngine}; npm >=10 <12; lockfile v3; no floating/git/URL dependency ranges.\n`
   );
 }
 
