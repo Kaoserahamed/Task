@@ -5,12 +5,12 @@ import * as toursApi from '../../api/tours';
 import { logError } from '../../utils/logger';
 import validateTourForm from '../../validators/tourForm';
 import { buildTourUpdateFormData, toEditableTour } from '../../utils/tourPayload';
-import BasicInfoSection from './sections/BasicInfoSection';
-import ServicesSection from './sections/ServicesSection';
-import DestinationsSection from './sections/DestinationsSection';
-import PackageDetailsSection from './sections/PackageDetailsSection';
-import WeatherSection from './sections/WeatherSection';
-import ImagesSection from './sections/ImagesSection';
+import BasicInfoSection from '../TourFormSections/BasicInfoSection';
+import ServicesSection from '../TourFormSections/ServicesSection';
+import DestinationsSection from '../TourFormSections/DestinationsSection';
+import PackageDetailsSection from '../TourFormSections/PackageDetailsSection';
+import WeatherSection from '../TourFormSections/WeatherSection';
+import ImagesSection from '../TourFormSections/ImagesSection';
 import './EditTour.css';
 
 /**
@@ -46,6 +46,8 @@ const EditTour = () => {
     addDestination,
     handleFileChange,
     handleRemoveImage,
+    imageError,
+    clearImageError,
   } = useTourForm();
 
   useEffect(() => {
@@ -140,6 +142,8 @@ const EditTour = () => {
           tourDetails={tourDetails}
           handleFileChange={handleFileChange}
           handleRemoveImage={handleRemoveImage}
+          imageError={imageError}
+          clearImageError={clearImageError}
         />
 
         <button type="submit" className="submit-button">

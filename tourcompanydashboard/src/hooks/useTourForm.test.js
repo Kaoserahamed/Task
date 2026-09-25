@@ -47,7 +47,7 @@ describe('useTourForm', () => {
     expect(previous.includes).toEqual(['']);
   });
 
-  test('adds destinations and images', () => {
+  test('adds destinations and valid images', () => {
     const { result } = renderHook(() => useTourForm());
     const image = new File(['image'], 'tour.jpg', { type: 'image/jpeg' });
 
@@ -59,5 +59,19 @@ describe('useTourForm', () => {
 
     act(() => result.current.handleRemoveImage(0));
     expect(result.current.tourDetails.images).toEqual([]);
+  });
+
+  test('accepts valid images from a mixed selection and exposes rejected-file feedback', () => {
+    const { result } = renderHook(() => useTourForm());
+    const valid = new File(['image'], 'valid.png', { type: 'image/png' });
+    const invalid = new File(['pdf'], 'document.pdf', { type: 'application/pdf' });
+
+    act(() => result.current.handleFileChange({ target: { files: [invalid, valid] } }));
+
+    expect(result.current.tourDetails.images).toEqual([valid]);
+    expect(result.current.imageError).toContain('use JPEG, PNG, WebP, or GIF');
+
+    act(() => result.current.clearImageError());
+    expect(result.current.imageError).toBe('');
   });
 });

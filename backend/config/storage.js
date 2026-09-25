@@ -11,6 +11,7 @@ const {
 } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const config = require('./env');
+const { UPLOAD } = require('./constants');
 
 const ALLOWED_TYPES = new Map([
   ['image/jpeg', '.jpg'],
@@ -18,7 +19,7 @@ const ALLOWED_TYPES = new Map([
   ['image/webp', '.webp'],
   ['image/gif', '.gif'],
 ]);
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = UPLOAD.MAX_FILE_SIZE;
 
 function requireStorageConfig() {
   if (!config.aws.region || !config.aws.s3Bucket) {
@@ -136,7 +137,7 @@ function createS3Storage() {
 function createS3Upload() {
   return multer({
     storage: createS3Storage(),
-    limits: { fileSize: MAX_FILE_SIZE, files: 5 },
+    limits: { fileSize: MAX_FILE_SIZE, files: UPLOAD.MAX_FILES },
     fileFilter: (req, file, callback) => {
       try {
         validateUpload({

@@ -1,4 +1,4 @@
-// Weather fields for the edit-tour form.
+// Weather fields shared by the tour forms.
 const WeatherSection = ({ tourDetails, weatherConditions, handleWeatherChange }) => (
   <div className="form-section">
     <h2>Weather Information</h2>

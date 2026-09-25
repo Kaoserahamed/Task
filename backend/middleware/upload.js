@@ -1,4 +1,5 @@
 const multer = require('multer');
+const { UPLOAD } = require('../config/constants');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -23,7 +24,8 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: UPLOAD.MAX_FILE_SIZE,
+    files: UPLOAD.MAX_FILES,
   },
 });
 

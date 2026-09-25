@@ -1,4 +1,4 @@
-import { buildTourUpdateFormData, toEditableTour } from './tourPayload';
+import { buildTourCreateFormData, buildTourUpdateFormData, toEditableTour } from './tourPayload';
 
 describe('toEditableTour', () => {
   test('trims ISO timestamps down to date-input values', () => {
@@ -43,6 +43,42 @@ describe('toEditableTour', () => {
 
     expect(form.name).toBe('');
     expect(form.destinations).toHaveLength(1);
+  });
+});
+
+describe('buildTourCreateFormData', () => {
+  test('serializes scalar and nested fields with the authenticated company', () => {
+    const file = new File(['binary'], 'cover.png', { type: 'image/png' });
+    const formData = buildTourCreateFormData(
+      {
+        name: 'Hill Weekend',
+        packageCategories: ['Nature & Eco'],
+        customCategory: '',
+        tourType: { single: false, group: true },
+        duration: { days: 2, nights: 1 },
+        startDate: '2026-07-01',
+        endDate: '2026-07-02',
+        meals: { breakfast: true, lunch: false, dinner: false },
+        transportation: { type: 'Bus', details: 'Coach' },
+        tourGuide: true,
+        price: '450',
+        maxGroupSize: '12',
+        availableSeats: '10',
+        destinations: [{ name: 'Sylhet' }],
+        images: [file, '/uploads/not-new.png'],
+        includes: ['Breakfast'],
+        excludes: [],
+        specialNote: '',
+        cancellationPolicy: '',
+        weather: { city: 'Sylhet' },
+      },
+      { _id: 'company-1', name: 'Contoso Tours' }
+    );
+
+    expect(formData.get('name')).toBe('Hill Weekend');
+    expect(formData.get('companyId')).toBe('company-1');
+    expect(JSON.parse(formData.get('weather'))).toEqual({ city: 'Sylhet' });
+    expect(formData.getAll('images')).toEqual([file]);
   });
 });
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { selectTourImages } from '../utils/tourImages';
 import {
   EMPTY_DESTINATION,
   PACKAGE_CATEGORIES,
@@ -9,6 +10,7 @@ import {
 
 export function useTourForm(initialDetails = {}) {
   const [tourDetails, setTourDetails] = useState(() => createTourFormState(initialDetails));
+  const [imageError, setImageError] = useState('');
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -92,9 +94,12 @@ export function useTourForm(initialDetails = {}) {
   };
 
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files || []);
-    setTourDetails((current) => ({ ...current, images: [...current.images, ...files] }));
+    const result = selectTourImages(tourDetails.images, Array.from(event.target.files || []));
+    setTourDetails((current) => ({ ...current, images: result.images }));
+    setImageError(result.error);
   };
+
+  const clearImageError = () => setImageError('');
 
   const handleRemoveImage = (index) => {
     setTourDetails((current) => ({
@@ -122,5 +127,7 @@ export function useTourForm(initialDetails = {}) {
     addDestination,
     handleFileChange,
     handleRemoveImage,
+    imageError,
+    clearImageError,
   };
 }

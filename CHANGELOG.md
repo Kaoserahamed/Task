@@ -8,6 +8,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The tour-company upload form is now a tested 132-line orchestrator using shared
+  create/edit sections and a pure multipart serializer. Browser and all backend
+  storage adapters enforce one accessible five-image, 5 MB upload policy; object
+  URL previews are revoked on replacement and unmount.
 - The tour seed script is now a 129-line import-safe runner over five category
   fixture modules, with tested company attachment, environment validation, and
   guaranteed database disconnect behavior.
@@ -51,9 +55,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `MONGODB_URI_TEST`, both Places API key names and `VERCEL` are documented in the
   environment templates, and a contract test keeps every web app's `.env.example`
   in sync with the `process.env` reads inside its source.
-- The tour-company edit form is now an orchestrator: the six form sections live in
-  `Components/EditTour/sections/`, while API-response normalisation and the
-  multipart update body moved to tested `utils/tourPayload.js`. `EditTour.jsx`
+- The tour-company edit form is now an orchestrator: all six shared form sections
+  live in `Components/TourFormSections/`, while API-response normalisation and the
+  multipart update body live in tested `utils/tourPayload.js`. `EditTour.jsx`
   dropped from 429 to under 200 lines.
 - The review page is composed from a presentational `ReviewForm` and `ReviewCard`,
   with date formatting, completed-tour filtering, photo validation and multipart

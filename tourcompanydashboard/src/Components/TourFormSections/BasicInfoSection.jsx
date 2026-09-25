@@ -1,5 +1,5 @@
-// Basic-information section of the edit-tour form. State stays in useTourForm;
-// this component only renders the fields and forwards the handlers.
+// Basic-information fields shared by the create and edit tour forms. State
+// stays in useTourForm; this component only renders fields and forwards events.
 const BasicInfoSection = ({
   tourDetails,
   packageCategories,
@@ -7,6 +7,7 @@ const BasicInfoSection = ({
   handleDurationChange,
   handleCategoryChange,
   handleTourTypeChange,
+  groupOnly = false,
 }) => (
   <div className="form-section">
     <h2>Basic Information</h2>
@@ -45,22 +46,31 @@ const BasicInfoSection = ({
     <div className="tour-type-section">
       <h3>Tour Type</h3>
       <div className="checkbox-group">
-        <label>
-          <input
-            type="checkbox"
-            checked={tourDetails.tourType.single}
-            onChange={() => handleTourTypeChange('single')}
-          />
-          Single
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={tourDetails.tourType.group}
-            onChange={() => handleTourTypeChange('group')}
-          />
-          Group
-        </label>
+        {groupOnly ? (
+          <label>
+            <input type="checkbox" checked disabled readOnly />
+            Group
+          </label>
+        ) : (
+          <>
+            <label>
+              <input
+                type="checkbox"
+                checked={tourDetails.tourType.single}
+                onChange={() => handleTourTypeChange('single')}
+              />
+              Single
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={tourDetails.tourType.group}
+                onChange={() => handleTourTypeChange('group')}
+              />
+              Group
+            </label>
+          </>
+        )}
       </div>
     </div>
 
@@ -87,7 +97,7 @@ const BasicInfoSection = ({
       />
     </div>
 
-    {tourDetails.tourType.group && (
+    {(groupOnly || tourDetails.tourType.group) && (
       <div className="group-details">
         <input
           type="number"
@@ -103,7 +113,7 @@ const BasicInfoSection = ({
           placeholder="Available Seats"
           value={tourDetails.availableSeats}
           onChange={handleChange}
-          min="0"
+          min={groupOnly ? '1' : '0'}
         />
         <input
           type="date"

@@ -50,6 +50,46 @@ export function toEditableTour(tour) {
  * New `File` values travel as `newImages`; anything already stored is sent as a
  * JSON `existingImages` list, so the server keeps exactly those images.
  */
+const CREATE_JSON_FIELDS = [
+  'packageCategories',
+  'tourType',
+  'duration',
+  'meals',
+  'transportation',
+  'destinations',
+  'includes',
+  'excludes',
+  'weather',
+];
+const CREATE_SCALAR_FIELDS = [
+  'name',
+  'customCategory',
+  'startDate',
+  'endDate',
+  'tourGuide',
+  'price',
+  'maxGroupSize',
+  'availableSeats',
+  'specialNote',
+  'cancellationPolicy',
+];
+
+/** Build the multipart body for `POST /api/tours`. */
+export function buildTourCreateFormData(tourDetails, company = {}) {
+  const formData = new FormData();
+
+  CREATE_SCALAR_FIELDS.forEach((field) => formData.append(field, tourDetails[field] ?? ''));
+  CREATE_JSON_FIELDS.forEach((field) => formData.append(field, JSON.stringify(tourDetails[field])));
+  formData.append('companyId', company._id ?? '');
+  formData.append('companyName', company.name ?? '');
+
+  (tourDetails.images || []).forEach((image) => {
+    if (image instanceof File) formData.append('images', image);
+  });
+
+  return formData;
+}
+
 export function buildTourUpdateFormData(tourDetails) {
   const formData = new FormData();
 

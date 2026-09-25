@@ -37,4 +37,17 @@ describe('S3 storage policy', () => {
       '/api/storage/object/uploads/2026-01-01/photo%20one.png'
     );
   });
+
+  test('uses one bounded multipart policy across every storage adapter', () => {
+    const { UPLOAD } = require('../../config/constants');
+    const cloudinarySource = require('fs').readFileSync(
+      require.resolve('../../config/cloudinary'),
+      'utf8'
+    );
+    const localSource = require('fs').readFileSync(require.resolve('../../config/upload'), 'utf8');
+
+    expect(UPLOAD).toMatchObject({ MAX_FILE_SIZE: 5 * 1024 * 1024, MAX_FILES: 5 });
+    expect(cloudinarySource).toContain('files: UPLOAD.MAX_FILES');
+    expect(localSource).toContain('files: UPLOAD.MAX_FILES');
+  });
 });

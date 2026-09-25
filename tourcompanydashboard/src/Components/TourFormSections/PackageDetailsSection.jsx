@@ -1,4 +1,4 @@
-// Includes, excludes, notes and price for the edit-tour form.
+// Includes, excludes, notes and price shared by the tour forms.
 const PackageDetailsSection = ({
   tourDetails,
   handleChange,

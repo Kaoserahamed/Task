@@ -8,6 +8,7 @@
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary-v2');
 const multer = require('multer');
+const { UPLOAD } = require('./constants');
 
 const logger = require('../utils/logger');
 
@@ -41,14 +42,16 @@ const reviewStorage = new CloudinaryStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: UPLOAD.MAX_FILE_SIZE,
+    files: UPLOAD.MAX_FILES,
   },
 });
 
 const reviewUpload = multer({
   storage: reviewStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: UPLOAD.MAX_FILE_SIZE,
+    files: UPLOAD.MAX_FILES,
   },
 });
 

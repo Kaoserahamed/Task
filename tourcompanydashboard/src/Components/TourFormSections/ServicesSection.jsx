@@ -1,5 +1,4 @@
-// Meals, transportation and tour-guide options. Mirrors the services block of
-// the old single-file form; state stays in useTourForm.
+// Shared presentational sections for create and edit tour forms.
 const ServicesSection = ({
   tourDetails,
   transportationTypes,

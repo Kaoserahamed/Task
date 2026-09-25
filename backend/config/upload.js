@@ -1,4 +1,5 @@
 const config = require('./env');
+const { UPLOAD } = require('./constants');
 const logger = require('../utils/logger');
 
 // Choose upload strategy based on environment
@@ -30,7 +31,8 @@ if (config.aws.region && config.aws.s3Bucket) {
   upload = multer({
     storage,
     limits: {
-      fileSize: 5 * 1024 * 1024, // 5MB limit
+      fileSize: UPLOAD.MAX_FILE_SIZE,
+      files: UPLOAD.MAX_FILES,
     },
     fileFilter: (req, file, cb) => {
       const allowedTypes = /jpeg|jpg|png|gif|webp/;

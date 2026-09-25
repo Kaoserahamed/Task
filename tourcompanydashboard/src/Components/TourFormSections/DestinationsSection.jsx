@@ -1,4 +1,4 @@
-// Repeatable destination rows for the edit-tour form.
+// Repeatable destination rows shared by the tour forms.
 const DestinationsSection = ({ tourDetails, handleDestinationsChange, addDestination }) => (
   <div className="form-section">
     <h2>Destinations</h2>
