@@ -56,6 +56,20 @@ describe('frontend API layer contract', () => {
         expect(offenders).toEqual([]);
       });
 
+      test('uses production-compatible React imports', () => {
+        // React 18's CommonJS entry point has no static named `React` export.
+        // Jest's transform tolerates it, but the CRA production bundler rejects
+        // it, so keep JSX on the default import understood by both paths.
+        const offenders = listSourceFiles(path.join(repoRoot, app, 'src'))
+          .map((file) => path.relative(repoRoot, file).split(path.sep).join('/'))
+          .filter((relative) => {
+            const source = fs.readFileSync(path.join(repoRoot, relative), 'utf8');
+            return /import\s*\{[^}]*\bReact\b[^}]*\}\s*from\s*['"]react['"]/.test(source);
+          });
+
+        expect(offenders).toEqual([]);
+      });
+
       test('carries no HTTP client library', () => {
         const manifest = readJson(`${app}/package.json`);
         expect((manifest.dependencies || {}).axios).toBeUndefined();
