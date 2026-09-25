@@ -8,6 +8,10 @@ updates:
       day: monday
     open-pull-requests-limit: 4
     target-branch: main
+    versioning-strategy: increase-if-necessary
+    labels:
+      - dependencies
+      - root-tooling
     groups:
       root-tooling:
         patterns:
@@ -21,6 +25,10 @@ updates:
       day: monday
     open-pull-requests-limit: 4
     target-branch: main
+    versioning-strategy: increase-if-necessary
+    labels:
+      - dependencies
+      - backend
 
   # Frontend dependencies
   - package-ecosystem: npm
@@ -30,6 +38,10 @@ updates:
       day: monday
     open-pull-requests-limit: 4
     target-branch: main
+    versioning-strategy: increase-if-necessary
+    labels:
+      - dependencies
+      - frontend
 
   # Admin dashboard dependencies
   - package-ecosystem: npm
@@ -39,6 +51,10 @@ updates:
       day: monday
     open-pull-requests-limit: 4
     target-branch: main
+    versioning-strategy: increase-if-necessary
+    labels:
+      - dependencies
+      - admin
 
   # Tour-company dashboard dependencies
   - package-ecosystem: npm
@@ -48,6 +64,10 @@ updates:
       day: monday
     open-pull-requests-limit: 4
     target-branch: main
+    versioning-strategy: increase-if-necessary
+    labels:
+      - dependencies
+      - company-dashboard
 
   # GitHub Actions and Docker base images
   - package-ecosystem: github-actions

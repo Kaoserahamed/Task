@@ -32,7 +32,8 @@ const backendRoot = path.resolve(__dirname, '..', '..', '..');
  * applies, so it cannot rot.
  */
 const MODEL_IMPORT_EXEMPTIONS = new Map([
-  ['routes/companyRoutes.js', 'company approval and profile — 428-line route'],
+  ['routes/companyAuthRoutes.js', 'company registration, login and password reset'],
+  ['routes/companySearchRoutes.js', 'company directory lookup and profile updates'],
   ['routes/bookingRoutes.js', 'booking lifecycle'],
   ['routes/reviewRoutes.js', 'customer reviews and moderation'],
   ['routes/adminauth.js', 'admin login and profile'],

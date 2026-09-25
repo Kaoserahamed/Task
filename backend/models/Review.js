@@ -31,4 +31,7 @@ const reviewSchema = new mongoose.Schema({
   },
 });
 
+reviewSchema.index({ tourId: 1, date: -1 });
+reviewSchema.index({ userName: 1, date: -1 });
+
 module.exports = mongoose.model('Review', reviewSchema);

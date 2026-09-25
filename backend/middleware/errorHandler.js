@@ -87,15 +87,17 @@ const errorHandler = (err, req, res, _next) => {
   const status = classified.status;
   const isServerError = status >= 500;
 
+  const requestLogger = req.log || logger;
+
   // A genuine 5xx means something is broken, so keep the stack. 4xx are
   // expected client mistakes and would only flood the log.
   if (isServerError) {
-    logger.error(
+    requestLogger.error(
       { err, requestId: req.id, method: req.method, path: req.originalUrl },
       'request failed'
     );
   } else {
-    logger.debug({ requestId: req.id, code: classified.code }, 'request rejected');
+    requestLogger.debug({ requestId: req.id, code: classified.code }, 'request rejected');
   }
 
   const message =

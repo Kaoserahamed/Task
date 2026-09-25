@@ -1,27 +1,12 @@
 'use strict';
 
-/**
- * Structured logging.
- *
- * The API used to log through `console.*`, which produces unstructured text and
- * cannot be filtered or shipped anywhere. Everything now goes through pino:
- * JSON lines with a level, an ISO timestamp, a service name and — where the
- * call site has one — the request id, so a single request can be followed from
- * edge to database.
- *
- * `LOG_LEVEL` overrides the default (`info`, or `silent` under Jest so that the
- * test output stays readable).
- *
- * Tests that assert on logging inject their own instance through
- * `createApp({ logger })` instead of mocking the module.
- */
-
+const { AsyncLocalStorage } = require('node:async_hooks');
 const pino = require('pino');
 const config = require('../config/env');
 
 const DEFAULT_LEVEL = config.nodeEnv === 'test' ? 'silent' : 'info';
+const requestContext = new AsyncLocalStorage();
 
-/** Fields that must never reach a log sink. */
 const REDACT_PATHS = [
   'req.headers.authorization',
   'req.headers.cookie',
@@ -43,7 +28,32 @@ function createLogger(options = {}) {
   });
 }
 
-const logger = createLogger();
+const rootLogger = createLogger();
+
+function getLogger() {
+  return requestContext.getStore() || rootLogger;
+}
+
+function createRequestLogger(requestId) {
+  return rootLogger.child({ requestId });
+}
+
+function withRequestContext(requestId, callback) {
+  const requestLogger = createRequestLogger(requestId);
+  return requestContext.run(requestLogger, callback);
+}
+
+const logger = {
+  trace: (...args) => getLogger().trace(...args),
+  debug: (...args) => getLogger().debug(...args),
+  info: (...args) => getLogger().info(...args),
+  warn: (...args) => getLogger().warn(...args),
+  error: (...args) => getLogger().error(...args),
+  fatal: (...args) => getLogger().fatal(...args),
+  child: (bindings) => getLogger().child(bindings),
+};
 
 module.exports = logger;
 module.exports.createLogger = createLogger;
+module.exports.createRequestLogger = createRequestLogger;
+module.exports.withRequestContext = withRequestContext;

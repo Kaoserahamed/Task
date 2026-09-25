@@ -45,6 +45,26 @@
   }
 }
 
+.form-status {
+  margin: 0 0 1.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.form-status--error {
+  color: #8b1e1e;
+  background: #fff1f2;
+  border-color: #fecdd3;
+}
+
+.form-status--success {
+  color: #14532d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
 .form-section {
   background: rgba(255, 255, 255, 0.9);
   padding: 2.5rem;

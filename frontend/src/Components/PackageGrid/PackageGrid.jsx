@@ -5,6 +5,7 @@ import { getImageUrl, handleImageError } from '../../utils/imageHelpers';
 import * as toursApi from '../../api/tours';
 import * as reviewsApi from '../../api/reviews';
 import { logError } from '../../utils/logger';
+import StatusState from '../ui/StatusState';
 
 const PackageGrid = ({ packages }) => {
   const navigate = useNavigate();
@@ -65,11 +66,9 @@ const PackageGrid = ({ packages }) => {
 
   if (packages.length === 0) {
     return (
-      <div className="package-grid-empty">
-        <i className="fas fa-search"></i>
-        <p>No packages found for this category.</p>
-        <p>Please try a different category or check back later.</p>
-      </div>
+      <StatusState status="empty" title="No packages found for this category.">
+        Please try a different category or check back later.
+      </StatusState>
     );
   }
 

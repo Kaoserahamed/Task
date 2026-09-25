@@ -11,6 +11,9 @@ function buildService(overrides = {}) {
 
   const tours = {
     findAll: jest.fn().mockResolvedValue([]),
+    findPage: jest
+      .fn()
+      .mockResolvedValue({ items: [], total: 0, page: 1, limit: 20, totalPages: 0 }),
     findApproved: jest.fn().mockResolvedValue([]),
     findPending: jest.fn().mockResolvedValue([]),
     findByCompany: jest.fn().mockResolvedValue([]),

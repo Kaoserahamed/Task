@@ -19,12 +19,44 @@ const readJson = (...parts) => JSON.parse(read(...parts));
 const STACKS = ['backend', 'frontend', 'admin', 'tourcompanydashboard'];
 
 describe('monorepo layout', () => {
-  test('every stack is pinned to Node 20 or newer', () => {
+  test('every stack is pinned to Node 20 and the shared npm major', () => {
     for (const stack of STACKS) {
-      const { engines } = readJson(stack, 'package.json');
+      const { engines, packageManager } = readJson(stack, 'package.json');
       expect(engines && engines.node).toMatch(/>=\s*20/);
+      expect(engines.npm).toMatch(/>=\s*10\s*<\s*12/);
+      expect(packageManager).toBe('npm@11.14.1');
     }
-    expect(readJson('package.json').engines.node).toMatch(/>=\s*20/);
+    const root = readJson('package.json');
+    expect(root.engines.node).toMatch(/>=\s*20/);
+    expect(root.engines.npm).toMatch(/>=\s*10\s*<\s*12/);
+    expect(root.packageManager).toBe('npm@11.14.1');
+  });
+
+  test('build-only tools are not classified as shipped runtime dependencies', () => {
+    for (const stack of STACKS) {
+      const manifest = readJson(stack, 'package.json');
+      const runtime = manifest.dependencies || {};
+      const development = manifest.devDependencies || {};
+      if (stack !== 'backend') {
+        expect(runtime['react-scripts']).toBeUndefined();
+        expect(development['react-scripts']).toBe('5.0.1');
+      }
+      if (stack === 'backend') {
+        expect(runtime.nodemon).toBeUndefined();
+        expect(development.nodemon).toBe('^3.1.14');
+      }
+    }
+  });
+
+  test('the dependency-health checker is runnable and owns every package manifest', () => {
+    expect(exists('scripts', 'dependency-health.mjs')).toBe(true);
+    const root = readJson('package.json');
+    expect(root.scripts['dependency:check']).toBe('node scripts/dependency-health.mjs');
+    expect(root.scripts['dependency:audit']).toMatch(/--omit=dev/);
+    for (const stack of STACKS) {
+      expect(readJson(stack, 'package.json').packageManager).toBe('npm@11.14.1');
+      expect(exists(stack, 'package-lock.json')).toBe(true);
+    }
   });
 
   test('the editor/line-ending configuration is shared', () => {

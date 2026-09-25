@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import './Companies.css';
 import * as companiesApi from '../../api/companies';
+import StatusState from '../ui/StatusState';
 import { logError } from '../../utils/logger';
 
 const Companies = () => {
@@ -60,18 +61,14 @@ const Companies = () => {
   };
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-      </div>
-    );
+    return <StatusState status="loading" title="Loading companies..." />;
   }
 
   if (error) {
     return (
-      <div className="error-message">
-        <FaTimes /> {error}
-      </div>
+      <StatusState status="error" title="We couldn't load the company registry.">
+        {error}
+      </StatusState>
     );
   }
 

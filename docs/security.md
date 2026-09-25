@@ -8,8 +8,10 @@ See also [SECURITY.md](../SECURITY.md) for how to report a vulnerability.
   `POST /company/auth/login` return a JWT signed with `JWT_SECRET`
   (`JWT_EXPIRES_IN`, default `7d`). Protected routes require
   `Authorization: Bearer <token>`.
-- **Admins:** `/api/admin/*` is mounted twice on purpose — the public part
-  (login, forgot-password) and the guarded part (`middleware/adminAuth.js`).
+- **Admins:** `/api/admin/*` is mounted once. The router keeps login public and
+  applies `middleware/adminAuth.js` to every administrative mutation. The
+  production signup route is disabled; administrators are provisioned by an
+  operator or controlled seed process.
 - **Passwords** are stored as bcrypt hashes produced by one module,
   `backend/utils/password.js` (`bcryptjs`, cost 10). The native `bcrypt` package
   that used to serve the company endpoints is gone, so every hash in the
@@ -30,9 +32,23 @@ See also [SECURITY.md](../SECURITY.md) for how to report a vulnerability.
   at the first request. Under `NODE_ENV=test` it records the gap in
   `config.validation.missing` rather than exiting.
 - `backend/tests/unit/contracts/env-template.test.js` fails the build if the code
-  reads a variable that `backend/.env.example` does not document.
+  reads a variable that `backend/.env.example` does not document. The root
+  `.env.example` mirrors the complete backend contract and is the fresh-clone
+  index; the app-local templates remain the source each process loads.
 - Demo credentials (`DEMO_*_PASSWORD`) have no defaults: the seed scripts and
   routes error out until they are set.
+
+### Environment classification
+
+| Class                       | Variables                                                                                                                                                                                        | Handling                                                                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Secrets                     | `JWT_SECRET`, `MONGODB_URI`, `REDIS_URL`, `CLOUDINARY_API_SECRET`, `PUSHER_SECRET`, `METRICS_TOKEN`, `SENDINBLUE_API_KEY`, `WEATHER_API_KEY`                                                     | Store in a secret manager or untracked `.env`; never commit or print values. ECS uses IAM role credentials rather than static AWS keys. |
+| Credentials                 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_CLUSTER`                                                                                                   | Treat as provider configuration; use placeholders locally and rotate through the provider.                                              |
+| Non-sensitive configuration | `PORT`, `NODE_ENV`, `JSON_BODY_LIMIT`, `LOG_LEVEL`, HTTP/S3/Redis/idempotency timeouts, `FRONTEND_URL`, `ADMIN_URL`, `COMPANY_URL`, `CORS_EXTRA_ORIGINS`, `AWS_REGION`, `S3_BUCKET`, `S3_PREFIX` | Safe to configure per environment, but validate values and do not expose admin-only settings publicly.                                  |
+| Demo-only                   | `DEMO_*_EMAIL`, `DEMO_*_PASSWORD`, `SEED_ENABLED`                                                                                                                                                | Keep disabled in production; replace values before enabling any seed route or script.                                                   |
+
+The authoritative placeholders are in the root
+[`.env.example`](../.env.example) and app-local `backend/.env.example`.
 
 ## Seeding and demo data
 
@@ -77,14 +93,13 @@ The gaps below are deliberate; they are repeated in
   one-line change; a refresh endpoint with a `jti` deny-list is the follow-up
   described in
   [ADR 0006](adr/0006-access-tokens-and-password-hashing.md).
-- **Validation coverage.** `validators/` covers the tour write endpoints; the
-  remaining write endpoints depend on Mongoose schema validation. The tour
-  validator is the template.
-- **Uploads.** When Cloudinary is not configured, files are written to
-  `backend/uploads` and served from `/uploads`; the allow-list and the 5 MB cap
-  still apply, but a production deployment should set the Cloudinary keys.
-- **Metrics.** No `/metrics` endpoint is exposed; add `prom-client` behind
-  `METRICS_TOKEN` when a dashboard needs one.
+- **Validation coverage.** `validators/` covers the tour and company write endpoints; the tour validator is the template.
+- **Uploads.** Production selects private S3 when `S3_BUCKET` and AWS region
+  are configured; legacy Cloudinary multipart uploads remain available when
+  explicitly configured. S3 buckets are private and downloads use short-lived
+  presigned redirects.
+- **Metrics.** `/metrics` exposes Prometheus text metrics; set `METRICS_TOKEN`
+  and restrict the path to the private monitoring path/role.
 - **Migrations.** The runner and the format exist
   ([migrations.md](migrations.md)); no collection carries `schemaVersion` yet
   because no shape change has needed it.

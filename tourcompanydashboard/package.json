@@ -2,19 +2,20 @@
   "name": "task-company-dashboard",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@11.14.1",
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "npm": ">=10 <12"
   },
   "dependencies": {
-    "chart.js": "^4.4.9",
-    "jspdf": "^3.0.1",
-    "react": "^18.2.0",
-    "react-chartjs-2": "^5.3.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^5.5.0",
-    "react-router-dom": "^7.6.1",
-    "react-scripts": "5.0.1",
-    "socket.io-client": "^4.8.1"
+    "chart.js": "^4.5.1",
+    "jspdf": "^4.2.1",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.7.0",
+    "react-router-dom": "^7.18.4",
+    "socket.io-client": "^4.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -22,6 +23,7 @@
     "test": "react-scripts test",
     "test:ci": "cross-env CI=true react-scripts test --watchAll=false",
     "test:coverage": "cross-env CI=true react-scripts test --watchAll=false --coverage",
+    "coverage:check": "node ../scripts/check-web-coverage.mjs",
     "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint --no-eslintrc -c .eslintrc.cjs --ext .js,.jsx src",
     "lint:fix": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint --no-eslintrc -c .eslintrc.cjs --ext .js,.jsx --fix src",
     "format": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
@@ -46,12 +48,19 @@
     "@testing-library/react": "^16.3.3",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
+    "react-scripts": "5.0.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-react-app": "^7.0.1",
     "prettier": "^3.9.8",
     "typescript": "^4.9.5"
   },
   "jest": {
+    "coverageReporters": [
+      "text-summary",
+      "json-summary",
+      "lcov",
+      "clover"
+    ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
       "!src/index.js",
@@ -66,10 +75,10 @@
     },
     "coverageThreshold": {
       "global": {
-        "statements": 9,
-        "branches": 7,
-        "functions": 6,
-        "lines": 9
+        "statements": 34,
+        "branches": 29,
+        "functions": 32,
+        "lines": 33
       },
       "./src/api/": {
         "statements": 85,

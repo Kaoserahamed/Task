@@ -4,9 +4,12 @@ const logger = require('../utils/logger');
 // Choose upload strategy based on environment
 let upload;
 
-if (config.isVercel || config.nodeEnv === 'production') {
-  // Use Cloudinary for production/Vercel
-  logger.info('📦 Using Cloudinary for file uploads');
+if (config.aws.region && config.aws.s3Bucket) {
+  logger.info('Using private S3 storage for file uploads');
+  const storage = require('./storage');
+  upload = storage.createS3Upload();
+} else if (config.isVercel || config.nodeEnv === 'production') {
+  logger.info('Using Cloudinary for file uploads');
   const cloudinaryConfig = require('./cloudinary');
   upload = cloudinaryConfig.upload;
 } else {

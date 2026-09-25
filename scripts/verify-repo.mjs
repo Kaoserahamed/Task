@@ -22,8 +22,14 @@ const REQUIRED_SCRIPTS = [
   'setup',
   'test',
   'test:backend',
+  'test:backend:unit',
   'test:backend:integration',
+  'test:offline',
   'test:coverage',
+  'dependency:check',
+  'dependency:report',
+  'dependency:audit',
+  'coverage:check',
   'test:web',
   'lint',
   'format:check',
@@ -136,6 +142,8 @@ for (const relativePath of [
   '.github/dependabot.yml',
   '.github/pull_request_template.md',
   '.github/workflows/ci.yml',
+  '.github/workflows/security.yml',
+  '.env.example',
   '.devcontainer/devcontainer.json',
   'backend/.dockerignore',
   'backend/scripts/migrations/README.md',
@@ -287,6 +295,12 @@ for (const app of WEB_APPS) {
   }
   if (!manifest.jest || !manifest.jest.coverageThreshold) {
     fail(`${app}/package.json must declare jest coverageThreshold floors`);
+  }
+  if (!manifest.scripts?.['coverage:check']) {
+    fail(`${app}/package.json must declare an independently runnable coverage:check script`);
+  }
+  if (!manifest.jest?.coverageReporters?.includes('json-summary')) {
+    fail(`${app}/package.json must emit json-summary coverage evidence`);
   }
 }
 

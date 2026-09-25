@@ -1,18 +1,23 @@
 // backend/middleware/adminAuth.js
-const jwt = require('jsonwebtoken');
+const { verifyAccessToken } = require('../utils/token');
+const { UnauthorizedError, ForbiddenError } = require('../utils/errors');
 
-module.exports = function (req, res, next) {
-  let token = req.headers['authorization'];
-  if (!token) return res.status(401).json({ message: 'No token provided' });
-  // Support Bearer <token>
-  if (token.startsWith('Bearer ')) {
-    token = token.slice(7);
-  }
+module.exports = function adminAuth(req, res, next) {
+  const authorization = req.headers.authorization;
+  const token =
+    typeof authorization === 'string' && authorization.startsWith('Bearer ')
+      ? authorization.slice(7)
+      : null;
+  if (!token) return next(new UnauthorizedError('No token provided', 'NO_TOKEN'));
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ message: 'Invalid token' });
-    if (!decoded.isAdmin) return res.status(403).json({ message: 'Not an admin' });
+  try {
+    const decoded = verifyAccessToken(token);
+    if (decoded.isAdmin !== true && decoded.role !== 'admin') {
+      return next(new ForbiddenError('Not an admin', 'ADMIN_REQUIRED'));
+    }
     req.user = decoded;
-    next();
-  });
+    return next();
+  } catch (_error) {
+    return next(new UnauthorizedError('Invalid token', 'INVALID_TOKEN'));
+  }
 };

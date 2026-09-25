@@ -9,31 +9,78 @@
 - Tests are fast, deterministic, and hermetic: a green `npm test` on a fresh
   checkout is the bar for merging.
 
-## Backend (Jest)
+## Offline versus integration tests
 
-Configuration: `backend/jest.config.js`, setup: `backend/tests/setup.js`.
-
-The setup file spins up an in-memory Mongo, connects Mongoose, wipes collections
-between tests, and tears Mongo down in `afterAll`. The suite uses `supertest` to
-exercise the Express app end-to-end through the controller + route layers.
+The default suites are offline and do not require MongoDB, Docker, Cloudinary,
+Pusher, or email credentials:
 
 ```bash
-cd backend
-npm test                  # jest --runInBand
-npm run test:coverage     # with a coverage report in coverage/
+npm test                  # backend unit suite + all three React app suites
+npm run test:coverage    # coverage gates for every package
 ```
 
-`mongodb-memory-server` downloads its own `mongod` binary on first run (cached in
-`node_modules/.cache`). On CI (Linux) the download happens automatically; locally
-on Windows ensure the binary can be fetched (see `.nvmrc` + Node ≥ 20).
+The backend integration suite is intentionally separate. It starts a
+throwaway `mongodb-memory-server` when `MONGODB_URI_TEST` is not set, so a fresh
+clone does not need Docker, a live database, or an account. The first run may
+download the MongoDB binary once; later runs use the local cache. To use an
+existing service instead, set `MONGODB_URI_TEST` explicitly.
+
+### Fresh-clone sequence
+
+From a new checkout, the complete offline test path is:
+
+```bash
+git clone <repository-url>
+cd Task
+npm run setup
+npm run test:offline
+```
+
+`test:offline` is hermetic: it runs the backend unit suite and all React app
+suites without MongoDB, Docker, Cloudinary, Pusher, or Sendinblue. The
+integration suite is also account-free when its MongoDB binary is cached:
+
+```bash
+npm run test:backend:integration
+```
+
+For a real service container, use the explicit alternative:
+
+```bash
+npm run stack:test:up
+$env:MONGODB_URI_TEST='mongodb://127.0.0.1:27017/task-integration'
+npm run test:backend:integration
+npm run stack:test:down
+```
+
+External API keys are not required by the offline unit/web suites or the
+in-memory integration suite.
+
+The default backend unit suite is configured by `backend/jest.config.js` and
+`backend/tests/unit/setup-env.js`; it does not open a database connection. The
+integration suite is configured separately by `backend/jest.integration.config.js`.
+
+### Dependency health
+
+Run `npm run dependency:check` to verify the root and all four package manifests
+against their committed lockfiles. The root is intentionally tooling-only; runtime
+dependencies are owned by the package that ships them. `npm run dependency:report`
+prints the ownership inventory, and `npm run dependency:audit` fails on high or
+critical advisories in every production dependency graph.
 
 ### Coverage
 
-`test:coverage` writes `backend/coverage/lcov-report/index.html`. The
-`jest.config.js` declares `collectCoverageFrom` and `coverageThreshold`
-**global** floors; CI runs `--coverage` so a regression in coverage fails the
-build. Ratchet thresholds upward when a new area is brought under test — never
-turn the gate off.
+Each app now runs a real coverage command and a second, independently runnable
+`coverage:check` command. The first command executes Jest with its package-level
+`coverageThreshold`; the second reads the generated `coverage-summary.json` and
+re-checks both the global floor and the stricter `./src/api/` floor. CI performs
+both steps, so a missing report or a threshold that is only documented cannot
+produce a green build.
+
+The repository has 73 tracked test/spec files across the backend and three React
+apps. The endpoint contract suites cover every exported resource function, and
+`backend/tests/unit/contracts/frontend-layer.test.js` fails if a new export is
+added without a corresponding contract assertion.
 
 ### Writing a new backend test
 

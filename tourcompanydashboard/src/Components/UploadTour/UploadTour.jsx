@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UploadTour.css'; // Import the CSS file for styling
 import { useAuth } from '../../Context/AuthContext';
+import { useTourForm } from '../../hooks/useTourForm';
 import * as toursApi from '../../api/tours';
 import { logDebug, logError } from '../../utils/logger';
+import validateTourForm from '../../validators/tourForm';
 
 const UploadTour = () => {
   const { company } = useAuth();
@@ -17,206 +19,36 @@ const UploadTour = () => {
   const companyName = company.company.name;
   const navigate = useNavigate();
   logDebug(companyName);
-  const [tourDetails, setTourDetails] = useState({
-    name: '',
-    packageCategories: [],
-    customCategory: '',
-    tourType: {
-      single: false, // Remove this line if not needed elsewhere
-      group: true,
-    },
-    duration: {
-      days: '',
-      nights: '',
-    },
-    startDate: '',
-    endDate: '',
-    meals: {
-      breakfast: false,
-      lunch: false,
-      dinner: false,
-    },
-    transportation: {
-      type: '',
-      details: '',
-    },
-    tourGuide: false,
-    price: '',
-    maxGroupSize: '',
-    availableSeats: '',
-    destinations: [
-      {
-        name: '',
-        description: '',
-        stayDuration: '',
-      },
-    ],
-    images: [],
-    includes: [''], // Additional included services
-    excludes: [''], // What's not included
-    specialNote: '',
-    cancellationPolicy: '',
-    weather: {
-      city: '',
-      condition: '',
-      temp: '',
-    },
-  });
-
-  const packageCategories = [
-    'Adventure',
-    'Cultural',
-    'Nature & Eco',
-    'Family',
-    'Honeymoon',
-    'Educational',
-    'Seasonal',
-  ];
-
-  const transportationTypes = ['Bus', 'Mini Bus', 'Car', 'Premium Car', 'Other'];
-
-  const weatherConditions = [
-    'Sunny',
-    'Partly Cloudy',
-    'Cloudy',
-    'Rainy',
-    'Stormy',
-    'Snowy',
-    'Foggy',
-    'Hot',
-    'Cold',
-    'Mild',
-  ];
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTourDetails({
-      ...tourDetails,
-      [name]: value,
-    });
-  };
-
-  const handleDurationChange = (e) => {
-    const { name, value } = e.target;
-    // Ensure value is a positive integer or empty string
-    const parsedValue = value === '' ? '' : Math.max(0, parseInt(value) || 0);
-
-    setTourDetails({
-      ...tourDetails,
-      duration: {
-        ...tourDetails.duration,
-        [name]: parsedValue,
-      },
-    });
-  };
-
-  const handleMealChange = (meal) => {
-    setTourDetails({
-      ...tourDetails,
-      meals: {
-        ...tourDetails.meals,
-        [meal]: !tourDetails.meals[meal],
-      },
-    });
-  };
-
-  const handleTransportationChange = (e) => {
-    const { name, value } = e.target;
-    setTourDetails({
-      ...tourDetails,
-      transportation: {
-        ...tourDetails.transportation,
-        [name]: value,
-      },
-    });
-  };
-
-  const handleWeatherChange = (e) => {
-    const { name, value } = e.target;
-    setTourDetails({
-      ...tourDetails,
-      weather: {
-        ...tourDetails.weather,
-        [name]: value,
-      },
-    });
-  };
-
-  const handleArrayFieldChange = (index, field, value) => {
-    const updatedArray = [...tourDetails[field]];
-    updatedArray[index] = value;
-    setTourDetails({
-      ...tourDetails,
-      [field]: updatedArray,
-    });
-  };
-
-  const addArrayField = (field) => {
-    setTourDetails({
-      ...tourDetails,
-      [field]: [...tourDetails[field], ''],
-    });
-  };
-
-  const handleDestinationsChange = (e, index, field) => {
-    const { value } = e.target;
-    const newDestinations = [...tourDetails.destinations];
-    newDestinations[index][field] = value;
-    setTourDetails({
-      ...tourDetails,
-      destinations: newDestinations,
-    });
-  };
-
-  const addDestination = () => {
-    setTourDetails({
-      ...tourDetails,
-      destinations: [...tourDetails.destinations, { name: '', description: '', stayDuration: '' }],
-    });
-  };
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setTourDetails({
-      ...tourDetails,
-      images: [...tourDetails.images, ...files],
-    });
-  };
-
-  const handleCategoryChange = (category) => {
-    setTourDetails((prev) => ({
-      ...prev,
-      packageCategories: prev.packageCategories.includes(category)
-        ? prev.packageCategories.filter((c) => c !== category)
-        : [...prev.packageCategories, category],
-    }));
-  };
-
-  const handleTourTypeChange = (type) => {
-    setTourDetails((prev) => ({
-      ...prev,
-      tourType: {
-        ...prev.tourType,
-        [type]: !prev.tourType[type],
-      },
-    }));
-  };
+  const [formStatus, setFormStatus] = useState({ type: '', message: '' });
+  const {
+    tourDetails,
+    setTourDetails,
+    packageCategories,
+    transportationTypes,
+    weatherConditions,
+    handleChange,
+    handleDurationChange,
+    handleMealChange,
+    handleTransportationChange,
+    handleWeatherChange,
+    handleArrayFieldChange,
+    addArrayField,
+    handleDestinationsChange,
+    addDestination,
+    handleFileChange,
+    handleCategoryChange,
+    handleRemoveImage,
+  } = useTourForm({ tourType: { single: false, group: true } });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormStatus({ type: '', message: '' });
+    const validation = validateTourForm(tourDetails);
+    if (!validation.valid) {
+      setFormStatus({ type: 'error', message: validation.message });
+      return;
+    }
     const formData = new FormData();
-
-    // Add validation for tour type
-    if (!tourDetails.tourType.single && !tourDetails.tourType.group) {
-      alert('Please select at least one tour type (Single or Group)');
-      return;
-    }
-
-    // Add validation for categories
-    if (tourDetails.packageCategories.length === 0 && !tourDetails.customCategory) {
-      alert('Please select at least one category or add a custom category');
-      return;
-    }
 
     formData.append('name', tourDetails.name);
     formData.append('packageCategories', JSON.stringify(tourDetails.packageCategories));
@@ -247,26 +79,26 @@ const UploadTour = () => {
     try {
       await toursApi.createTour(formData);
 
-      alert('Tour uploaded successfully');
-      navigate('manage-tours'); // Redirect to manage tours page
+      setFormStatus({ type: 'success', message: 'Tour uploaded successfully.' });
+      navigate('/manage-tours');
     } catch (error) {
       logError('Error uploading tour:', error);
-      alert(`Failed to upload tour: ${error.message}`);
+      setFormStatus({ type: 'error', message: `Failed to upload tour: ${error.message}` });
     }
-  };
-
-  const handleRemoveImage = (index) => {
-    const updatedImages = tourDetails.images.filter((_, i) => i !== index);
-    setTourDetails({
-      ...tourDetails,
-      images: updatedImages,
-    });
   };
 
   return (
     <div className="upload-tour">
       <h1>Create New Tour Package</h1>
       <form onSubmit={handleSubmit}>
+        {formStatus.message && (
+          <p
+            className={`form-status form-status--${formStatus.type}`}
+            role={formStatus.type === 'error' ? 'alert' : 'status'}
+          >
+            {formStatus.message}
+          </p>
+        )}
         <div className="form-section">
           <h2>Basic Information</h2>
           <input

@@ -69,13 +69,48 @@ describe('CI workflow contract', () => {
     expect(workflow).toMatch(/backend\/coverage/);
   });
 
-  test('audits dependencies at a level that fails on high severity', () => {
-    expect(workflow).toMatch(/npm audit --audit-level=high/);
+  test('runs an independent coverage check after tests', () => {
+    expect(workflow).toMatch(/name: Verify backend coverage summary/);
+    expect(workflow).toMatch(/run: npm run coverage:check/);
+    expect(workflow).toMatch(/name: Verify .* coverage summary/);
+  });
+
+  test('audits production dependencies at a level that fails on high severity', () => {
+    expect(workflow).toMatch(/npm audit --omit=dev --audit-level=high/);
+    expect(workflow).toMatch(/npm run dependency:audit/);
+    expect(workflow).toMatch(/name: Dependency health and ownership/);
+    expect(workflow).toMatch(/run: npm run dependency:check/);
   });
 
   test('proves a fresh clone installs and verifies itself', () => {
     expect(workflow).toMatch(/fresh-clone:/);
     expect(workflow).toMatch(/npm run verify:repo/);
+    expect(workflow).toMatch(/npm run verify/);
+  });
+
+  test('gates Terraform formatting, validation, planning, and policy scanning', () => {
+    const securityWorkflow = read('.github', 'workflows', 'security.yml');
+    expect(securityWorkflow).toMatch(/terraform fmt -check -recursive/);
+    expect(securityWorkflow).toMatch(/terraform validate/);
+    expect(securityWorkflow).toMatch(/terraform plan/);
+    expect(securityWorkflow).toMatch(/scan-ref: infrastructure\/terraform/);
+    expect(securityWorkflow).toMatch(/scan-type: config/);
+    expect(securityWorkflow).toMatch(/scanners: misconfig/);
+    expect(workflow).toMatch(/terraform-security:/);
+    expect(workflow).toMatch(/tfsec-action/);
+    expect(workflow).toMatch(/soft_fail: false/);
+  });
+
+  test('runs a dedicated PR-only Terraform plan and policy gate', () => {
+    const terraformWorkflow = read('.github', 'workflows', 'terraform-plan.yml');
+    expect(terraformWorkflow).toMatch(/pull_request:/);
+    expect(terraformWorkflow).toMatch(/infrastructure\/\*\*/);
+    expect(terraformWorkflow).toMatch(/terraform fmt -check -recursive/);
+    expect(terraformWorkflow).toMatch(/terraform validate/);
+    expect(terraformWorkflow).toMatch(/terraform plan/);
+    expect(terraformWorkflow).toMatch(/tfsec-action/);
+    expect(terraformWorkflow).toMatch(/upload-artifact/);
+    expect(terraformWorkflow).toMatch(/github-script/);
   });
 
   test('runs the integration suite against a real database service', () => {
@@ -85,13 +120,45 @@ describe('CI workflow contract', () => {
   });
 });
 
+describe('integration test infrastructure', () => {
+  test('uses an in-memory MongoDB fallback when no service URI is configured', () => {
+    const setup = read('backend', 'tests', 'integration', 'setup.js');
+    expect(setup).toMatch(/MongoMemoryServer/);
+    expect(setup).toMatch(/MONGODB_URI_TEST/);
+    expect(setup).toMatch(/300000/);
+  });
+});
+
 describe('secrets contract', () => {
+  test('the monorepo has a discoverable root environment template', () => {
+    const rootTemplate = read('.env.example');
+    expect(rootTemplate).toMatch(/MONGODB_URI=/);
+    expect(rootTemplate).toMatch(/JWT_SECRET=your_/);
+    expect(rootTemplate).toMatch(/REACT_APP_API_URL=/);
+    expect(rootTemplate).toMatch(/Never put real credentials/i);
+    expect(rootTemplate).not.toMatch(/AKIA[0-9A-Z]{16}/);
+  });
+
   test('no .env file is tracked in git', () => {
     const gitignore = read('.gitignore');
 
     expect(gitignore).toMatch(/^\*\.env$/m);
     expect(gitignore).toMatch(/^\*\.env\.\*$/m);
     expect(gitignore).toMatch(/^!\.env\.example$/m);
+  });
+
+  test('root environment template stays aligned with backend variables', () => {
+    const names = (path) =>
+      new Set(
+        read(path)
+          .split(/\r?\n/)
+          .map((line) => line.match(/^#?\s*([A-Z][A-Z0-9_]*)=/)?.[1])
+          .filter(Boolean)
+      );
+    const rootNames = names('.env.example');
+    const backendNames = names('backend/.env.example');
+    const missing = [...backendNames].filter((name) => !rootNames.has(name));
+    expect(missing).toEqual([]);
   });
 
   test('the committed env template only carries placeholders', () => {

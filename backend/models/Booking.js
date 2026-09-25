@@ -111,6 +111,11 @@ const bookingSchema = new mongoose.Schema({
   },
 });
 
+bookingSchema.index({ tourId: 1, createdAt: -1 });
+bookingSchema.index({ email: 1, createdAt: -1 });
+bookingSchema.index({ userId: 1, createdAt: -1 });
+bookingSchema.index({ bookingStatus: 1, createdAt: -1 });
+
 // Generate booking reference before saving
 bookingSchema.pre('save', function (next) {
   if (!this.bookingReference) {

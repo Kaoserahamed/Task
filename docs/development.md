@@ -93,16 +93,25 @@ The root `package.json` composes the per-package scripts:
 
 ```bash
 npm run lint        # lint backend + all three CRA apps
-npm run test        # backend + CRA tests (CI mode)
+npm run test                # backend + CRA tests (CI mode)
+npm run test:offline         # explicit no-database test path
 npm run test:coverage
 npm run format:check
 npm run verify      # lint + format + typecheck + verify:repo + test
 ```
 
+`npm run test:offline` is the hermetic path: it runs the backend unit suite and
+all three web suites with no database, no Docker and no external account, so a
+fresh clone that only copied the `.env.example` placeholders can execute it
+immediately. The separate integration suite starts a throwaway
+`mongodb-memory-server` unless `MONGODB_URI_TEST` points somewhere else — see
+[testing.md](testing.md).
+
 ## Environment variables
 
 - **Backend** — copy `backend/.env.example` to `backend/.env` and fill in the
   keys. At minimum set `JWT_SECRET`, `MONGODB_URI`, and any Cloudinary / mail
-  credentials. `npm run verify-env` checks them.
+  credentials. `npm run verify-env` checks them. The root `.env.example` is an
+  index for the four application-local templates.
 - **React apps** — CRA variables must be prefixed with `REACT_APP_`. The CI
   workflow supplies `REACT_APP_API_URL=http://localhost:4000` for builds.

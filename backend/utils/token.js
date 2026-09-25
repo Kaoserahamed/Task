@@ -14,8 +14,10 @@ const config = require('../config/env');
  * one configured value.
  */
 
-function signAccessToken(userId) {
-  return jwt.sign({ userId }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
+function signAccessToken(userId, claims = {}) {
+  return jwt.sign({ userId, id: String(userId), ...claims }, config.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  });
 }
 
 function verifyAccessToken(token) {

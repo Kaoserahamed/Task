@@ -1,15 +1,18 @@
 // routes/auth.js
 const express = require('express');
 const { hashPassword, verifyPassword } = require('../utils/password');
-const jwt = require('jsonwebtoken');
+const { signAccessToken } = require('../utils/token');
+const config = require('../config/env');
 const { Admin, AdminProfile } = require('../models/Admin'); // Adjust the path as necessary
 const adminAuth = require('../middleware/adminAuth');
 const Company = require('../models/company');
 
 const router = express.Router();
 
-// Sign Up Endpoint
+// Admin accounts are provisioned by an operator/seed script. Never expose a
+// public admin-creation endpoint in a production deployment.
 router.post('/signup', async (req, res) => {
+  if (config.isProduction) return res.status(404).json({ message: 'Not found' });
   const { email, password } = req.body;
   const hashedPassword = await hashPassword(password);
 
@@ -28,9 +31,7 @@ router.post('/login', async (req, res) => {
   const admin = await Admin.findOne({ email });
 
   if (admin && (await verifyPassword(password, admin.password))) {
-    const token = jwt.sign({ id: admin._id, isAdmin: true }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = signAccessToken(admin._id, { isAdmin: true, role: 'admin' });
     res.json({ token, user: { id: admin._id, email: admin.email, isAdmin: true } });
   } else {
     res.status(401).json({ error: 'Invalid credentials' });

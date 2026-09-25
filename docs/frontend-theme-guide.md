@@ -310,7 +310,7 @@ After refactoring a CSS file:
 
 ## Notes
 
-- Empty CSS files (HeroSection.css, PackageCard.css) can be deleted
-- Component-specific styles are still allowed when needed
+- Component-specific styles are still allowed when needed, including the extracted
+  `HeroSection.css`; keep shared utilities in the theme/component layers
 - Always extend shared classes rather than duplicating styles
 - Use utility classes for one-off spacing/layout adjustments

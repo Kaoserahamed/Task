@@ -22,8 +22,10 @@ beforeAll(async () => {
     uri = mongoServer.getUri();
   }
 
+  // A cold clone may download the MongoDB binary on the first run. Give that
+  // one-time download enough time; once cached, this suite is fully local.
   await mongoose.connect(uri, { serverSelectionTimeoutMS: 30000 });
-}, 120000);
+}, 300000);
 
 afterEach(async () => {
   const { collections } = mongoose.connection;

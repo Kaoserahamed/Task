@@ -1,0 +1,85 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/terraform-plan.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: terraform-plan-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  TF_IN_AUTOMATION: 'true'
+  TF_INPUT: 'false'
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_EC2_METADATA_DISABLED: 'true'
+  AWS_SKIP_CREDENTIALS_VALIDATION: 'true'
+  AWS_SKIP_REQUESTING_ACCOUNT_ID: 'true'
+
+jobs:
+  plan:
+    name: Terraform format, validate, plan, and policy scan
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+          terraform_wrapper: false
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+      - name: Initialize without a backend
+        run: terraform init -backend=false
+      - name: Validate configuration
+        run: terraform validate
+      - name: Create review plan
+        id: plan
+        run: terraform plan -no-color -lock=false -refresh=false -out=terraform.tfplan -var-file=terraform.tfvars.example | tee terraform-plan.txt
+      - name: Render plan for the artifact
+        if: always() && steps.plan.outcome == 'success'
+        run: terraform show -no-color terraform.tfplan > terraform-plan.txt
+      - name: Run tfsec high-severity policy gate
+        uses: aquasecurity/tfsec-action@v0.3.1
+        with:
+          soft_fail: false
+          args: '--no-color --severity HIGH,CRITICAL infrastructure/terraform'
+      - name: Upload Terraform plan artifact
+        if: always() && steps.plan.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-${{ github.event.pull_request.number }}
+          path: |
+            infrastructure/terraform/terraform.tfplan
+            infrastructure/terraform/terraform-plan.txt
+          if-no-files-found: error
+      - name: Post Terraform plan to the pull request
+        if: always() && steps.plan.outcome == 'success'
+        uses: actions/github-script@v7
+        env:
+          PLAN_PATH: infrastructure/terraform/terraform-plan.txt
+        with:
+          script: |
+            const fs = require('fs');
+            const path = process.env.PLAN_PATH;
+            const plan = fs.readFileSync(path, 'utf8');
+            const marker = '<!-- terraform-plan -->';
+            const body = `${marker}\n### Terraform plan\n\n\`\`\`text\n${plan.slice(0, 60000)}\n\`\`\``;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              ...context.repo,
+              issue_number: context.issue.number,
+            });
+            const previous = comments.find((comment) => comment.body?.includes(marker));
+            if (previous) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: previous.id, body });
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
+            }

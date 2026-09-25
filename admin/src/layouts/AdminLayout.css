@@ -1,0 +1,22 @@
+.admin-shell {
+  min-height: 100vh;
+  background: var(--light-bg);
+}
+
+.main-content {
+  min-height: 100vh;
+  margin-left: 250px;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+@media (max-width: 900px) {
+  .navbar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}

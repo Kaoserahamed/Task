@@ -22,8 +22,8 @@ class TourService {
     this.log = log;
   }
 
-  listAll() {
-    return this.tours.findAll();
+  listAll(options) {
+    return options ? this.tours.findPage(options) : this.tours.findAll();
   }
 
   listApproved() {

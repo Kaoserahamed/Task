@@ -8,6 +8,48 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Customer search filtering now delegates URL parsing, review aggregation, matching, sorting,
+  and display formatting to a tested `searchFilters` utility.
+
+- Fresh-clone verification now runs the complete root `npm run verify` path.
+- Integration tests use `mongodb-memory-server` when no database URI is supplied;
+  a cold clone gets a longer one-time binary-download budget.
+- A root `.env.example` indexes the app-local environment templates for onboarding.
+- `MONGODB_URI_TEST`, both Places API key names and `VERCEL` are documented in the
+  environment templates, and a contract test keeps every web app's `.env.example`
+  in sync with the `process.env` reads inside its source.
+- The tour-company edit form is now an orchestrator: the six form sections live in
+  `Components/EditTour/sections/`, while API-response normalisation and the
+  multipart update body moved to tested `utils/tourPayload.js`. `EditTour.jsx`
+  dropped from 429 to under 200 lines.
+- The review page is composed from a presentational `ReviewForm` and `ReviewCard`,
+  with date formatting, completed-tour filtering, photo validation and multipart
+  assembly in tested `reviewUtils.js`; `ReviewPage.jsx` dropped from 424 to 250
+  lines.
+- The company HTTP surface is split by concern: `routes/companyAuthRoutes.js`
+  (registration, login, password reset, re-auth) and
+  `routes/companySearchRoutes.js` (directory, search, profile, admin
+  verification), each with its own route test. The profile allow-list lives in
+  `utils/companyUpdate.js`, so approval state and the reset token can never be
+  written by a profile request.
+- Terraform CI now runs formatting, validation, an offline plan, and Trivy IaC policy scanning.
+- Pull requests touching `infrastructure/**` get a dedicated Terraform plan, tfsec
+  gate, uploaded plan artifact, and review comment.
+- The Terraform remote state backend (encrypted S3 state plus DynamoDB lock, wired
+  through `TF_STATE_BUCKET` / `TF_STATE_KEY` / `TF_LOCK_TABLE`) is now documented in
+  `docs/ci-cd.md` and the infrastructure README, including the one-time bootstrap.
+- The storefront hero styles now live in `HeroSection.css` instead of an inline
+  `<style jsx>` block, with a focused render test covering the extracted component.
+- Tour-company upload/edit forms now share `useTourForm` and centralized form options,
+  with focused hook tests covering nested state and file updates.
+- Tour-company upload/edit forms now share client-side validation and accessible inline
+  status feedback instead of browser alerts.
+- Tour-company dashboard metrics and chart-domain calculations now live in a pure
+  tested utility, keeping the React component focused on rendering.
+- Company license status normalization and PDF generation now live in tested utilities; the component is below 500 lines and no longer duplicates its company fetch/socket effects.
+- Company license details now live in a tested presentational fields component; `License.jsx`
+  is below 250 lines while edit, document filtering, and verification actions remain stateful.
+
 - Layered backend: `app.js` factory, `validators/`, `services/` and
   `repositories/` for the tour domain, plus a typed error taxonomy
   (`utils/errors.js`) and one central error handler.
@@ -77,6 +119,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `PATCH /company/auth/update-status` now updates the `companyId` the admin
+  dashboard sends in the body — it previously read an id only a company token
+  carries, so every admin approval answered 400 — and rejects a status outside
+  the model enum.
+- `GET /api/search` escapes regex metacharacters, so a `[` in the search box is
+  a search again instead of a 500, and company register/login answer 400 for a
+  missing field instead of 500.
+- Company password reset rejects an expired token, answers `{ success: true }`
+  instead of the historical `succes` typo, and no longer logs the company
+  document (which carried the password hash and the reset token).
 - The error handler was mounted before several routers, so errors raised by
   those routes bypassed it.
 - Malformed multipart JSON in tour payloads returned a 500 instead of a typed 400.

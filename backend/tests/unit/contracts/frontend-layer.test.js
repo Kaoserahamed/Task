@@ -118,11 +118,40 @@ describe('frontend API layer contract', () => {
       });
 
       test('declares coverage collection and floors', () => {
-        const { jest } = readJson(`${app}/package.json`);
+        const manifest = readJson(`${app}/package.json`);
+        const { jest } = manifest;
         expect(Array.isArray(jest.collectCoverageFrom)).toBe(true);
         expect(jest.collectCoverageFrom).toContain('src/**/*.{js,jsx}');
         expect(jest.coverageThreshold.global).toBeDefined();
         expect(jest.coverageThreshold['./src/api/']).toBeDefined();
+        expect(jest.coverageReporters).toContain('json-summary');
+        expect(manifest.scripts['coverage:check']).toBe('node ../scripts/check-web-coverage.mjs');
+      });
+
+      test('every exported resource function has an endpoint contract assertion', () => {
+        const apiDir = path.join(repoRoot, app, 'src', 'api');
+        const endpointTest = fs.readFileSync(path.join(apiDir, 'endpoints.test.js'), 'utf8');
+        const missing = [];
+
+        for (const entry of fs.readdirSync(apiDir)) {
+          if (!entry.endsWith('.js') || entry === 'client.js' || entry.endsWith('.test.js')) {
+            continue;
+          }
+          const source = fs.readFileSync(path.join(apiDir, entry), 'utf8');
+          const moduleName = entry.replace(/\.js$/, '');
+          const exports = [...source.matchAll(/export\\s+(?:const|function)\\s+(\\w+)/g)].map(
+            (match) => match[1]
+          );
+          for (const exportedName of exports) {
+            if (
+              !new RegExp(`\\\\b${moduleName}\\\\.${exportedName}\\\\s*\\\\(`).test(endpointTest)
+            ) {
+              missing.push(`${moduleName}.${exportedName}`);
+            }
+          }
+        }
+
+        expect(missing).toEqual([]);
       });
     });
   }

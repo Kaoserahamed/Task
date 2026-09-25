@@ -3,6 +3,7 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const tours = require('../services/tour.service');
 const { buildCreatePayload, buildUpdatePayload } = require('../validators/tour.validator');
+const { parsePagination } = require('../utils/pagination');
 
 /**
  * Tour endpoints — HTTP in, JSON out.
@@ -30,8 +31,21 @@ exports.getCompanyTours = asyncHandler(async (req, res) => {
 });
 
 exports.getTours = asyncHandler(async (req, res) => {
-  const list = await tours.listAll();
-  res.json({ success: true, tours: list });
+  const wantsPage = req.query.page !== undefined || req.query.limit !== undefined;
+  const result = wantsPage
+    ? await tours.listAll(parsePagination(req.query))
+    : await tours.listAll();
+  if (!wantsPage) return res.json({ success: true, tours: result });
+  return res.json({
+    success: true,
+    tours: result.items,
+    pagination: {
+      page: result.page,
+      limit: result.limit,
+      total: result.total,
+      totalPages: result.totalPages,
+    },
+  });
 });
 
 exports.getApprovedTours = asyncHandler(async (req, res) => {

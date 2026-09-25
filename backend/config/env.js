@@ -19,6 +19,42 @@ const config = {
   http: {
     // Multipart image uploads are capped separately in config/upload.js.
     jsonLimit: process.env.JSON_BODY_LIMIT || '1mb',
+    requestTimeoutMs: Number(process.env.HTTP_REQUEST_TIMEOUT_MS || 15000),
+    headersTimeoutMs: Number(process.env.HTTP_HEADERS_TIMEOUT_MS || 20000),
+    shutdownTimeoutMs: Number(process.env.SHUTDOWN_TIMEOUT_MS || 10000),
+  },
+
+  // Redis is optional. Production can use it for shared caching, idempotency
+  // and queue hand-off, while a single-container deployment degrades safely to
+  // MongoDB + local process behaviour.
+  redis: {
+    url: process.env.REDIS_URL,
+    keyPrefix: process.env.REDIS_KEY_PREFIX || 'task:',
+    connectTimeoutMs: Number(process.env.REDIS_CONNECT_TIMEOUT_MS || 3000),
+  },
+
+  // AWS/S3 settings. Credentials are resolved by the AWS SDK default provider
+  // chain (IAM role in ECS is preferred); never put an access key in the image.
+  aws: {
+    region: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION,
+    s3Bucket: process.env.S3_BUCKET,
+    s3Prefix: process.env.S3_PREFIX || 'uploads',
+    s3Endpoint: process.env.S3_ENDPOINT,
+    s3ForcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true',
+    s3PresignedUrlTtlSeconds: Number(process.env.S3_PRESIGNED_URL_TTL_SECONDS || 900),
+  },
+
+  idempotency: {
+    enabled: process.env.IDEMPOTENCY_ENABLED !== 'false',
+    ttlSeconds: Number(process.env.IDEMPOTENCY_TTL_SECONDS || 86400),
+  },
+
+  metrics: {
+    token: process.env.METRICS_TOKEN,
+  },
+
+  worker: {
+    mode: process.env.WORKER_MODE === 'true',
   },
 
   // Seeding creates demo accounts with known passwords: opt-in, never default.
@@ -90,15 +126,15 @@ const config = {
 // Validate required environment variables up front: a server that boots without
 // a database URI or a JWT secret fails at the first request, which is far
 // harder to diagnose than refusing to start.
-const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
+const requiredEnvVars = config.worker.mode ? [] : ['MONGODB_URI', 'JWT_SECRET'];
 
 const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
 
 if (missingEnvVars.length > 0 && config.nodeEnv !== 'test') {
   // The structured logger requires this module, so bootstrapping reports
   // through stderr directly.
-  console.error('Missing required environment variables:');
-  missingEnvVars.forEach((envVar) => console.error(`  - ${envVar}`));
+  process.stderr.write('Missing required environment variables:\n');
+  missingEnvVars.forEach((envVar) => process.stderr.write(`  - ${envVar}\n`));
   process.exit(1);
 }
 

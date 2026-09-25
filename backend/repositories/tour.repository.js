@@ -17,8 +17,26 @@ const tourRepository = {
     return Tour.create(data);
   },
 
-  findAll() {
-    return Tour.find();
+  findAll(options) {
+    if (!options) return Tour.find();
+    const { page, limit } = options;
+    return Promise.all([
+      Tour.find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      Tour.countDocuments(),
+    ]).then(([items, total]) => ({
+      items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    }));
+  },
+
+  findPage(options) {
+    return this.findAll(options);
   },
 
   findApproved() {

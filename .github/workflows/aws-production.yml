@@ -1,0 +1,222 @@
+name: AWS Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Optional immutable tag; defaults to the commit SHA.
+        required: false
+        type: string
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+  TF_VAR_project_name: ${{ vars.PROJECT_NAME || 'task' }}
+  TF_VAR_environment: ${{ vars.ENVIRONMENT || 'production' }}
+  TF_VAR_domain_name: ${{ vars.DOMAIN_NAME }}
+  TF_VAR_api_hostname: ${{ vars.API_HOSTNAME }}
+  TF_VAR_frontend_hostname: ${{ vars.FRONTEND_HOSTNAME }}
+  TF_VAR_admin_hostname: ${{ vars.ADMIN_HOSTNAME }}
+  TF_VAR_company_hostname: ${{ vars.COMPANY_HOSTNAME }}
+  TF_VAR_certificate_arn: ${{ vars.CERTIFICATE_ARN }}
+  TF_VAR_hosted_zone_id: ${{ vars.HOSTED_ZONE_ID }}
+  TF_VAR_weather_api_key: ${{ secrets.WEATHER_API_KEY }}
+  TF_VAR_sendinblue_api_key: ${{ secrets.SENDINBLUE_API_KEY }}
+  TF_VAR_cloudinary_cloud_name: ${{ vars.CLOUDINARY_CLOUD_NAME }}
+  TF_VAR_cloudinary_api_key: ${{ secrets.CLOUDINARY_API_KEY }}
+  TF_VAR_cloudinary_api_secret: ${{ secrets.CLOUDINARY_API_SECRET }}
+  TF_VAR_pusher_app_id: ${{ vars.PUSHER_APP_ID }}
+  TF_VAR_pusher_key: ${{ vars.PUSHER_KEY }}
+  TF_VAR_pusher_secret: ${{ secrets.PUSHER_SECRET }}
+  TF_VAR_pusher_cluster: ${{ vars.PUSHER_CLUSTER }}
+  TF_VAR_mail_from_name: ${{ vars.MAIL_FROM_NAME || 'Task' }}
+  TF_VAR_mail_from_email: ${{ vars.MAIL_FROM_EMAIL }}
+  TF_VAR_metrics_token: ${{ secrets.METRICS_TOKEN }}
+  TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+  TF_STATE_KEY: ${{ vars.TF_STATE_KEY || 'task/production/terraform.tfstate' }}
+  TF_LOCK_TABLE: ${{ vars.TF_LOCK_TABLE }}
+  ECR_REPOSITORY_PREFIX: ${{ vars.ECR_REPOSITORY_PREFIX || 'task-production' }}
+  IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+
+jobs:
+  quality:
+    name: Test before deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm run setup
+      - run: npm run verify
+      - name: Run backend integration tests against MongoDB
+        run: docker compose -f docker-compose.test.yml up -d && npm run test:backend:integration
+        env:
+          MONGODB_URI_TEST: mongodb://127.0.0.1:27017/task-integration
+      - if: always()
+        run: docker compose -f docker-compose.test.yml down -v
+
+  ecr-bootstrap:
+    name: Bootstrap ECR repositories
+    runs-on: ubuntu-latest
+    needs: quality
+    environment: production
+    outputs:
+      account_id: ${{ steps.identity.outputs.account_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS through GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - id: identity
+        run: echo "account_id=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_OUTPUT"
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: Initialize remote state
+        run: |
+          terraform -chdir=infrastructure/terraform init \
+            -backend-config="bucket=${TF_STATE_BUCKET}" \
+            -backend-config="key=${TF_STATE_KEY}" \
+            -backend-config="region=${AWS_REGION}" \
+            -backend-config="dynamodb_table=${TF_LOCK_TABLE}" \
+            -backend-config="encrypt=true"
+      - name: Create ECR repositories before image publication
+        run: |
+          terraform -chdir=infrastructure/terraform apply -auto-approve \
+            -target=aws_ecr_repository.services \
+            -var="project_name=${TF_VAR_project_name}" \
+            -var="environment=${TF_VAR_environment}" \
+            -var="backend_image=${IMAGE_TAG}" \
+            -var="frontend_image=${IMAGE_TAG}" \
+            -var="admin_image=${IMAGE_TAG}" \
+            -var="company_image=${IMAGE_TAG}"
+
+  build-scan-push:
+    name: Build scan and publish ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: ecr-bootstrap
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: backend
+            context: backend
+            dockerfile: backend/Dockerfile
+            repository: backend
+          - name: frontend
+            context: frontend
+            dockerfile: frontend/Dockerfile
+            repository: frontend
+            build_args: REACT_APP_API_URL=${{ vars.PUBLIC_API_URL }}
+          - name: admin
+            context: admin
+            dockerfile: admin/Dockerfile
+            repository: admin
+            build_args: REACT_APP_API_URL=${{ vars.PUBLIC_API_URL }}
+          - name: company
+            context: tourcompanydashboard
+            dockerfile: tourcompanydashboard/Dockerfile
+            repository: company
+            build_args: REACT_APP_API_URL=${{ vars.PUBLIC_API_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS through GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - uses: docker/setup-buildx-action@v3
+      - name: Build image locally
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          load: true
+          push: false
+          tags: task/${{ matrix.name }}:${{ env.IMAGE_TAG }}
+          build-args: ${{ matrix.build_args }}
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+      - name: Scan image before publication
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: task/${{ matrix.name }}:${{ env.IMAGE_TAG }}
+          format: table
+          exit-code: '1'
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+      - name: Tag and push immutable image
+        run: |
+          remote="${ECR_REPOSITORY_PREFIX}-${{ matrix.repository }}"
+          docker tag "task/${{ matrix.name }}:${IMAGE_TAG}" "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${remote}:${IMAGE_TAG}"
+          docker push "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${remote}:${IMAGE_TAG}"
+        env:
+          AWS_ACCOUNT_ID: ${{ needs.ecr-bootstrap.outputs.account_id }}
+
+  deploy:
+    name: Apply infrastructure and wait for ECS
+    runs-on: ubuntu-latest
+    needs: [ecr-bootstrap, build-scan-push]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS through GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: Initialize remote state
+        run: |
+          terraform -chdir=infrastructure/terraform init \
+            -backend-config="bucket=${TF_STATE_BUCKET}" \
+            -backend-config="key=${TF_STATE_KEY}" \
+            -backend-config="region=${AWS_REGION}" \
+            -backend-config="dynamodb_table=${TF_LOCK_TABLE}" \
+            -backend-config="encrypt=true"
+      - name: Apply immutable image references
+        run: |
+          account_id="$(aws sts get-caller-identity --query Account --output text)"
+          terraform -chdir=infrastructure/terraform apply -auto-approve \
+            -var="backend_image=${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY_PREFIX}-backend:${IMAGE_TAG}" \
+            -var="frontend_image=${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY_PREFIX}-frontend:${IMAGE_TAG}" \
+            -var="admin_image=${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY_PREFIX}-admin:${IMAGE_TAG}" \
+            -var="company_image=${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY_PREFIX}-company:${IMAGE_TAG}"
+      - name: Wait for ECS services to stabilize
+        run: |
+          cluster="$(terraform -chdir=infrastructure/terraform output -raw ecs_cluster_name)"
+          aws ecs wait services-stable --cluster "$cluster" --services backend frontend admin company worker
+      - name: Verify ECS deployment state
+        run: |
+          cluster="$(terraform -chdir=infrastructure/terraform output -raw ecs_cluster_name)"
+          aws ecs describe-services --cluster "$cluster" --services backend frontend admin company --query 'services[*].{name:serviceName,running:runningCount,desired:desiredCount,rollout:deployments[*].rolloutState}' --output table
+      - name: Verify public health endpoint
+        run: |
+          for attempt in $(seq 1 12); do
+            if curl --fail --silent --show-error --retry 2 --connect-timeout 10 "https://${API_HOSTNAME}/health/live"; then exit 0; fi
+            sleep 10
+          done
+          echo 'ALB health check did not become ready' >&2
+          exit 1
+        env:
+          API_HOSTNAME: ${{ vars.API_HOSTNAME }}

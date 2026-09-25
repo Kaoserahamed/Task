@@ -22,6 +22,19 @@ describe('TourService reads', () => {
     expect(tours.findAll).toHaveBeenCalledTimes(1);
   });
 
+  test('paginates when the caller supplies page or limit', async () => {
+    const { service, tours } = buildService({
+      findPage: jest
+        .fn()
+        .mockResolvedValue({ items: [{ _id: 1 }], total: 1, page: 2, limit: 5, totalPages: 1 }),
+    });
+
+    await expect(service.listAll({ page: 2, limit: 5 })).resolves.toMatchObject({
+      items: [{ _id: 1 }],
+    });
+    expect(tours.findPage).toHaveBeenCalledWith({ page: 2, limit: 5 });
+  });
+
   test('listByCompany refuses an empty company id', () => {
     const { service } = buildService();
 

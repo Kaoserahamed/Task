@@ -86,14 +86,11 @@ Each `package.json` declares:
 
 - `jest.collectCoverageFrom` — every `src/**/*.{js,jsx}` file counts, not only
   the ones a test happens to touch (entry points and tests are excluded);
-- `jest.coverageThreshold` — two rungs:
-  - a **global** floor set from the measured, honest current number; and
-  - a strict floor for **`./src/api/`** (85% statements, 75% branches, 90%
-    functions, 85% lines), because the HTTP layer is the part every screen
-    depends on.
-
-Raise the global floors as modules gain tests; never comment them out. The
-suite layout:
+  Each app's `test:coverage` command enforces the package-level threshold, and
+  `coverage:check` independently validates the generated summary before CI accepts
+  it. The global floors are ratcheted from measured behavior; the stricter API
+  floor is 85% statements, 75% branches, 90% functions, and 85% lines. The
+  suite layout:
 
 - `src/api/client.test.js` — transport behaviour (token injection, serialising,
   `ApiError` mapping, 204/empty bodies, every verb);
@@ -120,5 +117,7 @@ suite layout:
 1. Add one function to the matching resource module in `src/api/` (or create
    the module if the resource is new).
 2. Import it in the component or context and call it — no URLs in components.
-3. Extend `src/api/endpoints.test.js` with the path and verb you expect.
+3. Extend `src/api/endpoints.test.js` with the path, verb, and relevant payload
+   assertion you expect. The repository contract test fails if an exported
+   resource function is missing from that suite.
 4. Run `npm run verify` in the app and `npm run verify:repo` at the root.

@@ -85,5 +85,8 @@ const companySchema = new mongoose.Schema({
     type: Date,
   },
 });
+companySchema.index({ verificationStatus: 1, createdAt: -1 });
+companySchema.index({ createdAt: -1 });
+
 const Company = mongoose.model('Company', companySchema);
 module.exports = Company;
