@@ -8,6 +8,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Admin tour monitoring status, date, and destination search rules now live in a
+  tested selector, and search applies consistently to upcoming and finished tabs.
 - Company tour category and type filtering is now implemented by tested pure
   selectors, removing duplicated filtering logic from `ManageTours`.
 - Conventional Commit messages are now enforced locally with `lint:commits` and

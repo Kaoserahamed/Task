@@ -5,6 +5,7 @@ import PackageGallery from '../TourDetails/PackageGallery';
 import * as toursApi from '../../api/tours';
 import * as bookingsApi from '../../api/bookings';
 import { logError } from '../../utils/logger';
+import { filterMonitoringTours } from '../../utils/tourMonitoringFilters';
 
 const TourMonitoring = () => {
   const [tours, setTours] = useState([]);
@@ -110,16 +111,11 @@ const TourMonitoring = () => {
     }
   };
 
-  const filteredTours = tours.filter((tour) => {
-    if (activeTab !== 'all' && tour.status !== activeTab) return false;
-    if (
-      searchTerm &&
-      !tour.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !tour.destinations.some((dest) => dest.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    ) {
-      return false;
-    }
-    return true;
+  const now = new Date();
+  const filteredTours = filterMonitoringTours(tours, {
+    tab: activeTab,
+    searchTerm,
+    now,
   });
 
   const getStatusClass = (status) => {
@@ -155,10 +151,6 @@ const TourMonitoring = () => {
     if (tour.companyName) return tour.companyName;
     return 'Unknown Company';
   };
-
-  const now = new Date();
-  const upcomingTours = tours.filter((t) => t.status === 'approved' && new Date(t.startDate) > now);
-  const finishedTours = tours.filter((t) => t.status === 'approved' && new Date(t.endDate) < now);
 
   return (
     <div className="tour-monitoring">
@@ -196,11 +188,8 @@ const TourMonitoring = () => {
           <p>Loading tours...</p>
         ) : (
           (() => {
-            let displayTours = filteredTours;
-            if (activeTab === 'upcoming') displayTours = upcomingTours;
-            if (activeTab === 'finished') displayTours = finishedTours;
-            return displayTours.length > 0 ? (
-              displayTours.map((tour) => (
+            return filteredTours.length > 0 ? (
+              filteredTours.map((tour) => (
                 <React.Fragment key={tour._id}>
                   <div className="tour-card">
                     <div className="tour-header">
