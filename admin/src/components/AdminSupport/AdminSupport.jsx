@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './AdminSupport.css';
 import avatar from '../Assets/chat_avatar.png'; // Use a default avatar if needed
-import { useAuth } from '../../context/AuthContext';
 import socket from '../../socket';
 import * as chatApi from '../../api/chat';
 import { logDebug, logError } from '../../utils/logger';
@@ -9,7 +8,6 @@ import { logDebug, logError } from '../../utils/logger';
 const DEFAULT_ADMIN_ID = '65f1a2b3c4d5e6f7a8b9c0d1'; // Valid 24-character hex string
 
 const AdminSupport = () => {
-  const { user } = useAuth();
   const [userChats, setUserChats] = useState([]);
   const [companyChats, setCompanyChats] = useState([]);
   const [filter, setFilter] = useState('users'); // 'users' or 'companies'
@@ -22,7 +20,7 @@ const AdminSupport = () => {
   const chatHeaderRef = useRef(null);
   const messageInputRef = useRef(null);
 
-  const fetchUserChats = async () => {
+  const fetchUserChats = useCallback(async () => {
     try {
       const data = await chatApi.fetchAdminChats('aduse');
       setUserChats(Array.isArray(data) ? data : []);
@@ -30,9 +28,9 @@ const AdminSupport = () => {
       logError('Error fetching user chats:', error);
       setUserChats([]);
     }
-  };
+  }, []);
 
-  const fetchCompanyChats = async () => {
+  const fetchCompanyChats = useCallback(async () => {
     try {
       const data = await chatApi.fetchAdminChats('adcom');
       setCompanyChats(Array.isArray(data) ? data : []);
@@ -40,51 +38,37 @@ const AdminSupport = () => {
       logError('Error fetching company chats:', error);
       setCompanyChats([]);
     }
-  };
+  }, []);
 
   // Initial fetch of chats
   useEffect(() => {
     fetchUserChats();
     fetchCompanyChats();
-  }, []);
+  }, [fetchCompanyChats, fetchUserChats]);
 
   // Socket event handling
   useEffect(() => {
-    if (socket) {
-      socket.on('posts', (data) => {
-        logDebug('Received socket event:', data);
-        if (data.action === 'create' && data.updatedChat) {
-          // Update the active chat if it matches
-          if (activeChat && activeChat._id === data.updatedChat._id) {
-            setActiveChat(data.updatedChat);
-          }
-
-          // Refresh the appropriate chat list
-          if (data.updatedChat.chatType === 'aduse') {
-            fetchUserChats();
-          } else if (data.updatedChat.chatType === 'adcom') {
-            fetchCompanyChats();
-          }
-        }
-      });
-    }
-
-    return () => {
-      if (socket) {
-        socket.off('posts');
-      }
+    const handlePost = (data) => {
+      logDebug('Received socket event:', data);
+      if (data.action !== 'create' || !data.updatedChat) return;
+      if (activeChat?._id === data.updatedChat._id) setActiveChat(data.updatedChat);
+      if (data.updatedChat.chatType === 'aduse') fetchUserChats();
+      if (data.updatedChat.chatType === 'adcom') fetchCompanyChats();
     };
-  }, [socket, activeChat]);
+
+    socket.on('posts', handlePost);
+    return () => socket.off('posts', handlePost);
+  }, [activeChat, fetchCompanyChats, fetchUserChats]);
 
   // Function to scroll to the bottom
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
-  }, [activeChat?.messages?.length]);
+  }, [activeChat?.messages?.length, scrollToBottom]);
 
   // Measure header, input, and chat main heights and set messages container height
   useEffect(() => {
@@ -104,15 +88,7 @@ const AdminSupport = () => {
         messagesContainer.clientHeight + 100;
       setShowScrollButton(!isAtBottom);
     }
-  }, [
-    activeChat,
-    userChats,
-    companyChats,
-    messagesContainerRef.current,
-    chatMainRef.current,
-    chatHeaderRef.current,
-    messageInputRef.current,
-  ]); // Depend on refs to re-measure on resize/layout change
+  }, [activeChat, companyChats, userChats]);
 
   // Show/hide scroll button based on scroll position
   useEffect(() => {
@@ -131,7 +107,7 @@ const AdminSupport = () => {
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, [messagesContainerRef.current]); // Re-attach listener if container changes
+  }, [activeChat]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -189,7 +165,8 @@ const AdminSupport = () => {
 
           <div className="chat-list">
             {(filter === 'users' ? userChats : companyChats).map((chat) => (
-              <div
+              <button
+                type="button"
                 key={chat._id}
                 className={`chat-item ${activeChat?._id === chat._id ? 'active' : ''}`}
                 onClick={() => setActiveChat(chat)}
@@ -208,7 +185,7 @@ const AdminSupport = () => {
                   </div>
                   <p className="chat-preview">{chat.lastMessage}</p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -287,7 +264,7 @@ const AdminSupport = () => {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <button type="submit" className="send-btn">
+                <button type="submit" className="send-btn" aria-label="Send message">
                   <i className="fas fa-paper-plane"></i>
                 </button>
               </form>

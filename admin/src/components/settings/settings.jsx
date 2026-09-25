@@ -4,7 +4,7 @@ import './settings.css';
 import * as authApi from '../../api/auth';
 
 const Settings = () => {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -17,11 +17,6 @@ const Settings = () => {
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
-    notificationSettings: {
-      emailNotifications: true,
-      chatNotifications: true,
-      systemNotifications: true,
-    },
   });
   const [profilePassword, setProfilePassword] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
@@ -111,17 +106,6 @@ const Settings = () => {
     }));
   };
 
-  const handleNotificationChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      notificationSettings: {
-        ...prev.notificationSettings,
-        [name]: checked,
-      },
-    }));
-  };
-
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (formData.newPassword !== formData.confirmPassword) {
@@ -140,19 +124,6 @@ const Settings = () => {
       }));
     } catch (error) {
       setMessage({ type: 'error', text: error.message || 'Failed to update password' });
-    }
-  };
-
-  const handleNotificationSettings = async (e) => {
-    e.preventDefault();
-    try {
-      await authApi.updateNotificationSettings(formData.notificationSettings);
-      setMessage({ type: 'success', text: 'Notification settings updated successfully' });
-    } catch (error) {
-      setMessage({
-        type: 'error',
-        text: error.message || 'Failed to update notification settings',
-      });
     }
   };
 
@@ -347,51 +318,6 @@ const Settings = () => {
           </button>
         </form>
       </div>
-
-      {/* <div className="settings-section">
-        <h3>Notification Settings</h3>
-        <form onSubmit={handleNotificationSettings}>
-          <div className="form-group checkbox">
-            <label>
-              <input
-                type="checkbox"
-                name="emailNotifications"
-                checked={formData.notificationSettings.emailNotifications}
-                onChange={handleNotificationChange}
-              />
-              Email Notifications
-            </label>
-          </div>
-
-          <div className="form-group checkbox">
-            <label>
-              <input
-                type="checkbox"
-                name="chatNotifications"
-                checked={formData.notificationSettings.chatNotifications}
-                onChange={handleNotificationChange}
-              />
-              Chat Notifications
-            </label>
-          </div>
-
-          <div className="form-group checkbox">
-            <label>
-              <input
-                type="checkbox"
-                name="systemNotifications"
-                checked={formData.notificationSettings.systemNotifications}
-                onChange={handleNotificationChange}
-              />
-              System Notifications
-            </label>
-          </div>
-
-          <button type="submit" className="btn-primary">
-            Save Notification Settings
-          </button>
-        </form>
-      </div> */}
     </div>
   );
 };

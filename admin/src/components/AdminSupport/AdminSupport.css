@@ -88,10 +88,16 @@
 }
 
 .chat-item {
+  width: 100%;
   padding: 16px 18px;
   display: flex;
   gap: 14px;
+  color: inherit;
+  background: transparent;
+  border: 0;
   border-bottom: 1px solid #f1f3f5;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
   align-items: center;
   transition: background 0.15s;

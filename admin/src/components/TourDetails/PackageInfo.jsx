@@ -1,10 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import './PackageInfo.css';
 
-const PackageInfo = ({ tour, companyId, companyName }) => {
-  const navigate = useNavigate();
-
+const PackageInfo = ({ tour, companyName }) => {
   return (
     <div className="admin-package-info">
       {/* Company Name (if provided) */}

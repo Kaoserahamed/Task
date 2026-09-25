@@ -5,14 +5,6 @@ import socket from '../../socket';
 import * as companiesApi from '../../api/companies';
 import { logDebug } from '../../utils/logger';
 
-const emptySocialLinks = {
-  facebook: '',
-  twitter: '',
-  linkedin: '',
-  instagram: '',
-  website: '',
-};
-
 const RegistrationRequest = () => {
   const { id } = useParams();
   const navigate = useNavigate();

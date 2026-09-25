@@ -9,7 +9,6 @@ import AdminSupport from './components/AdminSupport/AdminSupport';
 import DestinationSearch from './components/DestinationSearch/DestinationSearch';
 import Reports from './components/Reports/Reports';
 import Login from './components/Login/Login';
-import Signup from './components/Signup/Signup';
 import Settings from './components/settings/settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import RegistrationRequest from './components/RegistrationRequests/RegistrationRequest';
