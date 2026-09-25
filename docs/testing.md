@@ -16,7 +16,8 @@ Pusher, or email credentials:
 
 ```bash
 npm test                  # backend unit suite + all three React app suites
-npm run test:coverage    # coverage gates for every package
+npm run build              # optimized production bundles for all three React apps
+npm run test:coverage      # coverage gates for every package
 ```
 
 The backend integration suite is intentionally separate. It starts a
@@ -33,7 +34,8 @@ From a new checkout, the complete offline test path is:
 git clone <repository-url>
 cd Task
 npm run setup
-npm run test:offline
+npm test
+npm run build
 ```
 
 `test:offline` is hermetic: it runs the backend unit suite and all React app
@@ -77,7 +79,7 @@ re-checks both the global floor and the stricter `./src/api/` floor. CI performs
 both steps, so a missing report or a threshold that is only documented cannot
 produce a green build.
 
-The repository has 73 tracked test/spec files across the backend and three React
+The repository has 74 tracked test/spec files across the backend and three React
 apps. The endpoint contract suites cover every exported resource function, and
 `backend/tests/unit/contracts/frontend-layer.test.js` fails if a new export is
 added without a corresponding contract assertion.

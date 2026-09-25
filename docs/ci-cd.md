@@ -39,9 +39,10 @@ each package's `package-lock.json`.
 ## Local verification
 
 ```bash
-npm run verify      # everything: lint + format + typecheck + verify:repo + test
+npm run verify      # everything: lint + format + typecheck + verify:repo + test + build
 npm run lint        # lint backend + every CRA app
-npm run test        # backend + CRA tests
+npm test            # backend + CRA tests
+npm run build       # production bundles for all three CRA apps
 npm run format:check
 ```
 

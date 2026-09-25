@@ -32,6 +32,17 @@ describe('monorepo layout', () => {
     expect(root.packageManager).toBe('npm@11.14.1');
   });
 
+  test('the root exposes conventional test and production-build entry points', () => {
+    const root = readJson('package.json');
+
+    expect(root.scripts.build).toBe('npm run build:web');
+    expect(root.scripts['verify:build']).toBe('npm run build');
+    for (const app of ['frontend', 'admin', 'tourcompanydashboard']) {
+      expect(root.scripts['build:web']).toContain(`npm --prefix ${app} run build`);
+    }
+    expect(root.scripts.verify).toContain('npm run verify:build');
+  });
+
   test('build-only tools are not classified as shipped runtime dependencies', () => {
     for (const stack of STACKS) {
       const manifest = readJson(stack, 'package.json');

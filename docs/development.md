@@ -93,11 +93,12 @@ The root `package.json` composes the per-package scripts:
 
 ```bash
 npm run lint        # lint backend + all three CRA apps
-npm run test                # backend + CRA tests (CI mode)
-npm run test:offline         # explicit no-database test path
+npm test            # backend + CRA tests (CI mode)
+npm run build       # optimized production bundles for all three CRA apps
+npm run test:offline # explicit no-database test path
 npm run test:coverage
 npm run format:check
-npm run verify      # lint + format + typecheck + verify:repo + test
+npm run verify      # lint + format + typecheck + verify:repo + test + build
 ```
 
 `npm run test:offline` is the hermetic path: it runs the backend unit suite and

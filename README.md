@@ -20,6 +20,8 @@ A comprehensive multi-tenant tour booking and management platform enabling custo
 | [CHANGELOG.md](CHANGELOG.md)                 | Notable changes per release                                  |
 
 **One command to install everything:** `npm run setup` (from the repository root).
+**One command to run every test:** `npm test`.
+**One command to compile all production web bundles:** `npm run build`.
 **One command to prove the repository is healthy:** `npm run verify`.
 
 ## Live Demo
@@ -564,8 +566,10 @@ Everything is driven from the repository root; each package also works on its ow
 
 ```bash
 npm run setup              # install every package exactly as CI does (npm ci)
-npm run verify             # lint + format + typecheck + repo guard + all test suites
-npm run test:backend       # backend unit tests (hermetic: no database, no Docker)
+npm test                    # backend unit tests + all three React suites
+npm run build               # production bundles for all three React apps
+npm run verify             # lint + format + typecheck + repo guard + tests + builds
+npm run test:backend       # backend unit tests only (hermetic: no database, no Docker)
 npm run test:web           # the three React suites
 npm run test:coverage      # coverage everywhere, plus the backend coverage gate
 npm run test:backend:integration   # backend against a real MongoDB (needs one, see docs/testing.md)

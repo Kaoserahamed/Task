@@ -20,6 +20,9 @@ const STACKS = ['backend', 'frontend', 'admin', 'tourcompanydashboard'];
 
 const REQUIRED_SCRIPTS = [
   'setup',
+  'build',
+  'build:web',
+  'verify:build',
   'test',
   'test:backend',
   'test:backend:unit',

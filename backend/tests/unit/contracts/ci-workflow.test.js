@@ -82,10 +82,11 @@ describe('CI workflow contract', () => {
     expect(workflow).toMatch(/run: npm run dependency:check/);
   });
 
-  test('proves a fresh clone installs and verifies itself', () => {
+  test('proves a fresh clone installs, tests, and builds itself', () => {
     expect(workflow).toMatch(/fresh-clone:/);
     expect(workflow).toMatch(/npm run verify:repo/);
     expect(workflow).toMatch(/npm run verify/);
+    expect(workflow).toMatch(/name: Production build/);
   });
 
   test('gates Terraform formatting, validation, planning, and policy scanning', () => {

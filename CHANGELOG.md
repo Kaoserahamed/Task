@@ -11,7 +11,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Customer search filtering now delegates URL parsing, review aggregation, matching, sorting,
   and display formatting to a tested `searchFilters` utility.
 
-- Fresh-clone verification now runs the complete root `npm run verify` path.
+- Fresh-clone verification now runs the complete root `npm run verify` path,
+  including backend and all three web test suites plus every production build.
+- Conventional root `npm test` and `npm run build` entry points make the
+  runnable suite and deployable web artifacts visible to contributors and buyers.
 - Integration tests use `mongodb-memory-server` when no database URI is supplied;
   a cold clone gets a longer one-time binary-download budget.
 - A root `.env.example` indexes the app-local environment templates for onboarding.
@@ -119,6 +122,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The storefront production build no longer fails on a named `React` import that
+  Jest tolerated but CRA's Webpack bundle rejected.
 - The company dashboard's Vercel build, output directory, SPA fallback, and Node
   runtime are now repository-owned and covered by a delivery contract test.
 - `PATCH /company/auth/update-status` now updates the `companyId` the admin

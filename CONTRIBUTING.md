@@ -57,7 +57,12 @@ That script runs, in order:
 3. **`npm run format:check`** — Prettier (v3) must report zero unformatted files.
 4. **`npm run typecheck`** — `tsc --noEmit` over the backend TypeScript helpers.
 5. **`npm run verify:repo`** — sanity-checks the repo structure.
-6. **`npm test`** — Jest (backend, with an in-memory Mongo) + CRA test runners.
+6. **`npm test`** — Jest backend plus all three CRA test runners.
+7. **`npm run build`** — creates optimized production bundles for the three
+   React applications. The plain-JavaScript Express API has no compile step.
+
+Use `npm run build:web` to build the same bundles, or `npm run verify:build` as the
+build-only entry point when iterating locally.
 
 ## Formatting
 
