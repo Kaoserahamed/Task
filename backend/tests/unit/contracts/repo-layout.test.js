@@ -124,6 +124,27 @@ describe('monorepo layout', () => {
     expect(checker).toContain('networkPrimitive');
   });
 
+  test('the tour seed fixtures stay split into small category modules', () => {
+    const seedData = path.join(repoRoot, 'backend', 'scripts', 'seed-data');
+    const files = fs.readdirSync(seedData).filter((name) => name.endsWith('.js'));
+    expect(files.sort()).toEqual([
+      'adventure.js',
+      'beach.js',
+      'cultural.js',
+      'index.js',
+      'mountain.js',
+      'nature.js',
+    ]);
+    for (const name of files) {
+      const lines = fs.readFileSync(path.join(seedData, name), 'utf8').split(/\r?\n/).length;
+      expect(lines).toBeLessThanOrEqual(200);
+    }
+    const runner = read('backend', 'scripts', 'seedTourPackages.js');
+    expect(runner).toContain("require('./seed-data')");
+    expect(runner).toContain('require.main === module');
+    expect(runner).toContain('module.exports');
+  });
+
   test('the commit message policy is configured locally and in CI', () => {
     const manifest = readJson('package.json');
     expect(manifest.scripts['lint:commits']).toContain('commitlint');

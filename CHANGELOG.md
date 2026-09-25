@@ -8,6 +8,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The tour seed script is now a 129-line import-safe runner over five category
+  fixture modules, with tested company attachment, environment validation, and
+  guaranteed database disconnect behavior.
 - Admin tour monitoring status, date, and destination search rules now live in a
   tested selector, and search applies consistently to upcoming and finished tabs.
 - Company tour category and type filtering is now implemented by tested pure
