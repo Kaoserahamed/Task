@@ -98,8 +98,9 @@ describe('CI workflow contract', () => {
     expect(securityWorkflow).toMatch(/scan-type: config/);
     expect(securityWorkflow).toMatch(/scanners: misconfig/);
     expect(workflow).toMatch(/terraform-security:/);
-    expect(workflow).toMatch(/tfsec-action/);
+    expect(workflow).toMatch(/tfsec-action@v1\.0\.3/);
     expect(workflow).toMatch(/soft_fail: false/);
+    expect(workflow).toMatch(/additional_args: --no-color --severity HIGH,CRITICAL/);
   });
 
   test('runs a dedicated PR-only Terraform plan and policy gate', () => {
@@ -109,9 +110,25 @@ describe('CI workflow contract', () => {
     expect(terraformWorkflow).toMatch(/terraform fmt -check -recursive/);
     expect(terraformWorkflow).toMatch(/terraform validate/);
     expect(terraformWorkflow).toMatch(/terraform plan/);
-    expect(terraformWorkflow).toMatch(/tfsec-action/);
+    expect(terraformWorkflow).toMatch(/tfsec-action@v1\.0\.3/);
     expect(terraformWorkflow).toMatch(/upload-artifact/);
     expect(terraformWorkflow).toMatch(/github-script/);
+  });
+
+  test('pins resolvable versioned security-action releases', () => {
+    const workflows = ['ci.yml', 'security.yml', 'terraform-plan.yml', 'aws-production.yml'].map(
+      (name) => read('.github', 'workflows', name)
+    );
+
+    for (const source of workflows) {
+      expect(source).not.toMatch(/trivy-action@0\.28\.0/);
+      expect(source).not.toMatch(/tfsec-action@v0\.3\.1/);
+    }
+    const allWorkflows = workflows.join('\n');
+    expect(allWorkflows).not.toMatch(/trivy-action@(?!v\d)/);
+    expect(allWorkflows).not.toMatch(/tfsec-action@(?!v\d)/);
+    expect(allWorkflows.match(/trivy-action@v0\.36\.0/g)).toHaveLength(3);
+    expect(allWorkflows.match(/tfsec-action@v1\.0\.3/g)).toHaveLength(2);
   });
 
   test('runs the integration suite against a real database service', () => {

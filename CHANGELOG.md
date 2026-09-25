@@ -8,6 +8,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- CI and production security gates now use resolvable versioned action releases
+  (`aquasecurity/trivy-action@v0.36.0` and `aquasecurity/tfsec-action@v1.0.3`)
+  instead of unresolvable references that failed before any scan executed.
 - Optional, privacy-safe Sentry monitoring and root error containment in all
   three React apps, with event-reference fallback UI, retry recovery, environment
   templates, focused tests, and a cross-app architecture contract. Sentry 11's

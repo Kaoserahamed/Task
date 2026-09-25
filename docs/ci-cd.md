@@ -63,7 +63,14 @@ Three workflows cover `infrastructure/terraform`:
 The review job never talks to AWS: it initialises without a backend
 (`-backend=false`), plans against `terraform.tfvars.example` with
 `-refresh=false`, uploads `terraform.tfplan` and `terraform-plan.txt` as a build
-artifact, and posts a bounded plan excerpt back to the pull request. The
+artifact, and posts a bounded plan excerpt back to the pull request.
+
+The action references are pinned to resolvable versioned releases
+`aquasecurity/trivy-action@v0.36.0` and
+`aquasecurity/tfsec-action@v1.0.3`. A repository contract rejects missing
+release tags so a security job cannot appear configured while failing before
+its scanner starts.
+
 Every high-severity Terraform finding is blocking. The dedicated PR plan uses
 [aquasecurity/tfsec-action](https://github.com/aquasecurity/tfsec-action) with
 `soft_fail: false --severity HIGH,CRITICAL`, and the same directory is scanned
