@@ -84,6 +84,30 @@ describe('container contract', () => {
   });
 });
 
+describe('company dashboard hosting contract', () => {
+  const readJson = (relativePath) => JSON.parse(read(relativePath));
+
+  test('declares a reproducible Vercel static build', () => {
+    const vercel = readJson('tourcompanydashboard/vercel.json');
+
+    expect(vercel.framework).toBe('create-react-app');
+    expect(vercel.installCommand).toBe('npm ci');
+    expect(vercel.buildCommand).toBe('npm run build');
+    expect(vercel.outputDirectory).toBe('build');
+  });
+
+  test('routes browser navigation through the SPA entry point', () => {
+    const { rewrites } = readJson('tourcompanydashboard/vercel.json');
+
+    expect(rewrites).toEqual([{ source: '/(.*)', destination: '/index.html' }]);
+  });
+
+  test('pins the same Node major used by CI and the container build', () => {
+    expect(read('tourcompanydashboard/.nvmrc').trim()).toBe('20');
+    expect(read('tourcompanydashboard/Dockerfile')).toMatch(/^FROM node:20-/m);
+  });
+});
+
 describe('password hashing contract', () => {
   test('the manifest declares exactly one bcrypt implementation', () => {
     const manifest = JSON.parse(read('backend/package.json'));

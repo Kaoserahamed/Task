@@ -107,10 +107,18 @@ table is a one-time operator action; step-by-step preparation is listed in
 
 ## Deployment note
 
-Production deployments build each CRA app with `npm run build` and serve the
-static bundle alongside the Express API (see `docker-compose.yml` and
-`docs/development.md`). The CI `web` job performs the same production build, so
-a failing CI build always corresponds to a build that would fail to deploy.
+The company dashboard's Vercel project is rooted at `tourcompanydashboard/` and
+keeps its framework, install command, build command, output directory, SPA
+fallback, and Node 20 runtime in `tourcompanydashboard/vercel.json` and
+`tourcompanydashboard/.nvmrc`. These settings are part of the repository rather
+than mutable dashboard defaults, so CI, a local build, and the deployment all
+run the same locked Node 20 toolchain. Set `REACT_APP_API_URL` in the Vercel
+project before deployment; CRA inlines that value into the static bundle.
+
+Production deployments for the other apps build each CRA app with `npm run build`
+and serve the static bundle alongside the Express API (see `docker-compose.yml`
+and `docs/development.md`). The CI `web` job performs the same production build,
+so a failing CI build always corresponds to a build that would fail to deploy.
 
 `npm run dependency:check` inventories the root tooling package and all four application manifests. The root intentionally has no runtime dependencies: runtime ownership stays with the package that ships the code. The same command verifies every committed lockfile, direct range synchronization, Node/npm compatibility, and reproducible dependency policy. `npm run dependency:report` prints the ownership counts for review.
 

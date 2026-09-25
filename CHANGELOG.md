@@ -119,6 +119,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The company dashboard's Vercel build, output directory, SPA fallback, and Node
+  runtime are now repository-owned and covered by a delivery contract test.
 - `PATCH /company/auth/update-status` now updates the `companyId` the admin
   dashboard sends in the body — it previously read an id only a company token
   carries, so every admin approval answered 400 — and rejects a status outside
