@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Scan Terraform for high-severity misconfigurations
-        uses: aquasecurity/tfsec-action@v0.3.1
+        uses: aquasecurity/tfsec-action@v1.0.3
         with:
           soft_fail: false
           args: '--no-color --severity HIGH,CRITICAL infrastructure/terraform'

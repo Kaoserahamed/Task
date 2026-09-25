@@ -48,7 +48,7 @@ jobs:
         if: always() && steps.plan.outcome == 'success'
         run: terraform show -no-color terraform.tfplan > terraform-plan.txt
       - name: Run tfsec high-severity policy gate
-        uses: aquasecurity/tfsec-action@v0.3.1
+        uses: aquasecurity/tfsec-action@v1.0.3
         with:
           soft_fail: false
           args: '--no-color --severity HIGH,CRITICAL infrastructure/terraform'
