@@ -85,8 +85,16 @@ describe('CI workflow contract', () => {
   test('proves a fresh clone installs, tests, and builds itself', () => {
     expect(workflow).toMatch(/fresh-clone:/);
     expect(workflow).toMatch(/npm run verify:repo/);
+    expect(workflow).toMatch(/npm run verify:offline/);
     expect(workflow).toMatch(/npm run verify/);
     expect(workflow).toMatch(/name: Production build/);
+  });
+
+  test('runs the explicit hermetic test boundary from a fresh clone', () => {
+    const root = JSON.parse(read('package.json'));
+    expect(root.scripts['verify:offline']).toBe('node scripts/verify-offline-boundary.mjs');
+    expect(root.scripts['test:offline']).toContain('npm run verify:offline');
+    expect(workflow).toMatch(/name: Verify the offline test boundary/);
   });
 
   test('gates Terraform formatting, validation, planning, and policy scanning', () => {

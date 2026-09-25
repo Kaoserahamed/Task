@@ -28,6 +28,7 @@ const REQUIRED_SCRIPTS = [
   'test:backend:unit',
   'test:backend:integration',
   'test:offline',
+  'verify:offline',
   'test:coverage',
   'dependency:check',
   'dependency:report',

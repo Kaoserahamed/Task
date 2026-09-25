@@ -16,15 +16,15 @@ runs on every push and pull-request to `main` / `develop`. It mirrors the local
 
 ### Jobs
 
-| Job                 | Runs                                                                       | Fails on                                                 |
-| ------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `lint-backend`      | `npm run lint --prefix backend`                                            | any ESLint error                                         |
-| `backend-tests`     | `npm run test:coverage --prefix backend`                                   | test failure **or** coverage threshold breach            |
-| `integration`       | `npm run test:integration --prefix backend` on a `mongo:` service          | test failure                                             |
-| `web`               | matrix over `frontend`, `admin`, `tourcompanydashboard`                    | lint error, test failure, or build failure               |
-| `typecheck-backend` | `npm run typecheck --prefix backend`                                       | any TypeScript error                                     |
-| `fresh-clone`       | `npm run setup`, repository guard, format check, and full `npm run verify` | install, test, type, format, or repository drift failure |
-| `docker`            | `docker compose -f docker-compose.test.yml build` and the image health     | build failure or a container that never turns healthy    |
+| Job                 | Runs                                                                                         | Fails on                                                                    |
+| ------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `lint-backend`      | `npm run lint --prefix backend`                                                              | any ESLint error                                                            |
+| `backend-tests`     | `npm run test:coverage --prefix backend`                                                     | test failure **or** coverage threshold breach                               |
+| `integration`       | `npm run test:integration --prefix backend` on a `mongo:` service                            | test failure                                                                |
+| `web`               | matrix over `frontend`, `admin`, `tourcompanydashboard`                                      | lint error, test failure, or build failure                                  |
+| `typecheck-backend` | `npm run typecheck --prefix backend`                                                         | any TypeScript error                                                        |
+| `fresh-clone`       | `npm run setup`, repository guard, offline boundary, format check, and full `npm run verify` | install, test, type, format, provider-boundary, or repository drift failure |
+| `docker`            | `docker compose -f docker-compose.test.yml build` and the image health                       | build failure or a container that never turns healthy                       |
 
 The `fresh-clone` job is what makes the README's Quick Start executable: it runs
 `npm run setup` and then the complete root `npm run verify` path on a checkout

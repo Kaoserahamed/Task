@@ -21,6 +21,41 @@ process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'silent';
 process.env.SEED_ENABLED = process.env.SEED_ENABLED || 'false';
 delete process.env.VERCEL;
 delete process.env.IS_VERCEL;
+// External providers are unavailable to the unit suite by design. Clearing the
+// variables here is a second line of defence after the Jest mocks: an accidental
+// SDK call must fail closed instead of discovering credentials from a developer's
+// shell or CI environment.
+const EXTERNAL_ENV_KEYS = [
+  'AWS_ACCESS_KEY_ID',
+  'AWS_DEFAULT_REGION',
+  'AWS_PROFILE',
+  'AWS_REGION',
+  'AWS_SECRET_ACCESS_KEY',
+  'AWS_SESSION_TOKEN',
+  'BREVO_API_KEY',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
+  'CLOUDINARY_CLOUD_NAME',
+  'MAIL_FROM_EMAIL',
+  'MAIL_FROM_NAME',
+  'PUSHER_APP_ID',
+  'PUSHER_CLUSTER',
+  'PUSHER_KEY',
+  'PUSHER_SECRET',
+  'REDIS_URL',
+  'S3_BUCKET',
+  'S3_ENDPOINT',
+  'S3_FORCE_PATH_STYLE',
+  'SENDINBLUE_API_KEY',
+  'SMTP_HOST',
+  'SMTP_PASSWORD',
+  'SMTP_PORT',
+  'SMTP_USER',
+  'WEATHER_API_KEY',
+];
+for (const key of EXTERNAL_ENV_KEYS) {
+  process.env[key] = '';
+}
 
 // Demo accounts are imported by the seed routes; give them placeholder values
 // so importing that module (behind the seed flag) can never throw.

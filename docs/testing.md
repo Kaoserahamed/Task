@@ -38,9 +38,11 @@ npm test
 npm run build
 ```
 
-`test:offline` is hermetic: it runs the backend unit suite and all React app
-suites without MongoDB, Docker, Cloudinary, Pusher, or Sendinblue. The
-integration suite is also account-free when its MongoDB binary is cached:
+`npm run test:offline` is the explicit hermetic gate: it clears external provider
+configuration, verifies the unit-test network boundary, and then runs the
+backend unit suite plus all three React suites. It never uses MongoDB, Docker,
+Cloudinary, Pusher, Sendinblue, AWS, Redis, or live credentials. The integration
+suite is separate and account-free when its MongoDB binary is cached:
 
 ```bash
 npm run test:backend:integration

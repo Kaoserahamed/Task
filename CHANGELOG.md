@@ -8,6 +8,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The offline test path now clears external provider credentials and runs a
+  repository contract that rejects unmocked network SDKs or direct network calls
+  in unit tests. CI runs the boundary check from a fresh clone.
 - Booking creation now uses a strict Zod request schema at the API boundary. It
   normalizes validated fields, rejects unknown/client-owned fields with per-field
   errors, derives the account email and total price on the server, and keeps only

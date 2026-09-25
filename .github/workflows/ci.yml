@@ -192,6 +192,8 @@ jobs:
         run: npm run setup
       - name: Repository guard
         run: npm run verify:repo
+      - name: Verify the offline test boundary
+        run: npm run verify:offline
       - name: Formatting is clean on a fresh clone
         run: npm run format:check
       - name: Full fresh-clone verification

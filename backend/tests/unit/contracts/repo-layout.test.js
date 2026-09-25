@@ -98,6 +98,31 @@ describe('monorepo layout', () => {
   test('a test stack exists for integration work', () => {
     expect(exists('docker-compose.test.yml')).toBe(true);
   });
+
+  test('the unit environment blanks external provider configuration', () => {
+    const setup = read('backend', 'tests', 'unit', 'setup-env.js');
+    for (const name of [
+      'CLOUDINARY_API_SECRET',
+      'PUSHER_SECRET',
+      'SENDINBLUE_API_KEY',
+      'WEATHER_API_KEY',
+      'REDIS_URL',
+      'S3_BUCKET',
+      'AWS_SECRET_ACCESS_KEY',
+    ]) {
+      expect(setup).toContain(`'${name}'`);
+    }
+    expect(setup).toContain('process.env[key] = ');
+  });
+
+  test('the offline boundary checker is dependency-free and covers provider SDKs', () => {
+    const checker = read('scripts', 'verify-offline-boundary.mjs');
+    expect(exists('scripts', 'verify-offline-boundary.mjs')).toBe(true);
+    for (const provider of ['axios', 'cloudinary', 'pusher', 'sib-api-v3-sdk', 'ioredis']) {
+      expect(checker).toContain(`'${provider}'`);
+    }
+    expect(checker).toContain('networkPrimitive');
+  });
 });
 
 describe('documentation layout', () => {
