@@ -8,6 +8,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Company tour category and type filtering is now implemented by tested pure
+  selectors, removing duplicated filtering logic from `ManageTours`.
 - Conventional Commit messages are now enforced locally with `lint:commits` and
   in CI for pull-request and protected-branch commit ranges, without rewriting
   history.

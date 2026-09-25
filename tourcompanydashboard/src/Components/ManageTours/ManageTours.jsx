@@ -5,6 +5,7 @@ import socket from '../../socket';
 import { useAuth } from '../../Context/AuthContext';
 import './ManageTours.css';
 import API_BASE_URL from '../../config/api';
+import { filterCompanyTours } from '../../utils/tourFilters';
 import { logDebug, logError } from '../../utils/logger';
 
 const ManageTours = () => {
@@ -20,7 +21,6 @@ const ManageTours = () => {
   const [filteredTours, setFilteredTours] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeTourType, setActiveTourType] = useState('all');
-  const [filterLoading, setFilterLoading] = useState(false);
   const navigate = useNavigate();
 
   // Verify socket connection
@@ -61,51 +61,10 @@ const ManageTours = () => {
     fetchcompanyTours();
   }, []);
 
-  // Combined filtering effect
   useEffect(() => {
-    let filtered = [...allTours];
-
-    // First filter by category
-    if (activeCategory !== 'all') {
-      filtered = filtered.filter((tour) => {
-        let categories = tour.packageCategories;
-
-        if (Array.isArray(categories) && categories.length > 0) {
-          let categoryString = categories[0];
-
-          try {
-            // Parse categories based on format
-            if (categoryString.startsWith('[')) {
-              categories = JSON.parse(categoryString);
-            } else {
-              categories = categoryString
-                .replace('[', '')
-                .replace(']', '')
-                .split(',')
-                .map((cat) => cat.trim());
-            }
-
-            // Case-insensitive comparison
-            return categories.some((cat) => cat.toLowerCase() === activeCategory.toLowerCase());
-          } catch (error) {
-            logError('Error parsing categories for tour:', tour.name, error);
-            return false;
-          }
-        }
-        return false;
-      });
-    }
-
-    // Then filter by tour type
-    if (activeTourType !== 'all') {
-      filtered = filtered.filter((tour) => tour.tourType?.[activeTourType]);
-    }
-    // Then filter by tour type
-    if (activeTourType !== 'all') {
-      filtered = filtered.filter((tour) => tour.tourType && tour.tourType[activeTourType] === true);
-    }
-
-    setFilteredTours(filtered);
+    setFilteredTours(
+      filterCompanyTours(allTours, { category: activeCategory, type: activeTourType })
+    );
   }, [activeCategory, activeTourType, allTours]);
 
   const handleCategoryChange = (category) => {
@@ -249,7 +208,6 @@ const ManageTours = () => {
             <button
               className={activeCategory === 'all' ? 'active' : ''}
               onClick={() => handleCategoryChange('all')}
-              disabled={filterLoading}
             >
               All Categories
             </button>
@@ -258,7 +216,6 @@ const ManageTours = () => {
                 key={category}
                 className={activeCategory === category ? 'active' : ''}
                 onClick={() => handleCategoryChange(category)}
-                disabled={filterLoading}
               >
                 {category}
               </button>
@@ -266,7 +223,6 @@ const ManageTours = () => {
             <button
               className={activeCategory === 'custom' ? 'active' : ''}
               onClick={() => handleCategoryChange('custom')}
-              disabled={filterLoading}
             >
               Custom
             </button>
@@ -276,21 +232,18 @@ const ManageTours = () => {
             <button
               className={activeTourType === 'all' ? 'active' : ''}
               onClick={() => handleTourTypeChange('all')}
-              disabled={filterLoading}
             >
               All Types
             </button>
             <button
               className={activeTourType === 'single' ? 'active' : ''}
               onClick={() => handleTourTypeChange('single')}
-              disabled={filterLoading}
             >
               Single
             </button>
             <button
               className={activeTourType === 'group' ? 'active' : ''}
               onClick={() => handleTourTypeChange('group')}
-              disabled={filterLoading}
             >
               Group
             </button>
@@ -298,115 +251,107 @@ const ManageTours = () => {
         </div>
       </div>
 
-      {filterLoading ? (
-        <div className="loading">Filtering tours...</div>
-      ) : (
-        <>
-          <div className="tours-grid">
-            {filteredTours.map((tour) => (
-              <div key={tour._id} className="tour-card">
-                <div className="tour-image">
-                  {tour.images && tour.images[0] ? (
-                    <img
-                      src={`${API_BASE_URL}/${tour.images[0]}`}
-                      alt={tour.name}
-                      onError={(e) => {
-                        e.target.src = fallbackImageUrl;
-                      }}
-                    />
-                  ) : (
-                    <img src={fallbackImageUrl} alt="No image available" />
+      <div className="tours-grid">
+        {filteredTours.map((tour) => (
+          <div key={tour._id} className="tour-card">
+            <div className="tour-image">
+              {tour.images && tour.images[0] ? (
+                <img
+                  src={`${API_BASE_URL}/${tour.images[0]}`}
+                  alt={tour.name}
+                  onError={(e) => {
+                    e.target.src = fallbackImageUrl;
+                  }}
+                />
+              ) : (
+                <img src={fallbackImageUrl} alt="No image available" />
+              )}
+              <span className={`status ${tour.status || 'draft'}`}>{tour.status || 'draft'}</span>
+            </div>
+
+            <div className="tour-details">
+              <h3>{tour.name || 'Untitled Tour'}</h3>
+              <div className="tour-info">
+                <div className="categories-list">
+                  {tour.packageCategories?.map((category, index) => (
+                    <span key={index} className="category-tag">
+                      {category}
+                      {index < tour.packageCategories.length - 1 ? ' ' : ''}
+                    </span>
+                  ))}
+                  {tour.customCategory && (
+                    <span className="category-tag custom">{tour.customCategory}</span>
                   )}
-                  <span className={`status ${tour.status || 'draft'}`}>
-                    {tour.status || 'draft'}
-                  </span>
                 </div>
-
-                <div className="tour-details">
-                  <h3>{tour.name || 'Untitled Tour'}</h3>
-                  <div className="tour-info">
-                    <div className="categories-list">
-                      {tour.packageCategories?.map((category, index) => (
-                        <span key={index} className="category-tag">
-                          {category}
-                          {index < tour.packageCategories.length - 1 ? ' ' : ''}
-                        </span>
-                      ))}
-                      {tour.customCategory && (
-                        <span className="category-tag custom">{tour.customCategory}</span>
-                      )}
-                    </div>
-                    <div className="tour-type-tags">
-                      {tour.tourType?.single && <span className="type-tag">Single</span>}
-                      {tour.tourType?.group && <span className="type-tag">Group</span>}
-                    </div>
-                    <p>
-                      <strong>Duration:</strong> {getDuration(tour)}
-                    </p>
-                    <p>
-                      <strong>Price:</strong> ${tour.price || 'N/A'}
-                    </p>
-                    {tour.tourType.group && (
-                      <p>
-                        <strong>Available Seats:</strong>{' '}
-                        {tour.availableSeats !== undefined
-                          ? `${tour.availableSeats}/${tour.maxGroupSize || 'N/A'}`
-                          : 'N/A'}
-                      </p>
-                    )}
-                  </div>
-
-                  {tour.status === 'rejected' && (
-                    <div className="rejection-review">
-                      <div className="review-header">
-                        <i className="fas fa-exclamation-circle"></i>
-                        <span>Rejection Review</span>
-                      </div>
-                      <div className="review-content">
-                        {tour.review ? (
-                          tour.review
-                        ) : (
-                          <span className="no-review">No review provided</span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="tour-dates">
-                    {tour.startDate && (
-                      <p>
-                        <strong>Dates:</strong> {formatDate(tour.startDate)} -{' '}
-                        {formatDate(tour.endDate)}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="tour-actions">
-                    <button className="edit-btn" onClick={() => handleEdit(tour._id)}>
-                      Edit
-                    </button>
-                    {(!tour.status || tour.status !== 'approved') && (
-                      <button
-                        className="approve-btn"
-                        onClick={() => handleStatusUpdate(tour._id, 'pending')}
-                        disabled={tour.status === 'pending'}
-                      >
-                        {tour.status === 'pending' ? 'Pending' : 'Send for Approval'}
-                      </button>
-                    )}
-                    <button className="delete-btn" onClick={() => handleDelete(tour._id)}>
-                      Delete
-                    </button>
-                  </div>
+                <div className="tour-type-tags">
+                  {tour.tourType?.single && <span className="type-tag">Single</span>}
+                  {tour.tourType?.group && <span className="type-tag">Group</span>}
                 </div>
+                <p>
+                  <strong>Duration:</strong> {getDuration(tour)}
+                </p>
+                <p>
+                  <strong>Price:</strong> ${tour.price || 'N/A'}
+                </p>
+                {tour.tourType.group && (
+                  <p>
+                    <strong>Available Seats:</strong>{' '}
+                    {tour.availableSeats !== undefined
+                      ? `${tour.availableSeats}/${tour.maxGroupSize || 'N/A'}`
+                      : 'N/A'}
+                  </p>
+                )}
               </div>
-            ))}
-          </div>
 
-          {filteredTours.length === 0 && !filterLoading && (
-            <div className="no-tours">No tours found for this category</div>
-          )}
-        </>
+              {tour.status === 'rejected' && (
+                <div className="rejection-review">
+                  <div className="review-header">
+                    <i className="fas fa-exclamation-circle"></i>
+                    <span>Rejection Review</span>
+                  </div>
+                  <div className="review-content">
+                    {tour.review ? (
+                      tour.review
+                    ) : (
+                      <span className="no-review">No review provided</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="tour-dates">
+                {tour.startDate && (
+                  <p>
+                    <strong>Dates:</strong> {formatDate(tour.startDate)} -{' '}
+                    {formatDate(tour.endDate)}
+                  </p>
+                )}
+              </div>
+
+              <div className="tour-actions">
+                <button className="edit-btn" onClick={() => handleEdit(tour._id)}>
+                  Edit
+                </button>
+                {(!tour.status || tour.status !== 'approved') && (
+                  <button
+                    className="approve-btn"
+                    onClick={() => handleStatusUpdate(tour._id, 'pending')}
+                    disabled={tour.status === 'pending'}
+                  >
+                    {tour.status === 'pending' ? 'Pending' : 'Send for Approval'}
+                  </button>
+                )}
+                <button className="delete-btn" onClick={() => handleDelete(tour._id)}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredTours.length === 0 && (
+        <div className="no-tours">No tours found for this category</div>
       )}
     </div>
   );
