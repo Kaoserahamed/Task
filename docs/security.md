@@ -93,9 +93,7 @@ The gaps below are deliberate; they are repeated in
   one-line change; a refresh endpoint with a `jti` deny-list is the follow-up
   described in
   [ADR 0006](adr/0006-access-tokens-and-password-hashing.md).
-- **Validation coverage.** `validators/` covers the tour write endpoints; the
-  remaining write endpoints depend on Mongoose schema validation. The tour
-  validator is the template.
+- **Validation coverage.** `validators/` covers the tour and company write endpoints; the tour validator is the template.
 - **Uploads.** Production selects private S3 when `S3_BUCKET` and AWS region
   are configured; legacy Cloudinary multipart uploads remain available when
   explicitly configured. S3 buckets are private and downloads use short-lived

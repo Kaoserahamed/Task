@@ -24,6 +24,34 @@ env:
   JWT_SECRET: ci-test-secret
 
 jobs:
+  terraform-security:
+    name: Terraform policy scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan Terraform for high-severity misconfigurations
+        uses: aquasecurity/tfsec-action@v0.3.1
+        with:
+          soft_fail: false
+          args: '--no-color --severity HIGH,CRITICAL infrastructure/terraform'
+
+  dependency-health:
+    name: Dependency health and ownership
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install root tooling
+        run: npm ci
+      - name: Check every manifest and lockfile
+        run: npm run dependency:check
+      - name: Audit all production dependency graphs
+        run: npm run dependency:audit
+
   # ---------------------------------------------------------------------------
   # Express + MongoDB API: lint, formatting, types, audit, hermetic unit tests
   # ---------------------------------------------------------------------------
@@ -48,8 +76,8 @@ jobs:
         run: npm run format:check
       - name: Typecheck
         run: npm run typecheck
-      - name: Audit dependencies (fails on high severity)
-        run: npm audit --audit-level=high
+      - name: Audit production dependencies (fails on high severity)
+        run: npm audit --omit=dev --audit-level=high
       - name: Unit tests with global and per-area coverage gates
         run: npm run test:coverage
       - name: Verify backend coverage summary
@@ -123,8 +151,8 @@ jobs:
         run: npm run format:check
       - name: Typecheck
         run: npm run typecheck
-      - name: Audit dependencies (fails on high severity)
-        run: npm audit --audit-level=high
+      - name: Audit production dependencies (fails on high severity)
+        run: npm audit --omit=dev --audit-level=high
       - name: Tests with global and API coverage thresholds
         run: npm run test:coverage
       - name: Verify ${{ matrix.app }} coverage summary

@@ -75,8 +75,11 @@ describe('CI workflow contract', () => {
     expect(workflow).toMatch(/name: Verify .* coverage summary/);
   });
 
-  test('audits dependencies at a level that fails on high severity', () => {
-    expect(workflow).toMatch(/npm audit --audit-level=high/);
+  test('audits production dependencies at a level that fails on high severity', () => {
+    expect(workflow).toMatch(/npm audit --omit=dev --audit-level=high/);
+    expect(workflow).toMatch(/npm run dependency:audit/);
+    expect(workflow).toMatch(/name: Dependency health and ownership/);
+    expect(workflow).toMatch(/run: npm run dependency:check/);
   });
 
   test('proves a fresh clone installs and verifies itself', () => {
@@ -93,6 +96,9 @@ describe('CI workflow contract', () => {
     expect(securityWorkflow).toMatch(/scan-ref: infrastructure\/terraform/);
     expect(securityWorkflow).toMatch(/scan-type: config/);
     expect(securityWorkflow).toMatch(/scanners: misconfig/);
+    expect(workflow).toMatch(/terraform-security:/);
+    expect(workflow).toMatch(/tfsec-action/);
+    expect(workflow).toMatch(/soft_fail: false/);
   });
 
   test('runs a dedicated PR-only Terraform plan and policy gate', () => {

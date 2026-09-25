@@ -84,6 +84,16 @@ describe('company credential endpoints', () => {
       expect(Company.__save).not.toHaveBeenCalled();
     });
 
+    test('rejects a non-string registration field before touching the database', async () => {
+      const res = await request(app)
+        .post('/company/auth/register')
+        .send({ name: { unexpected: true }, email: 'ada@x.io', password: 'secret123' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe('"name" must be a string');
+      expect(Company.findOne).not.toHaveBeenCalled();
+    });
+
     test('rejects a password shorter than eight characters', async () => {
       const res = await request(app)
         .post('/company/auth/register')

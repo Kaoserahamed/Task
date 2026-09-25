@@ -60,6 +60,14 @@ The default backend unit suite is configured by `backend/jest.config.js` and
 `backend/tests/unit/setup-env.js`; it does not open a database connection. The
 integration suite is configured separately by `backend/jest.integration.config.js`.
 
+### Dependency health
+
+Run `npm run dependency:check` to verify the root and all four package manifests
+against their committed lockfiles. The root is intentionally tooling-only; runtime
+dependencies are owned by the package that ships them. `npm run dependency:report`
+prints the ownership inventory, and `npm run dependency:audit` fails on high or
+critical advisories in every production dependency graph.
+
 ### Coverage
 
 Each app now runs a real coverage command and a second, independently runnable

@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "Tour Management System monorepo root: one-command install, test, lint and verification across the Express + MongoDB API and the React applications. See README.md.",
+  "packageManager": "npm@11.14.1",
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "npm": ">=10 <12"
   },
   "scripts": {
     "setup": "npm ci && npm ci --prefix backend && npm ci --prefix frontend && npm ci --prefix admin && npm ci --prefix tourcompanydashboard",
@@ -15,6 +17,9 @@
     "test:web": "npm --prefix frontend run test:ci && npm --prefix admin run test:ci && npm --prefix tourcompanydashboard run test:ci",
     "test:offline": "npm run test:backend:unit && npm run test:web",
     "test:coverage": "npm --prefix backend run test:coverage && npm --prefix frontend run test:coverage && npm --prefix admin run test:coverage && npm --prefix tourcompanydashboard run test:coverage",
+    "dependency:check": "node scripts/dependency-health.mjs",
+    "dependency:report": "node scripts/dependency-health.mjs --report",
+    "dependency:audit": "npm audit --omit=dev --audit-level=high && npm --prefix backend audit --omit=dev --audit-level=high && npm --prefix frontend audit --omit=dev --audit-level=high && npm --prefix admin audit --omit=dev --audit-level=high && npm --prefix tourcompanydashboard audit --omit=dev --audit-level=high",
     "coverage:check": "npm --prefix backend run coverage:check && npm --prefix frontend run coverage:check && npm --prefix admin run coverage:check && npm --prefix tourcompanydashboard run coverage:check",
     "lint": "npm --prefix backend run lint && npm --prefix frontend run lint && npm --prefix admin run lint && npm --prefix tourcompanydashboard run lint",
     "typecheck": "npm --prefix backend run typecheck && npm --prefix frontend run typecheck && npm --prefix admin run typecheck && npm --prefix tourcompanydashboard run typecheck",
@@ -22,7 +27,7 @@
     "format:check": "prettier --check .",
     "lint:root": "eslint scripts",
     "verify:repo": "node scripts/verify-repo.mjs",
-    "verify": "npm run lint && npm run lint:root && npm run format:check && npm run typecheck && npm run verify:repo && npm test",
+    "verify": "npm run dependency:check && npm run lint && npm run lint:root && npm run format:check && npm run typecheck && npm run verify:repo && npm test",
     "stack:up": "docker compose up --build",
     "stack:test:up": "docker compose -f docker-compose.test.yml up -d",
     "stack:test:down": "docker compose -f docker-compose.test.yml down -v"

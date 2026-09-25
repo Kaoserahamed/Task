@@ -2,16 +2,17 @@
   "name": "task-frontend",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@11.14.1",
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "npm": ">=10 <12"
   },
   "dependencies": {
     "lucide-react": "^0.486.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.1.5",
-    "react-scripts": "5.0.1",
-    "socket.io-client": "^4.8.1"
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "^7.18.4",
+    "socket.io-client": "^4.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -45,6 +46,7 @@
     "@testing-library/user-event": "^14.6.7",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
+    "react-scripts": "5.0.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-react-app": "^7.0.1",
     "prettier": "^3.9.8",

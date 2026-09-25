@@ -56,15 +56,19 @@ Three workflows cover `infrastructure/terraform`:
 | -------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `terraform-plan.yml` | PR touching `infrastructure/**` | `fmt -check -recursive`, `init -backend=false`, `validate`, offline `plan`, tfsec HIGH/CRITICAL |
 | `security.yml`       | every push and pull request     | `fmt`, `init -backend=false`, `validate`, Trivy IaC policy scan                                 |
+| `ci.yml`             | every push and pull request     | tfsec HIGH/CRITICAL scan of `infrastructure/terraform`                                          |
 | `aws-production.yml` | `v*` tag or manual dispatch     | `npm run verify` plus the integration suite, then apply against the remote state                |
 
 The review job never talks to AWS: it initialises without a backend
 (`-backend=false`), plans against `terraform.tfvars.example` with
 `-refresh=false`, uploads `terraform.tfplan` and `terraform-plan.txt` as a build
 artifact, and posts a bounded plan excerpt back to the pull request. The
-[aquasecurity/tfsec-action](https://github.com/aquasecurity/tfsec-action) step
-runs with `soft_fail: false` and `--severity HIGH,CRITICAL`, so a high-severity
-finding fails the job instead of annotating it for later.
+Every high-severity Terraform finding is blocking. The dedicated PR plan uses
+[aquasecurity/tfsec-action](https://github.com/aquasecurity/tfsec-action) with
+`soft_fail: false --severity HIGH,CRITICAL`, and the same directory is scanned
+in the always-on CI workflow; the security workflow additionally applies
+Trivy's misconfiguration checks. A finding therefore fails the relevant
+workflow rather than being reported for later review.
 
 ### Remote state
 
@@ -108,11 +112,13 @@ static bundle alongside the Express API (see `docker-compose.yml` and
 `docs/development.md`). The CI `web` job performs the same production build, so
 a failing CI build always corresponds to a build that would fail to deploy.
 
+`npm run dependency:check` inventories the root tooling package and all four application manifests. The root intentionally has no runtime dependencies: runtime ownership stays with the package that ships the code. The same command verifies every committed lockfile, direct range synchronization, Node/npm compatibility, and reproducible dependency policy. `npm run dependency:report` prints the ownership counts for review.
+
+`npm run dependency:audit` audits production dependency graphs with `--omit=dev`; development/build advisories remain visible in the full lockfile audit instead of being presented as shipped runtime risk.
+
 ## Dependabot
 
-`.github/dependabot.yml` opens weekly `npm`, `github-actions` and `docker` PRs
-with a 4-open-PR cap, scoped per workspace so upgrades are isolated and
-reviewable — the API base image (`backend/Dockerfile`) moves with its own PR.
+`.github/dependabot.yml` opens weekly `npm`, `github-actions` and `docker` PRs with a 4-open-PR cap, scoped per workspace so upgrades are isolated and reviewable — the API base image (`backend/Dockerfile`) moves with its own PR.
 
 A pull request is reviewed against the template in
 `.github/pull_request_template.md`: it repeats the gate (`npm run verify`), asks

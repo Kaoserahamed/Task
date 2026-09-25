@@ -199,6 +199,17 @@ describe('company directory and profile endpoints', () => {
 
       expect(res.status).toBe(404);
     });
+
+    test('rejects a malformed profile field before loading the company', async () => {
+      const res = await request(app)
+        .put('/api/update')
+        .set('Authorization', `Bearer ${companyToken()}`)
+        .send({ name: 42 });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe('"name" must be a string');
+      expect(Company.findById).not.toHaveBeenCalled();
+    });
   });
 
   describe('profile info', () => {

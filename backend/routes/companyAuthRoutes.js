@@ -21,7 +21,14 @@ const logger = require('../utils/logger');
 const { hashPassword, verifyPassword } = require('../utils/password');
 const { signAccessToken } = require('../utils/token');
 const { passwordResetEmail } = require('../utils/companyMail');
-const { requireFields, requireStrongPassword } = require('../utils/requestValidation');
+const {
+  validateCompanyBody,
+  parseCompanyRegister,
+  parseCompanyLogin,
+  parseCompanyReset,
+  parseCompanyResetPassword,
+  parseCompanyVerifyPassword,
+} = require('../validators/company.validator');
 
 const router = express.Router();
 
@@ -36,15 +43,11 @@ const sender = {
 };
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
-const MIN_PASSWORD_LENGTH = 8;
 
 // POST /register — create a company account and return an access token.
-router.post('/register', async (req, res) => {
+router.post('/register', validateCompanyBody(parseCompanyRegister), async (req, res) => {
   try {
-    if (!requireFields(res, req.body, ['name', 'email', 'password'])) return;
-
-    const { name, email, password } = req.body;
-    if (!requireStrongPassword(res, password, MIN_PASSWORD_LENGTH)) return;
+    const { name, email, password } = req.companyBody;
 
     const existing = await Company.findOne({ email });
     if (existing) {
@@ -76,11 +79,9 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /login — exchange credentials for an access token.
-router.post('/login', async (req, res) => {
+router.post('/login', validateCompanyBody(parseCompanyLogin), async (req, res) => {
   try {
-    if (!requireFields(res, req.body, ['email', 'password'])) return;
-
-    const { email, password } = req.body;
+    const { email, password } = req.companyBody;
 
     const company = await Company.findOne({ email });
     if (!company) {
@@ -111,11 +112,9 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /reset — mint a one-hour reset token and email the link.
-router.post('/reset', async (req, res) => {
+router.post('/reset', validateCompanyBody(parseCompanyReset), async (req, res) => {
   try {
-    if (!requireFields(res, req.body, ['email'])) return;
-
-    const { email, resetUrl } = req.body;
+    const { email, resetUrl } = req.companyBody;
     const token = (await crypto.randomBytes(32)).toString('hex');
 
     const company = await Company.findOne({ email });
@@ -140,7 +139,7 @@ router.post('/reset', async (req, res) => {
       message: 'Password reset email sent successfully',
     });
   } catch (error) {
-    logger.error('Reset password error:', error);
+    logger.error('Error sending reset password email:', error);
     res.status(500).json({
       success: false,
       message: 'Error sending reset password email',
@@ -149,12 +148,9 @@ router.post('/reset', async (req, res) => {
 });
 
 // POST /reset-password — consume the token and store the new password hash.
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', validateCompanyBody(parseCompanyResetPassword), async (req, res) => {
   try {
-    if (!requireFields(res, req.body, ['token', 'password'])) return;
-
-    const { token, password } = req.body;
-    if (!requireStrongPassword(res, password, MIN_PASSWORD_LENGTH)) return;
+    const { token, password } = req.companyBody;
 
     const company = await Company.findOne({ resetToken: token });
     if (!company || !company.resetTokenExpiration || company.resetTokenExpiration < Date.now()) {
@@ -174,25 +170,30 @@ router.post('/reset-password', async (req, res) => {
 });
 
 // POST /verify-password — re-authenticate the signed-in company.
-router.post('/verify-password', authMiddleware, async (req, res) => {
-  try {
-    if (!requireFields(res, req.body, ['password'])) return;
+router.post(
+  '/verify-password',
+  authMiddleware,
+  validateCompanyBody(parseCompanyVerifyPassword),
+  async (req, res) => {
+    try {
+      const { password } = req.companyBody;
 
-    const company = await Company.findById(req.user.companyId);
-    if (!company) {
-      return res.status(404).json({ success: false, message: 'Company not found' });
+      const company = await Company.findById(req.user.companyId);
+      if (!company) {
+        return res.status(404).json({ success: false, message: 'Company not found' });
+      }
+
+      const isMatch = await verifyPassword(password, company.password);
+      if (!isMatch) {
+        return res.status(401).json({ success: false, message: 'Incorrect password' });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      logger.error('Verify password error:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
     }
-
-    const isMatch = await verifyPassword(req.body.password, company.password);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Incorrect password' });
-    }
-
-    res.json({ success: true });
-  } catch (error) {
-    logger.error('Verify password error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
   }
-});
+);
 
 module.exports = router;
