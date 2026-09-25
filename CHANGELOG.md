@@ -8,6 +8,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Booking creation now uses a strict Zod request schema at the API boundary. It
+  normalizes validated fields, rejects unknown/client-owned fields with per-field
+  errors, derives the account email and total price on the server, and keeps only
+  the last four card digits.
 - The wishlist migration normalizes historical email casing and removes duplicate
   `(email, tourId)` rows before operators run `npm run db:indexes`.
 - The wishlist now follows `route → controller → service → repository`, validates

@@ -98,6 +98,22 @@ Multipart fields for create/update are JSON-encoded strings (`destinations`,
 `weather`) — a malformed one is a `400 VALIDATION_ERROR` with the field name in
 the message, never a 500.
 
+## Bookings
+
+`POST /api/bookings/add` requires a customer bearer token. The request is checked
+against a strict schema before any account or booking database access. The account
+email, user id, and total price are server-owned fields: `email`, `userId`, and
+`totalAmount` are rejected rather than trusted. The total is calculated from the
+persisted tour price and the validated traveler count.
+
+Required fields are `tourId`, `firstName`, `lastName`, `phone`, `address`, `city`,
+`country`, `travelers`, `startDate`, and `paymentMethod`. `tourId` must be a
+MongoDB ObjectId, `travelers` must be a positive whole number, and payment methods
+are `credit-card`, `paypal`, or `bank-transfer`. Credit-card bookings also require
+`cardHolder` and `cardNumber`; the API stores only the card's last four digits.
+Unknown fields, invalid dates, invalid payment methods, and malformed values return
+`400 VALIDATION_ERROR` with an `errors` array containing `field` and `message`.
+
 ## Other groups
 
 | Group                                | Prefix                                    |

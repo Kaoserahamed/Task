@@ -11,6 +11,8 @@ const {
   ValidationError,
 } = require('../utils/errors');
 const authMiddleware = require('../middleware/authMiddleware');
+const validateRequest = require('../middleware/validateRequest');
+const { bookingCreateSchema } = require('../validators/booking.validator');
 const router = express.Router();
 const socketIO = require('../socket');
 
@@ -75,8 +77,9 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
   }
 });
 
-// Add Booking (enhanced version with better validation)
-router.post('/add', authMiddleware, async (req, res) => {
+// Add Booking. Authentication runs first, then the schema rejects malformed
+// input before any account or booking database access begins.
+router.post('/add', authMiddleware, validateRequest(bookingCreateSchema), async (req, res) => {
   try {
     const {
       tourId,
@@ -92,41 +95,18 @@ router.post('/add', authMiddleware, async (req, res) => {
       paymentMethod,
       cardHolder,
       cardNumber,
-      totalAmount,
     } = req.body;
 
     const account = await User.findById(req.user.userId).select('email').lean();
     if (!account)
       throw new UnauthorizedError('Authenticated account was not found', 'ACCOUNT_NOT_FOUND');
 
-    // Validate required fields. The booking email always comes from the token's
-    // account; a caller cannot create a booking for somebody else's address.
-    if (!tourId) {
-      return res.status(400).json({
-        success: false,
-        code: 'VALIDATION_ERROR',
-        message: 'Tour ID is required',
-      });
-    }
-
-    // Validate tourId
-    if (!mongoose.Types.ObjectId.isValid(tourId)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid tour ID format',
-      });
-    }
-
-    logger.info('Creating booking for tourId:', tourId); // Debug log
+    logger.info('Creating booking for tourId:', tourId);
 
     // Check if the tour is already booked by this user, reserve seats, and write
     // the booking in one transaction. The seat guard is part of the same atomic
     // unit, so two requests cannot oversell the final seats.
-    const seatCount = Number(travelers);
-    if (!Number.isInteger(seatCount) || seatCount < 1) {
-      throw new ValidationError('Travelers must be a positive whole number');
-    }
-
+    const seatCount = travelers;
     const { booking, tour } = await runInTransaction(async (session) => {
       const existing = await Booking.findOne({
         email: account.email,
@@ -134,7 +114,6 @@ router.post('/add', authMiddleware, async (req, res) => {
       }).session(session);
       if (existing) throw new ConflictError('Tour already booked', 'TOUR_ALREADY_BOOKED');
 
-      const seatCount = Number(travelers);
       const tour = await Tour.findOneAndUpdate(
         {
           _id: tourId,
@@ -163,7 +142,7 @@ router.post('/add', authMiddleware, async (req, res) => {
             paymentMethod: paymentMethod || 'credit-card',
             cardHolder: cardHolder || '',
             cardLastFour: cardNumber ? cardNumber.slice(-4) : null,
-            totalAmount: totalAmount || 0,
+            totalAmount: Number(existingTour.price) * seatCount,
             userId: req.user.userId,
           });
           await created.save({ session });
@@ -187,7 +166,7 @@ router.post('/add', authMiddleware, async (req, res) => {
         paymentMethod: paymentMethod || 'credit-card',
         cardHolder: cardHolder || '',
         cardLastFour: cardNumber ? cardNumber.slice(-4) : null,
-        totalAmount: totalAmount || 0,
+        totalAmount: Number(tour.price) * seatCount,
         userId: req.user.userId,
       });
       await created.save({ session });

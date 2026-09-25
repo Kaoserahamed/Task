@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { ToursContext } from '../../Context/ToursContext';
-import { useAuth } from '../../Context/AuthContext';
 import Breadcrumb from './Breadcrumb';
 import ContactInfoForm from './ContactInfoForm';
 import PaymentInfoForm from './PaymentInfoForm';
@@ -16,7 +15,6 @@ const Checkout = () => {
   const [step, setStep] = useState(1);
   const { tourId } = useParams();
   const { tours = [], loading, updateTour } = useContext(ToursContext);
-  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -67,8 +65,7 @@ const Checkout = () => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      const requestedTravelers = parseInt(formData.travelers);
+      const requestedTravelers = parseInt(formData.travelers, 10);
 
       // Final validation before booking
       if (selectedTour?.tourType?.group) {
@@ -81,12 +78,8 @@ const Checkout = () => {
         }
       }
 
-      // Calculate total amount
-      const totalAmount = selectedTour.price * requestedTravelers;
-
       const bookingData = await bookingsApi.createBooking({
         tourId: tourId,
-        email: user?.user?.email || formData.email,
         firstName: formData.firstName,
         lastName: formData.lastName,
         phone: formData.phone,
@@ -97,10 +90,9 @@ const Checkout = () => {
         startDate: selectedTour?.startDate || new Date().toISOString(),
         specialRequests: formData.specialRequests,
         paymentMethod: formData.paymentMethod,
-        cardHolder: formData.cardHolder,
-        cardNumber: formData.cardNumber,
-        totalAmount: totalAmount,
-        userId: user?.user?._id,
+        cardHolder: formData.paymentMethod === 'credit-card' ? formData.cardHolder : '',
+        cardNumber: formData.paymentMethod === 'credit-card' ? formData.cardNumber : '',
+        // Email, userId, and totalAmount are intentionally server-owned.
       });
 
       // Update tour seats
