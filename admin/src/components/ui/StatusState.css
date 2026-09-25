@@ -43,6 +43,20 @@
 .status-state__message {
   line-height: 1.6;
 }
+.status-state__action {
+  margin-top: 0.5rem;
+  padding: 0.65rem 1rem;
+  color: var(--surface);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.status-state__action:hover {
+  filter: brightness(0.92);
+}
 @keyframes status-spin {
   to {
     transform: rotate(360deg);
