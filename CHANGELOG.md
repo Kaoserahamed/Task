@@ -150,6 +150,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- `WeatherSuggestion` no longer ships development debug logging: the ~20 emoji
+  `logDebug` calls left in `filterToursByWeather` and `fetchCityWeather` are gone, leaving
+  only `logError` on the real failure paths. The component drops from 442 to 300 lines.
+- Weather-based tour matching now lives in a tested
+  `frontend/src/utils/weatherTourFilter.js` (`filterToursByWeather`, `normalizeCity`,
+  `isWeatherSimilar`). Behaviour is unchanged — same-city match plus a similar condition or a
+  temperature within 10 degrees, ordered by temperature distance — but the rules are now
+  assertable, and the new `WeatherSuggestion.test.jsx` covers both the selector (fixed
+  fixtures, including a condition-only match outside the tolerance) and the component.
 - The Express application is no longer built as a side effect of starting the
   server, which makes every route exercisable by `supertest` without a port.
 - Seat booking is a single guarded update, so concurrent buyers cannot oversell
