@@ -72,17 +72,26 @@ can catch gate failures before pushing.
 
 Three workflows cover `infrastructure/terraform`:
 
-| Workflow             | Trigger                         | Gate                                                                                            |
-| -------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `terraform-plan.yml` | PR touching `infrastructure/**` | `fmt -check -recursive`, `init -backend=false`, `validate`, offline `plan`, tfsec HIGH/CRITICAL |
-| `security.yml`       | every push and pull request     | `fmt`, `init -backend=false`, `validate`, Trivy IaC policy scan                                 |
-| `ci.yml`             | every push and pull request     | tfsec HIGH/CRITICAL scan of `infrastructure/terraform`                                          |
-| `aws-production.yml` | `v*` tag or manual dispatch     | `npm run verify` plus the integration suite, then apply against the remote state                |
+| Workflow             | Trigger                         | Gate                                                                                                                |
+| -------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `terraform-plan.yml` | PR touching `infrastructure/**` | `fmt -check -recursive`, local-backend `init`, provider-lock check, `validate`, offline `plan`, tfsec HIGH/CRITICAL |
+| `security.yml`       | every push and pull request     | `fmt`, `init -backend=false`, `validate`, Trivy IaC policy scan                                                     |
+| `ci.yml`             | every push and pull request     | tfsec HIGH/CRITICAL scan of `infrastructure/terraform`                                                              |
+| `aws-production.yml` | `v*` tag or manual dispatch     | `npm run verify` plus the integration suite, then apply against the remote state                                    |
 
-The review job never talks to AWS: it initialises without a backend
-(`-backend=false`), plans against `terraform.tfvars.example` with
-`-refresh=false`, uploads `terraform.tfplan` and `terraform-plan.txt` as a build
-artifact, and posts a bounded plan excerpt back to the pull request.
+The review job never talks to AWS. It writes a `ci_backend_override.tf` that
+swaps the S3 backend for a local one and sets the provider's
+`skip_credentials_validation` / `skip_requesting_account_id` / `skip_metadata_api_check`,
+then runs `terraform init` and plans against `terraform.tfvars.example` with
+`-refresh=false`, uploading `terraform.tfplan` and `terraform-plan.txt` as a build
+artifact and posting a bounded plan excerpt back to the pull request.
+
+The override exists because `terraform init -backend=false` is **not** sufficient
+on its own: it skips backend configuration, which leaves the backend unconfigured
+so every later command — `plan` included — fails with
+`Backend initialization required`. A local backend in the override file gives the
+plan somewhere to write, and the provider skip attributes avoid an STS call, so a
+pull request needs no AWS credentials at all. Nothing in that job applies.
 
 The action references are pinned to resolvable versioned releases
 `aquasecurity/trivy-action@v0.36.0` and
@@ -99,9 +108,11 @@ workflow rather than being reported for later review.
 
 ### Remote state
 
-`infrastructure/terraform/versions.tf` declares an empty S3 backend
-(`backend "s3" {}`). The deployment workflow supplies the location through
-`-backend-config` flags, so no account id or bucket name is committed:
+`infrastructure/terraform/backend.tf` declares the S3 backend with
+`encrypt = true`. Encryption is a property of the configuration, not a flag, so a
+local or CI `init` cannot silently create an unencrypted state object. The
+location itself is supplied by the deployment workflow through `-backend-config`
+flags, so no account id or bucket name is committed:
 
 | Repository variable | `-backend-config` key | Purpose                                                     |
 | ------------------- | --------------------- | ----------------------------------------------------------- |
@@ -109,12 +120,12 @@ workflow rather than being reported for later review.
 | `TF_STATE_KEY`      | `key`                 | State path, defaults to `task/production/terraform.tfstate` |
 | `TF_LOCK_TABLE`     | `dynamodb_table`      | DynamoDB table used for state locking                       |
 
-Every `init` also passes `encrypt=true`, so the state object is encrypted at
-rest, and the DynamoDB table serialises concurrent applies. Terraform generates
-the DocumentDB, Redis and JWT credentials **inside this state**, so the bucket
-must be access-restricted like the production secrets themselves. Configure all
-three as repository variables (the names are not secret; the state they hold
-is).
+The DynamoDB table serialises concurrent applies: two overlapping CI runs, or a
+local apply racing a deploy, would otherwise write the same state key and silently
+lose one run's changes. Terraform generates the DocumentDB, Redis and JWT
+credentials **inside this state**, so the bucket must be access-restricted like
+the production secrets themselves. Configure all three as repository variables
+(the names are not secret; the state they hold is).
 
 To work locally against the same state:
 

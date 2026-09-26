@@ -21,6 +21,11 @@ env:
   AWS_EC2_METADATA_DISABLED: 'true'
   AWS_SKIP_CREDENTIALS_VALIDATION: 'true'
   AWS_SKIP_REQUESTING_ACCOUNT_ID: 'true'
+  # The plan never applies, so placeholder credentials are enough to satisfy the
+  # provider's STS caller-identity check without granting a pull request any real
+  # AWS access. `terraform validate` and `fmt` are unaffected by these.
+  AWS_ACCESS_KEY_ID: ci-plan-placeholder
+  AWS_SECRET_ACCESS_KEY: ci-plan-placeholder
 
 jobs:
   plan:
@@ -37,8 +42,34 @@ jobs:
           terraform_wrapper: false
       - name: Check formatting
         run: terraform fmt -check -recursive
-      - name: Initialize without a backend
-        run: terraform init -backend=false
+      # Pull requests must not need production state, so the S3 backend is
+      # replaced with a local one for the plan. `init -backend=false` alone is not
+      # enough: it leaves the backend unconfigured and every later command, plan
+      # included, fails with "Backend initialization required". The provider
+      # overrides stop the plan from calling STS, so no pull request needs AWS
+      # credentials; the plan is never applied.
+      - name: Override the backend and skip AWS credential checks
+        run: |
+          {
+            printf 'terraform {\n'
+            printf '  backend "local" {}\n'
+            printf '}\n\n'
+            printf 'provider "aws" {\n'
+            printf '  skip_credentials_validation = true\n'
+            printf '  skip_requesting_account_id  = true\n'
+            printf '  skip_metadata_api_check     = true\n'
+            printf '}\n'
+          } > ci_backend_override.tf
+      - name: Initialize the pinned providers
+        run: terraform init -no-color
+      - name: Verify the committed provider lock is up to date
+        run: terraform providers lock -platform=linux_amd64
+      - name: Check the provider lock is unchanged
+        run: |
+          if ! git diff --exit-code -- .terraform.lock.hcl; then
+            echo '::error::.terraform.lock.hcl is stale - run terraform init and commit it' >&2
+            exit 1
+          fi
       - name: Validate configuration
         run: terraform validate
       - name: Create review plan

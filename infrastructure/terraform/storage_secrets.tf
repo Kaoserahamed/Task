@@ -132,21 +132,21 @@ resource "aws_secretsmanager_secret" "application" {
 resource "aws_secretsmanager_secret_version" "application" {
   secret_id = aws_secretsmanager_secret.application.id
   secret_string = jsonencode({
-    MONGODB_URI = "mongodb://${var.documentdb_username}:${random_password.documentdb.result}@${aws_docdb_cluster.main.endpoint}:27017/tourmate?tls=true&tlsCAFile=/etc/ssl/certs/aws-rds-global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
-    JWT_SECRET = random_password.jwt.result
-    REDIS_URL = "rediss://:${random_password.redis.result}@${aws_elasticache_replication_group.main.primary_endpoint_address}:6379"
-    WEATHER_API_KEY = var.weather_api_key
-    SENDINBLUE_API_KEY = var.sendinblue_api_key
+    MONGODB_URI           = "mongodb://${var.documentdb_username}:${random_password.documentdb.result}@${aws_docdb_cluster.main.endpoint}:27017/tourmate?tls=true&tlsCAFile=/etc/ssl/certs/aws-rds-global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+    JWT_SECRET            = random_password.jwt.result
+    REDIS_URL             = "rediss://:${random_password.redis.result}@${aws_elasticache_replication_group.main.primary_endpoint_address}:6379"
+    WEATHER_API_KEY       = var.weather_api_key
+    SENDINBLUE_API_KEY    = var.sendinblue_api_key
     CLOUDINARY_CLOUD_NAME = var.cloudinary_cloud_name
-    CLOUDINARY_API_KEY = var.cloudinary_api_key
+    CLOUDINARY_API_KEY    = var.cloudinary_api_key
     CLOUDINARY_API_SECRET = var.cloudinary_api_secret
-    PUSHER_APP_ID = var.pusher_app_id
-    PUSHER_KEY = var.pusher_key
-    PUSHER_SECRET = var.pusher_secret
-    PUSHER_CLUSTER = var.pusher_cluster
-    MAIL_FROM_NAME = var.mail_from_name
-    MAIL_FROM_EMAIL = var.mail_from_email
-    METRICS_TOKEN = var.metrics_token
+    PUSHER_APP_ID         = var.pusher_app_id
+    PUSHER_KEY            = var.pusher_key
+    PUSHER_SECRET         = var.pusher_secret
+    PUSHER_CLUSTER        = var.pusher_cluster
+    MAIL_FROM_NAME        = var.mail_from_name
+    MAIL_FROM_EMAIL       = var.mail_from_email
+    METRICS_TOKEN         = var.metrics_token
   })
 
   depends_on = [aws_docdb_cluster.main, aws_elasticache_replication_group.main]

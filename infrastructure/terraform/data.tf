@@ -60,7 +60,6 @@ resource "aws_docdb_cluster" "main" {
   deletion_protection             = true
   skip_final_snapshot             = false
   final_snapshot_identifier       = "${local.name}-final"
-  copy_tags_to_snapshot           = true
   db_cluster_parameter_group_name = aws_docdb_cluster_parameter_group.main.name
   storage_encrypted               = true
   kms_key_id                      = aws_kms_key.application.arn
@@ -72,7 +71,7 @@ resource "aws_docdb_cluster_instance" "main" {
   cluster_identifier = aws_docdb_cluster.main.id
   instance_class     = "db.t3.medium"
   availability_zone  = var.availability_zones[count.index]
-  apply_immediately = false
+  apply_immediately  = false
 }
 
 resource "aws_elasticache_subnet_group" "main" {
@@ -81,23 +80,23 @@ resource "aws_elasticache_subnet_group" "main" {
 }
 
 resource "aws_elasticache_replication_group" "main" {
-  replication_group_id          = "${local.name}-redis"
-  description                   = "Shared cache, idempotency store, and queue"
-  node_type                     = "cache.t4g.small"
-  num_cache_clusters            = 2
-  automatic_failover_enabled    = true
-  multi_az_enabled               = true
-  engine                        = "redis"
-  engine_version                = "7.0"
-  subnet_group_name             = aws_elasticache_subnet_group.main.name
-  security_group_ids            = [aws_security_group.data.id]
-  port                          = 6379
-  auth_token                    = random_password.redis.result
-  transit_encryption_enabled    = true
-  at_rest_encryption_enabled    = true
-  kms_key_id                    = aws_kms_key.application.arn
-  maintenance_window            = "sun:05:00-sun:06:00"
-  snapshot_retention_limit       = 7
-  snapshot_window               = "03:00-04:00"
-  apply_immediately              = false
+  replication_group_id       = "${local.name}-redis"
+  description                = "Shared cache, idempotency store, and queue"
+  node_type                  = "cache.t4g.small"
+  num_cache_clusters         = 2
+  automatic_failover_enabled = true
+  multi_az_enabled           = true
+  engine                     = "redis"
+  engine_version             = "7.0"
+  subnet_group_name          = aws_elasticache_subnet_group.main.name
+  security_group_ids         = [aws_security_group.data.id]
+  port                       = 6379
+  auth_token                 = random_password.redis.result
+  transit_encryption_enabled = true
+  at_rest_encryption_enabled = true
+  kms_key_id                 = aws_kms_key.application.arn
+  maintenance_window         = "sun:05:00-sun:06:00"
+  snapshot_retention_limit   = 7
+  snapshot_window            = "03:00-04:00"
+  apply_immediately          = false
 }

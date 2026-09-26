@@ -3,12 +3,16 @@ resource "aws_wafv2_web_acl" "main" {
   description = "Managed protections for the Task ALB"
   scope       = "REGIONAL"
 
-  default_action { allow {} }
+  default_action {
+    allow {}
+  }
 
   rule {
     name     = "AWSCommonRules"
     priority = 10
-    override_action { none {} }
+    override_action {
+      none {}
+    }
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesCommonRuleSet"
@@ -25,7 +29,9 @@ resource "aws_wafv2_web_acl" "main" {
   rule {
     name     = "AWSKnownBadInputs"
     priority = 20
-    override_action { none {} }
+    override_action {
+      none {}
+    }
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesKnownBadInputsRuleSet"

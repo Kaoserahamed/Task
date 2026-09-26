@@ -8,6 +8,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The Terraform provider lock file `.terraform.lock.hcl` is now committed, pinning
+  `hashicorp/aws` and `hashicorp/random` to exact versions with content hashes for both
+  `linux_amd64` and `windows_amd64`. `terraform-plan.yml` fails the pull request when the
+  committed lock is stale or its hashes no longer match the registry.
+- Remote state is declared in a dedicated `infrastructure/terraform/backend.tf` with
+  `encrypt = true`, so state encryption is a property of the configuration rather than a
+  flag every caller must remember. Bucket, key, region and lock table are still supplied
+  through `-backend-config`, so nothing account-specific is committed.
 - The `fresh-clone` CI job now pipes `npm run verify` through `tee` and propagates
   `${PIPESTATUS[0]}`, so the job's done condition is the verification exit code
   itself, and uploads `fresh-clone-verify.log` as an artifact when it is non-zero.
@@ -175,6 +183,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The Terraform configuration was syntactically invalid and could not be
+  `terraform init`-ed or `validate`-d at all, so no infrastructure change had ever been
+  plan-checked. Four distinct defects: single-line nested blocks
+  (`default_action { allow {} }`, `override_action { none {} }`) in `waf_autoscaling.tf`;
+  an `each.key` index inside `depends_on` in `ecs.tf`, which only accepts whole resources;
+  `copy_tags_to_snapshot`, which is not an argument of `aws_docdb_cluster`; and
+  `var[<computed key>]`, which is illegal because `var` is not indexable — the three
+  static web images are now resolved through a `local.web_image` map. `terraform fmt -check
+-recursive` and `terraform validate` are both clean, and the plan runs end to end.
+- `terraform-plan.yml` no longer runs `terraform init -backend=false` and then expects
+  `plan` to work. That leaves the backend unconfigured, so every later command fails with
+  `Backend initialization required` and the review plan could never be produced. The job
+  now writes a `ci_backend_override.tf` that substitutes a local backend and sets the
+  provider's credential-skip attributes, so the plan runs with no AWS access at all.
 - The storefront production build no longer fails on a named `React` import that
   Jest tolerated but CRA's Webpack bundle rejected.
 - The company dashboard's Vercel build, output directory, SPA fallback, and Node
