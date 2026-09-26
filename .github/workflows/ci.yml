@@ -178,7 +178,11 @@ jobs:
           if-no-files-found: warn
 
   # ---------------------------------------------------------------------------
-  # A clone with nothing but the repository must install and verify itself
+  # A clone with nothing but the repository must install and verify itself.
+  # No `cache:` on setup-node on purpose: the done condition is a cold install
+  # from the committed lockfiles, not a warm ~/.npm. The final step is
+  # `npm run verify`, whose exit code is the single source of truth, and the log
+  # is uploaded when it is anything but 0.
   # ---------------------------------------------------------------------------
   fresh-clone:
     name: Fresh clone - setup and repository guard
@@ -197,7 +201,20 @@ jobs:
       - name: Formatting is clean on a fresh clone
         run: npm run format:check
       - name: Full fresh-clone verification
-        run: npm run verify
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run verify 2>&1 | tee fresh-clone-verify.log
+          status=${PIPESTATUS[0]}
+          echo "fresh-clone: npm run verify exit code: ${status}"
+          exit "${status}"
+      - name: Upload the failing verification log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fresh-clone-verify-log
+          path: fresh-clone-verify.log
+          if-no-files-found: warn
 
   # ---------------------------------------------------------------------------
   # The containers the README promises must build and configure cleanly

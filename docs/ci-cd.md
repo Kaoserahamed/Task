@@ -27,10 +27,28 @@ runs on every push and pull-request to `main` / `develop`. It mirrors the local
 | `commitlint`        | Conventional Commit validation over the push or pull-request range                           | a non-conforming commit message                                             |
 | `docker`            | `docker compose -f docker-compose.test.yml build` and the image health                       | build failure or a container that never turns healthy                       |
 
-The `fresh-clone` job is what makes the README's Quick Start executable: it runs
-`npm run setup` and then the complete root `npm run verify` path on a checkout
-with no `node_modules`, so a missing lockfile, broken script, test, or formatter
-fails CI before a contributor hits it.
+The `fresh-clone` job is what makes the README's Quick Start executable: it checks
+out the repository, deliberately configures `actions/setup-node@v4` **without** an
+npm `cache:` (a warm `~/.npm` would hide a lockfile that cannot install cold), runs
+`npm run setup` and then the complete root `npm run verify` path on a checkout with
+no `node_modules`, so a missing lockfile, broken script, test, or formatter fails CI
+before a contributor hits it.
+
+Its final step is the reproducibility gate itself:
+
+```bash
+set -o pipefail
+npm run verify 2>&1 | tee fresh-clone-verify.log
+status=${PIPESTATUS[0]}
+echo "fresh-clone: npm run verify exit code: ${status}"
+exit "${status}"
+```
+
+`PIPESTATUS[0]` is the exit code of `npm run verify` itself, not of `tee`, so the
+job's done condition is a single number: **0 means a fresh clone installs, lints,
+typechecks, tests and builds**. Any other value fails the job, and
+`fresh-clone-verify.log` is uploaded as the `fresh-clone-verify-log` artifact so the
+failing output can be inspected without re-running the job.
 
 ### Node version
 
