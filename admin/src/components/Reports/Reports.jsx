@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './Reports.css';
+import selectReports from '../../utils/reportFilters';
 
 const Reports = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -82,40 +83,12 @@ const Reports = () => {
     },
   ]);
 
-  // Filter reports based on active tab and search term
-  const filteredReports = reports.filter((report) => {
-    // Filter by tab
-    if (activeTab !== 'all' && report.type !== activeTab && report.status !== activeTab) {
-      return false;
-    }
-
-    // Filter by search term
-    if (
-      searchTerm &&
-      !report.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !report.submittedBy.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !report.submittedAgainst.toLowerCase().includes(searchTerm.toLowerCase())
-    ) {
-      return false;
-    }
-
-    return true;
-  });
-
-  // Sort reports
-  const sortedReports = [...filteredReports].sort((a, b) => {
-    if (sortBy === 'date') {
-      return sortOrder === 'asc'
-        ? new Date(a.date) - new Date(b.date)
-        : new Date(b.date) - new Date(a.date);
-    } else if (sortBy === 'priority') {
-      const priorityOrder = { low: 1, medium: 2, high: 3 };
-      return sortOrder === 'asc'
-        ? priorityOrder[a.priority] - priorityOrder[b.priority]
-        : priorityOrder[b.priority] - priorityOrder[a.priority];
-    }
-    return 0;
-  });
+  // Filtering and sorting rules live in utils/reportFilters.js so they can be
+  // unit-tested without rendering the view.
+  const sortedReports = useMemo(
+    () => selectReports(reports, { tab: activeTab, searchTerm, sortBy, sortOrder }),
+    [reports, activeTab, searchTerm, sortBy, sortOrder]
+  );
 
   const handleStatusChange = (id, newStatus) => {
     setReports(

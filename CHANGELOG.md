@@ -12,6 +12,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `${PIPESTATUS[0]}`, so the job's done condition is the verification exit code
   itself, and uploads `fresh-clone-verify.log` as an artifact when it is non-zero.
   The job still restores no npm cache, so the run proves a cold clone.
+- Admin report filtering and sorting now live in a tested
+  `admin/src/utils/reportFilters.js` selector (`filterReports`, `sortReports`,
+  `selectReports`), with 17 unit tests plus a new `Reports.test.jsx` covering the
+  tabs, search, both sort orders, and the process/resolve actions. `Reports.jsx`
+  is now a view over that selector, and an unparsable date sorts last instead of
+  poisoning the comparator with `NaN`.
 - The tour-company upload form is now a tested 132-line orchestrator using shared
   create/edit sections and a pure multipart serializer. Browser and all backend
   storage adapters enforce one accessible five-image, 5 MB upload policy; object
