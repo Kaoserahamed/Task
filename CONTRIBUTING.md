@@ -109,11 +109,47 @@ and every new commit pushed to `main` or `develop`:
 
 Keep commits focused; one logical change per commit.
 
+### Every feature or bugfix ships with a test
+
+**A change to production source must include a change to a test file in the same
+commit.** This is a required checklist item for every pull request, and CI
+enforces it: `scripts/verify-test-pairing.mjs` inspects the commit range and
+fails when `backend/`, `frontend/src/`, `admin/src/` or
+`tourcompanydashboard/src/` source changes with no `*.test.js` / `*.test.jsx`
+in the same range.
+
+```bash
+npm run verify:tests-paired                      # the most recent commit
+npm run verify:tests-paired <from> <to>          # a range
+npm run verify:tests-paired -- --staged          # before you commit
+```
+
+When a change is paired, prefer extending an existing test file over adding a
+new one, and add a new test file when the code is a new module.
+
+The check exempts changes that contain no production source at all
+(documentation, CI configuration, stylesheets) and these files, which no unit
+test reasonably owns: `index.js`, `setupTests.js`, `reportWebVitals.js`, story
+files, `*.d.ts`, and test files themselves.
+
+If a commit genuinely needs no test — a pure rename, a comment-only fix, a
+generated file — set `TEST_PAIRING_EXEMPT` with the reason and state it in the
+pull request so a reviewer can judge the exception:
+
+```bash
+TEST_PAIRING_EXEMPT="renamed WeatherSuggestion.jsx to Suggestions.jsx; no behaviour change" \
+  npm run verify:tests-paired
+```
+
 ## Pull requests
 
 1. Branch from `develop` (open a PR to `develop`; `main` is reserved for
    releases).
-2. Keep PRs small and include tests for any behaviour change.
+2. Keep PRs small. **Every feature or bugfix must include or update a matching
+   `*.test.js` / `*.test.jsx` in the same commit** — CI runs
+   `npm run verify:tests-paired` over the PR range and fails without one. See
+   [Every feature or bugfix ships with a test](#every-feature-or-bugfix-ships-with-a-test)
+   for the exemptions and the `TEST_PAIRING_EXEMPT` escape hatch.
 3. CI must be green on the PR before merge.
 4. Squash-and-merge is **not** used — we preserve the commit history.
 

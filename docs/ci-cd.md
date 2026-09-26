@@ -63,10 +63,17 @@ npm run lint        # lint backend + every CRA app
 npm test            # backend + CRA tests
 npm run build       # production bundles for all three CRA apps
 npm run format:check
+npm run verify:tests-paired   # a source change must carry a test change
 ```
 
 The `verify` script is intentionally identical in spirit to CI so a developer
 can catch gate failures before pushing.
+
+`npm run verify:tests-paired` enforces the rule described in
+[CONTRIBUTING.md](../CONTRIBUTING.md#every-feature-or-bugfix-ships-with-a-test):
+production source and a test must change together. The `commitlint.yml` workflow
+runs it over the same range it validates commit messages against, so an unpaired
+feature or bugfix fails the same job that validates the commit message.
 
 ## Infrastructure pipeline (Terraform)
 

@@ -26,6 +26,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   tabs, search, both sort orders, and the process/resolve actions. `Reports.jsx`
   is now a view over that selector, and an unparsable date sorts last instead of
   poisoning the comparator with `NaN`.
+- `npm run verify:tests-paired` (`scripts/verify-test-pairing.mjs`) now requires every
+  feature or bugfix to include or update a matching `*.test.js` / `*.test.jsx` in the same
+  commit. It is offline and dependency-free, runs in the `commitlint.yml` workflow over the
+  same range that validates commit messages, and supports `--staged`, an explicit range, and
+  a documented `TEST_PAIRING_EXEMPT` escape hatch. The rule is a checklist item in
+  `CONTRIBUTING.md` and the pull-request template.
 - The tour-company upload form is now a tested 132-line orchestrator using shared
   create/edit sections and a pure multipart serializer. Browser and all backend
   storage adapters enforce one accessible five-image, 5 MB upload policy; object

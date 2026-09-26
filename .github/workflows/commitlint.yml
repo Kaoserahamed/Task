@@ -55,3 +55,24 @@ jobs:
             exit 0
           fi
           npx commitlint --from "$FROM" --to "$TO" --verbose
+      - name: Require a test change alongside the source change
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            FROM="$BASE_SHA"
+            TO="$PR_HEAD_SHA"
+          elif [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            FROM="${HEAD_SHA}^"
+            TO="$HEAD_SHA"
+          else
+            FROM="$BEFORE_SHA"
+            TO="$HEAD_SHA"
+          fi
+          npm run verify:tests-paired -- "$FROM" "$TO"
