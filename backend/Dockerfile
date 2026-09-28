@@ -2,12 +2,12 @@
 # Production API image: dependency/build preparation is isolated from the
 # minimal runtime layer that runs the Express process.
 
-FROM node:20-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-FROM node:20-alpine AS runtime
+FROM node:26-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=4000
