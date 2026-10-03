@@ -143,8 +143,10 @@ TEST_PAIRING_EXEMPT="renamed WeatherSuggestion.jsx to Suggestions.jsx; no behavi
 
 ## Pull requests
 
-1. Branch from `develop` (open a PR to `develop`; `main` is reserved for
-   releases).
+1. Branch from `main` and open the pull request against `main` — it is the
+   repository's integration branch. `ci.yml` also accepts pulls into `develop`,
+   but no `develop` branch exists in this repository, so do not target one. Name
+   the branch for the work (`feat/…`, `fix/…`, `refactor/…`, `docs/…`).
 2. Keep PRs small. **Every feature or bugfix must include or update a matching
    `*.test.js` / `*.test.jsx` in the same commit** — CI runs
    `npm run verify:tests-paired` over the PR range and fails without one. See
@@ -152,6 +154,40 @@ TEST_PAIRING_EXEMPT="renamed WeatherSuggestion.jsx to Suggestions.jsx; no behavi
    for the exemptions and the `TEST_PAIRING_EXEMPT` escape hatch.
 3. CI must be green on the PR before merge.
 4. Squash-and-merge is **not** used — we preserve the commit history.
+
+## Releases
+
+`CHANGELOG.md` uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+headings and the project follows [Semantic Versioning](https://semver.org/).
+Every `package.json` in the workspace carries the same `version`, and
+`npm run verify:repo` fails when one drifts, so a release is a single version
+bump across five manifests rather than five independent edits.
+
+To cut a release:
+
+1. Move the entries under `## [Unreleased]` in `CHANGELOG.md` into a new
+   `## [x.y.z] - YYYY-MM-DD` heading, leaving an empty `## [Unreleased]` on top
+   for the next cycle.
+2. Bump `version` in the root `package.json` and in `backend/`, `frontend/`,
+   `admin/` and `tourcompanydashboard/` so all five agree.
+3. Land that change on `main` and wait for CI to go green — a tag is only as
+   trustworthy as the commit it points at.
+4. Tag that commit and push the tag:
+
+   ```bash
+   git tag -a v1.0.0 -m "Release v1.0.0"
+   git push origin v1.0.0
+   ```
+
+Pushing a `v*` tag is what triggers `aws-production.yml`. That workflow runs the
+quality gate (`npm run verify` plus the integration suite) before it builds,
+scans and pushes images and applies the Terraform plan, so **the tag is the
+deploy trigger** — tag only a commit you intend to deploy. When you need to
+deploy without cutting a release, dispatch the same workflow manually; it
+accepts an optional `image_tag` input.
+
+`git tag` plus the `CHANGELOG.md` history is the release record. There are no
+long-lived release branches to keep in sync.
 
 ## Reporting issues
 
