@@ -37,14 +37,14 @@ async function start() {
   }
 
   await mongoose.connect(config.mongodb.uri, MONGOOSE_OPTIONS);
-  logger.info({ database: 'connected' }, 'mongodb connected');
+  logger.info({ event: 'mongodb.connected', database: 'connected' }, 'mongodb connected');
 
   if (config.isVercel) {
     return app;
   }
 
   await new Promise((resolve) => server.listen(config.port, resolve));
-  logger.info({ port: config.port, env: config.nodeEnv }, 'api listening');
+  logger.info({ event: 'api.listening', port: config.port, env: config.nodeEnv }, 'api listening');
 
   return server;
 }
@@ -52,7 +52,7 @@ async function start() {
 /** Stop accepting work, then let in-flight requests finish. */
 function shutdown(server, signal) {
   return async () => {
-    logger.info({ signal }, 'shutting down');
+    logger.info({ event: 'shutdown.started', signal }, 'shutting down');
 
     const closeServer = () =>
       new Promise((resolve) => {
@@ -62,7 +62,10 @@ function shutdown(server, signal) {
 
     try {
       const forceClose = setTimeout(() => {
-        logger.warn('graceful shutdown timed out; closing remaining connections');
+        logger.warn(
+          { event: 'shutdown.forced', timeoutMs: config.http.shutdownTimeoutMs },
+          'graceful shutdown timed out; closing remaining connections'
+        );
         server.closeAllConnections?.();
       }, config.http.shutdownTimeoutMs);
       forceClose.unref();
@@ -71,10 +74,10 @@ function shutdown(server, signal) {
       clearTimeout(forceClose);
       await mongoose.connection.close(false);
       await require('./utils/redis').close();
-      logger.info('shutdown complete');
+      logger.info({ event: 'shutdown.complete' }, 'shutdown complete');
       process.exit(0);
     } catch (error) {
-      logger.error({ err: error }, 'error during shutdown');
+      logger.error({ err: error, event: 'shutdown.failed' }, 'error during shutdown');
       process.exit(1);
     }
   };
@@ -90,7 +93,7 @@ start()
     }
   })
   .catch((error) => {
-    logger.fatal({ err: error }, 'startup failed');
+    logger.fatal({ err: error, event: 'startup.failed' }, 'startup failed');
     process.exit(1);
   });
 

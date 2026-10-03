@@ -73,7 +73,7 @@ router.post('/register', validateCompanyBody(parseCompanyRegister), async (req, 
       },
     });
   } catch (error) {
-    logger.error('Register error:', error);
+    logger.error({ err: error, event: 'company.register.failed' }, 'company registration failed');
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -106,7 +106,7 @@ router.post('/login', validateCompanyBody(parseCompanyLogin), async (req, res) =
       },
     });
   } catch (error) {
-    logger.error('Login error:', error);
+    logger.error({ err: error, event: 'company.login.failed' }, 'company login failed');
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -130,7 +130,10 @@ router.post('/reset', validateCompanyBody(parseCompanyReset), async (req, res) =
     await company.save();
 
     // Never log the document: it carries the password hash and the reset token.
-    logger.info({ companyId: String(company._id) }, 'company password reset requested');
+    logger.info(
+      { event: 'company.password_reset.requested', companyId: String(company._id) },
+      'company password reset requested'
+    );
 
     await transEmail.sendTransacEmail(passwordResetEmail({ sender, email, resetUrl, token }));
 
@@ -139,7 +142,10 @@ router.post('/reset', validateCompanyBody(parseCompanyReset), async (req, res) =
       message: 'Password reset email sent successfully',
     });
   } catch (error) {
-    logger.error('Error sending reset password email:', error);
+    logger.error(
+      { err: error, event: 'company.password_reset.email.failed' },
+      'failed to send the reset password email'
+    );
     res.status(500).json({
       success: false,
       message: 'Error sending reset password email',
@@ -164,7 +170,7 @@ router.post('/reset-password', validateCompanyBody(parseCompanyResetPassword), a
 
     res.status(200).json({ success: true });
   } catch (error) {
-    logger.error('Reset password error:', error);
+    logger.error({ err: error, event: 'company.password_reset.failed' }, 'password reset failed');
     res.status(500).json({ success: false, message: 'password reset fail' });
   }
 });
@@ -190,7 +196,10 @@ router.post(
 
       res.json({ success: true });
     } catch (error) {
-      logger.error('Verify password error:', error);
+      logger.error(
+        { err: error, event: 'company.password_verify.failed' },
+        'password verification failed'
+      );
       res.status(500).json({ success: false, message: 'Server error' });
     }
   }

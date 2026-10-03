@@ -33,7 +33,10 @@ exports.getWeatherAndTours = async (req, res) => {
 
     res.json({ suggestions: results });
   } catch (error) {
-    logger.error('❌ Weather fetch failed:', error.message);
+    logger.error(
+      { err: error, event: 'weather.fetch.failed', city: req.params?.city },
+      'weather fetch failed'
+    );
     res.status(500).json({ error: 'Weather fetch failed' });
   }
 };

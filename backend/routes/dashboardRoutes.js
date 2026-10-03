@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
 // GET /api/dashboard/stats
 router.get('/dashboard/stats', async (req, res) => {
   try {
-    logger.info('I am currently inside dashboard stat backend');
+    logger.info({ event: 'dashboard.stats.started' }, 'collecting dashboard stats');
     const today = new Date();
     const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const last30Days = new Date(today);
@@ -95,7 +95,7 @@ router.get('/dashboard/stats', async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('Dashboard stats error:', error);
+    logger.error({ err: error, event: 'dashboard.stats.failed' }, 'dashboard stats failed');
     res
       .status(500)
       .json({ success: false, message: 'Failed to fetch dashboard stats', error: error.message });

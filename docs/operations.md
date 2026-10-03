@@ -25,6 +25,32 @@ after MongoDB reports healthy.
   sink is safe to share.
 - A 5xx logs at `error` with the stack; a 4xx logs at `debug` with its code.
 
+### Event names
+
+Every `logger.*` call in application code passes an object carrying a stable
+`event`, followed by a human-readable message:
+
+```js
+logger.error({ err: error, event: 'booking.create.failed', tourId }, 'failed to create booking');
+// => { "level": 50, "event": "booking.create.failed", "tourId": "64b7…",
+//      "err": { "type": "Error", "message": "…", "stack": "…" }, "msg": "failed to create booking" }
+```
+
+- `event` is `<domain>.<action>` in lower case, dotted: `booking.create`,
+  `booking.create.failed`, `socket.emit.unavailable`, `http.request.failed`.
+  It is the stable part — dashboards, alerts and log queries match on it, so
+  rename it only with a reason, and never bake a value into it.
+- Values go in sibling fields (`tourId`, `companyId`, `event`, `requestId`), never
+  into the message, so they stay queryable.
+- Errors go under `err`. pino serialises the stack from that key; a bare
+  `logger.error('something failed:', error)` drops the error into a positional
+  argument and logs only the useless string `"something failed:"`.
+
+`backend/tests/unit/contracts/logging.test.js` enforces this: it fails the suite
+if any `routes/`, `controllers/`, `middleware/`, `services/`, `utils/` or
+`config/` file logs without a structured `event`. `scripts/` is exempt — a CLI
+prints for a human at a terminal, so its plain output is deliberate there.
+
 Typical line:
 
 ```json

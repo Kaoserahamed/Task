@@ -32,7 +32,7 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
       });
     }
 
-    logger.info('Fetching bookings for tourId:', tourId); // Debug log
+    logger.info({ event: 'booking.list.tour', tourId }, 'listing bookings for a tour');
 
     const bookings = await Booking.find({ tourId: new mongoose.Types.ObjectId(tourId) })
       .populate('tourId', 'title location price')
@@ -68,7 +68,10 @@ router.get('/tour/:tourId', authMiddleware, async (req, res) => {
       total,
     });
   } catch (error) {
-    logger.error('Error fetching tour bookings:', error);
+    logger.error(
+      { err: error, event: 'booking.list.tour.failed', tourId: req.params?.tourId },
+      'tour bookings lookup failed'
+    );
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -101,7 +104,7 @@ router.post('/add', authMiddleware, validateRequest(bookingCreateSchema), async 
     if (!account)
       throw new UnauthorizedError('Authenticated account was not found', 'ACCOUNT_NOT_FOUND');
 
-    logger.info('Creating booking for tourId:', tourId);
+    logger.info({ event: 'booking.create', tourId }, 'creating a booking');
 
     // Check if the tour is already booked by this user, reserve seats, and write
     // the booking in one transaction. The seat guard is part of the same atomic
@@ -200,7 +203,13 @@ router.post('/add', authMiddleware, validateRequest(bookingCreateSchema), async 
       },
     });
   } catch (error) {
-    logger.error('Error adding booking:', error);
+    // `tourId` is read from `req.body` rather than the destructured local: the
+    // destructure sits inside the `try`, so it is out of scope in this `catch`
+    // and referencing it would throw while handling the original failure.
+    logger.error(
+      { err: error, event: 'booking.create.failed', tourId: req.body?.tourId },
+      'failed to create booking'
+    );
     const status = error.status || 500;
     res.status(status).json({
       success: false,
@@ -255,7 +264,10 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.json({ success: true, upcoming, completed });
   } catch (error) {
-    logger.error('Error fetching bookings:', error);
+    logger.error(
+      { err: error, event: 'booking.list.email.failed' },
+      'bookings lookup by email failed'
+    );
     res.status(500).json({
       success: false,
       message: 'Failed to fetch bookings',
@@ -291,7 +303,10 @@ router.get('/tour/:tourId/count', authMiddleware, async (req, res) => {
       totalRevenue: totalRevenue[0]?.total || 0,
     });
   } catch (error) {
-    logger.error('Error fetching booking count:', error);
+    logger.error(
+      { err: error, event: 'booking.count.failed', tourId: req.params?.tourId },
+      'booking count lookup failed'
+    );
     res.status(500).json({
       success: false,
       message: 'Server error',

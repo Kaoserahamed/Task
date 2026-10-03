@@ -11,7 +11,10 @@ let io = null;
 const initSocket = (server) => {
   // Only initialize Socket.IO in non-serverless environment
   if (process.env.VERCEL === '1') {
-    logger.warn('Socket.IO is not supported on Vercel serverless functions');
+    logger.warn(
+      { event: 'socket.init.unsupported' },
+      'Socket.IO is not supported on Vercel serverless functions'
+    );
     return null;
   }
 
@@ -19,21 +22,21 @@ const initSocket = (server) => {
     io = require('../socket').init(server);
     return io;
   } catch (error) {
-    logger.error('Failed to initialize Socket.IO:', error);
+    logger.error({ err: error, event: 'socket.init.failed' }, 'failed to initialize Socket.IO');
     return null;
   }
 };
 
 const getIO = () => {
   if (process.env.VERCEL === '1') {
-    logger.warn('Socket.IO is not available on Vercel');
+    logger.warn({ event: 'socket.unavailable.vercel' }, 'Socket.IO is not available on Vercel');
     return null;
   }
 
   try {
     return require('../socket').getIO();
   } catch (error) {
-    logger.error('Socket.IO not initialized:', error);
+    logger.error({ err: error, event: 'socket.get.failed' }, 'Socket.IO not initialized');
     return null;
   }
 };
@@ -44,7 +47,7 @@ const emitEvent = (event, data) => {
     socketIO.emit(event, data);
     return true;
   }
-  logger.warn(`Cannot emit event "${event}" - Socket.IO not available`);
+  logger.warn({ event: 'socket.emit.unavailable', emittedEvent: event }, 'cannot emit event');
   return false;
 };
 
@@ -54,7 +57,10 @@ const emitToRoom = (room, event, data) => {
     socketIO.to(room).emit(event, data);
     return true;
   }
-  logger.warn(`Cannot emit to room "${room}" - Socket.IO not available`);
+  logger.warn(
+    { event: 'socket.emit.room.unavailable', room, emittedEvent: event },
+    'cannot emit to room'
+  );
   return false;
 };
 

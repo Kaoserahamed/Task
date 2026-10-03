@@ -18,8 +18,10 @@ function getClient() {
     enableOfflineQueue: false,
     retryStrategy: (attempt) => Math.min(attempt * 100, 2000),
   });
-  client.on('error', (error) => logger.warn({ err: error }, 'redis unavailable'));
-  client.on('ready', () => logger.info('redis connected'));
+  client.on('error', (error) =>
+    logger.warn({ err: error, event: 'redis.unavailable' }, 'redis unavailable')
+  );
+  client.on('ready', () => logger.info({ event: 'redis.connected' }, 'redis connected'));
   return client;
 }
 
@@ -31,7 +33,10 @@ async function ensureConnected() {
     connecting = redis
       .connect()
       .catch((error) => {
-        logger.warn({ err: error }, 'redis connection failed; continuing without cache');
+        logger.warn(
+          { err: error, event: 'redis.connect.failed' },
+          'redis connection failed; continuing without cache'
+        );
         return null;
       })
       .finally(() => {
@@ -52,7 +57,7 @@ async function getJson(name) {
     const value = await redis.get(key(name));
     return value ? JSON.parse(value) : null;
   } catch (error) {
-    logger.warn({ err: error }, 'redis get failed');
+    logger.warn({ err: error, event: 'redis.get.failed', key: name }, 'redis get failed');
     return null;
   }
 }
@@ -64,7 +69,7 @@ async function setJson(name, value, ttlSeconds = 300) {
     await redis.set(key(name), JSON.stringify(value), 'EX', ttlSeconds);
     return true;
   } catch (error) {
-    logger.warn({ err: error }, 'redis set failed');
+    logger.warn({ err: error, event: 'redis.set.failed', key: name }, 'redis set failed');
     return false;
   }
 }
@@ -76,7 +81,7 @@ async function enqueue(name, payload) {
     await redis.rpush(key(`queue:${name}`), JSON.stringify(payload));
     return true;
   } catch (error) {
-    logger.warn({ err: error }, 'redis enqueue failed');
+    logger.warn({ err: error, event: 'redis.enqueue.failed', queue: name }, 'redis enqueue failed');
     return false;
   }
 }

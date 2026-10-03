@@ -39,7 +39,10 @@ function emitCompanyEvent(event, action, company) {
     const io = require('../socket').getIO();
     io.emit(event, { action, company });
   } catch (socketErr) {
-    logger.warn('Socket emit failed:', socketErr.message);
+    logger.warn(
+      { event: 'company.search.socket.emit.failed', err: socketErr },
+      'socket emit failed while broadcasting a company update'
+    );
   }
 }
 
@@ -58,7 +61,7 @@ router.get('/company/:id', async (req, res) => {
 
     res.status(200).json({ success: true, company });
   } catch (error) {
-    logger.error('Error fetching company by ID:', error);
+    logger.error({ err: error, event: 'company.get.failed' }, 'company lookup by id failed');
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
@@ -82,7 +85,7 @@ router.get('/search', async (req, res) => {
 
     res.json({ success: true, companies });
   } catch (error) {
-    logger.error('Search error:', error);
+    logger.error({ err: error, event: 'company.search.failed' }, 'company search failed');
     res.status(500).json({ success: false, message: 'Error searching companies' });
   }
 });
@@ -93,7 +96,7 @@ router.get('/companies', adminAuth, async (req, res) => {
     const companies = await Company.find();
     res.json({ success: true, companies });
   } catch (error) {
-    logger.error('Error fetching companies:', error);
+    logger.error({ err: error, event: 'company.list.failed' }, 'company listing failed');
     res.status(500).json({ success: false, message: 'Failed to fetch companies' });
   }
 });
@@ -128,7 +131,7 @@ router.put(
         },
       });
     } catch (error) {
-      logger.error('Update error:', error);
+      logger.error({ err: error, event: 'company.update.failed' }, 'company update failed');
       res.status(500).json({ message: 'Server error' });
     }
   }
@@ -182,7 +185,10 @@ router.patch(
 
       res.json({ success: true, company });
     } catch (error) {
-      logger.error('Update company info error:', error);
+      logger.error(
+        { err: error, event: 'company.info.update.failed' },
+        'company info update failed'
+      );
       res.status(500).json({ success: false, message: 'Failed to update company info' });
     }
   }
@@ -213,7 +219,11 @@ router.patch(
       }
 
       logger.info(
-        { companyId: String(company._id), verificationStatus },
+        {
+          event: 'company.verification.updated',
+          companyId: String(company._id),
+          verificationStatus,
+        },
         'company verification updated'
       );
 
@@ -221,7 +231,10 @@ router.patch(
 
       res.json({ success: true, company });
     } catch (error) {
-      logger.error('Failed to update verification status:', error);
+      logger.error(
+        { err: error, event: 'company.verification.update.failed' },
+        'failed to update verification status'
+      );
       res.status(500).json({ success: false, message: 'Failed to update status' });
     }
   }

@@ -259,7 +259,7 @@ router.get('/seed-tours', async (req, res) => {
       })),
     });
   } catch (error) {
-    logger.error('Seed error:', error);
+    logger.error({ err: error, event: 'seed.failed' }, 'seeding tour packages failed');
     res.status(500).json({
       success: false,
       message: 'Failed to seed tour packages',

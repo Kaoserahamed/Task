@@ -164,6 +164,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Backend logging is now uniformly structured. Every `logger.*` call in
+  application code (`routes/`, `controllers/`, `middleware/`, `services/`, `utils/`,
+  `config/`) passes an object carrying a stable dotted `event` plus the values as
+  sibling fields, with errors under `err` so pino serialises the stack. The ~50
+  remaining ad-hoc calls — `logger.info('Fetching bookings for tourId:', tourId)`,
+  `logger.error('Error adding booking:', error)` and friends — reached the log
+  sink as an unqueryable sentence with no event to filter on, no id to correlate,
+  and no stack, because pino treats a leading string as the message and drops the
+  trailing `Error` into a positional argument. `scripts/` is exempt: a CLI prints
+  for a human at a terminal, so its plain output stays.
+- `backend/tests/unit/contracts/logging.test.js` enforces the convention and fails
+  the suite when a call regresses to a bare string or an object without an
+  `event`. It mirrors the layering contract's walker, and — like the coverage
+  gate — it tests its own detector, so a regex that stopped matching would fail
+  rather than quietly pass everything.
 - `WeatherSuggestion` no longer ships development debug logging: the ~20 emoji
   `logDebug` calls left in `filterToursByWeather` and `fetchCityWeather` are gone, leaving
   only `logError` on the real failure paths. The component drops from 442 to 300 lines.

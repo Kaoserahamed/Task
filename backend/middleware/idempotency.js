@@ -42,7 +42,10 @@ module.exports = async function idempotency(req, res, next) {
     const existing = await getJson(name);
     if (existing) return replay(res, existing);
   } catch (error) {
-    logger.warn({ err: error }, 'idempotency lookup unavailable');
+    logger.warn(
+      { err: error, event: 'idempotency.lookup.unavailable' },
+      'idempotency lookup unavailable'
+    );
   }
 
   const originalJson = res.json.bind(res);

@@ -93,11 +93,20 @@ const errorHandler = (err, req, res, _next) => {
   // expected client mistakes and would only flood the log.
   if (isServerError) {
     requestLogger.error(
-      { err, requestId: req.id, method: req.method, path: req.originalUrl },
+      {
+        err,
+        event: 'http.request.failed',
+        requestId: req.id,
+        method: req.method,
+        path: req.originalUrl,
+      },
       'request failed'
     );
   } else {
-    requestLogger.debug({ requestId: req.id, code: classified.code }, 'request rejected');
+    requestLogger.debug(
+      { requestId: req.id, event: 'http.request.rejected', code: classified.code },
+      'request rejected'
+    );
   }
 
   const message =

@@ -20,12 +20,15 @@ const isTourUpcoming = (startDate) => {
 exports.getSuggestions = async (req, res) => {
   const { tourName } = req.params;
   const suggestions = [];
-  logger.info('Searching for suggestions for:', tourName);
+  logger.info({ event: 'suggestion.search.started', tourName }, 'searching for suggestions');
 
   try {
     // First get all tours to search through
     const allTours = await Tours.find({});
-    logger.info('Found', allTours.length, 'tours to search through');
+    logger.info(
+      { event: 'suggestion.search.tours_loaded', tourCount: allTours.length },
+      'loaded the tours to search through'
+    );
 
     fs.createReadStream(rulesPath)
       .pipe(csv())
@@ -52,7 +55,10 @@ exports.getSuggestions = async (req, res) => {
             }
           }
         } catch (err) {
-          logger.error('Parse error:', err);
+          logger.error(
+            { err, event: 'suggestion.row.parse.failed' },
+            'failed to parse a rules row'
+          );
         }
       })
       .on('end', async () => {
@@ -67,19 +73,28 @@ exports.getSuggestions = async (req, res) => {
             tours: s.tours,
           }));
 
-          logger.info('Found', sortedSuggestions.length, 'suggestions with upcoming tours');
+          logger.info(
+            { event: 'suggestion.search.completed', suggestionCount: sortedSuggestions.length },
+            'found suggestions with upcoming tours'
+          );
           res.json(sortedSuggestions);
         } catch (err) {
-          logger.error('Error processing suggestions:', err);
+          logger.error(
+            { err, event: 'suggestion.search.processing.failed' },
+            'failed to process suggestions'
+          );
           res.status(500).json({ error: 'Error processing suggestions' });
         }
       })
       .on('error', (error) => {
-        logger.error('Error reading CSV:', error);
+        logger.error(
+          { err: error, event: 'suggestion.csv.read.failed' },
+          'failed to read the rules CSV'
+        );
         res.status(500).json({ error: 'Error reading suggestions' });
       });
   } catch (err) {
-    logger.error('Error fetching tours:', err);
+    logger.error({ err, event: 'suggestion.tours.fetch.failed' }, 'failed to fetch tours');
     res.status(500).json({ error: 'Error fetching tours' });
   }
 };

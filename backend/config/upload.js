@@ -6,16 +6,25 @@ const logger = require('../utils/logger');
 let upload;
 
 if (config.aws.region && config.aws.s3Bucket) {
-  logger.info('Using private S3 storage for file uploads');
+  logger.info(
+    { event: 'upload.storage.selected', storage: 's3' },
+    'using private S3 storage for uploads'
+  );
   const storage = require('./storage');
   upload = storage.createS3Upload();
 } else if (config.isVercel || config.nodeEnv === 'production') {
-  logger.info('Using Cloudinary for file uploads');
+  logger.info(
+    { event: 'upload.storage.selected', storage: 'cloudinary' },
+    'using Cloudinary for uploads'
+  );
   const cloudinaryConfig = require('./cloudinary');
   upload = cloudinaryConfig.upload;
 } else {
   // Use local storage for development
-  logger.info('📁 Using local storage for file uploads');
+  logger.info(
+    { event: 'upload.storage.selected', storage: 'local' },
+    'using local storage for uploads'
+  );
   const multer = require('multer');
   const path = require('path');
 

@@ -26,7 +26,7 @@ function authMiddleware(req, res, next) {
     req.user = verifyAccessToken(token);
     return next();
   } catch (error) {
-    logger.warn('Token verification failed');
+    logger.warn({ event: 'auth.token.invalid' }, 'token verification failed');
     return next(new UnauthorizedError('Token is not valid', 'INVALID_TOKEN'));
   }
 }
