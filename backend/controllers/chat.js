@@ -6,8 +6,10 @@ exports.getChat = async (req, res) => {
   try {
     const { companyId } = req.params;
     const chatType = req.query;
-    logger.info('পারামস', companyId);
-    logger.info(chatType.query);
+    logger.info(
+      { event: 'chat.list.company', companyId, chatType: chatType.query },
+      'listing company chats'
+    );
     const chat = await Chat.find({
       companyId,
       chatType: chatType.query,
@@ -17,7 +19,6 @@ exports.getChat = async (req, res) => {
       )
       .populate('messages');
     res.status(200).json(chat);
-    logger.info(chat);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -25,7 +26,7 @@ exports.getChat = async (req, res) => {
 exports.getAdminchat = async (req, res) => {
   try {
     const chatType = req.query;
-    logger.info(chatType.query);
+    logger.info({ event: 'chat.list.admin', chatType: chatType.query }, 'listing admin chats');
     const chat = await Chat.find({
       chatType: chatType.query,
     })
@@ -36,7 +37,6 @@ exports.getAdminchat = async (req, res) => {
       .populate('messages');
 
     res.status(200).json(chat);
-    logger.info(chat);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -46,8 +46,10 @@ exports.getuserChat = async (req, res) => {
   try {
     const { userId } = req.params;
     const chatType = req.query;
-    logger.info(chatType);
-    logger.info('স্পপ্সপ্স');
+    logger.info(
+      { event: 'chat.list.user', userId, chatType: chatType.query },
+      'listing user chats'
+    );
     const chat = await Chat.find({
       participants: userId,
       chatType: chatType.query,
@@ -62,8 +64,6 @@ exports.getuserChat = async (req, res) => {
       action: 'userchat',
       chat,
     });
-
-    logger.info(chat);
 
     res.status(200).json(chat);
   } catch (error) {
@@ -85,15 +85,10 @@ exports.usersendMessage = async (req, res) => {
     // so they stay `let`; everything else is read-only.
     let { chatId, companyId } = req.body;
     const { content, senderId, chatType, companyName, userName, adminId, userId } = req.body;
-    logger.info('Received message request:', {
-      chatId,
-      content,
-      senderId,
-      companyName,
-      userName,
-      chatType,
-      companyId,
-    });
+    logger.info(
+      { event: 'chat.message.received', chatId, senderId, chatType, companyId, userId },
+      'chat message received'
+    );
 
     let chat;
 
@@ -101,11 +96,14 @@ exports.usersendMessage = async (req, res) => {
     if (chatId === null || (typeof chatId === 'string' && chatId.startsWith('temp_'))) {
       if (typeof chatId === 'string' && chatId.startsWith('temp_')) {
         companyId = chatId.substring(5);
-        logger.info('Temporary chatId detected, extracted companyId:', companyId);
+        logger.info(
+          { event: 'chat.temp-id.resolved', companyId },
+          'temporary chat id resolved to a company'
+        );
       }
 
       if (!chat) {
-        logger.info('Creating new chat...');
+        logger.info({ event: 'chat.create', companyId, chatType }, 'creating a chat');
         chat = new Chat({
           participants: userId,
           chatType,
@@ -116,7 +114,7 @@ exports.usersendMessage = async (req, res) => {
           messages: [], // Start with an empty messages array
         });
         await chat.save();
-        logger.info('New chat created with ID:', chat._id);
+        logger.info({ event: 'chat.created', chatId: chat._id }, 'chat created');
       }
       // Update chatId with the real chat ID for the new message
       chatId = chat._id;
@@ -125,8 +123,10 @@ exports.usersendMessage = async (req, res) => {
     }
 
     if (chat) {
-      logger.info('Chat object before adding message:', chat);
-      logger.info(senderId);
+      logger.debug(
+        { event: 'chat.message.append', chatId: chat._id, unreadCount: chat.unreadCount },
+        'appending a message'
+      );
       const newMessage = {
         senderId,
         content,
@@ -155,11 +155,11 @@ exports.usersendMessage = async (req, res) => {
     } else {
       // This case should ideally not be reached if logic is correct,
       // but included as a fallback.
-      logger.error('Error: Chat object is null after processing.');
+      logger.error({ event: 'chat.message.missing' }, 'chat was null after id resolution');
       res.status(404).json({ message: 'Chat not found after processing ID.' });
     }
   } catch (error) {
-    logger.error('Error in usersendMessage catch block:', error);
+    logger.error({ err: error, event: 'chat.message.failed' }, 'failed to send a chat message');
     res.status(500).json({ message: 'Failed to send message', error: error.message });
   }
 };

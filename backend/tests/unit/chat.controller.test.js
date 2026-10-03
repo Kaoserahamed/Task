@@ -3,6 +3,14 @@
 const Chat = require('../../models/Chat');
 const socket = require('../../socket');
 const controller = require('../../controllers/chat');
+const logger = require('../../utils/logger');
+
+jest.mock('../../utils/logger', () => ({
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+  debug: jest.fn(),
+}));
 
 jest.mock('../../models/Chat', () => {
   const Chat = jest.fn((data) => ({
@@ -162,5 +170,54 @@ describe('chat controller', () => {
       message: 'Failed to send message',
       error: 'message store unavailable',
     });
+  });
+
+  test('logs structured events and never dumps a chat document', async () => {
+    const privateBody = 'private-message-body';
+    Chat.find.mockReturnValue(chain([{ _id: 'chat-1', messages: [{ content: privateBody }] }]));
+    const res = response();
+
+    await controller.getChat(
+      { params: { companyId: 'company-1' }, query: { query: 'adcom' } },
+      res
+    );
+
+    expect(logger.info).toHaveBeenCalledWith(
+      { event: 'chat.list.company', companyId: 'company-1', chatType: 'adcom' },
+      'listing company chats'
+    );
+
+    // Chat documents carry user messages, so no log line may contain one.
+    const logged = JSON.stringify([
+      ...logger.info.mock.calls,
+      ...logger.error.mock.calls,
+      ...logger.debug.mock.calls,
+    ]);
+    expect(logged).not.toContain(privateBody);
+  });
+
+  test('records a structured event when a message is sent, without its body', async () => {
+    Chat.findById.mockReturnValue(
+      chain({ _id: 'chat-1', messages: [], unreadCount: 0, save: jest.fn() })
+    );
+    const res = response();
+
+    await controller.usersendMessage(
+      {
+        body: {
+          chatId: 'chat-1',
+          content: 'private message text',
+          senderId: 'user-1',
+          chatType: 'comuse',
+        },
+      },
+      res
+    );
+
+    expect(logger.info).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat.message.received' }),
+      'chat message received'
+    );
+    expect(JSON.stringify(logger.info.mock.calls)).not.toContain('private message text');
   });
 });
