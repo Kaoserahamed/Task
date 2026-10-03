@@ -8,6 +8,30 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The Terraform provider lock file `.terraform.lock.hcl` is now committed, pinning
+  `hashicorp/aws` and `hashicorp/random` to exact versions with content hashes for both
+  `linux_amd64` and `windows_amd64`. `terraform-plan.yml` fails the pull request when the
+  committed lock is stale or its hashes no longer match the registry.
+- Remote state is declared in a dedicated `infrastructure/terraform/backend.tf` with
+  `encrypt = true`, so state encryption is a property of the configuration rather than a
+  flag every caller must remember. Bucket, key, region and lock table are still supplied
+  through `-backend-config`, so nothing account-specific is committed.
+- The `fresh-clone` CI job now pipes `npm run verify` through `tee` and propagates
+  `${PIPESTATUS[0]}`, so the job's done condition is the verification exit code
+  itself, and uploads `fresh-clone-verify.log` as an artifact when it is non-zero.
+  The job still restores no npm cache, so the run proves a cold clone.
+- Admin report filtering and sorting now live in a tested
+  `admin/src/utils/reportFilters.js` selector (`filterReports`, `sortReports`,
+  `selectReports`), with 17 unit tests plus a new `Reports.test.jsx` covering the
+  tabs, search, both sort orders, and the process/resolve actions. `Reports.jsx`
+  is now a view over that selector, and an unparsable date sorts last instead of
+  poisoning the comparator with `NaN`.
+- `npm run verify:tests-paired` (`scripts/verify-test-pairing.mjs`) now requires every
+  feature or bugfix to include or update a matching `*.test.js` / `*.test.jsx` in the same
+  commit. It is offline and dependency-free, runs in the `commitlint.yml` workflow over the
+  same range that validates commit messages, and supports `--staged`, an explicit range, and
+  a documented `TEST_PAIRING_EXEMPT` escape hatch. The rule is a checklist item in
+  `CONTRIBUTING.md` and the pull-request template.
 - The tour-company upload form is now a tested 132-line orchestrator using shared
   create/edit sections and a pure multipart serializer. Browser and all backend
   storage adapters enforce one accessible five-image, 5 MB upload policy; object
@@ -140,6 +164,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- `WeatherSuggestion` no longer ships development debug logging: the ~20 emoji
+  `logDebug` calls left in `filterToursByWeather` and `fetchCityWeather` are gone, leaving
+  only `logError` on the real failure paths. The component drops from 442 to 300 lines.
+- Weather-based tour matching now lives in a tested
+  `frontend/src/utils/weatherTourFilter.js` (`filterToursByWeather`, `normalizeCity`,
+  `isWeatherSimilar`). Behaviour is unchanged — same-city match plus a similar condition or a
+  temperature within 10 degrees, ordered by temperature distance — but the rules are now
+  assertable, and the new `WeatherSuggestion.test.jsx` covers both the selector (fixed
+  fixtures, including a condition-only match outside the tolerance) and the component.
 - The Express application is no longer built as a side effect of starting the
   server, which makes every route exercisable by `supertest` without a port.
 - Seat booking is a single guarded update, so concurrent buyers cannot oversell
@@ -156,6 +189,30 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The admin Reports tests reached into the DOM directly (`document.querySelectorAll`,
+  `element.closest`) and called `render` from `beforeEach`, which the repository's
+  `testing-library/no-node-access` and `testing-library/no-render-in-setup` rules
+  reject, so `admin` lint and the fresh-clone verification job failed on the
+  change that introduced them. `Reports.test.jsx` now queries by role and renders
+  inside each test. To make that possible, `Reports.jsx` marks the report list
+  and its cards as `role="list"` / `role="listitem"` labelled with the report
+  title, names the search input, and gives the icon-only sort toggle an
+  `aria-label` that states which end of the sort the next click moves to.
+
+- The Terraform configuration was syntactically invalid and could not be
+  `terraform init`-ed or `validate`-d at all, so no infrastructure change had ever been
+  plan-checked. Four distinct defects: single-line nested blocks
+  (`default_action { allow {} }`, `override_action { none {} }`) in `waf_autoscaling.tf`;
+  an `each.key` index inside `depends_on` in `ecs.tf`, which only accepts whole resources;
+  `copy_tags_to_snapshot`, which is not an argument of `aws_docdb_cluster`; and
+  `var[<computed key>]`, which is illegal because `var` is not indexable — the three
+  static web images are now resolved through a `local.web_image` map. `terraform fmt -check
+-recursive` and `terraform validate` are both clean, and the plan runs end to end.
+- `terraform-plan.yml` no longer runs `terraform init -backend=false` and then expects
+  `plan` to work. That leaves the backend unconfigured, so every later command fails with
+  `Backend initialization required` and the review plan could never be produced. The job
+  now writes a `ci_backend_override.tf` that substitutes a local backend and sets the
+  provider's credential-skip attributes, so the plan runs with no AWS access at all.
 - The storefront production build no longer fails on a named `React` import that
   Jest tolerated but CRA's Webpack bundle rejected.
 - The company dashboard's Vercel build, output directory, SPA fallback, and Node

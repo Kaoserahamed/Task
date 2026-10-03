@@ -20,10 +20,13 @@ not an infrastructure setting.
 
 ## Remote state
 
-`versions.tf` declares an empty S3 backend (`backend "s3" {}`), so the location
-is supplied at `init` time and nothing account-specific is committed. Create the
-bucket and the lock table once; CI reads the same values from the
-`TF_STATE_BUCKET`, `TF_STATE_KEY` and `TF_LOCK_TABLE` repository variables.
+`backend.tf` declares the S3 backend with `encrypt = true`, so the state object
+— which holds the generated DocumentDB, Redis and JWT credentials — is encrypted
+at rest in every environment, including a local run. The bucket, key, region and
+lock table are deliberately **not** in the file: they are supplied at `init` time
+so nothing account-specific is committed. Create the bucket and the lock table
+once; CI reads the same values from the `TF_STATE_BUCKET`, `TF_STATE_KEY` and
+`TF_LOCK_TABLE` repository variables.
 
 ```bash
 # One-time bootstrap (replace the names and the region).
@@ -39,10 +42,29 @@ aws dynamodb create-table --table-name "$TF_LOCK_TABLE" \
   --billing-mode PAY_PER_REQUEST --region "$AWS_REGION"
 ```
 
-Every `init` — local and in `aws-production.yml` — passes `encrypt=true` and the
-same four `-backend-config` flags, so state is encrypted at rest and two applies
-cannot interleave. Details and the workflow gates:
+Every `init` — local and in `aws-production.yml` — passes the same four
+`-backend-config` flags, so two applies cannot interleave, and `encrypt = true`
+in `backend.tf` guarantees the state object is encrypted at rest without relying
+on a flag being remembered. Details and the workflow gates:
 [../../docs/ci-cd.md](../../docs/ci-cd.md#remote-state).
+
+## Provider versions
+
+`.terraform.lock.hcl` is committed. It records the exact provider versions and
+their content hashes for both `linux_amd64` (CI and production) and
+`windows_amd64` (local development on Windows), so every machine resolves the
+same providers and a tampered or corrupted download is rejected.
+
+Never edit that file by hand. After changing a provider constraint in
+`versions.tf`, regenerate and commit it:
+
+```bash
+terraform init
+terraform providers lock -platform=linux_amd64 -platform=windows_amd64
+```
+
+`terraform-plan.yml` fails the pull request if the committed lock file is stale
+or if the hashes do not match what the registry currently serves.
 
 ## Apply
 
@@ -54,8 +76,7 @@ terraform init \
   -backend-config="bucket=$TF_STATE_BUCKET" \
   -backend-config="key=$TF_STATE_KEY" \
   -backend-config="region=$AWS_REGION" \
-  -backend-config="dynamodb_table=$TF_LOCK_TABLE" \
-  -backend-config="encrypt=true"
+  -backend-config="dynamodb_table=$TF_LOCK_TABLE"
 terraform fmt -check
 terraform validate
 terraform plan -out production.tfplan

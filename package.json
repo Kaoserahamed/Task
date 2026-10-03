@@ -32,6 +32,7 @@
     "lint:root": "eslint scripts",
     "lint:commits": "commitlint --from HEAD^ --to HEAD --verbose",
     "verify:repo": "node scripts/verify-repo.mjs",
+    "verify:tests-paired": "node scripts/verify-test-pairing.mjs",
     "verify": "npm run dependency:check && npm run lint && npm run lint:root && npm run format:check && npm run typecheck && npm run verify:repo && npm test && npm run verify:build",
     "stack:up": "docker compose up --build",
     "stack:test:up": "docker compose -f docker-compose.test.yml up -d",

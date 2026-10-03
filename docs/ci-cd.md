@@ -27,10 +27,28 @@ runs on every push and pull-request to `main` / `develop`. It mirrors the local
 | `commitlint`        | Conventional Commit validation over the push or pull-request range                           | a non-conforming commit message                                             |
 | `docker`            | `docker compose -f docker-compose.test.yml build` and the image health                       | build failure or a container that never turns healthy                       |
 
-The `fresh-clone` job is what makes the README's Quick Start executable: it runs
-`npm run setup` and then the complete root `npm run verify` path on a checkout
-with no `node_modules`, so a missing lockfile, broken script, test, or formatter
-fails CI before a contributor hits it.
+The `fresh-clone` job is what makes the README's Quick Start executable: it checks
+out the repository, deliberately configures `actions/setup-node@v4` **without** an
+npm `cache:` (a warm `~/.npm` would hide a lockfile that cannot install cold), runs
+`npm run setup` and then the complete root `npm run verify` path on a checkout with
+no `node_modules`, so a missing lockfile, broken script, test, or formatter fails CI
+before a contributor hits it.
+
+Its final step is the reproducibility gate itself:
+
+```bash
+set -o pipefail
+npm run verify 2>&1 | tee fresh-clone-verify.log
+status=${PIPESTATUS[0]}
+echo "fresh-clone: npm run verify exit code: ${status}"
+exit "${status}"
+```
+
+`PIPESTATUS[0]` is the exit code of `npm run verify` itself, not of `tee`, so the
+job's done condition is a single number: **0 means a fresh clone installs, lints,
+typechecks, tests and builds**. Any other value fails the job, and
+`fresh-clone-verify.log` is uploaded as the `fresh-clone-verify-log` artifact so the
+failing output can be inspected without re-running the job.
 
 ### Node version
 
@@ -45,26 +63,42 @@ npm run lint        # lint backend + every CRA app
 npm test            # backend + CRA tests
 npm run build       # production bundles for all three CRA apps
 npm run format:check
+npm run verify:tests-paired   # a source change must carry a test change
 ```
 
 The `verify` script is intentionally identical in spirit to CI so a developer
 can catch gate failures before pushing.
 
+`npm run verify:tests-paired` enforces the rule described in
+[CONTRIBUTING.md](../CONTRIBUTING.md#every-feature-or-bugfix-ships-with-a-test):
+production source and a test must change together. The `commitlint.yml` workflow
+runs it over the same range it validates commit messages against, so an unpaired
+feature or bugfix fails the same job that validates the commit message.
+
 ## Infrastructure pipeline (Terraform)
 
 Three workflows cover `infrastructure/terraform`:
 
-| Workflow             | Trigger                         | Gate                                                                                            |
-| -------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `terraform-plan.yml` | PR touching `infrastructure/**` | `fmt -check -recursive`, `init -backend=false`, `validate`, offline `plan`, tfsec HIGH/CRITICAL |
-| `security.yml`       | every push and pull request     | `fmt`, `init -backend=false`, `validate`, Trivy IaC policy scan                                 |
-| `ci.yml`             | every push and pull request     | tfsec HIGH/CRITICAL scan of `infrastructure/terraform`                                          |
-| `aws-production.yml` | `v*` tag or manual dispatch     | `npm run verify` plus the integration suite, then apply against the remote state                |
+| Workflow             | Trigger                         | Gate                                                                                                                |
+| -------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `terraform-plan.yml` | PR touching `infrastructure/**` | `fmt -check -recursive`, local-backend `init`, provider-lock check, `validate`, offline `plan`, tfsec HIGH/CRITICAL |
+| `security.yml`       | every push and pull request     | `fmt`, `init -backend=false`, `validate`, Trivy IaC policy scan                                                     |
+| `ci.yml`             | every push and pull request     | tfsec HIGH/CRITICAL scan of `infrastructure/terraform`                                                              |
+| `aws-production.yml` | `v*` tag or manual dispatch     | `npm run verify` plus the integration suite, then apply against the remote state                                    |
 
-The review job never talks to AWS: it initialises without a backend
-(`-backend=false`), plans against `terraform.tfvars.example` with
-`-refresh=false`, uploads `terraform.tfplan` and `terraform-plan.txt` as a build
-artifact, and posts a bounded plan excerpt back to the pull request.
+The review job never talks to AWS. It writes a `ci_backend_override.tf` that
+swaps the S3 backend for a local one and sets the provider's
+`skip_credentials_validation` / `skip_requesting_account_id` / `skip_metadata_api_check`,
+then runs `terraform init` and plans against `terraform.tfvars.example` with
+`-refresh=false`, uploading `terraform.tfplan` and `terraform-plan.txt` as a build
+artifact and posting a bounded plan excerpt back to the pull request.
+
+The override exists because `terraform init -backend=false` is **not** sufficient
+on its own: it skips backend configuration, which leaves the backend unconfigured
+so every later command — `plan` included — fails with
+`Backend initialization required`. A local backend in the override file gives the
+plan somewhere to write, and the provider skip attributes avoid an STS call, so a
+pull request needs no AWS credentials at all. Nothing in that job applies.
 
 The action references are pinned to resolvable versioned releases
 `aquasecurity/trivy-action@v0.36.0` and
@@ -81,9 +115,11 @@ workflow rather than being reported for later review.
 
 ### Remote state
 
-`infrastructure/terraform/versions.tf` declares an empty S3 backend
-(`backend "s3" {}`). The deployment workflow supplies the location through
-`-backend-config` flags, so no account id or bucket name is committed:
+`infrastructure/terraform/backend.tf` declares the S3 backend with
+`encrypt = true`. Encryption is a property of the configuration, not a flag, so a
+local or CI `init` cannot silently create an unencrypted state object. The
+location itself is supplied by the deployment workflow through `-backend-config`
+flags, so no account id or bucket name is committed:
 
 | Repository variable | `-backend-config` key | Purpose                                                     |
 | ------------------- | --------------------- | ----------------------------------------------------------- |
@@ -91,12 +127,12 @@ workflow rather than being reported for later review.
 | `TF_STATE_KEY`      | `key`                 | State path, defaults to `task/production/terraform.tfstate` |
 | `TF_LOCK_TABLE`     | `dynamodb_table`      | DynamoDB table used for state locking                       |
 
-Every `init` also passes `encrypt=true`, so the state object is encrypted at
-rest, and the DynamoDB table serialises concurrent applies. Terraform generates
-the DocumentDB, Redis and JWT credentials **inside this state**, so the bucket
-must be access-restricted like the production secrets themselves. Configure all
-three as repository variables (the names are not secret; the state they hold
-is).
+The DynamoDB table serialises concurrent applies: two overlapping CI runs, or a
+local apply racing a deploy, would otherwise write the same state key and silently
+lose one run's changes. Terraform generates the DocumentDB, Redis and JWT
+credentials **inside this state**, so the bucket must be access-restricted like
+the production secrets themselves. Configure all three as repository variables
+(the names are not secret; the state they hold is).
 
 To work locally against the same state:
 

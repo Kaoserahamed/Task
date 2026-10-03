@@ -25,6 +25,9 @@ The commands you ran, e.g.
 
 - [ ] `npm run verify` passes locally (lint, format:check, typecheck, verify:repo, tests)
 - [ ] New behaviour comes with a test; changed behaviour updates the existing one
+- [ ] A `*.test.js` / `*.test.jsx` is included or updated in this same change
+      (`npm run verify:tests-paired` enforces this in CI; use `TEST_PAIRING_EXEMPT` with a
+      reason if this PR legitimately has no test)
 - [ ] `CHANGELOG.md` has an entry under `[Unreleased]`
 - [ ] Documentation touched by this change was updated (`README.md`, `docs/`)
 - [ ] No secret, `.env` file, upload or build artifact is part of the diff

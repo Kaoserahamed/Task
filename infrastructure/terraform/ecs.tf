@@ -17,11 +17,11 @@ resource "aws_ecs_task_definition" "backend" {
   task_role_arn            = aws_iam_role.ecs_task.arn
 
   container_definitions = jsonencode([{
-    name      = "backend"
-    image     = var.backend_image
-    essential = true
+    name                   = "backend"
+    image                  = var.backend_image
+    essential              = true
     readonlyRootFilesystem = true
-    portMappings = [{ containerPort = 4000, hostPort = 4000, protocol = "tcp" }]
+    portMappings           = [{ containerPort = 4000, hostPort = 4000, protocol = "tcp" }]
     environment = [
       { name = "NODE_ENV", value = "production" },
       { name = "PORT", value = "4000" },
@@ -51,10 +51,10 @@ resource "aws_ecs_task_definition" "backend" {
       { name = "METRICS_TOKEN", valueFrom = "${aws_secretsmanager_secret.application.arn}:METRICS_TOKEN::" }
     ]
     healthCheck = {
-      command  = ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:4000/health/live').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
-      interval = 30
-      timeout  = 5
-      retries  = 3
+      command     = ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:4000/health/live').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval    = 30
+      timeout     = 5
+      retries     = 3
       startPeriod = 20
     }
     linuxParameters = {
@@ -88,20 +88,20 @@ resource "aws_ecs_task_definition" "web" {
   task_role_arn            = aws_iam_role.ecs_task.arn
 
   container_definitions = jsonencode([{
-    name      = each.key
-    image     = var[each.key == "frontend" ? "frontend_image" : each.key == "admin" ? "admin_image" : "company_image"]
-    essential = true
+    name                   = each.key
+    image                  = local.web_image[each.key]
+    essential              = true
     readonlyRootFilesystem = true
-    portMappings = [{ containerPort = 8080, hostPort = 8080, protocol = "tcp" }]
+    portMappings           = [{ containerPort = 8080, hostPort = 8080, protocol = "tcp" }]
     environment = [
       { name = "PORT", value = "8080" },
       { name = "AWS_REGION", value = var.aws_region }
     ]
     healthCheck = {
-      command  = ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1"]
-      interval = 30
-      timeout  = 5
-      retries  = 3
+      command     = ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1"]
+      interval    = 30
+      timeout     = 5
+      retries     = 3
       startPeriod = 10
     }
     logConfiguration = {
@@ -114,7 +114,9 @@ resource "aws_ecs_task_definition" "web" {
     }
   }])
 
-  depends_on = [aws_cloudwatch_log_group.services[each.key]]
+  # depends_on only accepts whole resources, never an index expression, so this
+  # waits for every per-service log group rather than this instance's own.
+  depends_on = [aws_cloudwatch_log_group.services]
 }
 
 resource "aws_ecs_service" "web" {
@@ -189,11 +191,11 @@ resource "aws_ecs_task_definition" "worker" {
   task_role_arn            = aws_iam_role.ecs_task.arn
 
   container_definitions = jsonencode([{
-    name      = "worker"
-    image     = var.backend_image
-    essential = true
+    name                   = "worker"
+    image                  = var.backend_image
+    essential              = true
     readonlyRootFilesystem = true
-    command   = ["node", "scripts/background-worker.js"]
+    command                = ["node", "scripts/background-worker.js"]
     environment = [
       { name = "NODE_ENV", value = "production" },
       { name = "WORKER_MODE", value = "true" },

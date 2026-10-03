@@ -93,8 +93,7 @@ jobs:
             -backend-config="bucket=${TF_STATE_BUCKET}" \
             -backend-config="key=${TF_STATE_KEY}" \
             -backend-config="region=${AWS_REGION}" \
-            -backend-config="dynamodb_table=${TF_LOCK_TABLE}" \
-            -backend-config="encrypt=true"
+            -backend-config="dynamodb_table=${TF_LOCK_TABLE}"
       - name: Create ECR repositories before image publication
         run: |
           terraform -chdir=infrastructure/terraform apply -auto-approve \
@@ -192,8 +191,7 @@ jobs:
             -backend-config="bucket=${TF_STATE_BUCKET}" \
             -backend-config="key=${TF_STATE_KEY}" \
             -backend-config="region=${AWS_REGION}" \
-            -backend-config="dynamodb_table=${TF_LOCK_TABLE}" \
-            -backend-config="encrypt=true"
+            -backend-config="dynamodb_table=${TF_LOCK_TABLE}"
       - name: Apply immutable image references
         run: |
           account_id="$(aws sts get-caller-identity --query Account --output text)"

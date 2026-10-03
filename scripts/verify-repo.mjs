@@ -39,6 +39,7 @@ const REQUIRED_SCRIPTS = [
   'lint:commits',
   'format:check',
   'verify:repo',
+  'verify:tests-paired',
   'verify',
 ];
 

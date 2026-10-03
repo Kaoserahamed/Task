@@ -3,6 +3,14 @@ locals {
 
   public_subnets  = [for index in range(2) : cidrsubnet(var.vpc_cidr, 8, index)]
   private_subnets = [for index in range(2) : cidrsubnet(var.vpc_cidr, 8, index + 10)]
+
+  # `var` cannot be indexed by a computed key, so the three static web images are
+  # mapped explicitly and looked up per service in ecs.tf.
+  web_image = {
+    frontend = var.frontend_image
+    admin    = var.admin_image
+    company  = var.company_image
+  }
 }
 
 resource "aws_vpc" "main" {
