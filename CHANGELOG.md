@@ -189,6 +189,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The admin Reports tests reached into the DOM directly (`document.querySelectorAll`,
+  `element.closest`) and called `render` from `beforeEach`, which the repository's
+  `testing-library/no-node-access` and `testing-library/no-render-in-setup` rules
+  reject, so `admin` lint and the fresh-clone verification job failed on the
+  change that introduced them. `Reports.test.jsx` now queries by role and renders
+  inside each test. To make that possible, `Reports.jsx` marks the report list
+  and its cards as `role="list"` / `role="listitem"` labelled with the report
+  title, names the search input, and gives the icon-only sort toggle an
+  `aria-label` that states which end of the sort the next click moves to.
+
 - The Terraform configuration was syntactically invalid and could not be
   `terraform init`-ed or `validate`-d at all, so no infrastructure change had ever been
   plan-checked. Four distinct defects: single-line nested blocks

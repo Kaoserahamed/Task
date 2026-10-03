@@ -128,7 +128,9 @@ const Reports = () => {
         <h2>Reports & Complaints</h2>
         <div className="search-container">
           <input
+            id="report-search"
             type="text"
+            aria-label="Search reports"
             placeholder="Search by title, submitted by, or against..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -183,7 +185,10 @@ const Reports = () => {
             <option value="date">Date</option>
             <option value="priority">Priority</option>
           </select>
-          <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}>
+          <button
+            aria-label={`Sort ${sortOrder === 'desc' ? 'oldest' : 'newest'} first`}
+            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+          >
             <i className={`fas fa-sort-${sortOrder === 'asc' ? 'up' : 'down'}`}></i>
           </button>
         </div>
@@ -193,9 +198,9 @@ const Reports = () => {
         <p>Showing {sortedReports.length} reports</p>
       </div>
 
-      <div className="reports-list">
+      <div className="reports-list" role="list">
         {sortedReports.map((report) => (
-          <div key={report.id} className="report-card">
+          <div key={report.id} className="report-card" role="listitem" aria-label={report.title}>
             <div className="report-header">
               <div className="report-title-section">
                 <span
