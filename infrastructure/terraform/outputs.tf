@@ -32,3 +32,13 @@ output "ecs_cluster_name" {
   value       = aws_ecs_cluster.main.name
   description = "ECS cluster name."
 }
+
+output "ecr_repository_names" {
+  value       = module.ecr.repository_names
+  description = "Container repositories created by the reusable ECR module."
+}
+
+output "ecr_repository_arns" {
+  value       = module.ecr.repository_arns
+  description = "Container repository ARNs, for IAM policies and resource scoping."
+}

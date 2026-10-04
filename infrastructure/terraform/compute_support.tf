@@ -1,36 +1,22 @@
-resource "aws_ecr_repository" "services" {
-  for_each = toset(["backend", "frontend", "admin", "company"])
+# Container registries for every deployable service.
+#
+# These were inline resources; they are now a reusable module so encryption with
+# the application KMS key, scan-on-push, immutable tags and the untagged-image
+# lifecycle policy are defined once instead of being re-typed per service. The
+# deployed image URIs are supplied through the `*_image` variables, so nothing
+# else had to change to consume this module.
+module "ecr" {
+  source = "./modules/ecr"
 
-  name                 = "${local.name}-${each.key}"
-  image_tag_mutability = "IMMUTABLE"
-  force_delete         = false
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  encryption_configuration {
-    encryption_type = "KMS"
-    kms_key         = aws_kms_key.application.arn
-  }
-}
-
-resource "aws_ecr_lifecycle_policy" "services" {
-  for_each = aws_ecr_repository.services
-
-  repository = each.value.name
-  policy = jsonencode({
-    rules = [{
-      rulePriority = 1
-      description  = "Expire untagged images after 30 days"
-      selection = {
-        tagStatus   = "untagged"
-        countType   = "imageCountMoreThan"
-        countNumber = 10
-      }
-      action = { type = "expire" }
-    }]
-  })
+  name_prefix = local.name
+  names = [
+    "backend",
+    "frontend",
+    "admin",
+    "company",
+  ]
+  kms_key_arn          = aws_kms_key.application.arn
+  untagged_image_limit = 10
 }
 
 resource "aws_iam_role" "ecs_execution" {

@@ -66,6 +66,39 @@ terraform providers lock -platform=linux_amd64 -platform=windows_amd64
 `terraform-plan.yml` fails the pull request if the committed lock file is stale
 or if the hashes do not match what the registry currently serves.
 
+## Reusable modules
+
+Infrastructure that more than one service depends on lives in `modules/` rather
+than being re-typed inline, so its security properties are defined once:
+
+| Module | Source          | What it owns                                                                                                                         |
+| ------ | --------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `ecr`  | `./modules/ecr` | One container repository per service: KMS encryption, scan-on-push, immutable tags, and a lifecycle policy expiring untagged images. |
+
+### `modules/ecr`
+
+| Input                  | Type           | Required | Default       | Purpose                                                                                          |
+| ---------------------- | -------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------ |
+| `names`                | `list(string)` | yes      | –             | Short service names; each becomes `<name_prefix>-<name>`.                                        |
+| `name_prefix`          | `string`       | yes      | –             | Keeps environments from colliding in one account/region.                                         |
+| `kms_key_arn`          | `string`       | yes      | –             | Key for image encryption. Validated as a KMS ARN, because ECR rejects an unencrypted repository. |
+| `untagged_image_limit` | `number`       | no       | `10`          | Untagged images kept before the oldest expires.                                                  |
+| `image_tag_mutability` | `string`       | no       | `"IMMUTABLE"` | Overwriting a deployed tag is almost never intended.                                             |
+
+| Output             | Type           | Purpose                                                |
+| ------------------ | -------------- | ------------------------------------------------------ |
+| `repository_names` | `list(string)` | Fully qualified names.                                 |
+| `repositories`     | `map(object)`  | The resources, for ARN/URL access.                     |
+| `repository_urls`  | `map(string)`  | Registry URL per short name, for an ECS `image` field. |
+| `repository_arns`  | `map(string)`  | ARN per short name, for IAM scoping.                   |
+
+The module declares its own `required_providers` so it cannot be used with an
+unrelated provider version; the root `.terraform.lock.hcl` remains the single
+lock that governs the download. Adding a module directory is enough for
+`terraform fmt -check -recursive` and `terraform validate` in
+`terraform-plan.yml` to cover it — both commands walk the tree, and
+`terraform init` installs local modules automatically.
+
 ## Apply
 
 ```bash
