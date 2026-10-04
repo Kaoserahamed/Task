@@ -114,6 +114,27 @@ are `credit-card`, `paypal`, or `bank-transfer`. Credit-card bookings also requi
 Unknown fields, invalid dates, invalid payment methods, and malformed values return
 `400 VALIDATION_ERROR` with an `errors` array containing `field` and `message`.
 
+## Reports
+
+The admin moderation queue. Both endpoints require an admin bearer token; the
+router guards itself, so there is no unguarded second mount.
+
+| Method | Path                      | Purpose                      |
+| ------ | ------------------------- | ---------------------------- |
+| GET    | `/api/reports`            | Every report, newest first   |
+| PATCH  | `/api/reports/:id/status` | Move a report through triage |
+
+A report is `{ id, type, title, submittedBy, submittedAgainst, date, status,
+priority, description }`. `type` is `user` or `company` (who filed it), `status`
+is `pending`, `in-progress`, or `resolved`, and `priority` is `low`, `medium`, or
+`high` — the dashboard's tabs filter on exactly these values. `id` is a string
+projection of the MongoDB id, never the `_id` object.
+
+`PATCH` takes a strict body of `{ status }`; any other field is rejected with
+`400 VALIDATION_ERROR`, so a status change cannot also rewrite the title or
+priority. A malformed id and an unknown status are both `400`; an unknown report
+is `404 REPORT_NOT_FOUND`.
+
 ## Other groups
 
 | Group                                | Prefix                                    |
@@ -124,6 +145,7 @@ Unknown fields, invalid dates, invalid payment methods, and malformed values ret
 | Admin                                | `/api/admin/*` (guarded mount)            |
 | Chat                                 | `/api/chat/*`                             |
 | Wishlist                             | `/api/wishlist/*`                         |
+| Reports (admin only)                 | `/api/reports/*`                          |
 | Reviews                              | `/reviews/*`                              |
 | Places / weather                     | `/api/*`                                  |
 | Suggestions                          | `/Suggestion/:tourName`                   |

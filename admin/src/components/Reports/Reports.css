@@ -341,6 +341,39 @@
   font-size: 1.1rem;
 }
 
+/* Shown in place of the list when a request fails, so a dropped connection is
+   distinguishable from an empty queue. */
+.reports-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.35);
+  border-radius: 0.5rem;
+}
+
+.reports-error p {
+  margin: 0;
+}
+
+.reports-error button {
+  padding: 0.5rem 1rem;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 0.375rem;
+}
+
+.reports-error button:hover {
+  background: rgba(231, 76, 60, 0.12);
+}
+
 @media (max-width: 768px) {
   .reports-header {
     flex-direction: column;

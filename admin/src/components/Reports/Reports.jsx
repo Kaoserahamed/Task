@@ -1,87 +1,61 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './Reports.css';
 import selectReports from '../../utils/reportFilters';
+import StatusState from '../ui/StatusState';
+import { fetchReports, updateReportStatus } from '../../api/reports';
 
 const Reports = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Sample data for reports
-  const [reports, setReports] = useState([
-    {
-      id: 1,
-      type: 'user',
-      title: "Poor service during Cox's Bazar tour",
-      submittedBy: 'Rahul Ahmed',
-      submittedAgainst: 'Travel Buddy Ltd',
-      date: '2023-05-15',
-      status: 'pending',
-      priority: 'high',
-      description:
-        'The tour guide was not knowledgeable and the accommodation was below the standard promised in the package.',
-    },
-    {
-      id: 2,
-      type: 'company',
-      title: 'Customer refused to follow safety guidelines',
-      submittedBy: 'Green Tours',
-      submittedAgainst: 'Karim Uddin',
-      date: '2023-05-12',
-      status: 'resolved',
-      priority: 'medium',
-      description:
-        'The customer repeatedly ignored safety instructions during the boat tour in Sundarbans, putting themselves and others at risk.',
-    },
-    {
-      id: 3,
-      type: 'user',
-      title: 'Misleading tour package information',
-      submittedBy: 'Sabina Akter',
-      submittedAgainst: 'Explore Bangladesh',
-      date: '2023-05-10',
-      status: 'in-progress',
-      priority: 'high',
-      description:
-        'The tour package advertised 4-star accommodation but we were provided with a 2-star hotel. The food quality was also poor.',
-    },
-    {
-      id: 4,
-      type: 'company',
-      title: 'Customer damaged hotel property',
-      submittedBy: 'Adventure Tours',
-      submittedAgainst: 'Momin Khan',
-      date: '2023-05-08',
-      status: 'pending',
-      priority: 'low',
-      description:
-        'The customer damaged furniture in the hotel room and refused to pay for repairs.',
-    },
-    {
-      id: 5,
-      type: 'user',
-      title: 'Tour cancelled without proper refund',
-      submittedBy: 'Tahmina Begum',
-      submittedAgainst: 'Island Explorers',
-      date: '2023-05-05',
-      status: 'resolved',
-      priority: 'high',
-      description:
-        'My tour was cancelled just 2 days before the departure date and I was only refunded 50% of the amount.',
-    },
-    {
-      id: 6,
-      type: 'company',
-      title: 'Customer misbehavior with staff',
-      submittedBy: 'Sylhet Travels',
-      submittedAgainst: 'Rahim Miah',
-      date: '2023-05-03',
-      status: 'in-progress',
-      priority: 'medium',
-      description: 'The customer was verbally abusive to our female staff members during the tour.',
-    },
-  ]);
+  // Reports are a server-owned moderation queue. The view used to seed itself
+  // with a hardcoded array of sample complaints and mutate status in local
+  // state, which meant nothing an operator did survived a refresh and no real
+  // report could ever appear here. The API module is the only way in, and the
+  // filtering/sorting rules stay in `utils/reportFilters.js`.
+  const loadReports = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await fetchReports();
+      setReports(Array.isArray(data?.reports) ? data.reports : []);
+    } catch (err) {
+      setReports([]);
+      setError(err.message || 'Could not load reports');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadReports();
+  }, [loadReports]);
+
+  const handleStatusChange = async (id, newStatus) => {
+    // Optimistic update, rolled back from the server's copy if the call fails:
+    // the operator sees the action land immediately, and a rejected PATCH
+    // leaves the row in the state the API actually holds.
+    const previous = reports;
+    setReports(
+      reports.map((report) => (report.id === id ? { ...report, status: newStatus } : report))
+    );
+    try {
+      const data = await updateReportStatus(id, { status: newStatus });
+      const confirmed = data?.report;
+      if (confirmed) {
+        setReports((current) => current.map((report) => (report.id === id ? confirmed : report)));
+      }
+      setError('');
+    } catch (err) {
+      setReports(previous);
+      setError(err.message || `Could not mark report as ${newStatus}`);
+    }
+  };
 
   // Filtering and sorting rules live in utils/reportFilters.js so they can be
   // unit-tested without rendering the view.
@@ -89,12 +63,6 @@ const Reports = () => {
     () => selectReports(reports, { tab: activeTab, searchTerm, sortBy, sortOrder }),
     [reports, activeTab, searchTerm, sortBy, sortOrder]
   );
-
-  const handleStatusChange = (id, newStatus) => {
-    setReports(
-      reports.map((report) => (report.id === id ? { ...report, status: newStatus } : report))
-    );
-  };
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -194,6 +162,26 @@ const Reports = () => {
         </div>
       </div>
 
+      {/* A failed request must not look like an empty queue, so the error is
+          announced in a live region with a retry rather than silently replaced
+          by the "no reports" state below. */}
+      {error && (
+        <div className="reports-error" role="alert">
+          <p>{error}</p>
+          <button type="button" onClick={loadReports}>
+            Retry
+          </button>
+        </div>
+      )}
+
+      {loading && <StatusState status="loading" title="Loading reports" />}
+
+      {!loading && reports.length === 0 && !error && (
+        <StatusState status="empty" title="No reports have been filed yet">
+          Customer and tour-company complaints will appear here as they are filed.
+        </StatusState>
+      )}
+
       <div className="reports-count">
         <p>Showing {sortedReports.length} reports</p>
       </div>
@@ -285,7 +273,9 @@ const Reports = () => {
           </div>
         ))}
 
-        {sortedReports.length === 0 && (
+        {/* Only meaningful when the queue itself has rows: if nothing has been
+            filed, the empty state above already explains why the list is blank. */}
+        {!loading && reports.length > 0 && sortedReports.length === 0 && (
           <div className="no-reports">
             <i className="fas fa-exclamation-circle"></i>
             <p>No reports found matching your criteria</p>

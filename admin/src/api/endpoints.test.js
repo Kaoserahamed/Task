@@ -7,6 +7,7 @@ import * as tours from './tours';
 import * as bookings from './bookings';
 import * as companies from './companies';
 import * as chat from './chat';
+import * as reports from './reports';
 
 const lastCall = () => {
   const [url, options] = fetch.mock.calls[fetch.mock.calls.length - 1];
@@ -90,5 +91,20 @@ describe('api endpoint contract', () => {
 
     await chat.sendMessage({ chatId: 'c1', content: 'hi' });
     expect(lastCall().url).toBe('http://localhost:4000/api/chat/send-message');
+  });
+
+  test('report moderation endpoints', async () => {
+    await reports.fetchReports();
+    expect(lastCall()).toMatchObject({
+      url: 'http://localhost:4000/api/reports',
+      options: { method: 'GET' },
+    });
+
+    await reports.updateReportStatus('r1', { status: 'in-progress' });
+    expect(lastCall()).toMatchObject({
+      url: 'http://localhost:4000/api/reports/r1/status',
+      options: { method: 'PATCH' },
+    });
+    expect(JSON.parse(lastCall().options.body)).toEqual({ status: 'in-progress' });
   });
 });
