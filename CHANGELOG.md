@@ -8,6 +8,64 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **The admin Reports queue is now a real backend domain.** The dashboard used to
+  render six hardcoded sample complaints and change their status in local React
+  state, so nothing an operator did survived a refresh, no complaint could ever be
+  filed, and there was no server record of a report at all. `Report` is now a
+  model with `type` (`user`/`company`), `status` (`pending`/`in-progress`/
+  `resolved`) and `priority` enums plus `{ status, date }` and `{ type, date }`
+  indexes; `GET /api/reports` and `PATCH /api/reports/:id/status` sit behind
+  `adminAuth` in `routes/reportRoutes.js` and follow the existing
+  `route → validator → controller → service → repository` layering. The
+  repository is the only module that imports the model, so the layering ratchet
+  (`backend/tests/unit/contracts/layering.test.js`) stays green without adding an
+  exemption. `submittedBy`/`submittedAgainst` are display names captured at filing
+  time, not references, so a report stays readable after the account behind it is
+  deleted.
+- `admin/src/api/reports.js` (`fetchReports`, `updateReportStatus`) with endpoint
+  contract assertions in `endpoints.test.js`; the backend surface is pinned by
+  `backend/tests/unit/report.routes.test.js` (401/403/400/404, strict body,
+  non-admin refusal) alongside model, service and validator suites.
+- `tourcompanydashboard/src/Components/ui/ConfirmDialog.jsx`, an accessible
+  replacement for `window.confirm`: `role="alertdialog"` with `aria-modal`, focus
+  moved to the confirm button and a Tab trap while open, Escape and backdrop
+  dismissal, and `aria-busy` with both actions disabled while a request is in
+  flight.
+- `infrastructure/terraform/modules/ecr`, the first reusable Terraform module.
+  Container repositories were inline resources whose KMS encryption, scan-on-push,
+  immutable tag policy and untagged-image lifecycle rule had to be re-read to be
+  trusted; they are now defined once with input validation (`names` non-empty,
+  `kms_key_arn` must be a KMS ARN, `image_tag_mutability` constrained) and typed
+  outputs. The module declares its own `required_providers`, so the committed root
+  lock file still governs the download. Documented with a full input/output table
+  in `infrastructure/terraform/README.md`, and re-exported from the root
+  `outputs.tf`.
+- Docs: the reports endpoint group in `docs/api.md`, including the strict-body and
+  error-code contract.
+
+### Changed
+
+- `Reports.jsx` is a view over the API rather than a hardcoded array. It has
+  distinct loading, empty-queue, load-failure (with retry) and filter-empty
+  states, and a status change is an optimistic update reconciled against the
+  server's copy and rolled back on failure. A failure to load is announced in a
+  live region instead of being indistinguishable from an empty queue.
+- Deleting a tour package in the company dashboard now opens `ConfirmDialog` and
+  names the tour, instead of calling `window.confirm` and reporting failure
+  through `alert()`. The dialog stays open on a rejected delete so the operator
+  can read the reason and retry or cancel.
+- The three remaining `alert()` calls in `ManageTours.jsx` — a failed status
+  update and the inbound admin approval/rejection notification — now render a
+  dismissible `role="alert"` banner inline. `window.confirm` and `alert()` are no
+  longer used anywhere in this component.
+- `docs/testing.md` now states the real test-file count (109, broken down per
+  package) rather than a stale 89.
+- The Terraform `ecr` resources moved from `compute_support.tf` into the module.
+  Nothing else had to change: the deployed image URIs come from the `*_image`
+  variables, so no other configuration referenced the old resource addresses.
+
+### Added
+
 - The Terraform provider lock file `.terraform.lock.hcl` is now committed, pinning
   `hashicorp/aws` and `hashicorp/random` to exact versions with content hashes for both
   `linux_amd64` and `windows_amd64`. `terraform-plan.yml` fails the pull request when the
