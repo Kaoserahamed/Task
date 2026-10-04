@@ -7,6 +7,7 @@ import './ManageTours.css';
 import API_BASE_URL from '../../config/api';
 import { filterCompanyTours } from '../../utils/tourFilters';
 import { logDebug, logError } from '../../utils/logger';
+import ConfirmDialog from '../ui/ConfirmDialog';
 
 const ManageTours = () => {
   const { company } = useAuth();
@@ -21,6 +22,13 @@ const ManageTours = () => {
   const [filteredTours, setFilteredTours] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeTourType, setActiveTourType] = useState('all');
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  // Inline feedback for status changes and inbound socket decisions. These used
+  // to be `alert()` calls, which block the main thread, cannot be styled, and
+  // are invisible to assistive technology beyond a bare native string.
+  const [notice, setNotice] = useState(null);
   const navigate = useNavigate();
 
   // Verify socket connection
@@ -81,12 +89,37 @@ const ManageTours = () => {
     navigate(`/edit-tour/${tourId}`);
   };
 
-  const handleDelete = async (tourId) => {
-    if (window.confirm('Are you sure you want to delete this tour package?')) {
-      const result = await deleteTour(tourId);
+  const handleDelete = (tour) => {
+    // Confirmation is a two-step state change rather than a blocking browser
+    // dialog: `window.confirm` froze the main thread, could not be styled, and
+    // is unreachable for some assistive technology. The dialog owns focus and
+    // dismissal; this only decides what is being confirmed.
+    setPendingDelete({ id: tour._id, name: tour.name || 'this tour package' });
+    setDeleteError('');
+  };
+
+  const cancelDelete = () => {
+    if (deleting) return;
+    setPendingDelete(null);
+    setDeleteError('');
+  };
+
+  const confirmDelete = async () => {
+    if (!pendingDelete || deleting) return;
+
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      const result = await deleteTour(pendingDelete.id);
       if (!result.success) {
-        alert(result.error || 'Failed to delete tour');
+        // Keep the dialog open so the operator can retry or cancel; the failure
+        // belongs next to the action that caused it.
+        setDeleteError(result.error || 'Failed to delete tour');
+        return;
       }
+      setPendingDelete(null);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -128,11 +161,14 @@ const ManageTours = () => {
         }
       } else {
         logError('Status update failed:', result.error);
-        alert(result.error || 'Failed to update status');
+        setNotice({
+          type: 'error',
+          message: result.error || 'Failed to update tour status.',
+        });
       }
     } catch (error) {
       logError('Error updating status:', error);
-      alert('Failed to update status');
+      setNotice({ type: 'error', message: 'Failed to update tour status.' });
     }
   };
 
@@ -145,12 +181,15 @@ const ManageTours = () => {
             tour._id === data.tourId ? { ...tour, status: data.status, review: data.review } : tour
           )
         );
-        // Optionally, show a notification
-        alert(
-          data.status === 'approved'
-            ? `Tour "${data.tourName}" has been approved!`
-            : `Tour "${data.tourName}" has been rejected. ${data.review ? `Reason: ${data.review}` : ''}`
-        );
+        setNotice({
+          type: data.status === 'approved' ? 'success' : 'warning',
+          message:
+            data.status === 'approved'
+              ? `Tour "${data.tourName}" has been approved!`
+              : `Tour "${data.tourName}" has been rejected. ${
+                  data.review ? `Reason: ${data.review}` : ''
+                }`,
+        });
         // Optionally, refresh tours from server
         fetchcompanyTours();
       }
@@ -202,6 +241,17 @@ const ManageTours = () => {
     <div className="manage-tours">
       <div className="manage-tours-header">
         <h1>Manage Tour Packages</h1>
+
+        {/* `role="alert"` so a status failure is announced rather than only
+            painted; the dismiss control keeps it from blocking the list. */}
+        {notice && (
+          <div className={`manage-tours-notice manage-tours-notice--${notice.type}`} role="alert">
+            <p>{notice.message}</p>
+            <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss message">
+              ×
+            </button>
+          </div>
+        )}
 
         <div className="filters">
           <div className="category-filters">
@@ -341,7 +391,11 @@ const ManageTours = () => {
                     {tour.status === 'pending' ? 'Pending' : 'Send for Approval'}
                   </button>
                 )}
-                <button className="delete-btn" onClick={() => handleDelete(tour._id)}>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(tour)}
+                  aria-label={`Delete ${tour.name || 'this tour package'}`}
+                >
                   Delete
                 </button>
               </div>
@@ -353,6 +407,20 @@ const ManageTours = () => {
       {filteredTours.length === 0 && (
         <div className="no-tours">No tours found for this category</div>
       )}
+
+      <ConfirmDialog
+        open={Boolean(pendingDelete)}
+        title="Delete tour package"
+        message={
+          deleteError
+            ? `${deleteError} "${pendingDelete?.name}" was not deleted.`
+            : `This permanently removes "${pendingDelete?.name}" and its bookings from the platform. This cannot be undone.`
+        }
+        confirmLabel={deleting ? 'Deleting…' : 'Delete package'}
+        busy={deleting}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </div>
   );
 };
