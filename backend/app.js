@@ -25,6 +25,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 const weatherRoutes = require('./routes/weatherRoutes');
 const placeRoutes = require('./routes/placeRoutes');
 const tourRoutes = require('./routes/tours');
@@ -147,6 +148,9 @@ function createApp({ log = logger } = {}) {
   app.use('/api/wishlist', wishlistRoutes);
   app.use('/api/bookings', bookingRoutes);
   app.use('/reviews', reviewRoutes);
+  // Admin moderation queue. The router guards itself with adminAuth, so the mount
+  // needs no extra middleware here.
+  app.use('/api/reports', reportRoutes);
   app.use('/api', weatherRoutes);
   app.use('/api', placeRoutes);
   app.get('/Suggestion/:tourName', getSuggestions);
