@@ -6,11 +6,46 @@ const logger = require('../utils/logger');
 
 const localKeys = new Map();
 
+const sha256 = (value) => crypto.createHash('sha256').update(value).digest('hex');
+
+/**
+ * Identify the caller so that one requester's cached response can never be
+ * replayed to another.
+ *
+ * The key used to be `sha256(method:url:Idempotency-Key)` and nothing else, so
+ * the cache was addressed by a value the *client* chooses. Two callers who
+ * picked the same key - which is trivial for `1`, `2`, a timestamp or any
+ * fixed string - shared a single entry, and the second was served the first
+ * one's response body with `Idempotency-Replayed: true`. On a booking that is
+ * another customer's name, phone and address; on a login it is their token.
+ *
+ * This middleware is mounted before authentication (see app.js), so
+ * `req.user` is not populated yet and the caller's `Authorization` header is
+ * used instead - hashed, so the credential itself is never part of a cache key
+ * or of anything logged. Login and registration present no credential at all;
+ * those fall back to the request body so that two different sign-ins cannot
+ * collide either.
+ */
+function callerScope(req) {
+  const credential = req.header('Authorization');
+  if (credential) return `credential:${sha256(credential)}`;
+
+  let body;
+  try {
+    body = JSON.stringify(req.body ?? null);
+  } catch {
+    // A body that cannot be serialised must not fail the request; it only means
+    // these callers share a scope, which is still better than keying on the
+    // Idempotency-Key alone.
+    body = 'unserialisable';
+  }
+  return `anonymous:${sha256(body)}`;
+}
+
 function cacheName(req) {
-  return `idempotency:${crypto
-    .createHash('sha256')
-    .update(`${req.method}:${req.originalUrl}:${req.header('Idempotency-Key')}`)
-    .digest('hex')}`;
+  return `idempotency:${sha256(
+    `${req.method}:${req.originalUrl}:${req.header('Idempotency-Key')}:${callerScope(req)}`
+  )}`;
 }
 
 function replay(res, value) {

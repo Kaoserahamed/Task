@@ -260,6 +260,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The front-end CSS notes moved out of `frontend/` into the docs tree; the
   documentation index links every page.
 
+### Security
+
+- **The idempotency cache was shared between callers.** `middleware/idempotency.js` keyed
+  every entry on `sha256(method:url:Idempotency-Key)` — a value the _client_ chooses — so
+  two requests that picked the same key addressed the same entry, and the second was
+  served the first one's stored response body with `Idempotency-Replayed: true`. Because
+  the middleware is mounted before authentication, the key contained nothing that
+  distinguishes one user from another, and idempotency keys are routinely `1`, `2`, a
+  timestamp or any fixed string. On `POST /api/bookings/add` that is another customer's
+  name, phone and address replayed to whoever asked second; on `/user/auth/login`, which
+  carries no credential at all, it is the first person's JWT. Entries are now scoped to
+  the caller — the `Authorization` header, hashed so the credential never appears in a
+  cache key or a log line — with the request body as the fallback for the credential-free
+  login and registration paths. Retrying the _same_ request still replays, which is what
+  idempotency means.
+
 ### Fixed
 
 - Two ESLint **errors** were failing `npm run lint` on `main`, which means `npm run verify`
