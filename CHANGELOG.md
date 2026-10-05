@@ -262,6 +262,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Two ESLint **errors** were failing `npm run lint` on `main`, which means `npm run verify`
+  and the `fresh-clone` CI job could not pass on a clean checkout.
+  `tourcompanydashboard/src/Components/ui/ConfirmDialog.test.jsx` reached for the backdrop
+  with `document.querySelector('.confirm-dialog')`, which `testing-library/no-node-access`
+  rejects — and which would have failed silently the first time the wrapper was renamed.
+  The fix removes the need for it rather than silencing the rule: `ConfirmDialog` now puts
+  `role="alertdialog"` on the full-screen overlay (which is what the dialog actually is)
+  and decides dismissal with `event.target === event.currentTarget`, replacing the
+  `role="presentation"` wrapper and its `stopPropagation` call. The behaviour is now
+  asserted by role and the DOM is one node shallower.
+  `admin/src/components/Reports/Reports.test.jsx` named its `render()` return value
+  `result`, which `testing-library/render-result-naming-convention` rejects; renamed to
+  `view`, as the rule requires.
+
 - A bracket-wrapped `packageCategories` list was stored with the brackets still attached
   to the names. `"[Beach, Nature]"` reached `normalizePackageCategories`, failed the JSON
   branch, and was split on commas — yielding `['[beach', 'nature]']` in MongoDB. Those

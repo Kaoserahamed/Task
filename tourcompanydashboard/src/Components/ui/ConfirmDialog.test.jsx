@@ -68,13 +68,20 @@ test('cancels on Escape, matching the native dialog it replaces', () => {
 });
 
 test('cancels on a backdrop press but not on a press inside the panel', () => {
-  const { onCancel } = setup();
+  const { onConfirm, onCancel } = setup();
 
+  // The overlay is the alertdialog itself, so a press on it is a press on the
+  // backdrop area and dismisses.
   fireEvent.mouseDown(screen.getByRole('alertdialog'));
-  expect(onCancel).not.toHaveBeenCalled();
-
-  fireEvent.mouseDown(document.querySelector('.confirm-dialog'));
   expect(onCancel).toHaveBeenCalledTimes(1);
+  expect(onConfirm).not.toHaveBeenCalled();
+
+  onCancel.mockClear();
+
+  // A press on the panel or its controls is inside the dialog and must not.
+  fireEvent.mouseDown(screen.getByRole('button', { name: 'Delete package' }));
+  fireEvent.mouseDown(screen.getByRole('button', { name: 'Cancel' }));
+  expect(onCancel).not.toHaveBeenCalled();
 });
 
 test('disables both actions and announces progress while busy', () => {

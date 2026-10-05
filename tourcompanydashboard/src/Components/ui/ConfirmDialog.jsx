@@ -84,18 +84,25 @@ const ConfirmDialog = ({
   const messageId = 'confirm-dialog-message';
 
   return (
-    <div className="confirm-dialog" role="presentation" onMouseDown={onCancel}>
-      <div
-        className="confirm-dialog__panel"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={messageId}
-        aria-busy={busy}
-        ref={dialogRef}
-        // A click inside the panel must not reach the backdrop's dismiss handler.
-        onMouseDown={(event) => event.stopPropagation()}
-      >
+    // The overlay *is* the alertdialog: it fills the viewport and holds the
+    // labelled content. Dismissal is decided by comparing the event target with
+    // the current target, so only a press on the backdrop area itself cancels
+    // while a press anywhere on the panel or its controls does not. That keeps
+    // the rule in one place and, because the dialog is now a single element,
+    // lets the behaviour be asserted by role instead of by class name.
+    <div
+      className="confirm-dialog"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={messageId}
+      aria-busy={busy}
+      ref={dialogRef}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onCancel?.();
+      }}
+    >
+      <div className="confirm-dialog__panel">
         <h2 id={titleId}>{title}</h2>
         <p id={messageId}>{message}</p>
         <div className="confirm-dialog__actions">

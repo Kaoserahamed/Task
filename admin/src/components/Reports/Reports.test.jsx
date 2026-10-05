@@ -61,10 +61,10 @@ const cardTitles = () =>
 // Waits for the request *and* the state update it triggers: asserting on the
 // mock alone leaves the component still rendering its loading state.
 const renderReports = async () => {
-  const result = render(<Reports />);
+  const view = render(<Reports />);
   await waitFor(() => expect(reportsApi.fetchReports).toHaveBeenCalled());
   await waitFor(() => expect(screen.queryByText('Loading reports')).not.toBeInTheDocument());
-  return result;
+  return view;
 };
 
 const searchBox = () => screen.getByRole('textbox', { name: 'Search reports' });
