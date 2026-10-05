@@ -64,6 +64,29 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Nothing else had to change: the deployed image URIs come from the `*_image`
   variables, so no other configuration referenced the old resource addresses.
 
+### Fixed
+
+- **The company dashboard's Vercel deployment now builds.** The `tourcompany`
+  project was rooted at the repository root instead of `tourcompanydashboard/`,
+  so Vercel ran the monorepo `build:web` script, which builds `frontend` before
+  the dashboard. Only the root dependencies were installed, so `frontend`'s
+  build died on `cross-env: command not found` (exit 127) — a binary that is a
+  devDependency of `frontend/` and never reached the build machine. Every
+  deployment of this project had failed; it had never produced a bundle. The
+  project's Root Directory is now `tourcompanydashboard/`, so Vercel reads the
+  committed `tourcompanydashboard/vercel.json` (`npm ci`, `npm run build`,
+  output `build`) that `docs/ci-cd.md` already documents, and the Node runtime
+  is pinned to `20.x` to match `tourcompanydashboard/.nvmrc`, the Dockerfile and
+  CI. `REACT_APP_API_URL` is set on the project for production, preview and
+  development; without it CRA inlined the `http://localhost:4000` fallback and
+  the deployed dashboard could not reach the API.
+- The stale Company Dashboard and Backend API URLs in the `README.md` live-demo
+  list pointed at the retired `*-zeta` and `backend-kaoser614-7344s` aliases.
+  They now name the current production aliases.
+- `.gitignore` ignores `.env.local` and `.env.*.local`, the files `vercel link`
+  and `vercel pull` create, without the broader `.env*` pattern that would also
+  hide the committed `.env.example` templates.
+
 ### Added
 
 - The Terraform provider lock file `.terraform.lock.hcl` is now committed, pinning

@@ -30,8 +30,8 @@ A comprehensive multi-tenant tour booking and management platform enabling custo
 
 - **Frontend (Customer)**: https://frontend-kaoser614-7344s-projects.vercel.app
 - **Admin Dashboard**: https://admin-zeta-swart-18.vercel.app
-- **Company Dashboard**: https://tourcompany-zeta.vercel.app
-- **Backend API**: https://backend-kaoser614-7344s-projects.vercel.app
+- **Company Dashboard**: https://tourcompany-kaoser614-7344s-projects.vercel.app
+- **Backend API**: https://backend-eight-tan-16.vercel.app
 
 ### Demo Accounts
 
