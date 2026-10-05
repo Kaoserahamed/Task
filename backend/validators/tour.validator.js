@@ -51,6 +51,27 @@ function toNumber(value, fallback = 0) {
 }
 
 /**
+ * Strip the wrapping brackets and quotes from a list-ish string element.
+ *
+ * Clients send `packageCategories` as a JSON array, a comma separated string, a
+ * bracket-wrapped list (`"[Beach, Nature]"`, `"['Beach','Nature']"`) or a single
+ * value. Splitting a bracket-wrapped list on commas and trimming whitespace was
+ * not enough: the brackets stayed glued to the first and last names, so the
+ * document was persisted as `['[beach', 'nature]']` — categories that match no
+ * chip in the dashboard and no query in the API.
+ */
+function stripListDelimiters(value) {
+  return String(value)
+    .trim()
+    .replace(/^[[\]]+/, '')
+    .replace(/[[\]]+$/, '')
+    .trim()
+    .replace(/^["']+/, '')
+    .replace(/["']+$/, '')
+    .trim();
+}
+
+/**
  * `packageCategories` is sent either as a JSON array, a comma separated string
  * or a single value; the model always stores an array of lower-case names.
  */
@@ -60,21 +81,21 @@ function normalizePackageCategories(value) {
   }
 
   if (Array.isArray(value)) {
-    return value.map((category) => String(category).trim().toLowerCase()).filter(Boolean);
+    return value.map((category) => stripListDelimiters(category).toLowerCase()).filter(Boolean);
   }
 
   if (typeof value === 'string') {
     const { ok, value: parsed } = parseJsonField(value);
     if (ok && Array.isArray(parsed)) {
-      return parsed.map((category) => String(category).trim().toLowerCase()).filter(Boolean);
+      return parsed.map((category) => stripListDelimiters(category).toLowerCase()).filter(Boolean);
     }
     return value
       .split(',')
-      .map((category) => category.trim().toLowerCase())
+      .map((category) => stripListDelimiters(category).toLowerCase())
       .filter(Boolean);
   }
 
-  return [String(value).trim().toLowerCase()];
+  return [stripListDelimiters(value).toLowerCase()].filter(Boolean);
 }
 
 /** Duration is sent as `{"days":"3","nights":"2"}` (numbers optional). */

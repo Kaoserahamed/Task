@@ -22,6 +22,48 @@ describe('company tour filters', () => {
     expect(normalizePackageCategories('Adventure, Nature')).toEqual(['Adventure', 'Nature']);
   });
 
+  test('a bracketed list that is not valid JSON still parses as a list', () => {
+    // The bracket-stripping fallback below the JSON branch was unreachable: any
+    // string starting with `[` entered the `try` and returned from the `catch`,
+    // so `"[Adventure, Nature]"` — the shape a loosely serialised field has —
+    // reported *no* categories and the tour vanished from every category filter.
+    expect(normalizePackageCategories('[Adventure, Nature]')).toEqual(['Adventure', 'Nature']);
+    expect(normalizePackageCategories('[Adventure]')).toEqual(['Adventure']);
+    expect(normalizePackageCategories(['[Adventure, Nature]'])).toEqual(['Adventure', 'Nature']);
+  });
+
+  test('a bracket-wrapped list still matches its category filter', () => {
+    const legacy = tour({ packageCategories: '[Beach, Relaxation]' });
+
+    expect(matchesTourCategory(legacy, 'beach')).toBe(true);
+    expect(matchesTourCategory(legacy, 'relaxation')).toBe(true);
+    expect(matchesTourCategory(legacy, 'adventure')).toBe(false);
+  });
+
+  test('unrecoverable junk still yields no categories rather than a bogus one', () => {
+    // The fallback is a lenient list parser, so an unterminated bracket still
+    // yields its single token — what it must never do is invent a category or
+    // resurrect the JSON branch's empty result for a value that is a real list.
+    expect(normalizePackageCategories('[broken')).toEqual(['broken']);
+    expect(normalizePackageCategories('[]')).toEqual([]);
+    expect(normalizePackageCategories('[ ]')).toEqual([]);
+    expect(normalizePackageCategories('   ')).toEqual([]);
+    expect(normalizePackageCategories(null)).toEqual([]);
+    expect(normalizePackageCategories(undefined)).toEqual([]);
+  });
+
+  test('a malformed category list is excluded from an unrelated filter', () => {
+    // The pre-existing guarantee, kept: junk never matches a real category.
+    expect(
+      filterCompanyTours([tour({ packageCategories: ['[broken'] })], { category: 'nature' })
+    ).toEqual([]);
+    expect(
+      filterCompanyTours([tour({ packageCategories: '[Beach, Relaxation]' })], {
+        category: 'beach',
+      })
+    ).toHaveLength(1);
+  });
+
   test('matches categories case-insensitively and supports custom categories', () => {
     expect(matchesTourCategory(tour(), 'adventure')).toBe(true);
     expect(matchesTourCategory(tour({ customCategory: 'Wellness' }), 'custom')).toBe(true);

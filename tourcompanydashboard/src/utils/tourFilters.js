@@ -4,6 +4,19 @@
  * test and prevents category/type parsing from drifting with JSX changes.
  */
 
+/**
+ * Parse a stored `packageCategories` value into a flat list of category names.
+ *
+ * The field has been persisted in three shapes over the life of the project: a
+ * real array, a JSON-encoded array (`'["Beach","Nature"]'`), and a
+ * bracket-wrapped comma list (`'[Beach, Nature]'`) written by older clients and
+ * by seed data. All three have to resolve to the same names, otherwise a tour
+ * silently disappears from the category filters an operator is looking at.
+ *
+ * The bracket-stripping branch used to sit after the JSON branch and was
+ * unreachable, because every string starting with `[` entered the `try` and then
+ * returned from the `catch`. That made the third shape parse as *no* categories.
+ */
 const parseCategoryString = (value) => {
   if (typeof value !== 'string') return [];
   const trimmed = value.trim();
@@ -14,7 +27,8 @@ const parseCategoryString = (value) => {
       const parsed = JSON.parse(trimmed);
       return Array.isArray(parsed) ? parsed : [parsed];
     } catch {
-      return [];
+      // Not valid JSON. Fall through to the bracket-stripping split below rather
+      // than discarding the value: `'[Beach, Nature]'` is a list, not junk.
     }
   }
 
@@ -22,7 +36,7 @@ const parseCategoryString = (value) => {
     .replace(/^\[/, '')
     .replace(/\]$/, '')
     .split(',')
-    .map((category) => category.trim())
+    .map((category) => category.trim().replace(/^["']|["']$/g, ''))
     .filter(Boolean);
 };
 

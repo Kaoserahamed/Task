@@ -262,6 +262,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- A bracket-wrapped `packageCategories` list was stored with the brackets still attached
+  to the names. `"[Beach, Nature]"` reached `normalizePackageCategories`, failed the JSON
+  branch, and was split on commas — yielding `['[beach', 'nature]']` in MongoDB. Those
+  names match no category chip in the company dashboard and no query in the API, so the
+  tour was invisible to every category filter while looking perfectly valid in the
+  document. The validator now strips the wrapping brackets and quotes from each element
+  before lower-casing it, and `tour.validator.test.js` asserts no stored category can
+  retain list punctuation. The dashboard read path had the mirror-image defect:
+  `parseCategoryString` in `tourcompanydashboard/src/utils/tourFilters.js` had a
+  bracket-stripping fallback that was **dead code**, because every string starting with
+  `[` entered the JSON `try` and then returned from its `catch` — so the same value
+  parsed as _no_ categories and the tour vanished from Manage Tours. The `catch` now
+  falls through to that fallback instead of discarding the value.
+
 - `jest.integration.config.js` set `runInBand: true`, which is a command-line flag rather
   than a config key. Every integration run printed a validation warning and then ignored
   the setting, so the suite was never actually serialised by the file that claimed to do

@@ -56,6 +56,24 @@ describe('normalizePackageCategories', () => {
     expect(normalizePackageCategories('Beach')).toEqual(['beach']);
   });
 
+  test('strips the brackets off a bracket-wrapped list', () => {
+    // A client that sends `"[Beach, Nature]"` used to be stored as
+    // `['[beach', 'nature]']` — the brackets were kept as part of the category
+    // names, so the tour was persisted under names that match no category chip
+    // in the dashboard and no query in the API.
+    expect(normalizePackageCategories('[Beach, Nature]')).toEqual(['beach', 'nature']);
+    expect(normalizePackageCategories('[Beach]')).toEqual(['beach']);
+    expect(normalizePackageCategories("['Beach', 'Nature']")).toEqual(['beach', 'nature']);
+  });
+
+  test('never stores a category name with leftover punctuation', () => {
+    for (const input of ['[Beach, Nature]', "['Beach']", '[Beach, Nature', 'Beach, Nature]']) {
+      for (const category of normalizePackageCategories(input)) {
+        expect(category).toMatch(/^[a-z0-9 &'-]+$/);
+      }
+    }
+  });
+
   test('returns undefined for empty input so the field is left untouched', () => {
     expect(normalizePackageCategories('')).toBeUndefined();
     expect(normalizePackageCategories(undefined)).toBeUndefined();
