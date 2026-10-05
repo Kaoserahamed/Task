@@ -1,5 +1,6 @@
 import {
   aggregateReviews,
+  DEFAULT_FILTERS,
   filterAndSortTours,
   formatDate,
   formatPrice,
@@ -8,6 +9,9 @@ import {
   matchesDuration,
   matchesSearchQuery,
   matchesTourType,
+  MAX_PRICE,
+  MIN_PRICE,
+  parsePriceMax,
   parseSearchFilters,
 } from './searchFilters';
 
@@ -29,6 +33,52 @@ describe('searchFilters', () => {
       statuses: ['ongoing'],
       sort: 'rating',
     });
+  });
+
+  test('falls back to the default price when the URL price is not a usable number', () => {
+    // A shared or hand-edited link can carry anything. `Number.parseInt('abc')`
+    // is NaN, and every `price <= NaN` comparison is false, so an unguarded NaN
+    // silently emptied the search results for the whole storefront.
+    for (const raw of ['abc', 'NaN', '450abc', undefined]) {
+      expect(parsePriceMax(raw)).toBe(DEFAULT_FILTERS.priceMax);
+    }
+    // An absent parameter means "no ceiling chosen", not "zero".
+    expect(parseSearchFilters(params('')).priceMax).toBe(DEFAULT_FILTERS.priceMax);
+  });
+
+  test('clamps the price to the range the slider can actually represent', () => {
+    // The slider renders min={MIN_PRICE} max={MAX_PRICE}; a URL outside that
+    // range would put the control into a state it cannot display.
+    expect(parsePriceMax('99999')).toBe(MAX_PRICE);
+    expect(parsePriceMax('0')).toBe(MIN_PRICE);
+    expect(parsePriceMax('-5')).toBe(MIN_PRICE);
+    expect(parsePriceMax('450')).toBe(450);
+  });
+
+  test('a price written in scientific notation is not truncated', () => {
+    // `Number.parseInt('1e3')` is 1, which quietly turned a $1000 ceiling into
+    // a $1 one and hid the whole catalogue.
+    expect(parseSearchFilters(params('priceMax=1e3')).priceMax).toBe(1000);
+  });
+
+  test('a bad price in the URL does not filter every tour away', () => {
+    const tours = [
+      { _id: 'a', price: 80 },
+      { _id: 'b', price: 40 },
+    ];
+    const { priceMax } = parseSearchFilters(params('priceMax=abc'));
+
+    expect(Number.isNaN(priceMax)).toBe(false);
+    expect(filterAndSortTours({ tours, priceMax })).toHaveLength(tours.length);
+  });
+
+  test('filterAndSortTours is total even when priceMax is not a number', () => {
+    // The selector is called directly by tests and by any future caller, so it
+    // must not depend on the parser having already sanitised the value.
+    const tours = [{ _id: 'a', price: 80 }];
+
+    expect(filterAndSortTours({ tours, priceMax: NaN })).toHaveLength(1);
+    expect(filterAndSortTours({ tours, priceMax: undefined })).toHaveLength(1);
   });
 
   test('aggregates review totals and counts by tour', () => {

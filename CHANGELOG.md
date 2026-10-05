@@ -262,6 +262,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- A malformed `priceMax` in the storefront search URL emptied the results. The value was
+  read with `Number.parseInt` and used unchecked, so `?priceMax=abc` produced `NaN`,
+  and since every `price <= NaN` comparison is false, _all_ tours were filtered out while
+  the controlled price slider rendered `value={NaN}` and printed "NaN" in its label — a
+  shared or hand-edited link could leave the search page permanently empty. `parsePriceMax`
+  now parses the whole string with `Number`, falls back to the documented default when it
+  is unusable, and clamps usable values into `[MIN_PRICE, MAX_PRICE]` — the range the
+  slider actually renders. `filterAndSortTours` re-applies the same coercion so a
+  non-numeric ceiling can never drop the catalogue, whatever the caller passes. This also
+  fixes `?priceMax=1e3`, which `parseInt` truncated to a $1 ceiling, and the slider, its
+  `$1` label and `resetFilters` now read the shared constants instead of three copies of
+  the same magic numbers. Covered in `searchFilters.test.js` and `useSearchFilters.test.jsx`.
+
 - The admin Reports tests reached into the DOM directly (`document.querySelectorAll`,
   `element.closest`) and called `render` from `beforeEach`, which the repository's
   `testing-library/no-node-access` and `testing-library/no-render-in-setup` rules

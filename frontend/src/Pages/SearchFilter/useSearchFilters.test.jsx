@@ -8,6 +8,10 @@ const wrapper = ({ children }) => (
   </MemoryRouter>
 );
 
+const badPriceWrapper = ({ children }) => (
+  <MemoryRouter initialEntries={['/search?priceMax=abc']}>{children}</MemoryRouter>
+);
+
 describe('useSearchFilters', () => {
   test('hydrates state from URL parameters', () => {
     const { result } = renderHook(() => useSearchFilters({ tours: [] }), { wrapper });
@@ -27,5 +31,32 @@ describe('useSearchFilters', () => {
     expect(result.current.priceRange).toBe(1000);
     expect(result.current.selectedTourTypes).toEqual([]);
     expect(result.current.sortOption).toBe('lowest');
+  });
+
+  test('a malformed priceMax in the URL hydrates a usable slider and keeps tours', () => {
+    // A shared link could carry `priceMax=abc`; the hook used to seed NaN into
+    // the controlled range input and filter the whole catalogue away.
+    const tours = [{ _id: 'a', price: 80 }];
+    const { result } = renderHook(() => useSearchFilters({ tours }), {
+      wrapper: badPriceWrapper,
+    });
+
+    expect(Number.isNaN(result.current.priceRange)).toBe(false);
+    expect(result.current.priceRange).toBe(1000);
+    expect(result.current.filteredTours).toHaveLength(1);
+  });
+
+  test('the price slider only ever receives a value it can represent', () => {
+    const { result } = renderHook(() => useSearchFilters({ tours: [] }), {
+      wrapper: badPriceWrapper,
+    });
+
+    act(() => result.current.handlePriceChange({ target: { value: '99999' } }));
+
+    expect(result.current.priceRange).toBe(1000);
+
+    act(() => result.current.handlePriceChange({ target: { value: 'abc' } }));
+
+    expect(result.current.priceRange).toBe(1000);
   });
 });

@@ -24,18 +24,46 @@ export const STATUS_OPTIONS = [
   { id: 'completed', label: 'Completed', color: '#6b7280' },
 ];
 
+export const MIN_PRICE = 1;
+export const MAX_PRICE = 1000;
+
 export const DEFAULT_FILTERS = {
   query: '',
-  priceMax: 1000,
+  priceMax: MAX_PRICE,
   tourTypes: [],
   durations: [],
   statuses: [],
   sort: 'lowest',
 };
 
+/**
+ * Coerce a price ceiling to a value the price slider can actually represent.
+ *
+ * The value arrives from the query string, so a shared or hand-edited link can
+ * carry anything. Two things went wrong before this existed:
+ *
+ *   - `Number.parseInt` answers NaN for text, and every `price <= NaN`
+ *     comparison is false, so one bad link filtered *every* tour out of the
+ *     storefront and printed "NaN" inside the controlled range input.
+ *   - `Number.parseInt('1e3')` is `1`, so a legitimate `priceMax=1000` written
+ *     in scientific notation quietly became a $1 ceiling.
+ *
+ * So the whole string is parsed with `Number`, unparsable input falls back to
+ * the documented default instead of poisoning every downstream comparison, and
+ * anything usable is clamped into the range the control can actually render.
+ */
+export const parsePriceMax = (value) => {
+  if (value === null || value === undefined || value === '') return DEFAULT_FILTERS.priceMax;
+
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return DEFAULT_FILTERS.priceMax;
+
+  return Math.min(Math.max(parsed, MIN_PRICE), MAX_PRICE);
+};
+
 export const parseSearchFilters = (searchParams) => ({
   query: searchParams.get('query') || DEFAULT_FILTERS.query,
-  priceMax: Number.parseInt(searchParams.get('priceMax') || DEFAULT_FILTERS.priceMax, 10),
+  priceMax: parsePriceMax(searchParams.get('priceMax') ?? DEFAULT_FILTERS.priceMax),
   tourTypes: searchParams.getAll('tourType') || [],
   durations: searchParams.getAll('duration') || [],
   statuses: searchParams.getAll('status') || [],
@@ -137,10 +165,15 @@ export const filterAndSortTours = ({
   averageRatings = {},
   reviewCounts = {},
   now = new Date(),
-}) =>
-  [...tours]
+}) => {
+  // Re-sanitised here as well as in the parser: this selector is exported and
+  // called directly, and a single NaN comparison must never be able to drop the
+  // entire catalogue.
+  const priceCeiling = parsePriceMax(priceMax);
+
+  return [...tours]
     .filter((tour) => matchesSearchQuery(tour, query))
-    .filter((tour) => (tour.price || 0) <= priceMax)
+    .filter((tour) => (tour.price || 0) <= priceCeiling)
     .filter((tour) => matchesTourType(tour, tourTypes))
     .filter((tour) => matchesDuration(tour, durations))
     .filter((tour) => !statuses.length || statuses.includes(getTourStatus(tour, now)))
@@ -154,6 +187,7 @@ export const filterAndSortTours = ({
       }
       return (a.price || 0) - (b.price || 0);
     });
+};
 
 export const formatPrice = (price) => `$${(price || 0).toLocaleString()}`;
 export const formatDate = (dateString) =>

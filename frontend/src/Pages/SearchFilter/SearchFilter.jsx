@@ -17,6 +17,8 @@ import {
   formatPrice,
   getImageUrl,
   getTourStatus,
+  MAX_PRICE,
+  MIN_PRICE,
 } from '../../utils/searchFilters';
 import { useSearchFilters } from './useSearchFilters';
 
@@ -133,14 +135,14 @@ const SearchFilter = () => {
               <input
                 type="range"
                 className="tour-search-price-slider"
-                min="1"
-                max="1000"
+                min={MIN_PRICE}
+                max={MAX_PRICE}
                 step="1"
                 value={priceRange}
                 onChange={handlePriceChange}
               />
               <div className="tour-search-price-values">
-                <span>$1</span> - <span>${priceRange.toLocaleString()}</span>
+                <span>${MIN_PRICE}</span> - <span>${priceRange.toLocaleString()}</span>
               </div>
             </div>
           </div>

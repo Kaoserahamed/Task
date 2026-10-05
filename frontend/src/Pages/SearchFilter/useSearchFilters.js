@@ -1,6 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { filterAndSortTours, parseSearchFilters } from '../../utils/searchFilters';
+import {
+  DEFAULT_FILTERS,
+  filterAndSortTours,
+  parsePriceMax,
+  parseSearchFilters,
+} from '../../utils/searchFilters';
 
 export function useSearchFilters({ tours = [], averageRatings = {}, reviewCounts = {} } = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +38,9 @@ export function useSearchFilters({ tours = [], averageRatings = {}, reviewCounts
   };
 
   const handlePriceChange = (event) => {
-    const value = Number.parseInt(event.target.value, 10);
+    // Sanitised on the way in as well as on the way out of the URL: the slider
+    // is a controlled input, so a value it cannot represent would break it.
+    const value = parsePriceMax(event.target.value);
     setPriceRange(value);
     updateURLParams('priceMax', value.toString());
   };
@@ -76,7 +83,7 @@ export function useSearchFilters({ tours = [], averageRatings = {}, reviewCounts
 
   const resetFilters = () => {
     setSearchQuery('');
-    setPriceRange(1000);
+    setPriceRange(DEFAULT_FILTERS.priceMax);
     setSelectedTourTypes([]);
     setSelectedDurations([]);
     setSelectedStatuses([]);
