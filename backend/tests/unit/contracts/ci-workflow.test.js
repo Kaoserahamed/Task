@@ -19,6 +19,22 @@ const path = require('path');
 const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
 const read = (...parts) => fs.readFileSync(path.join(repoRoot, ...parts), 'utf8');
 
+/**
+ * Options Jest accepts only as command-line flags. Putting one in a config file
+ * is not an error — Jest prints a validation warning, then quietly ignores it —
+ * so the intent is silently lost. `--runInBand` is the one that bit us: the
+ * integration config asked for serialisation in a place Jest does not read it.
+ */
+const CLI_ONLY_JEST_OPTIONS = [
+  'runInBand',
+  'maxWorkers',
+  'workerIdleMemoryLimit',
+  'detectOpenHandles',
+  'forceExit',
+  'watch',
+  'watchAll',
+];
+
 describe('CI workflow contract', () => {
   const workflow = read('.github', 'workflows', 'ci.yml');
 
@@ -163,6 +179,28 @@ describe('integration test infrastructure', () => {
     expect(setup).toMatch(/MongoMemoryServer/);
     expect(setup).toMatch(/MONGODB_URI_TEST/);
     expect(setup).toMatch(/300000/);
+  });
+
+  test('the integration config declares only options Jest actually recognises', () => {
+    // `runInBand` is a CLI flag, not a config key. Setting it here made every
+    // integration run print a validation warning and then ignore the setting, so
+    // the suite was never actually serialised by the config that claimed to do
+    // it. Serialisation is requested on the command line in package.json.
+    const config = require(path.resolve(__dirname, '..', '..', '..', 'jest.integration.config.js'));
+
+    expect(config.runInBand).toBeUndefined();
+
+    // Nothing else may smuggle a CLI-only flag back into the config either.
+    for (const key of Object.keys(config)) {
+      expect(CLI_ONLY_JEST_OPTIONS).not.toContain(key);
+    }
+  });
+
+  test('serialisation for the integration suite is requested explicitly', () => {
+    // The guard above only holds as long as something actually asks for it.
+    const manifest = JSON.parse(read('backend', 'package.json'));
+
+    expect(manifest.scripts['test:integration']).toMatch(/--runInBand/);
   });
 });
 

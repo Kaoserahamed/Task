@@ -262,6 +262,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `jest.integration.config.js` set `runInBand: true`, which is a command-line flag rather
+  than a config key. Every integration run printed a validation warning and then ignored
+  the setting, so the suite was never actually serialised by the file that claimed to do
+  it. The dead key is gone, `npm run test:integration` keeps passing `--runInBand` on the
+  command line, and a new contract in `tests/unit/contracts/ci-workflow.test.js` fails if
+  any CLI-only Jest option (`maxWorkers`, `forceExit`, `detectOpenHandles`, …) reappears
+  in the config while the script stops asking for it.
+
 - A malformed `priceMax` in the storefront search URL emptied the results. The value was
   read with `Number.parseInt` and used unchecked, so `?priceMax=abc` produced `NaN`,
   and since every `price <= NaN` comparison is false, _all_ tours were filtered out while

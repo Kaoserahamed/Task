@@ -12,6 +12,12 @@
  * Run them with:
  *   npm run test:integration                    # in-memory MongoDB
  *   MONGODB_URI=mongodb://localhost:27017/... npm run test:integration   # any Mongo
+ *
+ * Note: `--runInBand` is deliberately absent here. It is a command-line flag,
+ * not a config key, so setting it in this file only made Jest print a validation
+ * warning and then ignore the setting. `npm run test:integration` passes the flag
+ * on the command line, and
+ * `tests/unit/contracts/ci-workflow.test.js` guards both halves of that.
  */
 
 module.exports = {
@@ -21,5 +27,4 @@ module.exports = {
   setupFiles: ['<rootDir>/tests/unit/setup-env.js'],
   setupFilesAfterEnv: ['<rootDir>/tests/integration/setup.js'],
   testTimeout: 120000,
-  runInBand: true,
 };
